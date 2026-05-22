@@ -643,6 +643,43 @@ async function handleRequest(request, env, ctx) {
       return json({ created: created.length, password: pw, students: created });
     }
 
+    // POST /api/users/batch-delete
+    if (path === '/api/users/batch-delete' && method === 'POST') {
+      authErr = requireAuth(user, ['admin', 'teacher']);
+      if (authErr) return authErr;
+      const { ids, grade, class_num } = await request.json();
+      let users = await r2Get(env.DATA, 'users.json') || [];
+      const toRemove = ids || [];
+      let fullMatch = false;
+      if (grade) {
+        const before = users.length;
+        users = users.filter(u => {
+          if (u.grade === String(grade) && (!class_num || u.class_num === String(class_num))) {
+            if (u.id === user.id) return true;
+            if (u.role === 'admin') return true;
+            toRemove.push(u.id);
+            return false;
+          }
+          return true;
+        });
+        fullMatch = before - users.length > 0;
+      }
+      if (toRemove.length > 0 && !grade) {
+        const remSet = new Set(toRemove);
+        users = users.filter(u => {
+          if (remSet.has(u.id)) {
+            if (u.id === user.id) return true;
+            if (u.role === 'admin') return true;
+            return false;
+          }
+          return true;
+        });
+      }
+      await r2Put(env.DATA, 'users.json', users);
+      await auditLog(env, 'batch_delete', user.username, { count: toRemove.length, grade, class_num });
+      return json({ deleted: toRemove.length });
+    }
+
     // ============================================================
     // 4. STATS
     // ============================================================

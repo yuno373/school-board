@@ -119,14 +119,23 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
       例: 2026年入学 1組1番 → <strong>26001</strong>、2組1番 → <strong>26031</strong>（30人学級の場合）<br>
       <span style="font-size:11px">※ 手動登録は任意の数字IDを使用できます</span>
     </div>
-    <div class="search-bar">
-      <input type="text" id="searchInput" placeholder="名前・部活・委員会・クラスで検索">
-      <select id="searchRole"><option value="">全権限</option><option value="teacher">先生</option><option value="president">部長</option><option value="vice-president">副部長</option><option value="chairperson">委員長</option><option value="student">生徒</option></select>
+    <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;align-items:center">
+      <input type="text" id="searchInput" placeholder="名前・部活・委員会・クラスで検索" style="flex:1;min-width:140px;padding:8px 12px;border:2px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;background:#faf8f5">
+      <select id="searchRole" style="padding:8px 12px;border:2px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;background:#faf8f5"><option value="">全権限</option><option value="teacher">先生</option><option value="president">部長</option><option value="vice-president">副部長</option><option value="chairperson">委員長</option><option value="student">生徒</option></select>
       <button class="btn btn-primary btn-sm" id="aRefresh">更新</button>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;align-items:center;padding:8px 12px;background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);font-size:12px">
+      <label><input type="checkbox" id="selectAll"> すべて選択</label>
+      <button class="btn btn-danger btn-sm" id="bulkDeleteBtn">選択を削除</button>
+      <span style="color:var(--sub);margin:0 4px">|</span>
+      <select id="bulkGrade" style="padding:4px 8px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:inherit"><option value="">全学年</option><option value="1">1年</option><option value="2">2年</option><option value="3">3年</option></select>
+      <select id="bulkClass" style="padding:4px 8px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:inherit"><option value="">全クラス</option><option value="1">1組</option><option value="2">2組</option><option value="3">3組</option><option value="4">4組</option><option value="5">5組</option></select>
+      <button class="btn btn-danger btn-sm" id="bulkGradeDeleteBtn">学年・クラスで削除</button>
+      <span id="bulkSelectedCount" style="color:var(--sub);font-size:11px">0人選択中</span>
     </div>
     <div style="overflow-x:auto">
       <table class="user-table">
-        <thead><tr><th>ログインID</th><th>表示名</th><th>パスワード</th><th>権限</th><th>状態</th><th>学年</th><th>クラス</th><th>番号</th><th>部活</th><th>委員会</th><th>登録日</th><th></th></tr></thead>
+        <thead><tr><th style="width:24px"><input type="checkbox" id="selectAllH"></th><th>ログインID</th><th>表示名</th><th>パスワード</th><th>権限</th><th>状態</th><th>学年</th><th>クラス</th><th>番号</th><th>部活</th><th>委員会</th><th>登録日</th><th></th></tr></thead>
         <tbody id="userList"></tbody>
       </table>
     </div>
@@ -276,7 +285,7 @@ function renderUsers(){
       <button class="btn btn-outline btn-sm" onclick="resetPwd('${x.id}','${esc(x.username)}')">PW</button>
       <button class="btn btn-outline btn-sm" onclick="unlockUser('${x.id}')">解除</button>
     </div>`;
-    tr.innerHTML=`<td style="font-size:10px">${esc(x.username)}</td>
+    tr.innerHTML=`<td style="width:24px;text-align:center"><input type="checkbox" class="user-select" data-id="${esc(x.id)}"></td><td style="font-size:10px">${esc(x.username)}</td>
       <td><input type="text" value="${esc(x.display_name||'')}" onchange="updField('${x.id}','display_name',this.value)" style="width:60px"></td>
       <td style="white-space:normal">${sd?pwShow+'<br><input type="text" placeholder="新PW" onchange="setPwd(\'${x.id}\',this)" style="width:50px;font-size:10px;margin-top:2px">':'—'}</td>
       <td><div class="role-group">${roleHtml}</div></td>
@@ -290,7 +299,8 @@ function renderUsers(){
     tr.querySelectorAll('input[type=checkbox][data-id]').forEach(cb=>{cb.onchange=function(){updRole(this.dataset.id,this.dataset.v,this.checked)}});
     t.appendChild(tr);
   }
-  if(!flt.length)t.innerHTML='<tr><td colspan="12" style="text-align:center;padding:20px;color:var(--sub)">該当するユーザーがいません</td></tr>';
+  if(!flt.length)t.innerHTML='<tr><td colspan="13" style="text-align:center;padding:20px;color:var(--sub)">該当するユーザーがいません</td></tr>';
+  updateBulkCount();
 }
 async function updRole(id,val,add){
   try{
@@ -309,6 +319,45 @@ async function unlockUser(id){try{await a('/api/users/'+id+'/unlock',{method:'PO
 $('searchInput').addEventListener('input',renderUsers);
 $('searchRole').addEventListener('change',renderUsers);
 $('aRefresh').addEventListener('click',loadUsers);
+
+// === Bulk actions ===
+function updateBulkCount() {
+  const checked = document.querySelectorAll('.user-select:checked').length;
+  $('bulkSelectedCount').textContent = checked + '人選択中';
+}
+document.addEventListener('change', e => {
+  if (e.target.classList.contains('user-select')) updateBulkCount();
+});
+$('selectAll').addEventListener('change', function() {
+  document.querySelectorAll('.user-select').forEach(cb => cb.checked = this.checked);
+  updateBulkCount();
+});
+$('selectAllH').addEventListener('change', function() {
+  document.querySelectorAll('.user-select').forEach(cb => cb.checked = this.checked);
+  updateBulkCount();
+});
+$('bulkDeleteBtn').addEventListener('click', async () => {
+  const ids = [...document.querySelectorAll('.user-select:checked')].map(cb => cb.dataset.id);
+  if (!ids.length) { alert('削除するユーザーを選択してください'); return }
+  if (!confirm(ids.length + '人のユーザーを削除しますか？')) return;
+  try {
+    await a('/api/users/batch-delete', { method: 'POST', body: JSON.stringify({ ids }) });
+    alert(ids.length + '人を削除しました');
+    loadUsers();
+  } catch(e) { alert(e.message) }
+});
+$('bulkGradeDeleteBtn').addEventListener('click', async () => {
+  const grade = $('bulkGrade').value;
+  const cls = $('bulkClass').value;
+  if (!grade) { alert('学年を選択してください'); return }
+  const label = cls ? grade + '年' + cls + '組' : grade + '年生';
+  if (!confirm(label + 'のユーザーを全員削除しますか？（管理者・自分自身を除く）')) return;
+  try {
+    const r = await a('/api/users/batch-delete', { method: 'POST', body: JSON.stringify({ grade, class_num: cls || undefined }) });
+    alert(r.deleted + '人を削除しました');
+    loadUsers();
+  } catch(e) { alert(e.message) }
+});
 
 // === Batch ===
 $('bGenerate').addEventListener('click',async()=>{

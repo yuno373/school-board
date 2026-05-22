@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>部長・副部長への質問 - 上藤沢中学校</title>
+<style>
+:root{--primary:#1E4D2B;--primary-dark:#153820;--primary-light:#2D6B40;--accent-pink:#f5a0b8;--accent-blue:#a0c4e8;--accent-yellow:#f5e6a0;--accent-green:#a8d8a0;--bg:#f7f5f0;--card:#fff;--text:#2c2c2c;--sub:#8a8682;--border:#e0dcd4;--radius:12px;--shadow:0 2px 12px rgba(30,77,43,0.06)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sans',Meiryo,sans-serif;background:var(--bg);color:var(--text)}
+.header{background:var(--primary);padding:12px 20px;display:flex;justify-content:space-between;align-items:center}
+.header-title{font-size:16px;font-weight:700;color:#fff}
+.header-right{display:flex;gap:8px}
+.header-link{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);padding:4px 12px;font-size:12px;cursor:pointer;color:rgba(255,255,255,.85);border-radius:8px;text-decoration:none;font-family:inherit}
+.header-link:hover{background:rgba(255,255,255,.25);color:#fff}
+.main{max-width:700px;margin:0 auto;padding:20px}
+.form-section{background:var(--card);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);margin-bottom:20px;border-left:4px solid var(--accent-yellow)}
+.form-section h2{font-size:15px;font-weight:700;margin-bottom:12px}
+.form-section textarea,.form-section select{width:100%;padding:10px 12px;border:2px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit;background:#faf8f5;margin-bottom:10px}
+.form-section textarea{min-height:100px;resize:vertical}
+.form-section textarea:focus,.form-section select:focus{outline:none;border-color:var(--primary);background:#fff}
+.submit-btn{padding:10px 24px;background:var(--primary);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
+.submit-btn:hover{background:var(--primary-dark);box-shadow:0 4px 12px rgba(30,77,43,0.2)}
+.q-card{background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);margin-bottom:10px;border-left:3px solid var(--accent-yellow)}
+.q-card .meta{font-size:11px;color:var(--sub);margin-bottom:6px}
+.q-card .question{font-size:14px;line-height:1.6;margin-bottom:8px;white-space:pre-wrap}
+.q-card .answer{background:#faf8f0;padding:10px 14px;border-radius:8px;font-size:13px;margin-top:8px;border-left:3px solid var(--accent-green)}
+.q-card .answer .label{font-size:11px;font-weight:700;color:var(--primary);margin-bottom:4px}
+.reply-input{display:flex;gap:8px;margin-top:10px}
+.reply-input input{flex:1;padding:8px 12px;border:2px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit}
+.reply-input input:focus{outline:none;border-color:var(--primary)}
+.reply-btn{padding:8px 16px;background:var(--primary);color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit}
+.empty{text-align:center;padding:40px;color:var(--sub);font-size:14px}
+.notice{font-size:12px;color:var(--sub);margin-bottom:10px;padding:8px 12px;background:#f0ede8;border-radius:8px}
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="header-title">❓ 部長・副部長への質問</div>
+  <div class="header-right">
+    <a href="01index.html" class="header-link">黒板に戻る</a>
+  </div>
+</header>
+<div class="main">
+  <div class="notice">📌 部長・副部長に個別に質問できます。通知は送られませんので、回答までお待ちください。</div>
+  <div class="form-section">
+    <h2>✏️ 新しい質問</h2>
+    <select id="clubSelect"><option value="">部活を選択</option></select>
+    <textarea id="qMsg" placeholder="質問内容を書いてください..."></textarea>
+    <button class="submit-btn" id="qBtn">送信する</button>
+  </div>
+  <div id="qList"></div>
+</div>
+<script>
+const API_BASE='https://school-board-api.dajianweixi.workers.dev'
+async function a(p,o={}){const t=sessionStorage.getItem('token'),h={'Content-Type':'application/json',...o.headers};if(t)h['Authorization']='Bearer '+t;const r=await fetch(API_BASE+p,{...o,headers:h}),d=await r.json();if(!r.ok)throw new Error(d.error||'エラー');return d}
+const $=id=>document.getElementById(id),esc=s=>{const d=document.createElement('div');d.textContent=s;return d.innerHTML};
+const cu=sessionStorage.getItem('username'),role=sessionStorage.getItem('role');
+if(!cu||!sessionStorage.getItem('token'))window.location.href='02login.html';
+const userRoles=(role||'').split(',').map(r=>r.trim());
+const CLUBS=['吹奏楽部','茶道部','美術部','卓球部','テニス部女子','テニス部男子','サッカー部','野球部','陸上部','バスケ部女子','バスケ部男子','バレー部'];
+CLUBS.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;$('clubSelect').appendChild(o)});
+
+$('qBtn').addEventListener('click',async()=>{
+  const msg=$('qMsg').value.trim(),club=$('clubSelect').value;
+  if(!msg||!club){alert('部活と質問内容を入力してください');return}
+  $('qBtn').disabled=true;$('qBtn').textContent='送信中...';
+  try{await a('/api/club-questions',{method:'POST',body:JSON.stringify({question:msg,club})});$('qMsg').value='';loadQs()}catch(e){alert(e.message)}
+  $('qBtn').disabled=false;$('qBtn').textContent='送信する';
+});
+
+async function loadQs(){
+  try{
+    const data=await a('/api/club-questions');
+    const el=$('qList');
+    if(!data.length){el.innerHTML='<div class="empty">質問はまだありません</div>';return}
+    el.innerHTML=data.map(q=>{
+      const d=new Date(q.created_at);
+      const ds=(d.getMonth()+1)+'/'+d.getDate()+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+      const canReply=!q.answered&&(userRoles.includes('president')||userRoles.includes('vice-president'));
+      const isAdminView=userRoles.includes('admin')||userRoles.includes('teacher');
+      const replyForm=canReply?`<div class="reply-input"><input type="text" placeholder="回答を入力..." id="ar-${q.id}"><button class="reply-btn" onclick="answerQ('${q.id}')">回答</button></div>`:'';
+      const answerHtml=q.answered?`<div class="answer"><div class="label">✏️ 回答</div>${esc(q.reply||'')}</div>`:'';
+      const fromInfo=isAdminView?`<span>${esc(q.from_display||q.from_username)} → </span>`:'';
+      return `<div class="q-card"><div class="meta">${fromInfo}${esc(q.club)} · ${ds}</div><div class="question">${esc(q.question||'')}</div>${answerHtml}${replyForm}</div>`;
+    }).join('');
+  }catch(e){$('qList').innerHTML='<div class="empty">読み込みエラー</div>'}
+}
+async function answerQ(id){
+  const inp=$('ar-'+id);if(!inp)return;
+  const reply=inp.value.trim();if(!reply)return;
+  try{await a('/api/club-questions/'+id+'/reply',{method:'POST',body:JSON.stringify({reply})});loadQs()}catch(e){alert(e.message)}
+}
+loadQs();
+</script>
+</body>
+</html>

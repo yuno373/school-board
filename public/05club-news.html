@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>部活動・委員会お知らせ - 上藤沢中学校</title>
+<link rel="stylesheet" href="01style.css">
+</head>
+<body class="pub-body">
+<div class="pub-header">
+<h1>上藤沢中学校 部活動・委員会</h1>
+<div class="pub-sub">お知らせ一覧</div>
+</div>
+<div class="pub-main">
+<div id="pubNav" style="display:flex;gap:0;margin-bottom:20px;border-bottom:2px solid #222">
+<button class="tab-btn active" id="pubAll" style="flex:1">すべて</button>
+<button class="tab-btn" id="pubClub" style="flex:1">部活動</button>
+<button class="tab-btn" id="pubComm" style="flex:1">委員会</button>
+</div>
+<div id="pubList"><div class="empty-state">読み込み中...</div></div>
+</div>
+<div class="pub-footer">上藤沢中学校</div>
+<script>
+const API_BASE='https://school-board-api.dajianweixi.workers.dev'
+async function a(p,o={}){const t=sessionStorage.getItem('token'),h={'Content-Type':'application/json',...o.headers};if(t)h['Authorization']='Bearer '+t;const r=await fetch(API_BASE+p,{...o,headers:h}),d=await r.json();if(!r.ok)throw new Error(d.error||'エラー');return d}
+window.api=a
+let mode='all';
+const $=id=>document.getElementById(id);
+function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
+
+async function load(){
+  const c=$('pubList');c.innerHTML='<div class="empty-state">読み込み中...</div>';
+  try{
+    let posts=[];
+    if(mode==='all'){
+      const [club,comm]=await Promise.all([api('/api/club-news'),api('/api/committee-news')]);
+      posts=[...club,...comm].sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
+    }else{
+      posts=await api('/api/'+mode);
+    }
+    if(!posts.length){c.innerHTML='<div class="empty-state">現在お知らせはありません</div>';return}
+    c.innerHTML='';
+    posts.forEach(p=>{
+      const cd=document.createElement('div');cd.className='pub-card';
+      const d=new Date(p.created_at);const ds=(d.getMonth()+1)+'/'+d.getDate();
+      const fls=p.files?.map(f=>'<a href="'+esc(f.url)+'" target="_blank" class="pub-file">'+esc(f.name)+'</a>').join('')||'';
+      cd.innerHTML='<div class="pub-cat">'+esc(p.category)+'</div><div class="pub-title">'+esc(p.title)+'</div><div class="pub-content">'+esc(p.content)+'</div>'+(fls?'<div class="pub-files">'+fls+'</div>':'')+'<div class="pub-meta">'+esc(p.username)+' · '+ds+'</div>';
+      c.appendChild(cd);
+    });
+  }catch(e){c.innerHTML='<div class="empty-state">読み込みエラー</div>'}
+}
+
+$('pubAll').addEventListener('click',()=>{mode='all';document.querySelectorAll('#pubNav .tab-btn').forEach(b=>b.classList.remove('active'));$('pubAll').classList.add('active');load()});
+$('pubClub').addEventListener('click',()=>{mode='club-news';document.querySelectorAll('#pubNav .tab-btn').forEach(b=>b.classList.remove('active'));$('pubClub').classList.add('active');load()});
+$('pubComm').addEventListener('click',()=>{mode='committee-news';document.querySelectorAll('#pubNav .tab-btn').forEach(b=>b.classList.remove('active'));$('pubComm').classList.add('active');load()});
+
+load();
+</script>
+</body>
+</html>

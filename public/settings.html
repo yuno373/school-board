@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ユーザー設定 - 上藤沢中学校</title>
+<style>
+:root{--primary:#1E4D2B;--primary-dark:#153820;--primary-light:#2D6B40;--bg:#f7f5f0;--card:#fff;--text:#2c2c2c;--sub:#8a8682;--border:#e0dcd4;--radius:12px;--shadow:0 2px 12px rgba(30,77,43,0.06)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sans',Meiryo,sans-serif;background:var(--bg);color:var(--text)}
+.header{background:var(--primary);padding:12px 20px;display:flex;justify-content:space-between;align-items:center}
+.header-title{font-size:16px;font-weight:700;color:#fff}
+.header-right{display:flex;gap:8px}
+.header-link{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);padding:4px 12px;font-size:12px;cursor:pointer;color:rgba(255,255,255,.85);border-radius:8px;text-decoration:none;font-family:inherit}
+.header-link:hover{background:rgba(255,255,255,.25);color:#fff}
+.main{max-width:500px;margin:0 auto;padding:20px}
+.card{background:var(--card);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);margin-bottom:16px}
+.card h2{font-size:15px;font-weight:700;margin-bottom:14px}
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-size:13px;font-weight:700;color:var(--sub);margin-bottom:4px}
+.form-group input,.form-group select{width:100%;padding:10px 12px;border:2px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit;background:#faf8f5;transition:all .2s}
+.form-group input:focus,.form-group select:focus{outline:none;border-color:var(--primary);background:#fff;box-shadow:0 0 0 3px rgba(30,77,43,0.08)}
+.btn{padding:10px 20px;background:var(--primary);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s}
+.btn:hover{background:#153820;box-shadow:0 4px 12px rgba(30,77,43,0.2)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn-outline{background:0 0;border:2px solid var(--border);color:var(--sub)}
+.btn-outline:hover{border-color:var(--primary);color:var(--primary);box-shadow:none}
+.success{color:#2d6b4a;font-size:13px;margin-top:6px}
+.error{color:var(--danger);font-size:13px;margin-top:6px}
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="header-title">⚙️ ユーザー設定</div>
+  <div class="header-right">
+    <a href="01index.html" class="header-link">黒板に戻る</a>
+  </div>
+</header>
+<div class="main">
+  <div class="card">
+    <h2>プロフィール</h2>
+    <div class="form-group"><label>表示名</label><input type="text" id="sDispName" placeholder="表示名"></div>
+    <div class="form-group"><label>部活動</label><select id="sClub"><option value="">—</option></select></div>
+    <div class="form-group"><label>委員会</label><select id="sCommittee"><option value="">—</option></select></div>
+    <button class="btn" id="saveProfile">保存</button>
+    <div id="profileStatus"></div>
+  </div>
+  <div class="card">
+    <h2>パスワード変更</h2>
+    <div class="form-group"><label>現在のパスワード</label><input type="password" id="sCurPw"></div>
+    <div class="form-group"><label>新しいパスワード</label><input type="password" id="sNewPw"></div>
+    <div class="form-group"><label>新しいパスワード（確認）</label><input type="password" id="sNewPw2"></div>
+    <button class="btn" id="changePwBtn">変更</button>
+    <div id="pwStatus"></div>
+  </div>
+</div>
+<script>
+const API_BASE='https://school-board-api.dajianweixi.workers.dev'
+async function a(p,o={}){const t=sessionStorage.getItem('token'),h={'Content-Type':'application/json',...o.headers};if(t)h['Authorization']='Bearer '+t;const r=await fetch(API_BASE+p,{...o,headers:h}),d=await r.json();if(!r.ok)throw new Error(d.error||'エラー');return d}
+const $=id=>document.getElementById(id);
+if(!sessionStorage.getItem('token'))window.location.href='02login.html';
+const CLUBS=['吹奏楽部','茶道部','美術部','卓球部','テニス部女子','テニス部男子','サッカー部','野球部','陸上部','バスケ部女子','バスケ部男子','バレー部'];
+const COMMS=['整備委員会','生活委員会','選挙管理委員会','図書委員会','給食委員会','合唱委員会','体育委員会','保健委員会','放送委員会'];
+CLUBS.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;$('sClub').appendChild(o)});
+COMMS.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;$('sCommittee').appendChild(o)});
+
+async function loadProfile(){try{const u=await a('/api/me');$('sDispName').value=u.display_name||'';if(u.club)$('sClub').value=u.club;if(u.committee)$('sCommittee').value=u.committee}catch(e){}}
+loadProfile();
+
+$('saveProfile').addEventListener('click',async()=>{
+  const dn=$('sDispName').value.trim(),club=$('sClub').value,comm=$('sCommittee').value;
+  try{await a('/api/me',{method:'PUT',body:JSON.stringify({display_name:dn,club,committee:comm})});$('profileStatus').textContent='✅ 保存しました';$('profileStatus').className='success'}catch(e){$('profileStatus').textContent='❌ '+e.message;$('profileStatus').className='error'}
+});
+$('changePwBtn').addEventListener('click',async()=>{
+  const cur=$('sCurPw').value,pw=$('sNewPw').value,pw2=$('sNewPw2').value;
+  if(!cur||!pw){$('pwStatus').textContent='入力してください';$('pwStatus').className='error';return}
+  if(pw.length<6){$('pwStatus').textContent='6文字以上必要です';$('pwStatus').className='error';return}
+  if(pw!==pw2){$('pwStatus').textContent='パスワードが一致しません';$('pwStatus').className='error';return}
+  try{await a('/api/me/password',{method:'POST',body:JSON.stringify({currentPassword:cur,newPassword:pw})});$('pwStatus').textContent='✅ 変更しました';$('pwStatus').className='success';$('sCurPw').value='';$('sNewPw').value='';$('sNewPw2').value=''}catch(e){$('pwStatus').textContent='❌ '+e.message;$('pwStatus').className='error'}
+});
+</script>
+</body>
+</html>

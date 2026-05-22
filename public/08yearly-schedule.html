@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>予定表 - 上藤沢中学校</title>
+<title>莠亥ｮ夊｡ｨ - 荳願陸豐｢荳ｭ蟄ｦ譬｡</title>
 <style>
 :root{--primary:#3a6b5c;--primary-dark:#2d5548;--primary-light:#5a8a7a;--accent:#e07a5f;--bg:#f7f4f0;--card:#fff;--text:#2c2c2c;--sub:#8a8682;--border:#e8e2d8;--danger:#c96565;--radius:12px;--shadow:0 2px 12px rgba(58,107,92,0.07)}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -81,114 +81,113 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
 </head>
 <body>
 <header class="header">
-  <div class="header-title">予定表</div>
+  <div class="header-title">莠亥ｮ夊｡ｨ</div>
   <div class="header-right">
     <span id="hUser" style="font-size:12px;color:rgba(255,255,255,.75)"></span>
-    <a href="/" class="header-link">黒板</a>
+    <a href="/" class="header-link">鮟呈攸</a>
   </div>
 </header>
 <main class="main-content">
 
-  <!-- 年間予定 -->
+  <!-- 蟷ｴ髢謎ｺ亥ｮ・-->
   <div class="card" id="yearlyForm" style="display:none">
-    <h2>📅 学校行事を追加</h2>
+    <h2>套 蟄ｦ譬｡陦御ｺ九ｒ霑ｽ蜉</h2>
     <div class="form-row">
-      <label>タイトル<input type="text" id="yTitle" placeholder="体育祭"></label>
-      <label>日付<input type="date" id="yDate"></label>
-      <label>月
-        <select id="yMonth">
-          <option value="4">4月</option><option value="5">5月</option><option value="6">6月</option>
-          <option value="7">7月</option><option value="8">8月</option><option value="9">9月</option>
-          <option value="10">10月</option><option value="11">11月</option><option value="12">12月</option>
-          <option value="1">1月</option><option value="2">2月</option><option value="3">3月</option>
+      <label>繧ｿ繧､繝医Ν<input type="text" id="yTitle" placeholder="菴楢ご逾ｭ"></label>
+      <label>譌･莉・input type="date" id="yDate"></label>
+      <label>譛・        <select id="yMonth">
+          <option value="4">4譛・/option><option value="5">5譛・/option><option value="6">6譛・/option>
+          <option value="7">7譛・/option><option value="8">8譛・/option><option value="9">9譛・/option>
+          <option value="10">10譛・/option><option value="11">11譛・/option><option value="12">12譛・/option>
+          <option value="1">1譛・/option><option value="2">2譛・/option><option value="3">3譛・/option>
         </select>
       </label>
     </div>
     <div class="form-row">
-      <label>カテゴリ
+      <label>繧ｫ繝・ざ繝ｪ
         <select id="yCat">
-          <option value="学校行事">学校行事</option>
-          <option value="部活動">部活動</option>
-          <option value="試験">試験</option>
-          <option value="休日">休日</option>
-          <option value="その他">その他</option>
+          <option value="蟄ｦ譬｡陦御ｺ・>蟄ｦ譬｡陦御ｺ・/option>
+          <option value="驛ｨ豢ｻ蜍・>驛ｨ豢ｻ蜍・/option>
+          <option value="隧ｦ鬨・>隧ｦ鬨・/option>
+          <option value="莨第律">莨第律</option>
+          <option value="縺昴・莉・>縺昴・莉・/option>
         </select>
       </label>
     </div>
     <div class="form-row">
-      <label>備考<textarea id="yDesc" placeholder="任意"></textarea></label>
+      <label>蛯呵・textarea id="yDesc" placeholder="莉ｻ諢・></textarea></label>
     </div>
-    <button class="btn btn-primary" id="yAddBtn">追加</button>
+    <button class="btn btn-primary" id="yAddBtn">霑ｽ蜉</button>
   </div>
 
   <div class="card" id="yearlySection">
-    <h2 onclick="this.parentElement.classList.toggle('section-hide')">📅 学校行事・年間予定 <span class="collapse-toggle">▼</span></h2>
+    <h2 onclick="this.parentElement.classList.toggle('section-hide')">套 蟄ｦ譬｡陦御ｺ九・蟷ｴ髢謎ｺ亥ｮ・<span class="collapse-toggle">笆ｼ</span></h2>
     <div class="section-body">
       <div class="cat-tabs" id="catTabs"></div>
-      <div class="entry-list" id="entryList"><div class="empty-state">読み込み中...</div></div>
+      <div class="entry-list" id="entryList"><div class="empty-state">隱ｭ縺ｿ霎ｼ縺ｿ荳ｭ...</div></div>
     </div>
   </div>
 
-  <!-- 部活動予定 -->
+  <!-- 驛ｨ豢ｻ蜍穂ｺ亥ｮ・-->
   <div class="card" id="clubForm" style="display:none">
-    <h2>⚽ 部活動予定を追加</h2>
+    <h2>笞ｽ 驛ｨ豢ｻ蜍穂ｺ亥ｮ壹ｒ霑ｽ蜉</h2>
     <div class="form-row">
-      <label>タイトル<input type="text" id="sTitle" placeholder="練習試合"></label>
-      <label>日付<input type="date" id="sDate"></label>
-      <label>時間<input type="text" id="sTime" placeholder="15:00-17:00"></label>
+      <label>繧ｿ繧､繝医Ν<input type="text" id="sTitle" placeholder="邱ｴ鄙定ｩｦ蜷・></label>
+      <label>譌･莉・input type="date" id="sDate"></label>
+      <label>譎る俣<input type="text" id="sTime" placeholder="15:00-17:00"></label>
     </div>
     <div class="form-row">
-      <label>場所<input type="text" id="sLoc" placeholder="体育館"></label>
-      <label>部活
+      <label>蝣ｴ謇<input type="text" id="sLoc" placeholder="菴楢ご鬢ｨ"></label>
+      <label>驛ｨ豢ｻ
         <select id="sClub">
-          <option value="">— 全校 —</option>
-          <option>吹奏楽部</option><option>茶道部</option><option>美術部</option><option>卓球部</option>
-          <option>テニス部女子</option><option>テニス部男子</option><option>サッカー部</option>
-          <option>野球部</option><option>陸上部</option><option>バスケ部女子</option><option>バスケ部男子</option><option>バレー部</option>
+          <option value="">窶・蜈ｨ譬｡ 窶・/option>
+          <option>蜷ｹ螂乗･ｽ驛ｨ</option><option>闌ｶ驕馴Κ</option><option>鄒手｡馴Κ</option><option>蜊鍋帥驛ｨ</option>
+          <option>繝・ル繧ｹ驛ｨ螂ｳ蟄・/option><option>繝・ル繧ｹ驛ｨ逕ｷ蟄・/option><option>繧ｵ繝・き繝ｼ驛ｨ</option>
+          <option>驥守帥驛ｨ</option><option>髯ｸ荳企Κ</option><option>繝舌せ繧ｱ驛ｨ螂ｳ蟄・/option><option>繝舌せ繧ｱ驛ｨ逕ｷ蟄・/option><option>繝舌Ξ繝ｼ驛ｨ</option>
         </select>
       </label>
     </div>
     <div class="form-row">
-      <label>備考<textarea id="sDesc" placeholder="任意"></textarea></label>
+      <label>蛯呵・textarea id="sDesc" placeholder="莉ｻ諢・></textarea></label>
     </div>
-    <button class="btn btn-primary" id="sAddBtn">追加</button>
+    <button class="btn btn-primary" id="sAddBtn">霑ｽ蜉</button>
   </div>
 
   <div class="card" id="clubSection">
-    <h2 onclick="this.parentElement.classList.toggle('section-hide')">⚽ 部活動予定表 <span class="collapse-toggle">▼</span></h2>
+    <h2 onclick="this.parentElement.classList.toggle('section-hide')">笞ｽ 驛ｨ豢ｻ蜍穂ｺ亥ｮ夊｡ｨ <span class="collapse-toggle">笆ｼ</span></h2>
     <div class="section-body">
       <div class="filter-bar">
-        <input type="text" id="sSearch" placeholder="部活・タイトルで検索">
-        <select id="sMonthFilter"><option value="">全月</option>
-          <option value="01">1月</option><option value="02">2月</option><option value="03">3月</option><option value="04">4月</option>
-          <option value="05">5月</option><option value="06">6月</option><option value="07">7月</option><option value="08">8月</option>
-          <option value="09">9月</option><option value="10">10月</option><option value="11">11月</option><option value="12">12月</option>
+        <input type="text" id="sSearch" placeholder="驛ｨ豢ｻ繝ｻ繧ｿ繧､繝医Ν縺ｧ讀懃ｴ｢">
+        <select id="sMonthFilter"><option value="">蜈ｨ譛・/option>
+          <option value="01">1譛・/option><option value="02">2譛・/option><option value="03">3譛・/option><option value="04">4譛・/option>
+          <option value="05">5譛・/option><option value="06">6譛・/option><option value="07">7譛・/option><option value="08">8譛・/option>
+          <option value="09">9譛・/option><option value="10">10譛・/option><option value="11">11譛・/option><option value="12">12譛・/option>
         </select>
       </div>
-      <div class="sched-list" id="schedList"><div class="empty-state">読み込み中...</div></div>
+      <div class="sched-list" id="schedList"><div class="empty-state">隱ｭ縺ｿ霎ｼ縺ｿ荳ｭ...</div></div>
     </div>
   </div>
 
   <!-- Gemini -->
   <div class="card">
-    <h2 onclick="this.parentElement.classList.toggle('section-hide')">🤖 Gemini に質問 <span class="collapse-toggle">▼</span></h2>
+    <h2 onclick="this.parentElement.classList.toggle('section-hide')">､・Gemini 縺ｫ雉ｪ蝠・<span class="collapse-toggle">笆ｼ</span></h2>
     <div class="section-body">
-      <p style="font-size:13px;color:var(--sub);margin-bottom:8px">年間予定表のデータについて質問できます</p>
+      <p style="font-size:13px;color:var(--sub);margin-bottom:8px">蟷ｴ髢謎ｺ亥ｮ夊｡ｨ縺ｮ繝・・繧ｿ縺ｫ縺､縺・※雉ｪ蝠上〒縺阪∪縺・/p>
       <div class="gemini-box">
         <div class="chat-area">
-          <input type="text" id="gQuestion" placeholder="例：5月の予定は？" onkeydown="if(event.key==='Enter')askGemini()">
-          <button class="btn btn-accent" id="gAskBtn">質問</button>
+          <input type="text" id="gQuestion" placeholder="萓具ｼ・譛医・莠亥ｮ壹・・・ onkeydown="if(event.key==='Enter')askGemini()">
+          <button class="btn btn-accent" id="gAskBtn">雉ｪ蝠・/button>
         </div>
         <div class="answer" id="gAnswer"></div>
-        <div class="hint" id="gHint">「体育祭はいつ？」「夏休み前の行事を教えて」など</div>
+        <div class="hint" id="gHint">縲御ｽ楢ご逾ｭ縺ｯ縺・▽・溘阪悟､丈ｼ代∩蜑阪・陦御ｺ九ｒ謨吶∴縺ｦ縲阪↑縺ｩ</div>
       </div>
     </div>
   </div>
 
 </main>
 <script>
-const API_BASE='https://school-board-api.dajianweixi.workers.dev'
-async function a(p,o={}){const t=sessionStorage.getItem('token'),h={'Content-Type':'application/json',...o.headers};if(t)h['Authorization']='Bearer '+t;const r=await fetch(API_BASE+p,{...o,headers:h}),d=await r.json();if(!r.ok)throw new Error(d.error||'エラー');return d}
+const API_BASE=''
+async function a(p,o={}){const t=sessionStorage.getItem('token'),h={'Content-Type':'application/json',...o.headers};if(t)h['Authorization']='Bearer '+t;const r=await fetch(API_BASE+p,{...o,headers:h}),d=await r.json();if(!r.ok)throw new Error(d.error||'繧ｨ繝ｩ繝ｼ');return d}
 const A={requireAuth(){const u=sessionStorage.getItem('username'),r=sessionStorage.getItem('role'),t=sessionStorage.getItem('token');if(!u||!r||!t)return null;return{username:u,role:r,token:t}},canManageUsers(){const u=this.requireAuth();return u&&['admin','subadmin'].includes(u.role)},logout(){sessionStorage.clear()}};window.AUTH=A
 const $=id=>document.getElementById(id),esc=s=>{const d=document.createElement('div');d.textContent=s;return d.innerHTML}
 const u=AUTH.requireAuth();if(!u)window.location.href='02login.html'
@@ -196,72 +195,72 @@ $('hUser').textContent=u.username
 const isTeacher=u.role==='admin'||u.role==='subadmin'
 if(isTeacher){$('yearlyForm').style.display='block';$('clubForm').style.display='block'}
 
-// ---- 年間予定 ----
-let allData=[],curCat='all',cats=['学校行事','部活動','試験','休日','その他'];
+// ---- 蟷ｴ髢謎ｺ亥ｮ・----
+let allData=[],curCat='all',cats=['蟄ｦ譬｡陦御ｺ・,'驛ｨ豢ｻ蜍・,'隧ｦ鬨・,'莨第律','縺昴・莉・];
 function renderCatTabs(){
   const el=$('catTabs');
-  el.innerHTML='<button class="cat-tab '+(curCat==='all'?'active':'')+'" data-cat="all">すべて</button>'+
+  el.innerHTML='<button class="cat-tab '+(curCat==='all'?'active':'')+'" data-cat="all">縺吶∋縺ｦ</button>'+
     cats.map(c=>'<button class="cat-tab '+(curCat===c?'active':'')+'" data-cat="'+c+'">'+c+'</button>').join('');
   el.querySelectorAll('.cat-tab').forEach(b=>b.addEventListener('click',()=>{curCat=b.dataset.cat;renderCatTabs();renderList()}));
 }
 function renderList(){
   const el=$('entryList');
   const flt=curCat==='all'?allData:allData.filter(e=>e.category===curCat);
-  if(!flt.length){el.innerHTML='<div class="empty-state">予定がありません</div>';return}
+  if(!flt.length){el.innerHTML='<div class="empty-state">莠亥ｮ壹′縺ゅｊ縺ｾ縺帙ｓ</div>';return}
   flt.sort((a,b)=>a.date.localeCompare(b.date)||a.month-b.month);
   el.innerHTML=flt.map(e=>{
-    const d=new Date(e.date+'T00:00:00');const md=(d.getMonth()+1)+'/'+d.getDate()+'('+'日月火水木金土'[d.getDay()]+')';
+    const d=new Date(e.date+'T00:00:00');const md=(d.getMonth()+1)+'/'+d.getDate()+'('+'譌･譛育↓豌ｴ譛ｨ驥大悄'[d.getDay()]+')';
     let html='<div class="entry-item"><div class="entry-date">'+md+'</div><div class="entry-cat">'+esc(e.category)+'</div><div class="entry-body"><div class="entry-title">'+esc(e.title)+'</div>'+(e.description?'<div class="entry-desc">'+esc(e.description)+'</div>':'')+'</div>';
-    if(isTeacher)html+='<button class="btn btn-danger btn-sm" data-id="'+e.id+'" style="flex-shrink:0">削除</button>';
+    if(isTeacher)html+='<button class="btn btn-danger btn-sm" data-id="'+e.id+'" style="flex-shrink:0">蜑企勁</button>';
     return html+'</div>';
   }).join('');
-  if(isTeacher)el.querySelectorAll('[data-id]').forEach(b=>b.addEventListener('click',async function(){if(!confirm('削除しますか？'))return;try{await a('/api/yearly-schedule/'+this.dataset.id,{method:'DELETE'});loadYearly()}catch(e){alert(e.message)}}));
+  if(isTeacher)el.querySelectorAll('[data-id]').forEach(b=>b.addEventListener('click',async function(){if(!confirm('蜑企勁縺励∪縺吶°・・))return;try{await a('/api/yearly-schedule/'+this.dataset.id,{method:'DELETE'});loadYearly()}catch(e){alert(e.message)}}));
 }
 async function loadYearly(){
-  try{allData=await a('/api/yearly-schedule');renderCatTabs();renderList()}catch(e){$('entryList').innerHTML='<div class="empty-state">エラー</div>'}
+  try{allData=await a('/api/yearly-schedule');renderCatTabs();renderList()}catch(e){$('entryList').innerHTML='<div class="empty-state">繧ｨ繝ｩ繝ｼ</div>'}
 }
 $('yAddBtn').addEventListener('click',async()=>{
   const title=$('yTitle').value.trim(),date=$('yDate').value,month=$('yMonth').value,cat=$('yCat').value;
-  if(!title||!date){alert('タイトルと日付は必須です');return}
-  $('yAddBtn').disabled=true;$('yAddBtn').textContent='追加中...';
+  if(!title||!date){alert('繧ｿ繧､繝医Ν縺ｨ譌･莉倥・蠢・医〒縺・);return}
+  $('yAddBtn').disabled=true;$('yAddBtn').textContent='霑ｽ蜉荳ｭ...';
   try{
     await a('/api/yearly-schedule',{method:'POST',body:JSON.stringify({title,date,month,category:cat,description:$('yDesc').value.trim()})});
     $('yTitle').value='';$('yDate').value='';$('yDesc').value='';loadYearly();
   }catch(e){alert(e.message)}
-  $('yAddBtn').disabled=false;$('yAddBtn').textContent='追加';
+  $('yAddBtn').disabled=false;$('yAddBtn').textContent='霑ｽ蜉';
 });
 
-// ---- 部活動予定 ----
+// ---- 驛ｨ豢ｻ蜍穂ｺ亥ｮ・----
 async function loadClub(){
   try{
     const data=await a('/api/schedules');
     const q=$('sSearch').value.trim().toLowerCase(),mf=$('sMonthFilter').value;
     const flt=data.filter(d=>(!q||d.title.toLowerCase().includes(q)||d.club.toLowerCase().includes(q))&&(!mf||d.date.startsWith('2026-'+mf)));
     const el=$('schedList');el.innerHTML='';
-    if(!flt.length){el.innerHTML='<div class="empty-state">予定はありません</div>';return}
+    if(!flt.length){el.innerHTML='<div class="empty-state">莠亥ｮ壹・縺ゅｊ縺ｾ縺帙ｓ</div>';return}
     flt.sort((a,b)=>a.date.localeCompare(b.date)||a.time.localeCompare(b.time));
     flt.forEach(d=>{
       const item=document.createElement('div');item.className='sched-item';
-      const dateStr=new Date(d.date+'T00:00:00');const md=(dateStr.getMonth()+1)+'/'+dateStr.getDate()+'('+'日月火水木金土'[dateStr.getDay()]+')';
-      let html='<div class="sched-date">'+md+'</div><div class="sched-body"><div class="sched-title">'+esc(d.title)+(d.time?' <span style="font-size:12px;color:var(--sub);font-weight:400">'+esc(d.time)+'</span>':'')+'</div><div class="sched-meta">'+(d.club?esc(d.club)+' · ':'')+(d.location?esc(d.location):'')+'</div>'+(d.description?'<div class="sched-desc">'+esc(d.description)+'</div>':'')+'</div>';
-      html+=isTeacher?'<button class="btn btn-danger btn-sm" style="flex-shrink:0" data-id="'+d.id+'">削除</button>':'';
+      const dateStr=new Date(d.date+'T00:00:00');const md=(dateStr.getMonth()+1)+'/'+dateStr.getDate()+'('+'譌･譛育↓豌ｴ譛ｨ驥大悄'[dateStr.getDay()]+')';
+      let html='<div class="sched-date">'+md+'</div><div class="sched-body"><div class="sched-title">'+esc(d.title)+(d.time?' <span style="font-size:12px;color:var(--sub);font-weight:400">'+esc(d.time)+'</span>':'')+'</div><div class="sched-meta">'+(d.club?esc(d.club)+' ﾂｷ ':'')+(d.location?esc(d.location):'')+'</div>'+(d.description?'<div class="sched-desc">'+esc(d.description)+'</div>':'')+'</div>';
+      html+=isTeacher?'<button class="btn btn-danger btn-sm" style="flex-shrink:0" data-id="'+d.id+'">蜑企勁</button>':'';
       item.innerHTML=html;
       if(d.description){item.classList.add('expandable');item.onclick=function(e){if(e.target.tagName!=='BUTTON')this.classList.toggle('expanded')}}
-      item.querySelector('[data-id]')?.addEventListener('click',async function(e){e.stopPropagation();if(!confirm('削除しますか？'))return;try{await a('/api/schedules/'+this.dataset.id,{method:'DELETE'});loadClub()}catch(e){alert(e.message)}});
+      item.querySelector('[data-id]')?.addEventListener('click',async function(e){e.stopPropagation();if(!confirm('蜑企勁縺励∪縺吶°・・))return;try{await a('/api/schedules/'+this.dataset.id,{method:'DELETE'});loadClub()}catch(e){alert(e.message)}});
       el.appendChild(item);
     });
-  }catch(e){$('schedList').innerHTML='<div class="empty-state">エラー</div>'}
+  }catch(e){$('schedList').innerHTML='<div class="empty-state">繧ｨ繝ｩ繝ｼ</div>'}
 }
 $('sAddBtn').addEventListener('click',async()=>{
   const title=$('sTitle').value.trim(),date=$('sDate').value;
-  if(!title||!date){alert('タイトルと日付は必須です');return}
-  $('sAddBtn').disabled=true;$('sAddBtn').textContent='追加中...';
+  if(!title||!date){alert('繧ｿ繧､繝医Ν縺ｨ譌･莉倥・蠢・医〒縺・);return}
+  $('sAddBtn').disabled=true;$('sAddBtn').textContent='霑ｽ蜉荳ｭ...';
   try{
     await a('/api/schedules',{method:'POST',body:JSON.stringify({title,date,time:$('sTime').value.trim(),location:$('sLoc').value.trim(),club:$('sClub').value,description:$('sDesc').value.trim()})});
     $('sTitle').value='';$('sDate').value='';$('sTime').value='';$('sLoc').value='';$('sClub').value='';$('sDesc').value='';
     loadClub();
   }catch(e){alert(e.message)}
-  $('sAddBtn').disabled=false;$('sAddBtn').textContent='追加';
+  $('sAddBtn').disabled=false;$('sAddBtn').textContent='霑ｽ蜉';
 });
 $('sSearch').addEventListener('input',loadClub);
 $('sMonthFilter').addEventListener('change',loadClub);
@@ -271,12 +270,12 @@ async function askGemini(){
   const q=$('gQuestion').value.trim();
   if(!q)return;
   const btn=$('gAskBtn'),ans=$('gAnswer'),hint=$('gHint');
-  btn.disabled=true;btn.textContent='考え中...';ans.className='answer show';ans.textContent='Gemini に質問しています...';hint.style.display='none';
+  btn.disabled=true;btn.textContent='閠・∴荳ｭ...';ans.className='answer show';ans.textContent='Gemini 縺ｫ雉ｪ蝠上＠縺ｦ縺・∪縺・..';hint.style.display='none';
   try{
     const r=await a('/api/gemini/ask',{method:'POST',body:JSON.stringify({question:q})});
     ans.textContent=r.answer;
-  }catch(e){ans.textContent='エラー: '+e.message}
-  btn.disabled=false;btn.textContent='質問';
+  }catch(e){ans.textContent='繧ｨ繝ｩ繝ｼ: '+e.message}
+  btn.disabled=false;btn.textContent='雉ｪ蝠・;
 }
 $('gAskBtn').addEventListener('click',askGemini);
 

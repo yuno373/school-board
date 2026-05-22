@@ -1,23 +1,25 @@
 const express = require('express');
 const path = require('path');
-const https = require('https');
 const app = express();
 
-app.use('/api', (req, res) => {
-  const u = new URL('/api' + req.url, 'https://school-board-api.dajianweixi.workers.dev');
-  const opts = {
-    hostname: u.hostname, port: 443, path: u.pathname + u.search,
-    method: req.method,
-    headers: { ...req.headers, host: u.hostname }
-  };
-  const pr = https.request(opts, (prs) => {
-    const h = { ...prs.headers };
+app.use('/api', async (req, res) => {
+  try {
+    const target = new URL('/api' + req.url, 'https://school-board-api.dajianweixi.workers.dev');
+    let body;
+    if (!['GET', 'HEAD'].includes(req.method)) {
+      body = await new Promise(r => { const c = []; req.on('data', d => c.push(d)); req.on('end', () => r(Buffer.concat(c))); });
+    }
+    const h = { ...req.headers, host: target.hostname };
     delete h['transfer-encoding'];
-    res.writeHead(prs.statusCode, h);
-    prs.pipe(res);
-  });
-  pr.on('error', (e) => { console.error('Proxy error:', e.message); res.status(502).json({ error: 'Bad Gateway' }) });
-  req.pipe(pr);
+    const pr = await fetch(target, { method: req.method, headers: h, body });
+    const rh = {};
+    pr.headers.forEach((v, k) => { if (k !== 'transfer-encoding') rh[k] = v; });
+    res.writeHead(pr.status, rh);
+    res.end(await pr.text());
+  } catch (e) {
+    console.error('Proxy error:', e.message);
+    try { res.status(502).json({ error: 'Bad Gateway' }) } catch (_) {}
+  }
 });
 
 app.use(express.static(path.join(__dirname, 'public')));

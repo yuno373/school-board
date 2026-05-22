@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>部長チャット - 上藤沢中学校 部活動黒板</title>
+<title>驛ｨ髟ｷ繝√Ε繝・ヨ - 荳願陸豐｢荳ｭ蟄ｦ譬｡ 驛ｨ豢ｻ蜍暮ｻ呈攸</title>
 <style>
 :root{--primary:#1E4D2B;--primary-dark:#153820;--primary-light:#2D6B40;--accent-pink:#f5a0b8;--accent-blue:#a0c4e8;--accent-yellow:#f5e6a0;--accent-green:#a8d8a0;--bg:#f7f5f0;--card:#fff;--text:#2c2c2c;--sub:#8a8682;--border:#e0dcd4;--radius:12px;--shadow:0 2px 12px rgba(30,77,43,0.06)}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -35,21 +35,21 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
 </head>
 <body>
 <header class="header">
-  <div class="header-title">💬 部長チャット</div>
+  <div class="header-title">町 驛ｨ髟ｷ繝√Ε繝・ヨ</div>
   <div class="header-right">
-    <a href="01index.html" class="header-link">黒板に戻る</a>
+    <a href="01index.html" class="header-link">鮟呈攸縺ｫ謌ｻ繧・/a>
   </div>
 </header>
 <div class="chat-container">
-  <div class="chat-messages" id="msgList"><div class="empty-chat">読み込み中...</div></div>
+  <div class="chat-messages" id="msgList"><div class="empty-chat">隱ｭ縺ｿ霎ｼ縺ｿ荳ｭ...</div></div>
   <div class="chat-input">
-    <input type="text" id="msgInput" placeholder="メッセージを入力..." maxlength="1000" autofocus>
-    <button id="sendBtn">送信</button>
+    <input type="text" id="msgInput" placeholder="繝｡繝・そ繝ｼ繧ｸ繧貞・蜉・.." maxlength="1000" autofocus>
+    <button id="sendBtn">騾∽ｿ｡</button>
   </div>
 </div>
 <script>
-const API_BASE='https://school-board-api.dajianweixi.workers.dev'
-async function a(p,o={}){const t=sessionStorage.getItem('token'),h={'Content-Type':'application/json',...o.headers};if(t)h['Authorization']='Bearer '+t;const r=await fetch(API_BASE+p,{...o,headers:h}),d=await r.json();if(!r.ok)throw new Error(d.error||'エラー');return d}
+const API_BASE=''
+async function a(p,o={}){const t=sessionStorage.getItem('token'),h={'Content-Type':'application/json',...o.headers};if(t)h['Authorization']='Bearer '+t;const r=await fetch(API_BASE+p,{...o,headers:h}),d=await r.json();if(!r.ok)throw new Error(d.error||'繧ｨ繝ｩ繝ｼ');return d}
 const $=id=>document.getElementById(id);const esc=s=>{const d=document.createElement('div');d.textContent=s;return d.innerHTML};
 const cu=sessionStorage.getItem('username');
 if(!cu||!sessionStorage.getItem('token'))window.location.href='02login.html';
@@ -70,7 +70,7 @@ function renderMsg(m,l){
   const d=document.createElement('div');d.className='msg '+(m.username===cu?'mine':'other');
   const time=new Date(m.created_at);const ts=String(time.getHours()).padStart(2,'0')+':'+String(time.getMinutes()).padStart(2,'0');
   const canDel=m.username===cu||(sessionStorage.getItem('role')||'').includes('admin')||(sessionStorage.getItem('role')||'').includes('teacher');
-  const delBtn=canDel?`<button class="del-btn" onclick="delMsg('${m.id}')">✕</button>`:'';
+  const delBtn=canDel?`<button class="del-btn" onclick="delMsg('${m.id}')">笨・/button>`:'';
   d.innerHTML=delBtn+'<div class="author">'+esc(m.display_name||m.username)+'</div><div class="text">'+esc(m.message||m.text||'')+'</div><div class="time">'+ts+'</div>';
   l.appendChild(d);
 }
@@ -92,3 +92,4 @@ loadMsgs();setInterval(loadMsgs,3000);
 </script>
 </body>
 </html>
+

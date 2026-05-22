@@ -39,7 +39,7 @@ async function hashPwd(pwd, salt) {
 
 async function hmacSign(data, secret) {
   const json = JSON.stringify(data);
-  const b64 = btoa(json);
+  const b64 = btoa(unescape(encodeURIComponent(json)));
   const key = await crypto.subtle.importKey('raw', enc(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
   const sig = await crypto.subtle.sign('HMAC', key, enc(b64));
   return b64 + '.' + Array.from(new Uint8Array(sig)).map(x => x.toString(16).padStart(2, '0')).join('');
@@ -54,7 +54,7 @@ async function hmacVerify(token, secret) {
     const key = await crypto.subtle.importKey('raw', enc(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['verify']);
     const sig = new Uint8Array(sigHex.match(/.{2}/g).map(x => parseInt(x, 16)));
     if (!await crypto.subtle.verify('HMAC', key, sig, enc(b64))) return null;
-    const data = JSON.parse(atob(b64));
+    const data = JSON.parse(decodeURIComponent(escape(atob(b64))));
     if (data.exp && Date.now() > data.exp) return null;
     return data;
   } catch(e) { return null; }

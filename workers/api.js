@@ -890,6 +890,14 @@ async function handleRequest(request, env, ctx) {
       authErr = requireAuth(user);
       if (authErr) return authErr;
       let data = await r2Get(env.DATA, 'consult.json') || [];
+      const now = Date.now();
+      const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+      // Auto-delete: replied & student_read_at > 7 days ago
+      const before = data.length;
+      data = data.filter(m => !(m.teacher_reply && m.student_read_at && (now - new Date(m.student_read_at).getTime() > WEEK_MS)));
+      if (data.length < before) await r2Put(env.DATA, 'consult.json', data);
+      // Sort newest first
+      data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
       const isTeacher = hasOneOf(user.role, ['admin', 'teacher']);
       if (isTeacher) {
         if (hasOneOf(user.role, ['teacher'])) data = data.filter(m => m.to === 'all' || m.to === user.username);
@@ -904,7 +912,13 @@ async function handleRequest(request, env, ctx) {
       } else {
         // Student: own consults only
         data = data.filter(m => m.username === user.username);
+        // Mark as read
+        let changed = false;
         for (const item of data) {
+          if (item.teacher_reply && !item.student_read_at) {
+            item.student_read_at = new Date().toISOString();
+            changed = true;
+          }
           if (item.encrypted) {
             try { item.message = await aesDecrypt(item.encrypted, AES_KEY); } catch(e) { item.message = '[復号できません]'; }
           }
@@ -912,6 +926,7 @@ async function handleRequest(request, env, ctx) {
           item.from = '自分';
           delete item.username;
         }
+        if (changed) await r2Put(env.DATA, 'consult.json', data);
       }
       return json(data);
     }

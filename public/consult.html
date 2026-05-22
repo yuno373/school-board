@@ -96,7 +96,8 @@ async function loadConsults(){
       const d=new Date(item.created_at);if(isNaN(d.getTime()))return '';
       const ds=(d.getMonth()+1)+'/'+d.getDate()+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
       const msgText=esc(item.message||'');
-      const replyHtml=item.teacher_reply?`<div class="reply"><div class="label">✏️ 返信（${esc(item.replied_by||'')}）</div>${esc(item.teacher_reply)}</div>`:'';
+      const readMark=isTeacher&&item.teacher_reply&&item.student_read_at?' <span style="font-size:10px;color:var(--primary);font-weight:700">✓既読</span>':'';
+      const replyHtml=item.teacher_reply?`<div class="reply"><div class="label">✏️ 返信（${esc(item.replied_by||'')}）${readMark}</div>${esc(item.teacher_reply)}</div>`:'';
       const replyForm=(isTeacher&&!item.teacher_reply)?`<div class="reply-input"><input type="text" placeholder="返信を入力..." id="reply-${item.id}"><button class="reply-btn" onclick="sendReply('${item.id}')">返信</button></div>`:'';
       return `<div class="consult-card"><div class="meta">${ds} → ${esc(item.to==='all'?'全員':item.to)}${isTeacher?' / '+esc(item.from||''):''}</div><div class="msg">${msgText}</div>${replyHtml}${replyForm}</div>`;
     }).join('');

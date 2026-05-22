@@ -320,7 +320,7 @@ $('mCreate').addEventListener('click', async () => {
   if (!user.match(/^\d+$/)) { $('mResult').textContent = 'IDは数字のみです'; return }
   $('mCreate').disabled = true; $('mCreate').textContent = '登録中...';
   try {
-    const h = await h(pass);
+    const hp = await h(pass);
     const r = await a('/api/users', { method: 'POST', body: JSON.stringify({
       username: user, password: h, role,
       grade: grade || '', class_num: cls || '', seat_num: seat || '',

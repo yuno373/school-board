@@ -887,24 +887,31 @@ async function handleRequest(request, env, ctx) {
     }
 
     if (path === '/api/consult' && method === 'GET') {
-      authErr = requireAuth(user, ['admin', 'teacher']);
+      authErr = requireAuth(user);
       if (authErr) return authErr;
       let data = await r2Get(env.DATA, 'consult.json') || [];
-      if (hasOneOf(user.role, ['teacher'])) data = data.filter(m => m.to === 'all' || m.to === user.username);
-      // Decrypt messages for teachers
-      if (hasOneOf(user.role, ['teacher'])) {
+      const isTeacher = hasOneOf(user.role, ['admin', 'teacher']);
+      if (isTeacher) {
+        if (hasOneOf(user.role, ['teacher'])) data = data.filter(m => m.to === 'all' || m.to === user.username);
         for (const item of data) {
           if (item.encrypted) {
             try { item.message = await aesDecrypt(item.encrypted, AES_KEY); } catch(e) { item.message = '[復号できません]'; }
           }
+          delete item.encrypted;
+          if (item.anonymous) item.from = '匿名';
+          else item.from = item.username;
         }
       } else {
-        // Admin: show only metadata
-        data = data.map(item => ({
-          id: item.id, created_at: item.created_at, to: item.to,
-          hasMessage: !!item.encrypted, teacher_reply: item.teacher_reply,
-          replied_at: item.replied_at
-        }));
+        // Student: own consults only
+        data = data.filter(m => m.username === user.username);
+        for (const item of data) {
+          if (item.encrypted) {
+            try { item.message = await aesDecrypt(item.encrypted, AES_KEY); } catch(e) { item.message = '[復号できません]'; }
+          }
+          delete item.encrypted;
+          item.from = '自分';
+          delete item.username;
+        }
       }
       return json(data);
     }
@@ -914,13 +921,12 @@ async function handleRequest(request, env, ctx) {
       if (authErr) return authErr;
       const { message, to, anonymous } = await request.json();
       if (!message || !message.trim()) return json({ error: '内容を入力してください' }, 400);
-      // Encrypt message
       const encrypted = await aesEncrypt(message, AES_KEY);
       const entry = {
         id: uuid(), encrypted, created_at: new Date().toISOString(),
         to: (to && to !== '') ? to : 'all',
         anonymous: anonymous !== false,
-        username: anonymous !== false ? undefined : user.username
+        username: user.username
       };
       let data = await r2Get(env.DATA, 'consult.json') || [];
       data.push(entry);

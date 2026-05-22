@@ -81,24 +81,23 @@ $('consultBtn').addEventListener('click',async()=>{
     const r=await a('/api/consult',{method:'POST',body:JSON.stringify({message:msg,to,anonymous:anon})});
     $('consultMsg').value='';
     const status=$('consultStatus');status.style.display='block';status.textContent='✅ 送信しました。先生の返信をお待ちください。';
-    if(isTeacher)loadConsults();
+    loadConsults();
   }catch(e){alert(e.message)}
   $('consultBtn').disabled=false;$('consultBtn').textContent='送信する';
 });
 
-// Load consultations (teachers only)
+// Load consultations
 async function loadConsults(){
-  if(!isTeacher)return;
   const el=$('consultList');
   try{
     const data=await a('/api/consult');
-    if(!data.length){el.innerHTML='<div class="empty">相談はまだありません</div>';return}
+    if(!data.length){el.innerHTML='<div class="empty">'+(isTeacher?'相談はまだありません':'相談履歴はまだありません')+'</div>';return}
     el.innerHTML=data.map(item=>{
       const d=new Date(item.created_at);const ds=(d.getMonth()+1)+'/'+d.getDate()+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
       const msgText=esc(item.message||'');
       const replyHtml=item.teacher_reply?`<div class="reply"><div class="label">✏️ 返信（${esc(item.replied_by||'')}）</div>${esc(item.teacher_reply)}</div>`:'';
-      const replyForm=item.teacher_reply?'':`<div class="reply-input"><input type="text" placeholder="返信を入力..." id="reply-${item.id}"><button class="reply-btn" onclick="sendReply('${item.id}')">返信</button></div>`;
-      return `<div class="consult-card"><div class="meta">${ds} → ${esc(item.to||'全員')}${item.hasMessage?'':''}</div><div class="msg">${msgText||'🔒 暗号化メッセージ'}</div>${replyHtml}${replyForm}</div>`;
+      const replyForm=(isTeacher&&!item.teacher_reply)?`<div class="reply-input"><input type="text" placeholder="返信を入力..." id="reply-${item.id}"><button class="reply-btn" onclick="sendReply('${item.id}')">返信</button></div>`:'';
+      return `<div class="consult-card"><div class="meta">${ds} → ${esc(item.to==='all'?'全員':item.to)}${isTeacher?' / '+esc(item.from||item.username||''):''}</div><div class="msg">${msgText}</div>${replyHtml}${replyForm}</div>`;
     }).join('');
   }catch(e){el.innerHTML='<div class="empty">読み込みエラー</div>'}
 }
@@ -108,7 +107,7 @@ async function sendReply(id){
   try{await a('/api/consult/'+id+'/reply',{method:'POST',body:JSON.stringify({reply})});loadConsults()}catch(e){alert(e.message)}
 }
 
-if(isTeacher)loadConsults();
+loadConsults();
 </script>
 </body>
 </html>

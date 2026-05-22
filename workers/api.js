@@ -1044,15 +1044,20 @@ async function handleRequest(request, env, ctx) {
       const q = allQ.find(x => x.id === qReply[1]);
       if (!q) return json({ error: '見つかりません' }, 404);
 
-      // Only president/vice-president of the same club can reply
-      if (!userRoles.includes('admin') && !userRoles.includes('teacher')) {
-        const users = await r2Get(env.DATA, 'users.json') || [];
-        const u = users.find(x => x.id === user.id);
-        const isLeader = (userRoles.includes('president') || userRoles.includes('vice-president')) && u?.club === q.club;
-        if (!isLeader) return json({ error: '権限がありません' }, 403);
-      }
-      // Admin/teacher can view but not reply per spec
+      // Determine if q.club is a committee or a club
+      const isCommittee = COMM_CATS.includes(q.club);
+      // Check reply permission
       if (userRoles.includes('admin') || userRoles.includes('teacher')) return json({ error: '管理者・先生は回答できません' }, 403);
+      const users = await r2Get(env.DATA, 'users.json') || [];
+      const u = users.find(x => x.id === user.id);
+      if (!u) return json({ error: '見つかりません' }, 404);
+      if (isCommittee) {
+        // Chairperson of that committee can reply
+        if (!userRoles.includes('chairperson') || u.committee !== q.club) return json({ error: '権限がありません' }, 403);
+      } else {
+        // President/vice-president of that club can reply
+        if (!(userRoles.includes('president') || userRoles.includes('vice-president')) || u.club !== q.club) return json({ error: '権限がありません' }, 403);
+      }
 
       q.reply_encrypted = await aesEncrypt(reply, AES_KEY);
       q.reply = reply;

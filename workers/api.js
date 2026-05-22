@@ -623,9 +623,11 @@ async function handleRequest(request, env, ctx) {
       const users = await r2Get(env.DATA, 'users.json') || [];
       const pw = password || '111111';
       const created = [];
+      let seq = 1;
       for (let cl = 1; cl <= c; cl++) {
         for (let seat = 1; seat <= p; seat++) {
-          const studentId = `${yr}${String(cl).padStart(2,'0')}${String(seat).padStart(3,'0')}`;
+          const studentId = `${yr}${String(seq).padStart(3,'0')}`;
+          seq++;
           if (users.find(u => u.username === studentId)) continue;
           const newUser = {
             id: uuid(), username: studentId, password: await hp(pw), password_plain: pw,

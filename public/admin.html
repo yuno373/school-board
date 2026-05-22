@@ -114,10 +114,10 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
   <!-- Users Tab -->
   <div class="tab-content active" id="tab-users">
     <div class="id-rule">
-      <strong>ログインID 生成ルール</strong><br>
-      学年(1桁) + クラス(2桁) + 出席番号(3桁)<br>
-      例: 1年1組 出席番号5番 → <strong>101005</strong><br>
-      例: 2年4組 出席番号12番 → <strong>204012</strong>
+      <strong>ID生成ルール（一括生成時）</strong><br>
+      入学年度下2桁 + 通し番号3桁<br>
+      例: 2026年入学 1組1番 → <strong>26001</strong>、2組1番 → <strong>26031</strong>（30人学級の場合）<br>
+      <span style="font-size:11px">※ 手動登録は任意の数字IDを使用できます</span>
     </div>
     <div class="search-bar">
       <input type="text" id="searchInput" placeholder="名前・部活・委員会・クラスで検索">
@@ -137,7 +137,8 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
     <div class="id-rule">
       <strong>生徒ID 自動生成</strong><br>
       入学年度・クラス数・1クラス人数を指定すると、全ての生徒アカウントを自動生成します。<br>
-      ID形式: <strong>{学年}{クラス2桁}{出席番号3桁}</strong> （例: 1年1組1番 → 101001）
+      ID形式: <strong>{入学年度下2桁 + 通し番号3桁}</strong><br>
+      例: 2026年入学 1組1番 → <strong>26001</strong>、1組2番 → <strong>26002</strong>、2組1番 → <strong>26031</strong>（各クラス30人の場合）
     </div>
     <div class="batch-form">
       <label>入学年度<input type="number" id="bYear" value="2026" min="2020" max="2035"></label>

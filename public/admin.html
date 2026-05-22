@@ -58,10 +58,13 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
 .user-table select{padding:2px 4px;border:1px solid var(--border);border-radius:4px;font-size:11px;font-family:inherit;max-width:85px}
 .user-table .role-group{display:flex;flex-direction:column;gap:1px;font-size:10px}
 #batchYears{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
-.batch-year-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding:14px 18px;background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow)}
+.batch-year-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:12px 16px;background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow)}
 .batch-year-row label{font-size:12px;font-weight:700;color:var(--sub);display:flex;flex-direction:column;gap:2px}
-.batch-year-row input[type=number]{padding:6px 10px;border:2px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit;width:60px;text-align:center;background:#faf8f5}
-.batch-year-row input.per-class{width:180px;text-align:left}
+.batch-year-row input[type=number]{padding:6px 10px;border:2px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit;width:54px;text-align:center;background:#faf8f5}
+.batch-year-row input.b-year{width:68px}
+.batch-year-row .class-sizes{display:flex;gap:4px;flex-wrap:wrap;align-items:center}
+.batch-year-row .class-sizes label{font-size:11px;font-weight:600;color:var(--text);flex-direction:row;align-items:center;gap:2px}
+.batch-year-row .class-sizes input[type=number]{width:42px;padding:4px 6px;font-size:13px}
 .batch-year-row .btn-remove-year{background:#e74c3c;color:#fff;border:none;border-radius:8px;padding:6px 12px;cursor:pointer;font-size:12px;font-weight:700;margin-left:auto}
 .batch-year-row .btn-remove-year:hover{opacity:.8}
 .batch-form{display:flex;gap:12px;flex-wrap:wrap;align-items:end;padding:18px;background:var(--card);border-radius:var(--radius);margin-bottom:14px;box-shadow:var(--shadow)}
@@ -382,45 +385,50 @@ $('bulkGradeDeleteBtn').addEventListener('click', async () => {
 
 // === Batch ===
 function renderBatchYears(){
-  const c=$('batchYears').children;
-  if(c.length===0) addBatchYearRow();
+  if($$('.batch-year-row').length===0) addBatchYearRow();
+}
+function initBatchRow(row){
+  const cnt=row.querySelector('.b-class-count');
+  cnt.addEventListener('input',()=>renderClassSizes(row));
+  renderClassSizes(row);
+}
+function renderClassSizes(row){
+  const n=parseInt(row.querySelector('.b-class-count').value)||1;
+  const container=row.querySelector('.class-sizes');
+  const existing=container.querySelectorAll('.class-size-wrap');
+  // Get current size values
+  const vals=[];
+  existing.forEach(el=>{const v=parseInt(el.querySelector('input').value);if(v>0)vals.push(v)});
+  // Build new HTML
+  let html='<span style="font-size:11px;color:var(--sub);font-weight:700;min-width:70px">各クラス人数:</span>';
+  for(let i=0;i<n;i++){
+    const v=vals[i]||30;
+    html+='<label class="class-size-wrap">'+(i+1)+'組<input type="number" class="class-size-input" value="'+v+'" min="1" max="50" onfocus="this.select()"></label>';
+  }
+  container.innerHTML=html;
 }
 function addBatchYearRow(){
   const div=document.createElement('div');div.className='batch-year-row';
-  div.innerHTML='<label>入学年度<input type="number" class="b-year" value="2026" min="2020" max="2035" style="width:70px"></label>'+
-    '<label>クラス数<input type="number" class="b-class-count" value="3" min="1" max="10" style="width:50px"></label>'+
-    '<label>各クラス人数（カンマ区切り）<input type="text" class="per-class" value="30,30,30" placeholder="例: 30,30,31,30"></label>'+
+  div.innerHTML='<label>入学年度<input type="number" class="b-year" value="2026" min="2020" max="2035"></label>'+
+    '<label>クラス数<input type="number" class="b-class-count" value="3" min="1" max="10"></label>'+
+    '<div class="class-sizes"></div>'+
     '<button class="btn-remove-year" onclick="this.parentElement.remove()">削除</button>';
   $('batchYears').appendChild(div);
+  initBatchRow(div);
 }
 $('addBatchYear').addEventListener('click',addBatchYearRow);
-function formatClassSize(y){
-  if(Array.isArray(y.classes)) return y.classes.map((c,i)=>'<b>'+(i+1)+'組</b> '+c+'人').join(' ');
-  return '<b>'+y.classes+'クラス</b> 各'+y.perClass+'人';
-}
-function classSizePlain(y){
-  if(Array.isArray(y.classes)) return y.classes.map((c,i)=>(i+1)+'組'+c+'人').join(' ');
-  return y.classes+'クラス各'+y.perClass+'人';
-}
 $('bGenerate').addEventListener('click',async()=>{
   const rows=$$('.batch-year-row');
   if(rows.length===0){alert('年度を追加してください');return}
   const years=[];
   for(const r of rows){
     const year=r.querySelector('.b-year').value;
-    const classCount=parseInt(r.querySelector('.b-class-count').value)||1;
-    const perClassRaw=r.querySelector('.per-class').value;
-    const parts=perClassRaw.split(',').map(x=>parseInt(x.trim())).filter(x=>x>0);
-    if(parts.length===0){alert(year+'年度: クラス人数が不正です');return}
-    if(parts.length===1){
-      years.push({year,classes:classCount,perClass:parts[0]});
-    }else{
-      if(parts.length!==classCount){alert(year+'年度: 人数指定('+parts.length+'クラス分)がクラス数('+classCount+')と一致しません');return}
-      years.push({year,classes:parts});
-    }
+    const sizes=Array.from(r.querySelectorAll('.class-size-input')).map(x=>parseInt(x.value));
+    if(!sizes.every(s=>s>0)){alert(year+'年度: クラス人数が不正です');return}
+    years.push({year,classes:sizes});
   }
   const password=$('bPassword').value;
-  const label=years.map(y=>y.year+'年度 '+classSizePlain(y)).join('、');
+  const label=years.map(y=>y.year+'年度 '+y.classes.map((s,i)=>(i+1)+'組'+s+'人').join(' ')).join('、');
   if(!confirm('以下の内容で生成しますか？\n'+label+'\nパスワード: '+password))return;
   $('bGenerate').disabled=true;$('bGenerate').textContent='生成中...';
   try{

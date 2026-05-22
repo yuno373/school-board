@@ -296,7 +296,7 @@ function renderUsers(){
       <td><select onchange="updField('${x.id}','club',this.value)"><option value="">—</option>${CLUBS.map(c=>'<option value="'+c+'"'+(x.club===c?' selected':'')+'>'+c+'</option>').join('')}</select></td>
       <td><select onchange="updField('${x.id}','committee',this.value)"><option value="">—</option>${COMMS.map(c=>'<option value="'+c+'"'+(x.committee===c?' selected':'')+'>'+c+'</option>').join('')}</select></td>
       <td>${dt}</td><td>${actions}</td>`;
-    tr.querySelectorAll('input[type=checkbox][data-id]').forEach(cb=>{cb.onchange=function(){updRole(this.dataset.id,this.dataset.v,this.checked)}});
+    tr.querySelectorAll('input[type=checkbox][data-v]').forEach(cb=>{cb.onchange=function(){updRole(this.dataset.id,this.dataset.v,this.checked)}});
     t.appendChild(tr);
   }
   if(!flt.length)t.innerHTML='<tr><td colspan="13" style="text-align:center;padding:20px;color:var(--sub)">該当するユーザーがいません</td></tr>';

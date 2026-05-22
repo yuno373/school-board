@@ -78,6 +78,10 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
 <body>
 <header class="header">
   <div class="header-title">📅 年間予定表</div>
+  <div class="header-center" style="display:flex;gap:6px">
+    <a href="https://miraiseed2.benesse.ne.jp/seed/start/FpgtwCRY" target="_blank" rel="noopener" class="header-link">📚 ミライシード</a>
+    <a href="https://ed-cl.com" target="_blank" rel="noopener" class="header-link">📖 メクビット</a>
+  </div>
   <div class="header-right">
     <a href="01index.html" class="header-link">黒板に戻る</a>
   </div>
@@ -95,12 +99,17 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
     <div id="scheduleList"></div>
   </div>
   <div class="gemini-area">
-    <div style="display:flex;gap:8px;margin-bottom:10px">
-      <a href="https://miraiseed2.benesse.ne.jp/seed/start/FpgtwCRY" target="_blank" rel="noopener" style="flex:1;background:var(--primary);color:#fff;text-align:center;padding:12px 16px;border-radius:var(--radius);font-weight:700;font-size:14px;text-decoration:none;transition:all .2s" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">📚 ミライシード</a>
-      <a href="https://ed-cl.com" target="_blank" rel="noopener" style="flex:1;background:var(--accent-blue);color:#1a4a6a;text-align:center;padding:12px 16px;border-radius:var(--radius);font-weight:700;font-size:14px;text-decoration:none;transition:all .2s" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">📖 メクビット</a>
+    <div class="gemini-header" style="cursor:pointer" onclick="const n=this.nextElementSibling;n.style.display=n.style.display==='none'?'':'none'">❓ 部長・委員長に質問 <span style="font-size:11px;opacity:.7">▲</span></div>
+    <div id="clubQArea">
+      <div style="padding:10px 14px;background:var(--card);border-left:2px solid var(--border);border-right:2px solid var(--border)">
+        <select id="cqClub" style="width:100%;padding:6px 10px;border:2px solid var(--border);border-radius:6px;font-size:12px;font-family:inherit;margin-bottom:6px"><option value="">送信先を選択</option></select>
+        <textarea id="cqMsg" placeholder="質問内容..." style="width:100%;padding:6px 10px;border:2px solid var(--border);border-radius:6px;font-size:12px;font-family:inherit;min-height:50px;resize:vertical;margin-bottom:6px"></textarea>
+        <button class="btn btn-primary" id="cqBtn" style="padding:6px 14px;font-size:12px;width:100%">送信</button>
+      </div>
+      <div id="cqList" style="padding:8px 12px;background:var(--card);border-left:2px solid var(--border);border-right:2px solid var(--border);max-height:300px;overflow-y:auto;font-size:12px"></div>
     </div>
-    <div class="gemini-header">🤖 Gemini ノートブック</div>
-    <div class="gemini-msgs" id="gmMsgs"><div class="empty">年間予定について質問できます<br>例：「次の体育祭はいつ？」</div></div>
+    <div class="gemini-header" style="cursor:pointer;margin-top:8px" onclick="const n=this.nextElementSibling;n.style.display=n.style.display==='none'?'flex':'none';this.querySelector('span').textContent=n.style.display==='none'?'▶':'▼'">🤖 Gemini <span style="font-size:11px;opacity:.7">▼</span></div>
+    <div class="gemini-msgs" id="gmMsgs" style="display:flex"><div class="empty">年間予定について質問できます<br>例：「次の体育祭はいつ？」</div></div>
     <div id="gmPreview" class="gm-preview" style="display:none"></div>
     <div class="gemini-input"><input type="text" id="gmInput" placeholder="予定について質問..." maxlength="500"><button class="gm-img-btn" id="gmImgBtn" style="display:none" title="画像を添付">ファイル</button><button id="gmBtn">送信</button><input type="file" id="gmFile" accept="image/*" style="display:none"></div>
   </div>
@@ -198,6 +207,49 @@ async function askGemini(){
   }catch(e){thinkingDiv.remove();msgs.innerHTML+=`<div class="gm-msg ai">エラーが発生しました<div class="gm-time">Gemini</div></div>`}
   msgs.scrollTop=msgs.scrollHeight;
 }
+
+// Club questions
+async function initClubQ(){
+  const me=await a('/api/me');
+  const targets=[];
+  if(me.club)targets.push(me.club);
+  if(me.committee)targets.push(me.committee);
+  const cqSel=$('cqClub');
+  targets.forEach(t=>{const o=document.createElement('option');o.value=t;o.textContent=t;cqSel.appendChild(o)});
+  if(targets.length===0)cqSel.innerHTML='<option value="">所属クラブ・委員会がありません</option>';
+}
+$('cqBtn').addEventListener('click',async()=>{
+  const msg=$('cqMsg').value.trim(),club=cqSel.value;
+  if(!msg||!club){alert('部活と質問を入力してください');return}
+  $('cqBtn').disabled=true;$('cqBtn').textContent='送信中...';
+  try{await a('/api/club-questions',{method:'POST',body:JSON.stringify({question:msg,club})});$('cqMsg').value='';loadClubQs()}catch(e){alert(e.message)}
+  $('cqBtn').disabled=false;$('cqBtn').textContent='送信';
+});
+async function loadClubQs(){
+  try{
+    const data=await a('/api/club-questions');
+    const el=$('cqList');
+    if(!data.length){el.innerHTML='<div class="empty" style="padding:16px">質問はまだありません</div>';return}
+    const me=await a('/api/me');
+    const userRoles=(role||'').split(',').map(r=>r.trim());
+    const isClubLeader=userRoles.some(r=>['president','vice-president'].includes(r));
+    const isCommLeader=userRoles.includes('chairperson');
+    el.innerHTML=data.map(q=>{
+      const d=new Date(q.created_at);const ds=(d.getMonth()+1)+'/'+d.getDate();
+      const answerHtml=q.answered?`<div style="background:#faf8f0;padding:6px 10px;border-radius:6px;margin-top:4px;border-left:2px solid var(--accent-green);font-size:11px"><b>回答</b>: ${esc(q.reply||'')}</div>`:'';
+      const canReply=!q.answered&&((isClubLeader&&me.club===q.club)||(isCommLeader&&me.committee===q.club));
+      const replyForm=canReply?`<div style="display:flex;gap:4px;margin-top:4px"><input type="text" id="ar-${q.id}" placeholder="回答..." style="flex:1;padding:4px 8px;border:2px solid var(--border);border-radius:4px;font-size:11px;font-family:inherit"><button onclick="answerClubQ('${q.id}')" style="padding:4px 10px;font-size:11px;background:var(--primary);color:#fff;border:none;border-radius:4px;cursor:pointer;font-family:inherit;font-weight:700">回答</button></div>`:'';
+      return `<div style="padding:6px 0;border-bottom:1px solid var(--border)"><div style="font-size:10px;color:var(--sub)">${esc(q.club)} · ${ds}</div><div style="font-size:12px;margin:2px 0">${esc(q.question||'')}</div>${answerHtml}${replyForm}</div>`;
+    }).join('');
+  }catch(e){$('cqList').innerHTML='<div class="empty" style="padding:16px">読み込みエラー</div>'}
+}
+async function answerClubQ(id){
+  const inp=$('ar-'+id);if(!inp)return;
+  const reply=inp.value.trim();if(!reply)return;
+  try{await a('/api/club-questions/'+id+'/reply',{method:'POST',body:JSON.stringify({reply})});loadClubQs()}catch(e){alert(e.message)}
+}
+initClubQ();
+loadClubQs();
 </script>
 </body>
 </html>

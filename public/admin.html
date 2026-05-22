@@ -337,7 +337,7 @@ $('mCreate').addEventListener('click', async () => {
     const r = await a('/api/users', { method: 'POST', body: JSON.stringify({
       username: user, password: hx, role,
       grade: grade || '', class_num: cls || '', seat_num: seat || '',
-      club, committee, display_name: disp
+      club, committee: comm, display_name: disp
     })});
     $('mResult').style.color = 'var(--primary)';
     $('mResult').textContent = '登録しました: ' + r.username;

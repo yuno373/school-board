@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>荳願陸豐｢荳ｭ蟄ｦ譬｡ 驛ｨ豢ｻ蜍暮ｻ呈攸</title>
+<title>上藤沢中学校 部活動黒板</title>
 <style>
 :root{--primary:#1E4D2B;--primary-dark:#153820;--primary-light:#2D6B40;--accent-pink:#f5a0b8;--accent-blue:#a0c4e8;--accent-yellow:#f5e6a0;--accent-green:#a8d8a0;--bg:#f7f5f0;--card:#fff;--text:#2c2c2c;--sub:#8a8682;--border:#e0dcd4;--danger:#c96565;--radius:12px;--shadow:0 2px 12px rgba(30,77,43,0.06)}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -108,72 +108,72 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
 </head>
 <body>
 <header class="header">
-  <div class="header-title"><span class="hd">搭 荳願陸豐｢荳ｭ蟄ｦ譬｡</span><span class="hdate" id="hDate"></span><span class="hwbgt" id="hWbgt" style="display:none"></span><span class="hdisaster" id="hDisaster" style="display:none"></span></div>
+  <div class="header-title"><span class="hd">📋 上藤沢中学校</span><span class="hdate" id="hDate"></span><span class="hwbgt" id="hWbgt" style="display:none"></span><span class="hdisaster" id="hDisaster" style="display:none"></span></div>
   <div class="header-right">
     <span id="bUser" style="font-size:12px;color:rgba(255,255,255,.75)"></span>
     <span class="user-badge" id="bRole"></span>
-    <a href="chat.html" class="header-link" id="bChatLink" style="display:none">驛ｨ髟ｷ繝√Ε繝・ヨ<span class="notif-badge" id="chatBadge"></span></a>
-    <a href="club-questions.html" class="header-link" style="display:none" id="bClubQLink">雉ｪ蝠・/a>
-    <a href="schedule.html" class="header-link">莠亥ｮ夊｡ｨ</a>
-    <a href="consult.html" class="header-link" id="bConsultLink">逶ｸ隲・園</a>
-    <a href="admin.html" class="header-link" id="bAdminLink" style="display:none">邂｡逅・/a>
-    <button class="header-link danger" id="bLogout">繝ｭ繧ｰ繧｢繧ｦ繝・/button>
+    <a href="chat.html" class="header-link" id="bChatLink" style="display:none">部長チャット<span class="notif-badge" id="chatBadge"></span></a>
+    <a href="club-questions.html" class="header-link" style="display:none" id="bClubQLink">質問</a>
+    <a href="schedule.html" class="header-link">予定表</a>
+    <a href="consult.html" class="header-link" id="bConsultLink">相談所</a>
+    <a href="admin.html" class="header-link" id="bAdminLink" style="display:none">管理</a>
+    <button class="header-link danger" id="bLogout">ログアウト</button>
   </div>
 </header>
-<div id="disasterBar"><span class="disaster-icon">笞・・/span><span class="disaster-msg" id="disasterMsg"></span></div>
-<div id="wbgtBar"><div class="wbgt-val">--.-</div><div><div class="wbgt-label">WBGT</div><div class="wbgt-advice">蜿門ｾ嶺ｸｭ...</div></div><div class="wbgt-detail"><span>--ﾂｰC</span><span>--%</span></div></div>
+<div id="disasterBar"><span class="disaster-icon">⚠️</span><span class="disaster-msg" id="disasterMsg"></span></div>
+<div id="wbgtBar"><div class="wbgt-val">--.-</div><div><div class="wbgt-label">WBGT</div><div class="wbgt-advice">取得中...</div></div><div class="wbgt-detail"><span>--°C</span><span>--%</span></div></div>
 <div class="nav-container"><nav class="nav-tabs" id="bTabs"></nav></div>
-<div class="search-bar"><input type="text" id="bSearch" placeholder="剥 驛ｨ豢ｻ繝ｻ蟋泌藤莨壹・繧ｫ繝・ざ繝ｪ繧呈､懃ｴ｢"></div>
+<div class="search-bar"><input type="text" id="bSearch" placeholder="🔍 部活・委員会・カテゴリを検索"></div>
 <main class="main-content">
   <section id="postForm">
-    <h2>譁ｰ隕乗兜遞ｿ</h2>
-    <input type="text" id="bTitle" placeholder="繧ｿ繧､繝医Ν">
-    <textarea id="bContent" placeholder="蜀・ｮｹ繧貞・蜉帙＠縺ｦ縺上□縺輔＞"></textarea>
+    <h2>新規投稿</h2>
+    <input type="text" id="bTitle" placeholder="タイトル">
+    <textarea id="bContent" placeholder="内容を入力してください"></textarea>
     <select id="bCat"></select>
     <div class="form-row"><input type="file" id="bFile" multiple accept=".pdf,.jpg,.jpeg,.png,.gif,.txt,.doc,.docx"></div>
     <div id="bFileList" style="font-size:12px;color:#8a8682;margin-bottom:10px"></div>
     <select id="bExpires">
-      <option value="30" selected>30譌･蠕後↓豸医∴繧・/option>
-      <option value="15">15譌･蠕後↓豸医∴繧・/option>
-      <option value="60">60譌･蠕後↓豸医∴繧・/option>
-      <option value="90">90譌･蠕後↓豸医∴繧・/option>
+      <option value="30" selected>30日後に消える</option>
+      <option value="15">15日後に消える</option>
+      <option value="60">60日後に消える</option>
+      <option value="90">90日後に消える</option>
     </select>
-    <button id="createBtn">謚慕ｨｿ縺吶ｋ</button>
+    <button id="createBtn">投稿する</button>
   </section>
-  <section id="bList"><div class="empty-state">隱ｭ縺ｿ霎ｼ縺ｿ荳ｭ...</div></section>
+  <section id="bList"><div class="empty-state">読み込み中...</div></section>
 </main>
 
 <script>
 async function h(p){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(p));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('')}
 const API_BASE=''
-async function a(p,o={}){const t=sessionStorage.getItem('token'),h={'Content-Type':'application/json',...o.headers};if(t)h['Authorization']='Bearer '+t;const r=await fetch(API_BASE+p,{...o,headers:h}),d=await r.json();if(!r.ok)throw new Error(d.error||'繧ｨ繝ｩ繝ｼ');return d}
+async function a(p,o={}){const t=sessionStorage.getItem('token'),h={'Content-Type':'application/json',...o.headers};if(t)h['Authorization']='Bearer '+t;const r=await fetch(API_BASE+p,{...o,headers:h}),d=await r.json();if(!r.ok)throw new Error(d.error||'エラー');return d}
 function hasRole(r,t){return (r||'').split(',').map(s=>s.trim()).some(s=>t.includes(s))}
 const A={async login(u,p){const k=await h(p),d=await a('/api/login',{method:'POST',body:JSON.stringify({username:u,password:k})});sessionStorage.setItem('token',d.token);sessionStorage.setItem('username',d.username);sessionStorage.setItem('role',d.role);return d},logout(){sessionStorage.clear()},getUser(){const u=sessionStorage.getItem('username'),r=sessionStorage.getItem('role');return u&&r?{username:u,role:r}:null},requireAuth(){const u=this.getUser();if(!u){window.location.href='02login.html';return null}return u},canManageUsers(){const u=this.getUser();return u&&hasRole(u.role,['admin','teacher'])},canPost(){const u=this.getUser();return u&&hasRole(u.role,['admin','teacher','president','vice-president','chairperson'])},async api(p,o){return a(p,o)},hashPassword(p){return h(p)}};window.AUTH=A;window.api=a
 
 const CATS=[
-{l:'荳贋ｸｭ騾｣邨｡',n:'荳贋ｸｭ騾｣邨｡'},
-{l:'蠢倥ｌ迚ｩ',n:'蠢倥ｌ迚ｩ'},
-{l:'逕溷ｾ剃ｼ・,n:'逕溷ｾ剃ｼ・},
-{l:'3蟄ｦ蟷ｴ蟋泌藤莨・,n:'3蟄ｦ蟷ｴ蟋泌藤莨・},{l:'2蟄ｦ蟷ｴ蟋泌藤莨・,n:'2蟄ｦ蟷ｴ蟋泌藤莨・},{l:'1蟄ｦ蟷ｴ蟋泌藤莨・,n:'1蟄ｦ蟷ｴ蟋泌藤莨・},
-{l:'荳ｭ螟ｮ蟋泌藤莨・,n:'荳ｭ螟ｮ蟋泌藤莨・,roles:['admin','teacher','president','vice-president','chairperson']},
-{l:'驛ｨ豢ｻ蜍募ｧ泌藤莨・,n:'驛ｨ豢ｻ蜍募ｧ泌藤莨・,roles:['admin','teacher','president','vice-president','chairperson']},
-{l:'窶・驛ｨ豢ｻ蜍・窶・,g:true},
-{l:'蜷ｹ螂乗･ｽ驛ｨ',n:'蜷ｹ螂乗･ｽ驛ｨ'},{l:'闌ｶ驕馴Κ',n:'闌ｶ驕馴Κ'},{l:'鄒手｡馴Κ',n:'鄒手｡馴Κ'},{l:'蜊鍋帥驛ｨ',n:'蜊鍋帥驛ｨ'},
-{l:'繝・ル繧ｹ驛ｨ螂ｳ蟄・,n:'繝・ル繧ｹ驛ｨ螂ｳ蟄・},{l:'繝・ル繧ｹ驛ｨ逕ｷ蟄・,n:'繝・ル繧ｹ驛ｨ逕ｷ蟄・},{l:'繧ｵ繝・き繝ｼ驛ｨ',n:'繧ｵ繝・き繝ｼ驛ｨ'},
-{l:'驥守帥驛ｨ',n:'驥守帥驛ｨ'},{l:'髯ｸ荳企Κ',n:'髯ｸ荳企Κ'},{l:'繝舌せ繧ｱ驛ｨ螂ｳ蟄・,n:'繝舌せ繧ｱ驛ｨ螂ｳ蟄・},{l:'繝舌せ繧ｱ驛ｨ逕ｷ蟄・,n:'繝舌せ繧ｱ驛ｨ逕ｷ蟄・},{l:'繝舌Ξ繝ｼ驛ｨ',n:'繝舌Ξ繝ｼ驛ｨ'},
-{l:'窶・蟋泌藤莨・窶・,g:true},
-{l:'謨ｴ蛯吝ｧ泌藤莨・,n:'謨ｴ蛯吝ｧ泌藤莨・},{l:'逕滓ｴｻ蟋泌藤莨・,n:'逕滓ｴｻ蟋泌藤莨・},{l:'驕ｸ謖咏ｮ｡逅・ｧ泌藤莨・,n:'驕ｸ謖咏ｮ｡逅・ｧ泌藤莨・},{l:'蝗ｳ譖ｸ蟋泌藤莨・,n:'蝗ｳ譖ｸ蟋泌藤莨・},
-{l:'邨ｦ鬟溷ｧ泌藤莨・,n:'邨ｦ鬟溷ｧ泌藤莨・},{l:'蜷亥罰蟋泌藤莨・,n:'蜷亥罰蟋泌藤莨・},{l:'菴楢ご蟋泌藤莨・,n:'菴楢ご蟋泌藤莨・},
-{l:'菫晏▼蟋泌藤莨・,n:'菫晏▼蟋泌藤莨・},{l:'謾ｾ騾∝ｧ泌藤莨・,n:'謾ｾ騾∝ｧ泌藤莨・}
+{l:'上中連絡',n:'上中連絡'},
+{l:'忘れ物',n:'忘れ物'},
+{l:'生徒会',n:'生徒会'},
+{l:'3学年委員会',n:'3学年委員会'},{l:'2学年委員会',n:'2学年委員会'},{l:'1学年委員会',n:'1学年委員会'},
+{l:'中央委員会',n:'中央委員会',roles:['admin','teacher','president','vice-president','chairperson']},
+{l:'部活動委員会',n:'部活動委員会',roles:['admin','teacher','president','vice-president','chairperson']},
+{l:'— 部活動 —',g:true},
+{l:'吹奏楽部',n:'吹奏楽部'},{l:'茶道部',n:'茶道部'},{l:'美術部',n:'美術部'},{l:'卓球部',n:'卓球部'},
+{l:'テニス部女子',n:'テニス部女子'},{l:'テニス部男子',n:'テニス部男子'},{l:'サッカー部',n:'サッカー部'},
+{l:'野球部',n:'野球部'},{l:'陸上部',n:'陸上部'},{l:'バスケ部女子',n:'バスケ部女子'},{l:'バスケ部男子',n:'バスケ部男子'},{l:'バレー部',n:'バレー部'},
+{l:'— 委員会 —',g:true},
+{l:'整備委員会',n:'整備委員会'},{l:'生活委員会',n:'生活委員会'},{l:'選挙管理委員会',n:'選挙管理委員会'},{l:'図書委員会',n:'図書委員会'},
+{l:'給食委員会',n:'給食委員会'},{l:'合唱委員会',n:'合唱委員会'},{l:'体育委員会',n:'体育委員会'},
+{l:'保健委員会',n:'保健委員会'},{l:'放送委員会',n:'放送委員会'}
 ];
 const ALL_NAMES=CATS.filter(c=>!c.g).map(c=>c.n);
 function visibleCats(){return CATS.filter(c=>!c.g&&(!c.roles||(curUser&&c.roles.some(r=>userRolesArr.includes(r))))).map(c=>c.n)}
-let curCat='荳贋ｸｭ騾｣邨｡',curUser=null,allPosts=[],searchQuery='';
+let curCat='上中連絡',curUser=null,allPosts=[],searchQuery='';
 const $=id=>document.getElementById(id);
 function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
-const REACT_ICONS={like:'総',heart:'笶､・・,ok:'笨・,question:'笶・,thanks:'剌'};
+const REACT_ICONS={like:'👍',heart:'❤️',ok:'✅',question:'❓',thanks:'🙏'};
 
-let counts={},collapsedGroups={'驛ｨ豢ｻ蜍・:true,'蟋泌藤莨・:true};
+let counts={},collapsedGroups={'部活動':true,'委員会':true};
 function tabs(){
   const c=$('bTabs');c.innerHTML='';const q=searchQuery.trim().toLowerCase();let inGroup=false,groupCollapsed=false,groupName='';
   CATS.forEach(t=>{
@@ -181,9 +181,9 @@ function tabs(){
     if(q&&!t.g&&!t.n.toLowerCase().includes(q))return;
     const b=document.createElement('button');b.className='tab';
     if(t.g){
-      inGroup=true;const gName=t.l.replace(/^窶能s*|\s*窶・/g,'');groupName=gName;groupCollapsed=collapsedGroups[gName];
+      inGroup=true;const gName=t.l.replace(/^—\s*|\s*—$/g,'');groupName=gName;groupCollapsed=collapsedGroups[gName];
       b.classList.add('separator');b.style.cursor='pointer';
-      b.textContent=(groupCollapsed?'笆ｶ ':'笆ｼ ')+t.l;
+      b.textContent=(groupCollapsed?'▶ ':'▼ ')+t.l;
       b.addEventListener('click',()=>{collapsedGroups[gName]=!collapsedGroups[gName];tabs()});
     }else{
       if(!q&&inGroup&&groupCollapsed){b.style.display='none'}
@@ -204,16 +204,16 @@ function sel(){
 }
 
 async function load(){
-  const c=$('bList');c.innerHTML='<div class="empty-state">隱ｭ縺ｿ霎ｼ縺ｿ荳ｭ...</div>';
+  const c=$('bList');c.innerHTML='<div class="empty-state">読み込み中...</div>';
   try{
     const p=await api('/api/posts?category='+encodeURIComponent(curCat));
     allPosts=p||[];renderPosts();
-  }catch(e){if(e.message.includes('隱崎ｨｼ')){sessionStorage.clear();window.location.href='02login.html'}c.innerHTML='<div class="empty-state">繧ｨ繝ｩ繝ｼ</div>'}
+  }catch(e){if(e.message.includes('認証')){sessionStorage.clear();window.location.href='02login.html'}c.innerHTML='<div class="empty-state">エラー</div>'}
 }
 function renderPosts(){
   const c=$('bList');const q=searchQuery.trim().toLowerCase();
   const p=q?allPosts.filter(x=>x.title.toLowerCase().includes(q)||x.content.toLowerCase().includes(q)||x.category.toLowerCase().includes(q)):allPosts;
-  if(!p.length){c.innerHTML='<div class="empty-state">'+(q?'縲・+esc(searchQuery.trim())+'縲阪↓荳閾ｴ縺吶ｋ謚慕ｨｿ縺ｯ縺ゅｊ縺ｾ縺帙ｓ':'謚慕ｨｿ縺ｯ縺ｾ縺縺ゅｊ縺ｾ縺帙ｓ')+'</div>';return}
+  if(!p.length){c.innerHTML='<div class="empty-state">'+(q?'「'+esc(searchQuery.trim())+'」に一致する投稿はありません':'投稿はまだありません')+'</div>';return}
   c.innerHTML='';p.forEach(x=>render(x,c));
 }
 async function loadReactions(el,targetType,targetId){
@@ -235,43 +235,43 @@ function render(p,c){
   const card=document.createElement('div');card.className='post-card';
   const canDel=curUser&&(hasRole(curUser.role,['admin','teacher'])||curUser.username===p.username);
   const d=new Date(p.created_at);const ds=(d.getMonth()+1)+'/'+d.getDate()+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
-  const fls=p.files?.map(f=>'<a href="'+esc(f.url)+'" target="_blank" class="attachment"><span>梼</span> '+esc(f.name)+'</a>').join('')||'';
+  const fls=p.files?.map(f=>'<a href="'+esc(f.url)+'" target="_blank" class="attachment"><span>📎</span> '+esc(f.name)+'</a>').join('')||'';
   let exp='',expCls='';
-  if(p.expires_at){const r=Math.ceil((new Date(p.expires_at)-Date.now())/86400000);exp='縺ゅ→'+r+'譌･';expCls=r>30?'safe':r>10?'warn':''}
+  if(p.expires_at){const r=Math.ceil((new Date(p.expires_at)-Date.now())/86400000);exp='あと'+r+'日';expCls=r>30?'safe':r>10?'warn':''}
   let claimHtml='';
-  if(p.category==='蠢倥ｌ迚ｩ'){
+  if(p.category==='忘れ物'){
     const claims=p.claims||[];const myClaim=claims.some(c=>c.username===curUser?.username);
     const claimers=claims.map(c=>esc(c.display_name||c.username)).join(', ');
-    claimHtml='<div class="claim-area"><button class="claim-btn '+(myClaim?'claimed':'')+'" data-id="'+p.id+'">'+(myClaim?'蜿悶ｊ豸医☆':'遘√・縺ｧ縺咀泗・)+'</button>'+(claims.length?'<span class="claim-count">'+claims.length+'莠ｺ</span>':'')+'</div>'+(claimers?'<div style="font-size:12px;color:var(--sub)">刹 '+claimers+'</div>':'');
+    claimHtml='<div class="claim-area"><button class="claim-btn '+(myClaim?'claimed':'')+'" data-id="'+p.id+'">'+(myClaim?'取り消す':'私のです🙋')+'</button>'+(claims.length?'<span class="claim-count">'+claims.length+'人</span>':'')+'</div>'+(claimers?'<div style="font-size:12px;color:var(--sub)">🙋 '+claimers+'</div>':'');
   }
-  card.innerHTML='<div class="post-category">'+esc(p.category)+'</div><div class="post-title">'+esc(p.title)+'</div><div class="post-body">'+esc(p.content)+'</div>'+(fls?'<div>'+fls+'</div>':'')+claimHtml+'<div class="post-footer"><div class="post-meta">'+esc(p.display_name||p.username)+' ﾂｷ '+ds+'</div>'+(exp?'<div class="post-deadline '+expCls+'">'+exp+'</div>':'')+'</div><div class="reaction-bar" id="react-'+p.id+'"></div>';
-  if(canDel){const db=document.createElement('button');db.className='delete-btn';db.textContent='蜑企勁';db.addEventListener('click',()=>delPost(p.id));card.querySelector('.post-footer').appendChild(db)}
-  if(p.category==='蠢倥ｌ迚ｩ'){const btn=card.querySelector('.claim-btn');if(btn)btn.addEventListener('click',async function(){const id=this.dataset.id;try{if(this.classList.contains('claimed')){await api('/api/posts/'+id+'/claim',{method:'DELETE'})}else{await api('/api/posts/'+id+'/claim',{method:'POST'})}load()}catch(e){alert(e.message)}})}
+  card.innerHTML='<div class="post-category">'+esc(p.category)+'</div><div class="post-title">'+esc(p.title)+'</div><div class="post-body">'+esc(p.content)+'</div>'+(fls?'<div>'+fls+'</div>':'')+claimHtml+'<div class="post-footer"><div class="post-meta">'+esc(p.display_name||p.username)+' · '+ds+'</div>'+(exp?'<div class="post-deadline '+expCls+'">'+exp+'</div>':'')+'</div><div class="reaction-bar" id="react-'+p.id+'"></div>';
+  if(canDel){const db=document.createElement('button');db.className='delete-btn';db.textContent='削除';db.addEventListener('click',()=>delPost(p.id));card.querySelector('.post-footer').appendChild(db)}
+  if(p.category==='忘れ物'){const btn=card.querySelector('.claim-btn');if(btn)btn.addEventListener('click',async function(){const id=this.dataset.id;try{if(this.classList.contains('claimed')){await api('/api/posts/'+id+'/claim',{method:'DELETE'})}else{await api('/api/posts/'+id+'/claim',{method:'POST'})}load()}catch(e){alert(e.message)}})}
   c.appendChild(card);
   loadReactions(card.querySelector('#react-'+p.id),'post',p.id);
 }
 
 async function create(){
   const t=$('bTitle').value.trim(),c=$('bContent').value.trim(),cat=$('bCat').value;
-  if(!t||!c){alert('蜈･蜉帙＠縺ｦ縺上□縺輔＞');return}
-  $('createBtn').disabled=true;$('createBtn').textContent='謚慕ｨｿ荳ｭ...';
+  if(!t||!c){alert('入力してください');return}
+  $('createBtn').disabled=true;$('createBtn').textContent='投稿中...';
   try{
     const files=[];const fileInput=$('bFile');
-    if(fileInput.files.length){for(const f of fileInput.files){const fd=new FormData();fd.append('file',f);const token=sessionStorage.getItem('token');const r=await fetch(API_BASE+'/api/upload',{method:'POST',headers:{'Authorization':'Bearer '+token},body:fd});const d=await r.json();if(r.ok)files.push({url:d.url,name:d.name,type:d.type});else{alert('繝輔ぃ繧､繝ｫ繧｢繝・・繝ｭ繝ｼ繝牙､ｱ謨・ '+d.error);$('createBtn').disabled=false;$('createBtn').textContent='謚慕ｨｿ縺吶ｋ';return}}}
+    if(fileInput.files.length){for(const f of fileInput.files){const fd=new FormData();fd.append('file',f);const token=sessionStorage.getItem('token');const r=await fetch(API_BASE+'/api/upload',{method:'POST',headers:{'Authorization':'Bearer '+token},body:fd});const d=await r.json();if(r.ok)files.push({url:d.url,name:d.name,type:d.type});else{alert('ファイルアップロード失敗: '+d.error);$('createBtn').disabled=false;$('createBtn').textContent='投稿する';return}}}
     await api('/api/posts',{method:'POST',body:JSON.stringify({title:t,content:c,category:cat,files,expiresIn:$('bExpires').value})});
     $('bTitle').value='';$('bContent').value='';$('bFile').value='';$('bFileList').textContent='';
     loadCounts();load();
-  }catch(e){alert('螟ｱ謨・ '+e.message)}
-  $('createBtn').disabled=false;$('createBtn').textContent='謚慕ｨｿ縺吶ｋ';
+  }catch(e){alert('失敗: '+e.message)}
+  $('createBtn').disabled=false;$('createBtn').textContent='投稿する';
 }
 
-$('bFile').addEventListener('change',()=>{const fs=$('bFile').files;$('bFileList').textContent=fs.length?'驕ｸ謚・ '+Array.from(fs).map(f=>f.name).join(', '):''});
-async function delPost(id){if(!confirm('蜑企勁縺励∪縺吶°・・))return;try{await api('/api/posts/'+id,{method:'DELETE'});loadCounts();load()}catch(e){alert('螟ｱ謨・)}}
+$('bFile').addEventListener('change',()=>{const fs=$('bFile').files;$('bFileList').textContent=fs.length?'選択: '+Array.from(fs).map(f=>f.name).join(', '):''});
+async function delPost(id){if(!confirm('削除しますか？'))return;try{await api('/api/posts/'+id,{method:'DELETE'});loadCounts();load()}catch(e){alert('失敗')}}
 
 curUser=AUTH.requireAuth();if(!curUser)window.location.href='02login.html';
 $('bUser').textContent=curUser.username;
-const roleNames={'admin':'邂｡逅・・,'teacher':'蜈育函','president':'驛ｨ髟ｷ','vice-president':'蜑ｯ驛ｨ髟ｷ','chairperson':'蟋泌藤髟ｷ','student':'逕溷ｾ・};
-$('bRole').textContent=(curUser.role||'').split(',').map(r=>roleNames[r.trim()]||r.trim()).filter(Boolean).join('ﾂｷ');
+const roleNames={'admin':'管理者','teacher':'先生','president':'部長','vice-president':'副部長','chairperson':'委員長','student':'生徒'};
+$('bRole').textContent=(curUser.role||'').split(',').map(r=>roleNames[r.trim()]||r.trim()).filter(Boolean).join('·');
 const userRolesArr=(curUser.role||'').split(',').map(r=>r.trim());
 $('postForm').classList.toggle('hidden',!AUTH.canPost());
 $('bAdminLink').style.display=hasRole(curUser.role,['admin','teacher'])?'':'none';
@@ -281,7 +281,7 @@ $('bConsultLink').style.display='';
 $('createBtn').addEventListener('click',create);
 $('bLogout').addEventListener('click',()=>{AUTH.logout();window.location.href='02login.html'});
 
-function clock(){function u(){const n=new Date();$('hDate').textContent=(n.getMonth()+1)+'/'+n.getDate()+'('+'譌･譛育↓豌ｴ譛ｨ驥大悄'[n.getDay()]+')'}u();setInterval(u,1000)}
+function clock(){function u(){const n=new Date();$('hDate').textContent=(n.getMonth()+1)+'/'+n.getDate()+'('+'日月火水木金土'[n.getDay()]+')'}u();setInterval(u,1000)}
 clock();
 $('bSearch').addEventListener('input',function(){searchQuery=this.value;tabs();renderPosts()});
 loadCounts().then(()=>{tabs();sel();load()});
@@ -296,24 +296,25 @@ if(chatLink.style.display!=='none'){
   chatLink.addEventListener('click',()=>{localStorage.setItem(ls,Date.now());chatBadge.style.display='none'});
 }
 
-// WBGT from Open-Meteo (蝓ｼ邇臥恁蜈･髢灘ｸ・
+// WBGT from Open-Meteo (埼玉県入間市)
 function wbgt(){
   function upd(t,h){
     const e=(h/100)*6.105*Math.exp(17.27*t/(t+237.3));const wbgt=0.567*t+0.393*e+3.94;
-    const bar=$('wbgtBar'),hw=$('hWbgt');    const levels=[{max:21,lbl:'豕ｨ諢・,adv:'驕ｩ蠎ｦ縺ｫ豌ｴ蛻・｣懃ｵｦ',cls:'l0',hcls:'hw0'},{max:25,lbl:'隴ｦ謌・,adv:'遨肴･ｵ逧・↓豌ｴ蛻・｣懃ｵｦ',cls:'l1',hcls:'hw1'},{max:28,lbl:'蜴ｳ驥崎ｭｦ謌・,adv:'遨肴･ｵ逧・↓莨第・',cls:'l2',hcls:'hw2'},{max:31,lbl:'蜊ｱ髯ｺ',adv:'豼縺励＞驕句虚縺ｯ荳ｭ豁｢',cls:'l3',hcls:'hw3'},{max:99,lbl:'讌ｵ蠎ｦ蜊ｱ髯ｺ',adv:'驕句虚縺ｯ蜴溷援荳ｭ豁｢',cls:'l4',hcls:'hw4'}];
+    const bar=$('wbgtBar'),hw=$('hWbgt');    const levels=[{max:21,lbl:'注意',adv:'適度に水分補給',cls:'l0',hcls:'hw0'},{max:25,lbl:'警戒',adv:'積極的に水分補給',cls:'l1',hcls:'hw1'},{max:28,lbl:'厳重警戒',adv:'積極的に休息',cls:'l2',hcls:'hw2'},{max:31,lbl:'危険',adv:'激しい運動は中止',cls:'l3',hcls:'hw3'},{max:99,lbl:'極度危険',adv:'運動は原則中止',cls:'l4',hcls:'hw4'}];
     const lv=levels.find(l=>wbgt<l.max)||levels[levels.length-1];
-    bar.className='wbgt-'+lv.cls;bar.innerHTML='<div class="wbgt-val">'+wbgt.toFixed(1)+'</div><div><div class="wbgt-label">蝓ｼ邇臥恁蜈･髢灘ｸ・WBGT '+lv.lbl+'</div><div class="wbgt-advice">'+lv.adv+'</div></div><div class="wbgt-detail"><span>'+t+'ﾂｰC</span><span>'+h+'%</span></div>';
-    hw.style.display='inline-flex';hw.className='hwbgt '+lv.hcls;hw.textContent='蝓ｼ邇臥恁蜈･髢灘ｸ・WBGT '+wbgt.toFixed(1)+'ﾂｰC '+lv.lbl;
+    bar.className='wbgt-'+lv.cls;bar.innerHTML='<div class="wbgt-val">'+wbgt.toFixed(1)+'</div><div><div class="wbgt-label">埼玉県入間市 WBGT '+lv.lbl+'</div><div class="wbgt-advice">'+lv.adv+'</div></div><div class="wbgt-detail"><span>'+t+'°C</span><span>'+h+'%</span></div>';
+    hw.style.display='inline-flex';hw.className='hwbgt '+lv.hcls;hw.textContent='埼玉県入間市 WBGT '+wbgt.toFixed(1)+'°C '+lv.lbl;
   }
-  const lat=35.84,lon=139.39; // 蝓ｼ邇臥恁蜈･髢灘ｸ・  function w(){fetch('https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&current=temperature_2m,relative_humidity_2m,weather_code&timezone=Asia%2FTokyo').then(r=>r.json()).then(d=>{if(d.current)upd(d.current.temperature_2m,d.current.relative_humidity_2m)}).catch(()=>{})}
+  const lat=35.84,lon=139.39; // 埼玉県入間市
+  function w(){fetch('https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&current=temperature_2m,relative_humidity_2m,weather_code&timezone=Asia%2FTokyo').then(r=>r.json()).then(d=>{if(d.current)upd(d.current.temperature_2m,d.current.relative_humidity_2m)}).catch(()=>{})}
   w();setInterval(w,300000);
 }
 wbgt();
 
 // Disaster info (JMA + manual)
-const JMA_CODES={'蛹玲ｵｷ驕・:10000,'髱呈｣ｮ逵・:20000,'蟯ｩ謇狗恁':30000,'螳ｮ蝓守恁':40000,'遘狗伐逵・:50000,'螻ｱ蠖｢逵・:60000,'遖丞ｳｶ逵・:70000,'闌ｨ蝓守恁':80000,'譬・惠逵・:90000,'鄒､鬥ｬ逵・:100000,'蝓ｼ邇臥恁':110000,'蜊・痩逵・:120000,'譚ｱ莠ｬ驛ｽ':130000,'逾槫･亥ｷ晉恁':140000,'譁ｰ貎溽恁':150000,'蟇悟ｱｱ逵・:160000,'遏ｳ蟾晉恁':170000,'遖丈ｺ慕恁':180000,'螻ｱ譴ｨ逵・:190000,'髟ｷ驥守恁':200000,'蟯宣・逵・:210000,'髱吝ｲ｡逵・:220000,'諢帷衍逵・:230000,'荳蛾㍾逵・:240000,'貊玖ｳ逵・:250000,'莠ｬ驛ｽ蠎・:260000,'螟ｧ髦ｪ蠎・:270000,'蜈ｵ蠎ｫ逵・:280000,'螂郁憶逵・:290000,'蜥梧ｭ悟ｱｱ逵・:300000,'魑･蜿也恁':310000,'蟲ｶ譬ｹ逵・:320000,'蟯｡螻ｱ逵・:330000,'蠎・ｳｶ逵・:340000,'螻ｱ蜿｣逵・:350000,'蠕ｳ蟲ｶ逵・:360000,'鬥吝ｷ晉恁':370000,'諢帛ｪ帷恁':380000,'鬮倡衍逵・:390000,'遖丞ｲ｡逵・:400000,'菴占ｳ逵・:410000,'髟ｷ蟠守恁':420000,'辭頑悽逵・:430000,'螟ｧ蛻・恁':440000,'螳ｮ蟠守恁':450000,'鮖ｿ蜈仙ｳｶ逵・:460000,'豐也ｸ・恁':471000};
-const WARN_JP={'02':'螟ｧ髮ｨ','03':'豢ｪ豌ｴ','04':'證ｴ鬚ｨ','05':'證ｴ鬚ｨ髮ｪ','06':'螟ｧ髮ｪ','07':'豕｢豬ｪ','08':'鬮俶ｽｮ','10':'螟ｧ髮ｨ豕ｨ諢丞ｱ','12':'螟ｧ髮ｪ豕ｨ諢丞ｱ','14':'證ｴ鬚ｨ髮ｪ豕ｨ諢丞ｱ','15':'豕｢豬ｪ豕ｨ諢丞ｱ','16':'鬮俶ｽｮ豕ｨ諢丞ｱ','18':'豢ｪ豌ｴ豕ｨ諢丞ｱ','20':'髮ｷ豕ｨ諢丞ｱ','21':'陞埼妛豕ｨ諢丞ｱ','22':'豼・悸豕ｨ諢丞ｱ','23':'荵ｾ辯･豕ｨ諢丞ｱ','24':'縺ｪ縺繧梧ｳｨ諢丞ｱ','25':'菴取ｸｩ豕ｨ諢丞ｱ','26':'髴懈ｳｨ諢丞ｱ','27':'逹豌ｷ豕ｨ諢丞ｱ','28':'逹髮ｪ豕ｨ諢丞ｱ','29':'鬮俶ｸｩ豕ｨ諢丞ｱ'};
-let disasterLoc='蝓ｼ邇臥恁蜈･髢灘ｸ・;
+const JMA_CODES={'北海道':10000,'青森県':20000,'岩手県':30000,'宮城県':40000,'秋田県':50000,'山形県':60000,'福島県':70000,'茨城県':80000,'栃木県':90000,'群馬県':100000,'埼玉県':110000,'千葉県':120000,'東京都':130000,'神奈川県':140000,'新潟県':150000,'富山県':160000,'石川県':170000,'福井県':180000,'山梨県':190000,'長野県':200000,'岐阜県':210000,'静岡県':220000,'愛知県':230000,'三重県':240000,'滋賀県':250000,'京都府':260000,'大阪府':270000,'兵庫県':280000,'奈良県':290000,'和歌山県':300000,'鳥取県':310000,'島根県':320000,'岡山県':330000,'広島県':340000,'山口県':350000,'徳島県':360000,'香川県':370000,'愛媛県':380000,'高知県':390000,'福岡県':400000,'佐賀県':410000,'長崎県':420000,'熊本県':430000,'大分県':440000,'宮崎県':450000,'鹿児島県':460000,'沖縄県':471000};
+const WARN_JP={'02':'大雨','03':'洪水','04':'暴風','05':'暴風雪','06':'大雪','07':'波浪','08':'高潮','10':'大雨注意報','12':'大雪注意報','14':'暴風雪注意報','15':'波浪注意報','16':'高潮注意報','18':'洪水注意報','20':'雷注意報','21':'融雪注意報','22':'濃霧注意報','23':'乾燥注意報','24':'なだれ注意報','25':'低温注意報','26':'霜注意報','27':'着氷注意報','28':'着雪注意報','29':'高温注意報'};
+let disasterLoc='埼玉県入間市';
 async function loadDisaster(){
   try{
     const d=await api('/api/disaster-info');
@@ -321,10 +322,10 @@ async function loadDisaster(){
     if(d.active&&d.message){
       bar.style.display='flex';bar.className='disaster-'+d.level;
       msg.textContent=d.message;
-      hd.style.display='inline-flex';hd.className='hdisaster hd-'+d.level;hd.textContent='笞 '+d.message.slice(0,12)+(d.message.length>12?'窶ｦ':'');
+      hd.style.display='inline-flex';hd.className='hdisaster hd-'+d.level;hd.textContent='⚠ '+d.message.slice(0,12)+(d.message.length>12?'…':'');
       const isTeacher=curUser&&hasRole(curUser.role,['admin','teacher']);
       if(isTeacher&&!bar.querySelector('.disaster-clear')){
-        const btn=document.createElement('button');btn.className='disaster-clear';btn.textContent='隗｣髯､';
+        const btn=document.createElement('button');btn.className='disaster-clear';btn.textContent='解除';
         btn.onclick=async()=>{try{await api('/api/disaster-info/clear',{method:'POST'});loadDisaster()}catch(e){}};
         bar.appendChild(btn);
       }
@@ -334,13 +335,13 @@ async function loadDisaster(){
     if(jma){
       bar.style.display='flex';bar.className='disaster-danger';
       msg.textContent=jma;
-      hd.style.display='inline-flex';hd.className='hdisaster hd-danger';hd.textContent='笞 '+jma.slice(0,15)+(jma.length>15?'窶ｦ':'');
+      hd.style.display='inline-flex';hd.className='hdisaster hd-danger';hd.textContent='⚠ '+jma.slice(0,15)+(jma.length>15?'…':'');
       bar.querySelector('.disaster-clear')?.remove();
     }else{
       bar.style.display='flex';bar.className='disaster-info';
-      const txt='研 蝓ｼ邇臥恁蜈･髢灘ｸゅ↓隴ｦ蝣ｱ繝ｻ豕ｨ諢丞ｱ縺ｯ縺ゅｊ縺ｾ縺帙ｓ';
+      const txt='🌤 埼玉県入間市に警報・注意報はありません';
       msg.textContent=txt;
-      hd.style.display='inline-flex';hd.className='hdisaster hd-info';hd.textContent=txt.slice(0,18)+(txt.length>18?'窶ｦ':'');
+      hd.style.display='inline-flex';hd.className='hdisaster hd-info';hd.textContent=txt.slice(0,18)+(txt.length>18?'…':'');
       bar.querySelector('.disaster-clear')?.remove();
     }
   }catch(e){}
@@ -350,14 +351,13 @@ async function fetchJMASaitama(){
     const warn=await fetch('https://www.jma.go.jp/bosai/warning/data/warning/110000.json').then(r=>r.json());
     if(!warn?.timeSeries?.length){return null}
     const list=[];
-    (warn.timeSeries[0]?.areas||[]).forEach(a=>{(a.warnings||[]).forEach(w=>{const wl=WARN_JP[w.code]||w.code;if(!list.includes(wl)&&w.status==='逋ｺ陦ｨ')list.push(wl)})});
+    (warn.timeSeries[0]?.areas||[]).forEach(a=>{(a.warnings||[]).forEach(w=>{const wl=WARN_JP[w.code]||w.code;if(!list.includes(wl)&&w.status==='発表')list.push(wl)})});
     (warn.timeSeries[0]?.areas||[]).forEach(a=>{(a.forecasts||[]).forEach(f=>{(f.warnings||[]).forEach(w=>{const wl=WARN_JP[w.code]||w.code;if(!list.includes(wl))list.push(wl)})})});
     if(!list.length){return null}
-    return '笞・・蝓ｼ邇臥恁蜈･髢灘ｸゅ↓'+list.slice(0,4).join('繝ｻ')+'隴ｦ蝣ｱ逋ｺ陦ｨ';
+    return '⚠️ 埼玉県入間市に'+list.slice(0,4).join('・')+'警報発表';
   }catch(e){return null}
 }
 loadDisaster();setInterval(loadDisaster,60000);
 </script>
 </body>
 </html>
-

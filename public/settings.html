@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>繝ｦ繝ｼ繧ｶ繝ｼ險ｭ螳・- 荳願陸豐｢荳ｭ蟄ｦ譬｡</title>
+<title>ユーザー設定 - 上藤沢中学校</title>
 <style>
 :root{--primary:#1E4D2B;--primary-dark:#153820;--primary-light:#2D6B40;--bg:#f7f5f0;--card:#fff;--text:#2c2c2c;--sub:#8a8682;--border:#e0dcd4;--radius:12px;--shadow:0 2px 12px rgba(30,77,43,0.06)}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -31,36 +31,36 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
 </head>
 <body>
 <header class="header">
-  <div class="header-title">笞呻ｸ・繝ｦ繝ｼ繧ｶ繝ｼ險ｭ螳・/div>
+  <div class="header-title">⚙️ ユーザー設定</div>
   <div class="header-right">
-    <a href="01index.html" class="header-link">鮟呈攸縺ｫ謌ｻ繧・/a>
+    <a href="01index.html" class="header-link">黒板に戻る</a>
   </div>
 </header>
 <div class="main">
   <div class="card">
-    <h2>繝励Ο繝輔ぅ繝ｼ繝ｫ</h2>
-    <div class="form-group"><label>陦ｨ遉ｺ蜷・/label><input type="text" id="sDispName" placeholder="陦ｨ遉ｺ蜷・></div>
-    <div class="form-group"><label>驛ｨ豢ｻ蜍・/label><select id="sClub"><option value="">窶・/option></select></div>
-    <div class="form-group"><label>蟋泌藤莨・/label><select id="sCommittee"><option value="">窶・/option></select></div>
-    <button class="btn" id="saveProfile">菫晏ｭ・/button>
+    <h2>プロフィール</h2>
+    <div class="form-group"><label>表示名</label><input type="text" id="sDispName" placeholder="表示名"></div>
+    <div class="form-group"><label>部活動</label><select id="sClub"><option value="">—</option></select></div>
+    <div class="form-group"><label>委員会</label><select id="sCommittee"><option value="">—</option></select></div>
+    <button class="btn" id="saveProfile">保存</button>
     <div id="profileStatus"></div>
   </div>
   <div class="card">
-    <h2>繝代せ繝ｯ繝ｼ繝牙､画峩</h2>
-    <div class="form-group"><label>迴ｾ蝨ｨ縺ｮ繝代せ繝ｯ繝ｼ繝・/label><input type="password" id="sCurPw"></div>
-    <div class="form-group"><label>譁ｰ縺励＞繝代せ繝ｯ繝ｼ繝・/label><input type="password" id="sNewPw"></div>
-    <div class="form-group"><label>譁ｰ縺励＞繝代せ繝ｯ繝ｼ繝会ｼ育｢ｺ隱搾ｼ・/label><input type="password" id="sNewPw2"></div>
-    <button class="btn" id="changePwBtn">螟画峩</button>
+    <h2>パスワード変更</h2>
+    <div class="form-group"><label>現在のパスワード</label><input type="password" id="sCurPw"></div>
+    <div class="form-group"><label>新しいパスワード</label><input type="password" id="sNewPw"></div>
+    <div class="form-group"><label>新しいパスワード（確認）</label><input type="password" id="sNewPw2"></div>
+    <button class="btn" id="changePwBtn">変更</button>
     <div id="pwStatus"></div>
   </div>
 </div>
 <script>
 const API_BASE=''
-async function a(p,o={}){const t=sessionStorage.getItem('token'),h={'Content-Type':'application/json',...o.headers};if(t)h['Authorization']='Bearer '+t;const r=await fetch(API_BASE+p,{...o,headers:h}),d=await r.json();if(!r.ok)throw new Error(d.error||'繧ｨ繝ｩ繝ｼ');return d}
+async function a(p,o={}){const t=sessionStorage.getItem('token'),h={'Content-Type':'application/json',...o.headers};if(t)h['Authorization']='Bearer '+t;const r=await fetch(API_BASE+p,{...o,headers:h}),d=await r.json();if(!r.ok)throw new Error(d.error||'エラー');return d}
 const $=id=>document.getElementById(id);
 if(!sessionStorage.getItem('token'))window.location.href='02login.html';
-const CLUBS=['蜷ｹ螂乗･ｽ驛ｨ','闌ｶ驕馴Κ','鄒手｡馴Κ','蜊鍋帥驛ｨ','繝・ル繧ｹ驛ｨ螂ｳ蟄・,'繝・ル繧ｹ驛ｨ逕ｷ蟄・,'繧ｵ繝・き繝ｼ驛ｨ','驥守帥驛ｨ','髯ｸ荳企Κ','繝舌せ繧ｱ驛ｨ螂ｳ蟄・,'繝舌せ繧ｱ驛ｨ逕ｷ蟄・,'繝舌Ξ繝ｼ驛ｨ'];
-const COMMS=['謨ｴ蛯吝ｧ泌藤莨・,'逕滓ｴｻ蟋泌藤莨・,'驕ｸ謖咏ｮ｡逅・ｧ泌藤莨・,'蝗ｳ譖ｸ蟋泌藤莨・,'邨ｦ鬟溷ｧ泌藤莨・,'蜷亥罰蟋泌藤莨・,'菴楢ご蟋泌藤莨・,'菫晏▼蟋泌藤莨・,'謾ｾ騾∝ｧ泌藤莨・];
+const CLUBS=['吹奏楽部','茶道部','美術部','卓球部','テニス部女子','テニス部男子','サッカー部','野球部','陸上部','バスケ部女子','バスケ部男子','バレー部'];
+const COMMS=['整備委員会','生活委員会','選挙管理委員会','図書委員会','給食委員会','合唱委員会','体育委員会','保健委員会','放送委員会'];
 CLUBS.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;$('sClub').appendChild(o)});
 COMMS.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;$('sCommittee').appendChild(o)});
 
@@ -69,16 +69,15 @@ loadProfile();
 
 $('saveProfile').addEventListener('click',async()=>{
   const dn=$('sDispName').value.trim(),club=$('sClub').value,comm=$('sCommittee').value;
-  try{await a('/api/me',{method:'PUT',body:JSON.stringify({display_name:dn,club,committee:comm})});$('profileStatus').textContent='笨・菫晏ｭ倥＠縺ｾ縺励◆';$('profileStatus').className='success'}catch(e){$('profileStatus').textContent='笶・'+e.message;$('profileStatus').className='error'}
+  try{await a('/api/me',{method:'PUT',body:JSON.stringify({display_name:dn,club,committee:comm})});$('profileStatus').textContent='✅ 保存しました';$('profileStatus').className='success'}catch(e){$('profileStatus').textContent='❌ '+e.message;$('profileStatus').className='error'}
 });
 $('changePwBtn').addEventListener('click',async()=>{
   const cur=$('sCurPw').value,pw=$('sNewPw').value,pw2=$('sNewPw2').value;
-  if(!cur||!pw){$('pwStatus').textContent='蜈･蜉帙＠縺ｦ縺上□縺輔＞';$('pwStatus').className='error';return}
-  if(pw.length<6){$('pwStatus').textContent='6譁・ｭ嶺ｻ･荳雁ｿ・ｦ√〒縺・;$('pwStatus').className='error';return}
-  if(pw!==pw2){$('pwStatus').textContent='繝代せ繝ｯ繝ｼ繝峨′荳閾ｴ縺励∪縺帙ｓ';$('pwStatus').className='error';return}
-  try{await a('/api/me/password',{method:'POST',body:JSON.stringify({currentPassword:cur,newPassword:pw})});$('pwStatus').textContent='笨・螟画峩縺励∪縺励◆';$('pwStatus').className='success';$('sCurPw').value='';$('sNewPw').value='';$('sNewPw2').value=''}catch(e){$('pwStatus').textContent='笶・'+e.message;$('pwStatus').className='error'}
+  if(!cur||!pw){$('pwStatus').textContent='入力してください';$('pwStatus').className='error';return}
+  if(pw.length<6){$('pwStatus').textContent='6文字以上必要です';$('pwStatus').className='error';return}
+  if(pw!==pw2){$('pwStatus').textContent='パスワードが一致しません';$('pwStatus').className='error';return}
+  try{await a('/api/me/password',{method:'POST',body:JSON.stringify({currentPassword:cur,newPassword:pw})});$('pwStatus').textContent='✅ 変更しました';$('pwStatus').className='success';$('sCurPw').value='';$('sNewPw').value='';$('sNewPw2').value=''}catch(e){$('pwStatus').textContent='❌ '+e.message;$('pwStatus').className='error'}
 });
 </script>
 </body>
 </html>
-

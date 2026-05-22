@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>驛ｨ豢ｻ蜍穂ｺ亥ｮ夊｡ｨ - 荳願陸豐｢荳ｭ蟄ｦ譬｡</title>
+<title>部活動予定表 - 上藤沢中学校</title>
 <style>
 :root{--primary:#3a6b5c;--primary-dark:#2d5548;--primary-light:#5a8a7a;--accent:#e07a5f;--bg:#f7f4f0;--card:#fff;--text:#2c2c2c;--sub:#8a8682;--border:#e8e2d8;--danger:#c96565;--radius:12px;--shadow:0 2px 12px rgba(58,107,92,0.07)}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -53,54 +53,54 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
 </head>
 <body>
 <header class="header">
-  <div class="header-title">驛ｨ豢ｻ蜍穂ｺ亥ｮ夊｡ｨ</div>
+  <div class="header-title">部活動予定表</div>
   <div class="header-right">
     <span id="hUser" style="font-size:12px;color:rgba(255,255,255,.75)"></span>
-    <a href="/" class="header-link">鮟呈攸</a>
+    <a href="/" class="header-link">黒板</a>
   </div>
 </header>
 <main class="main-content">
   <div class="card" id="addForm" style="display:none">
-    <h2>莠亥ｮ壹ｒ霑ｽ蜉</h2>
+    <h2>予定を追加</h2>
     <div class="form-row">
-      <label>繧ｿ繧､繝医Ν<input type="text" id="sTitle" placeholder="邱ｴ鄙定ｩｦ蜷・></label>
-      <label>譌･莉・input type="date" id="sDate"></label>
-      <label>譎る俣<input type="text" id="sTime" placeholder="15:00-17:00"></label>
+      <label>タイトル<input type="text" id="sTitle" placeholder="練習試合"></label>
+      <label>日付<input type="date" id="sDate"></label>
+      <label>時間<input type="text" id="sTime" placeholder="15:00-17:00"></label>
     </div>
     <div class="form-row">
-      <label>蝣ｴ謇<input type="text" id="sLoc" placeholder="菴楢ご鬢ｨ"></label>
-      <label>驛ｨ豢ｻ
+      <label>場所<input type="text" id="sLoc" placeholder="体育館"></label>
+      <label>部活
         <select id="sClub">
-          <option value="">窶・蜈ｨ譬｡ 窶・/option>
-          <option>蜷ｹ螂乗･ｽ驛ｨ</option><option>闌ｶ驕馴Κ</option><option>鄒手｡馴Κ</option><option>蜊鍋帥驛ｨ</option>
-          <option>繝・ル繧ｹ驛ｨ螂ｳ蟄・/option><option>繝・ル繧ｹ驛ｨ逕ｷ蟄・/option><option>繧ｵ繝・き繝ｼ驛ｨ</option>
-          <option>驥守帥驛ｨ</option><option>髯ｸ荳企Κ</option><option>繝舌せ繧ｱ驛ｨ螂ｳ蟄・/option><option>繝舌せ繧ｱ驛ｨ逕ｷ蟄・/option><option>繝舌Ξ繝ｼ驛ｨ</option>
+          <option value="">— 全校 —</option>
+          <option>吹奏楽部</option><option>茶道部</option><option>美術部</option><option>卓球部</option>
+          <option>テニス部女子</option><option>テニス部男子</option><option>サッカー部</option>
+          <option>野球部</option><option>陸上部</option><option>バスケ部女子</option><option>バスケ部男子</option><option>バレー部</option>
         </select>
       </label>
     </div>
     <div class="form-row">
-      <label>蛯呵・textarea id="sDesc" placeholder="莉ｻ諢・></textarea></label>
+      <label>備考<textarea id="sDesc" placeholder="任意"></textarea></label>
     </div>
-    <button class="btn btn-primary" id="sAddBtn">霑ｽ蜉</button>
+    <button class="btn btn-primary" id="sAddBtn">追加</button>
   </div>
   <div class="card">
-    <h2>莠亥ｮ壻ｸ隕ｧ</h2>
+    <h2>予定一覧</h2>
     <div class="filter-bar">
-      <input type="text" id="sSearch" placeholder="驛ｨ豢ｻ繝ｻ繧ｿ繧､繝医Ν縺ｧ讀懃ｴ｢">
-      <select id="sMonthFilter"><option value="">蜈ｨ譛・/option>
-        <option value="01">1譛・/option><option value="02">2譛・/option><option value="03">3譛・/option><option value="04">4譛・/option>
-        <option value="05">5譛・/option><option value="06">6譛・/option><option value="07">7譛・/option><option value="08">8譛・/option>
-        <option value="09">9譛・/option><option value="10">10譛・/option><option value="11">11譛・/option><option value="12">12譛・/option>
+      <input type="text" id="sSearch" placeholder="部活・タイトルで検索">
+      <select id="sMonthFilter"><option value="">全月</option>
+        <option value="01">1月</option><option value="02">2月</option><option value="03">3月</option><option value="04">4月</option>
+        <option value="05">5月</option><option value="06">6月</option><option value="07">7月</option><option value="08">8月</option>
+        <option value="09">9月</option><option value="10">10月</option><option value="11">11月</option><option value="12">12月</option>
       </select>
-      <button class="btn btn-primary btn-sm" id="sRefresh">譖ｴ譁ｰ</button>
+      <button class="btn btn-primary btn-sm" id="sRefresh">更新</button>
     </div>
-    <div class="sched-list" id="schedList"><div class="empty-state">隱ｭ縺ｿ霎ｼ縺ｿ荳ｭ...</div></div>
+    <div class="sched-list" id="schedList"><div class="empty-state">読み込み中...</div></div>
   </div>
 </main>
 <script>
 async function h(p){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(p));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('')}
 const API_BASE=''
-async function a(p,o={}){const t=sessionStorage.getItem('token'),h={'Content-Type':'application/json',...o.headers};if(t)h['Authorization']='Bearer '+t;const r=await fetch(API_BASE+p,{...o,headers:h}),d=await r.json();if(!r.ok)throw new Error(d.error||'繧ｨ繝ｩ繝ｼ');return d}
+async function a(p,o={}){const t=sessionStorage.getItem('token'),h={'Content-Type':'application/json',...o.headers};if(t)h['Authorization']='Bearer '+t;const r=await fetch(API_BASE+p,{...o,headers:h}),d=await r.json();if(!r.ok)throw new Error(d.error||'エラー');return d}
 const A={requireAuth(){const u=sessionStorage.getItem('username'),r=sessionStorage.getItem('role'),t=sessionStorage.getItem('token');if(!u||!r||!t)return null;return{username:u,role:r,token:t}},canManageUsers(){const u=this.requireAuth();return u&&['admin','subadmin'].includes(u.role)},logout(){sessionStorage.clear()}};window.AUTH=A
 const $=id=>document.getElementById(id),esc=s=>{const d=document.createElement('div');d.textContent=s;return d.innerHTML}
 const u=AUTH.requireAuth();if(!u){window.location.href='02login.html'}
@@ -114,31 +114,31 @@ async function load(){
     const q=$('sSearch').value.trim().toLowerCase(),mf=$('sMonthFilter').value;
     const flt=data.filter(d=>(!q||d.title.toLowerCase().includes(q)||d.club.toLowerCase().includes(q))&&(!mf||d.date.startsWith('2026-'+mf)));
     const el=$('schedList');el.innerHTML='';
-    if(!flt.length){el.innerHTML='<div class="empty-state">莠亥ｮ壹・縺ゅｊ縺ｾ縺帙ｓ</div>';return}
+    if(!flt.length){el.innerHTML='<div class="empty-state">予定はありません</div>';return}
     flt.sort((a,b)=>a.date.localeCompare(b.date)||a.time.localeCompare(b.time));
     flt.forEach(d=>{
       const item=document.createElement('div');item.className='sched-item';
-      const dateStr=new Date(d.date+'T00:00:00');const md=(dateStr.getMonth()+1)+'/'+dateStr.getDate()+'('+'譌･譛育↓豌ｴ譛ｨ驥大悄'[dateStr.getDay()]+')';
-      let html='<div class="sched-date">'+md+'</div><div class="sched-body"><div class="sched-title">'+esc(d.title)+(d.time?' <span style="font-size:12px;color:var(--sub);font-weight:400">'+esc(d.time)+'</span>':'')+'</div><div class="sched-meta">'+(d.club?esc(d.club)+' ﾂｷ ':'')+(d.location?esc(d.location):'')+'</div>'+(d.description?'<div class="sched-desc">'+esc(d.description)+'</div>':'')+'</div>';
-      html+=isTeacher?'<button class="btn btn-danger btn-sm" style="flex-shrink:0" data-id="'+d.id+'">蜑企勁</button>':'';
+      const dateStr=new Date(d.date+'T00:00:00');const md=(dateStr.getMonth()+1)+'/'+dateStr.getDate()+'('+'日月火水木金土'[dateStr.getDay()]+')';
+      let html='<div class="sched-date">'+md+'</div><div class="sched-body"><div class="sched-title">'+esc(d.title)+(d.time?' <span style="font-size:12px;color:var(--sub);font-weight:400">'+esc(d.time)+'</span>':'')+'</div><div class="sched-meta">'+(d.club?esc(d.club)+' · ':'')+(d.location?esc(d.location):'')+'</div>'+(d.description?'<div class="sched-desc">'+esc(d.description)+'</div>':'')+'</div>';
+      html+=isTeacher?'<button class="btn btn-danger btn-sm" style="flex-shrink:0" data-id="'+d.id+'">削除</button>':'';
       item.innerHTML=html;
       if(d.description)item.onclick=function(e){if(e.target.tagName!=='BUTTON')this.classList.toggle('expanded')};
-      item.querySelector('[data-id]')?.addEventListener('click',async function(e){e.stopPropagation();if(!confirm('蜑企勁縺励∪縺吶°・・))return;try{await a('/api/schedules/'+this.dataset.id,{method:'DELETE'});load()}catch(e){alert(e.message)}});
+      item.querySelector('[data-id]')?.addEventListener('click',async function(e){e.stopPropagation();if(!confirm('削除しますか？'))return;try{await a('/api/schedules/'+this.dataset.id,{method:'DELETE'});load()}catch(e){alert(e.message)}});
       el.appendChild(item);
     });
-  }catch(e){$('schedList').innerHTML='<div class="empty-state">繧ｨ繝ｩ繝ｼ</div>'}
+  }catch(e){$('schedList').innerHTML='<div class="empty-state">エラー</div>'}
 }
 
 $('sAddBtn').addEventListener('click',async()=>{
   const title=$('sTitle').value.trim(),date=$('sDate').value;
-  if(!title||!date){alert('繧ｿ繧､繝医Ν縺ｨ譌･莉倥・蠢・医〒縺・);return}
-  $('sAddBtn').disabled=true;$('sAddBtn').textContent='霑ｽ蜉荳ｭ...';
+  if(!title||!date){alert('タイトルと日付は必須です');return}
+  $('sAddBtn').disabled=true;$('sAddBtn').textContent='追加中...';
   try{
     await a('/api/schedules',{method:'POST',body:JSON.stringify({title,date,time:$('sTime').value.trim(),location:$('sLoc').value.trim(),club:$('sClub').value,description:$('sDesc').value.trim()})});
     $('sTitle').value='';$('sDate').value='';$('sTime').value='';$('sLoc').value='';$('sClub').value='';$('sDesc').value='';
     load();
   }catch(e){alert(e.message)}
-  $('sAddBtn').disabled=false;$('sAddBtn').textContent='霑ｽ蜉';
+  $('sAddBtn').disabled=false;$('sAddBtn').textContent='追加';
 });
 
 $('sRefresh').addEventListener('click',load);

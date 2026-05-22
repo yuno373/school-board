@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>逶ｸ隲・ｮｱ - 荳願陸豐｢荳ｭ蟄ｦ譬｡</title>
+<title>相談箱 - 上藤沢中学校</title>
 <style>
 :root{--primary:#3a6b5c;--primary-dark:#2d5548;--primary-light:#5a8a7a;--accent:#e07a5f;--bg:#f7f4f0;--card:#fff;--text:#2c2c2c;--sub:#8a8682;--border:#e8e2d8;--danger:#c96565;--radius:12px;--shadow:0 2px 12px rgba(58,107,92,0.07)}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -56,58 +56,58 @@ select:focus{outline:none;border-color:var(--primary);background:#fff}
 </head>
 <body>
 <header class="header">
-  <div class="header-title">逶ｸ隲・ｮｱ</div>
+  <div class="header-title">相談箱</div>
   <div class="header-right">
     <span id="hUser" style="font-size:12px;color:rgba(255,255,255,.75)"></span>
-    <a href="/" class="header-link">鮟呈攸</a>
+    <a href="/" class="header-link">黒板</a>
   </div>
 </header>
 <main class="main-content">
   <div class="card" id="mainCard">
-    <h2>陶 蜈育函縺ｫ逶ｸ隲・☆繧・/h2>
-    <p>謨咏ｧ代・雉ｪ蝠上〒繧ゆｽ輔〒繧よｰ苓ｻｽ縺ｫ縺ｩ縺・◇縲・br>蛹ｿ蜷阪〒繧ょ錐荵励▲縺ｦ騾√ｋ縺薙→繧ゅ〒縺阪∪縺吶・/p>
+    <h2>📩 先生に相談する</h2>
+    <p>教科の質問でも何でも気軽にどうぞ。<br>匿名でも名乗って送ることもできます。</p>
     <div class="form-group">
-      <label>騾∽ｿ｡蜈医・蜈育函</label>
-      <select id="cTo"><option value="all">蜈ｨ謨吝藤</option></select>
+      <label>送信先の先生</label>
+      <select id="cTo"><option value="all">全教員</option></select>
     </div>
     <div class="toggle-row">
-      <button class="toggle-btn active" id="anonBtn">蛹ｿ蜷阪〒騾√ｋ</button>
-      <button class="toggle-btn" id="namedBtn">蜷榊燕繧貞錐荵励ｋ</button>
+      <button class="toggle-btn active" id="anonBtn">匿名で送る</button>
+      <button class="toggle-btn" id="namedBtn">名前を名乗る</button>
     </div>
-    <textarea id="cMsg" placeholder="逶ｸ隲・・螳ｹ繧呈嶌縺・※縺上□縺輔＞窶ｦ"></textarea>
-    <button class="btn btn-primary" id="cSendBtn">騾∽ｿ｡縺吶ｋ</button>
-    <div class="success-msg" id="cSuccess">騾∽ｿ｡縺励∪縺励◆ 笨会ｸ・/div>
+    <textarea id="cMsg" placeholder="相談内容を書いてください…"></textarea>
+    <button class="btn btn-primary" id="cSendBtn">送信する</button>
+    <div class="success-msg" id="cSuccess">送信しました ✉️</div>
   </div>
   <div class="card" id="adminSection" style="display:none">
-    <h2>搭 逶ｸ隲・ｸ隕ｧ</h2>
-    <div class="msg-list" id="msgList"><div class="empty-state">隱ｭ縺ｿ霎ｼ縺ｿ荳ｭ...</div></div>
+    <h2>📋 相談一覧</h2>
+    <div class="msg-list" id="msgList"><div class="empty-state">読み込み中...</div></div>
   </div>
 </main>
 
 <div class="modal-overlay" id="warnModal">
   <div class="modal-box">
-    <h3>笞・・隴ｦ蜻・/h3>
+    <h3>⚠️ 警告</h3>
     <p id="warnText"></p>
     <div class="modal-actions">
-      <button class="btn btn-outline" id="warnCancel">繧ｭ繝｣繝ｳ繧ｻ繝ｫ</button>
-      <button class="btn btn-danger" id="warnConfirm">邏榊ｾ励＞縺九↑縺・/button>
+      <button class="btn btn-outline" id="warnCancel">キャンセル</button>
+      <button class="btn btn-danger" id="warnConfirm">納得いかない</button>
     </div>
   </div>
 </div>
 
 <div class="modal-overlay" id="banModal">
   <div class="modal-box">
-    <h3>圻 蛻ｩ逕ｨ蛛懈ｭ｢</h3>
+    <h3>🚫 利用停止</h3>
     <p id="banText"></p>
     <div class="modal-actions">
-      <button class="btn btn-primary" onclick="document.getElementById('banModal').classList.remove('show')">髢峨§繧・/button>
+      <button class="btn btn-primary" onclick="document.getElementById('banModal').classList.remove('show')">閉じる</button>
     </div>
   </div>
 </div>
 
 <script>
 const API_BASE=''
-async function a(p,o={}){const t=sessionStorage.getItem('token'),h={'Content-Type':'application/json',...o.headers};if(t)h['Authorization']='Bearer '+t;const r=await fetch(API_BASE+p,{...o,headers:h}),d=await r.json();if(!r.ok)throw new Error(d.error||'繧ｨ繝ｩ繝ｼ');return d}
+async function a(p,o={}){const t=sessionStorage.getItem('token'),h={'Content-Type':'application/json',...o.headers};if(t)h['Authorization']='Bearer '+t;const r=await fetch(API_BASE+p,{...o,headers:h}),d=await r.json();if(!r.ok)throw new Error(d.error||'エラー');return d}
 const A={requireAuth(){const u=sessionStorage.getItem('username'),r=sessionStorage.getItem('role'),t=sessionStorage.getItem('token');if(!u||!r||!t)return null;return{username:u,role:r,token:t}}};window.AUTH=A
 const $=id=>document.getElementById(id),esc=s=>{const d=document.createElement('div');d.textContent=s;return d.innerHTML}
 const u=AUTH.requireAuth();if(!u)window.location.href='02login.html'
@@ -117,33 +117,34 @@ if(isTeacher)$('adminSection').style.display='block'
 
 let anon=true,teacherMap={},pendingMsg='',pendingAnon=true,pendingTo='all'
 
-// 蛹ｿ蜷・蜷堺ｹ励ｋ繝医げ繝ｫ
+// 匿名/名乗るトグル
 $('anonBtn').addEventListener('click',()=>{anon=true;$('anonBtn').classList.add('active');$('namedBtn').classList.remove('active')})
 $('namedBtn').addEventListener('click',()=>{anon=false;$('namedBtn').classList.add('active');$('anonBtn').classList.remove('active')})
 
-// 蜈育函荳隕ｧ蜿門ｾ・(async function(){
+// 先生一覧取得
+(async function(){
   try{
     const teachers=await a('/api/consult/teachers');
-    const sel=$('cTo');sel.innerHTML='<option value="all">蜈ｨ謨吝藤</option>';
+    const sel=$('cTo');sel.innerHTML='<option value="all">全教員</option>';
     teachers.forEach(t=>{teacherMap[t.username]=t.display_name;const o=document.createElement('option');o.value=t.username;o.textContent=t.display_name;sel.appendChild(o)})
   }catch(e){}
 })();
 
-// 蛻ｩ逕ｨ蛛懈ｭ｢繝√ぉ繝・け
+// 利用停止チェック
 (async function(){
   try{
     const s=await a('/api/consult/status');
     if(s.banned){
-      $('mainCard').innerHTML='<h2>圻 蛻ｩ逕ｨ蛛懈ｭ｢荳ｭ</h2><p>荳埼←蛻・↑蛻ｩ逕ｨ縺後≠縺｣縺溘◆繧√∝諺蜷咲嶌隲・園縺ｯ縺ゅ→ <strong>'+s.days_remaining+'譌･</strong> 縺泌茜逕ｨ縺・◆縺縺代∪縺帙ｓ縲・/p>';
+      $('mainCard').innerHTML='<h2>🚫 利用停止中</h2><p>不適切な利用があったため、匿名相談所はあと <strong>'+s.days_remaining+'日</strong> ご利用いただけません。</p>';
     }
   }catch(e){}
 })();
 
 $('cSendBtn').addEventListener('click',async()=>{
   const msg=$('cMsg').value.trim();
-  if(!msg){alert('蜀・ｮｹ繧貞・蜉帙＠縺ｦ縺上□縺輔＞');return}
+  if(!msg){alert('内容を入力してください');return}
   const to=$('cTo').value
-  $('cSendBtn').disabled=true;$('cSendBtn').textContent='騾∽ｿ｡荳ｭ...';
+  $('cSendBtn').disabled=true;$('cSendBtn').textContent='送信中...';
   try{
     const r=await a('/api/consult',{method:'POST',body:JSON.stringify({message:msg,to,anonymous:anon})});
     if(r.status==='warning'){
@@ -151,28 +152,28 @@ $('cSendBtn').addEventListener('click',async()=>{
       $('warnText').textContent=r.message;
       $('warnModal').classList.add('show');
     }else if(r.status==='blocked'){
-      $('banText').textContent='荳埼←蛻・↑謚慕ｨｿ縺檎｢ｺ隱阪＆繧後◆縺溘ａ縲∝諺蜷咲嶌隲・園繧・繝ｶ譛亥茜逕ｨ蛛懈ｭ｢縺ｫ縺励∪縺励◆縲・n\n莉雁屓縺ｮ繝｡繝・そ繝ｼ繧ｸ縺ｯ蜈育函縺ｫ蜷榊燕莉倥″縺ｧ螻翫＞縺ｦ縺・∪縺吶・;
+      $('banText').textContent='不適切な投稿が確認されたため、匿名相談所を1ヶ月利用停止にしました。\n\n今回のメッセージは先生に名前付きで届いています。';
       $('banModal').classList.add('show');$('cMsg').value='';
     }else if(r.status==='ok'){
       $('cMsg').value='';$('cSuccess').classList.add('show');setTimeout(()=>$('cSuccess').classList.remove('show'),3000);
     }else if(r.status==='banned'){
-      $('banText').textContent='蛻ｩ逕ｨ蛛懈ｭ｢荳ｭ縺ｧ縺吶りｧ｣髯､縺ｾ縺ｧ縺ゅ→ '+r.days_remaining+' 譌･縺ｧ縺吶・;
+      $('banText').textContent='利用停止中です。解除まであと '+r.days_remaining+' 日です。';
       $('banModal').classList.add('show');
     }
   }catch(e){alert(e.message)}
-  $('cSendBtn').disabled=false;$('cSendBtn').textContent='騾∽ｿ｡縺吶ｋ';
+  $('cSendBtn').disabled=false;$('cSendBtn').textContent='送信する';
 });
 
 $('warnCancel').addEventListener('click',()=>{$('warnModal').classList.remove('show');pendingMsg=''});
 $('warnConfirm').addEventListener('click',async()=>{
   $('warnModal').classList.remove('show');
   if(!pendingMsg)return;
-  $('cSendBtn').disabled=true;$('cSendBtn').textContent='騾∽ｿ｡荳ｭ...';
+  $('cSendBtn').disabled=true;$('cSendBtn').textContent='送信中...';
   try{
     await a('/api/consult/confirm',{method:'POST',body:JSON.stringify({message:pendingMsg,to:pendingTo,anonymous:pendingAnon})});
     $('cMsg').value='';$('cSuccess').classList.add('show');setTimeout(()=>$('cSuccess').classList.remove('show'),3000);
   }catch(e){alert(e.message)}
-  $('cSendBtn').disabled=false;$('cSendBtn').textContent='騾∽ｿ｡縺吶ｋ';pendingMsg='';
+  $('cSendBtn').disabled=false;$('cSendBtn').textContent='送信する';pendingMsg='';
 });
 
 async function loadMsgs(){
@@ -180,17 +181,17 @@ async function loadMsgs(){
   try{
     const data=await a('/api/consult');
     const el=$('msgList');
-    if(!data.length){el.innerHTML='<div class="empty-state">逶ｸ隲・・縺ｾ縺縺ゅｊ縺ｾ縺帙ｓ</div>';return}
+    if(!data.length){el.innerHTML='<div class="empty-state">相談はまだありません</div>';return}
     el.innerHTML=data.slice().reverse().map(m=>{
       const d=new Date(m.created_at);const ds=(d.getMonth()+1)+'/'+d.getDate()+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
-      const flag=m.flagged?'<div class="msg-flag">笞 螳溷錐蝣ｱ蜻・/div>':'';
-      const fromName=m.username?'<div class="msg-user">from: '+esc(m.username)+'</div>':'<div class="msg-user" style="color:var(--sub)">蛹ｿ蜷・/div>';
-      const toLabel=m.to&&m.to!=='all'&&teacherMap[m.to]?' 竊・'+teacherMap[m.to]:'';
-      const toTag=m.to?('<div class="msg-to">騾∽ｿ｡蜈・ '+(m.to==='all'?'蜈ｨ謨吝藤':(teacherMap[m.to]||m.to))+toLabel+'</div>'):'';
-      return '<div class="msg-item"><div class="msg-body">'+fromName+toTag+'<div class="msg-text">'+esc(m.message)+'</div>'+flag+'<div class="msg-time">'+ds+'</div></div><button class="btn btn-danger btn-sm" data-id="'+m.id+'">蜑企勁</button></div>';
+      const flag=m.flagged?'<div class="msg-flag">⚠ 実名報告</div>':'';
+      const fromName=m.username?'<div class="msg-user">from: '+esc(m.username)+'</div>':'<div class="msg-user" style="color:var(--sub)">匿名</div>';
+      const toLabel=m.to&&m.to!=='all'&&teacherMap[m.to]?' → '+teacherMap[m.to]:'';
+      const toTag=m.to?('<div class="msg-to">送信先: '+(m.to==='all'?'全教員':(teacherMap[m.to]||m.to))+toLabel+'</div>'):'';
+      return '<div class="msg-item"><div class="msg-body">'+fromName+toTag+'<div class="msg-text">'+esc(m.message)+'</div>'+flag+'<div class="msg-time">'+ds+'</div></div><button class="btn btn-danger btn-sm" data-id="'+m.id+'">削除</button></div>';
     }).join('');
-    el.querySelectorAll('[data-id]').forEach(b=>b.addEventListener('click',async function(){if(!confirm('蜑企勁縺励∪縺吶°・・))return;try{await a('/api/consult/'+this.dataset.id,{method:'DELETE'});loadMsgs()}catch(e){alert(e.message)}}));
-  }catch(e){$('msgList').innerHTML='<div class="empty-state">繧ｨ繝ｩ繝ｼ</div>'}
+    el.querySelectorAll('[data-id]').forEach(b=>b.addEventListener('click',async function(){if(!confirm('削除しますか？'))return;try{await a('/api/consult/'+this.dataset.id,{method:'DELETE'});loadMsgs()}catch(e){alert(e.message)}}));
+  }catch(e){$('msgList').innerHTML='<div class="empty-state">エラー</div>'}
 }
 loadMsgs();
 </script>

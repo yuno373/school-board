@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
-<title>驛ｨ髟ｷ繝√Ε繝・ヨ - 荳願陸豐｢荳ｭ蟄ｦ譬｡驛ｨ豢ｻ蜍暮ｻ呈攸</title>
+<title>部長チャット - 上藤沢中学校部活動黒板</title>
 <style>
 :root{--primary:#3a6b5c;--primary-dark:#2d5548;--primary-light:#5a8a7a;--accent:#e07a5f;--bg:#f7f4f0;--card:#fff;--text:#2c2c2c;--sub:#8a8682;--border:#e8e2d8;--danger:#c96565;--radius:12px;--shadow:0 2px 12px rgba(58,107,92,0.07)}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -79,29 +79,29 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
 <body>
 <div class="chat-layout">
   <div class="chat-side" id="chatSide">
-    <h2><span>蜿ょ刈閠・/span><span><button class="close-btn" id="sideClose">笨・/button></span></h2>
+    <h2><span>参加者</span><span><button class="close-btn" id="sideClose">✕</button></span></h2>
     <div class="part-list" id="partList"></div>
   </div>
   <div class="chat-main">
     <div class="chat-header">
-      <button class="side-toggle-btn" id="sideToggle">笘ｰ</button>
-      <h1>驛ｨ髟ｷ繝√Ε繝・ヨ <span class="h-count" id="partCount"></span></h1>
-      <a href="/" class="back-btn">竊・謌ｻ繧・/a>
+      <button class="side-toggle-btn" id="sideToggle">☰</button>
+      <h1>部長チャット <span class="h-count" id="partCount"></span></h1>
+      <a href="/" class="back-btn">← 戻る</a>
     </div>
     <div id="chatMsgs"></div>
     <div class="file-preview" id="filePreview"></div>
     <div class="chat-input-area">
-      <button class="btn-icon" id="cFileBtn" title="繝輔ぃ繧､繝ｫ豺ｻ莉・>梼</button>
+      <button class="btn-icon" id="cFileBtn" title="ファイル添付">📎</button>
       <input type="file" id="cFileInput" multiple accept=".pdf,.jpg,.jpeg,.png,.gif,.txt,.doc,.docx" style="display:none">
-      <textarea id="cInput" placeholder="繝｡繝・そ繝ｼ繧ｸ繧貞・蜉・.." rows="1"></textarea>
-      <button id="cSend">竊・/button>
+      <textarea id="cInput" placeholder="メッセージを入力..." rows="1"></textarea>
+      <button id="cSend">→</button>
     </div>
   </div>
 </div>
 <script>
 async function h(p){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(p));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('')}
 const API_BASE=''
-async function a(p,o={}){const t=sessionStorage.getItem('token'),h={'Content-Type':'application/json',...o.headers};if(t)h['Authorization']='Bearer '+t;const r=await fetch(API_BASE+p,{...o,headers:h}),d=await r.json();if(!r.ok)throw new Error(d.error||'繧ｨ繝ｩ繝ｼ');return d}
+async function a(p,o={}){const t=sessionStorage.getItem('token'),h={'Content-Type':'application/json',...o.headers};if(t)h['Authorization']='Bearer '+t;const r=await fetch(API_BASE+p,{...o,headers:h}),d=await r.json();if(!r.ok)throw new Error(d.error||'エラー');return d}
 const A={async login(u,p){const k=await h(p),d=await a('/api/login',{method:'POST',body:JSON.stringify({username:u,password:k})});sessionStorage.setItem('token',d.token);sessionStorage.setItem('username',d.username);sessionStorage.setItem('role',d.role);return d},logout(){sessionStorage.clear()},getUser(){const u=sessionStorage.getItem('username'),r=sessionStorage.getItem('role');return u&&r?{username:u,role:r}:null},requireAuth(){const u=this.getUser();if(!u){window.location.href='02login.html';return null}return u},isAdmin(){const u=this.getUser();return u&&u.role==='admin'},canManageUsers(){const u=this.getUser();return u&&['admin','subadmin'].includes(u.role)},async api(p,o){return a(p,o)},hashPassword(p){return h(p)}};window.AUTH=A
 const API=A.api.bind(A);
 const user = AUTH.requireAuth(); if (!user) window.location.href='02login.html';
@@ -114,7 +114,7 @@ $('sideClose').onclick=()=>$('chatSide').classList.remove('open');
 
 (async function checkAccess(){
   try{await API('/api/chat/participants')}
-  catch(e){alert('繝√Ε繝・ヨ縺ｫ蜿ょ刈縺励※縺・∪縺帙ｓ縲らｮ｡逅・・↓騾｣邨｡縺励※縺上□縺輔＞縲・);window.location.href='01index.html'}
+  catch(e){alert('チャットに参加していません。管理者に連絡してください。');window.location.href='01index.html'}
 })();
 
 let sentFiles = [];
@@ -132,10 +132,10 @@ function renderMsgs(msgs){
     const d=document.createElement('div');d.className='chat-msg '+(own?'own':'other');
     let html='<div class="msg-author">'+(!own?esc(m.username):'')+'</div><div class="msg-text">'+linkify(m.message)+'</div>';
     if(m.files&&m.files.length){
-      html+=m.files.map(f=>'<a href="'+esc(f.url)+'" target="_blank" class="msg-file" rel="noopener"><span>梼</span> '+esc(f.name)+'</a>').join('');
+      html+=m.files.map(f=>'<a href="'+esc(f.url)+'" target="_blank" class="msg-file" rel="noopener"><span>📎</span> '+esc(f.name)+'</a>').join('');
     }
     html+='<div class="msg-time">'+fmtTime(m.created_at)+'</div>';
-    d.innerHTML=html+(canManage?'<button class="del-btn" data-id="'+m.id+'">ﾃ・/button>':'');
+    d.innerHTML=html+(canManage?'<button class="del-btn" data-id="'+m.id+'">×</button>':'');
     msgsEl.appendChild(d);
   }
   msgsEl.scrollTop=msgsEl.scrollHeight;
@@ -154,10 +154,10 @@ async function loadMsgs(){
       }
       lastTime=msgs.reduce((max,m)=>Math.max(max,new Date(m.created_at).getTime()),lastTime);
     }
-    if(!msgsEl.children.length)msgsEl.innerHTML='<div class="chat-empty">繝｡繝・そ繝ｼ繧ｸ縺ｯ縺ゅｊ縺ｾ縺帙ｓ</div>';
+    if(!msgsEl.children.length)msgsEl.innerHTML='<div class="chat-empty">メッセージはありません</div>';
   }catch(e){
-    if(e.message.includes('隱崎ｨｼ')){sessionStorage.clear();window.location.href='02login.html';return}
-    msgsEl.innerHTML='<div class="chat-empty">隱ｭ縺ｿ霎ｼ縺ｿ繧ｨ繝ｩ繝ｼ</div>';
+    if(e.message.includes('認証')){sessionStorage.clear();window.location.href='02login.html';return}
+    msgsEl.innerHTML='<div class="chat-empty">読み込みエラー</div>';
   }
 }
 
@@ -177,12 +177,12 @@ async function sendMsg(){
     await API('/api/chat',{method:'POST',body:JSON.stringify({message:msg,files})});
     input.value='';input.style.height='auto';sentFiles=[];updateFilePreview();
     await loadMsgs();
-  }catch(e){alert('騾∽ｿ｡螟ｱ謨・ '+e.message)}
+  }catch(e){alert('送信失敗: '+e.message)}
   sendBtn.disabled=false;input.focus();
 }
 
 function updateFilePreview(){
-  filePrev.innerHTML=sentFiles.map((f,i)=>'<span class="fp-item"><span>梼</span> '+esc(f.name)+' <button class="fp-del" data-idx="'+i+'">笨・/button></span>').join('');
+  filePrev.innerHTML=sentFiles.map((f,i)=>'<span class="fp-item"><span>📎</span> '+esc(f.name)+' <button class="fp-del" data-idx="'+i+'">✕</button></span>').join('');
   filePrev.querySelectorAll('.fp-del').forEach(b=>b.onclick=()=>{sentFiles.splice(parseInt(b.dataset.idx),1);updateFilePreview()});
 }
 
@@ -195,17 +195,17 @@ fileInput.onchange=()=>{
 async function loadParts(){
   try{
     const parts=await API('/api/chat/participants');
-    const el=$('partList');$('partCount').textContent='('+parts.length+'莠ｺ)';
-    const rl={'admin':'邂｡逅・・,'subadmin':'蜈育函','manager':'','student':'','student-council':'逕溷ｾ剃ｼ・};
-    const subLbl={'club':'驛ｨ髟ｷ','committee':'蟋泌藤髟ｷ'};
+    const el=$('partList');$('partCount').textContent='('+parts.length+'人)';
+    const rl={'admin':'管理者','subadmin':'先生','manager':'','student':'','student-council':'生徒会'};
+    const subLbl={'club':'部長','committee':'委員長'};
     el.innerHTML=parts.map((p,i)=>{
       const dotColor=COLORS[i%COLORS.length];
       const roleLabel=p.role==='manager'?(subLbl[p.role_subtype]||''):(rl[p.role]||'');
       const canDel=canManage&&p.role!=='admin'&&p.role!=='subadmin';
-      return '<div class="part-item"><span class="part-dot" style="background:'+dotColor+'"></span><span class="part-name">'+esc(p.display_name||p.username)+'</span><span class="part-role">'+roleLabel+'</span>'+(canDel?'<button class="part-del" data-u="'+esc(p.username)+'">笨・/button>':'')+'</div>';
+      return '<div class="part-item"><span class="part-dot" style="background:'+dotColor+'"></span><span class="part-name">'+esc(p.display_name||p.username)+'</span><span class="part-role">'+roleLabel+'</span>'+(canDel?'<button class="part-del" data-u="'+esc(p.username)+'">✕</button>':'')+'</div>';
     }).join('');
     el.querySelectorAll('.part-del').forEach(b=>b.onclick=async()=>{
-      if(!confirm('縲・+b.dataset.u+'縲阪ｒ繝√Ε繝・ヨ縺九ｉ蜑企勁縺励∪縺吶°・・))return;
+      if(!confirm('「'+b.dataset.u+'」をチャットから削除しますか？'))return;
       try{await API('/api/chat/participants/'+encodeURIComponent(b.dataset.u),{method:'DELETE'});loadParts()}catch(e){alert(e.message)}
     });
   }catch(e){}
@@ -214,7 +214,7 @@ async function loadParts(){
 msgsEl.onclick=async e=>{
   const btn=e.target.closest('.del-btn');
   if(!btn)return;
-  if(!confirm('蜑企勁縺励∪縺吶°・・))return;
+  if(!confirm('削除しますか？'))return;
   try{await API('/api/chat/'+btn.dataset.id,{method:'DELETE'});btn.closest('.chat-msg').remove()}catch(e){alert(e.message)}
 };
 
@@ -222,7 +222,7 @@ sendBtn.onclick=sendMsg;
 input.onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg()}};
 input.oninput=()=>{input.style.height='auto';input.style.height=Math.min(input.scrollHeight,120)+'px'};
 
-msgsEl.innerHTML='<div class="chat-empty">隱ｭ縺ｿ霎ｼ縺ｿ荳ｭ...</div>';
+msgsEl.innerHTML='<div class="chat-empty">読み込み中...</div>';
 loadMsgs();loadParts();
 setInterval(loadMsgs,3000);
 </script>

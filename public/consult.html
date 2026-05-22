@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>逶ｸ隲・園 - 荳願陸豐｢荳ｭ蟄ｦ譬｡ 驛ｨ豢ｻ蜍暮ｻ呈攸</title>
+<title>相談所 - 上藤沢中学校 部活動黒板</title>
 <style>
 :root{--primary:#1E4D2B;--primary-dark:#153820;--primary-light:#2D6B40;--accent-pink:#f5a0b8;--accent-blue:#a0c4e8;--accent-yellow:#f5e6a0;--accent-green:#a8d8a0;--bg:#f7f5f0;--card:#fff;--text:#2c2c2c;--sub:#8a8682;--border:#e0dcd4;--radius:12px;--shadow:0 2px 12px rgba(30,77,43,0.06)}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -38,25 +38,25 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
 </head>
 <body>
 <header class="header">
-  <div class="header-title">陶 逶ｸ隲・園</div>
+  <div class="header-title">📩 相談所</div>
   <div class="header-right">
-    <a href="01index.html" class="header-link">鮟呈攸縺ｫ謌ｻ繧・/a>
+    <a href="01index.html" class="header-link">黒板に戻る</a>
   </div>
 </header>
 <div class="main">
   <div class="form-section">
-    <h2>笨擾ｸ・譁ｰ縺励＞逶ｸ隲・/h2>
-    <select id="consultTo"><option value="all">蜈ｨ縺ｦ縺ｮ蜈育函縺ｸ</option></select>
-    <textarea id="consultMsg" placeholder="逶ｸ隲・・螳ｹ繧呈嶌縺・※縺上□縺輔＞..."></textarea>
-    <label class="anon-notice"><input type="checkbox" id="consultAnon" checked> 蛹ｿ蜷阪〒騾∽ｿ｡・亥・逕溘↓縺ｯ蜷榊燕縺ｯ隕九∴縺ｾ縺帙ｓ・・/label>
-    <button class="submit-btn" id="consultBtn">騾∽ｿ｡縺吶ｋ</button>
+    <h2>✏️ 新しい相談</h2>
+    <select id="consultTo"><option value="all">全ての先生へ</option></select>
+    <textarea id="consultMsg" placeholder="相談内容を書いてください..."></textarea>
+    <label class="anon-notice"><input type="checkbox" id="consultAnon" checked> 匿名で送信（先生には名前は見えません）</label>
+    <button class="submit-btn" id="consultBtn">送信する</button>
     <div id="consultStatus" style="font-size:13px;color:var(--primary);margin-top:8px;display:none"></div>
   </div>
   <div id="consultList" class="consult-list"></div>
 </div>
 <script>
 const API_BASE=''
-async function a(p,o={}){const t=sessionStorage.getItem('token'),h={'Content-Type':'application/json',...o.headers};if(t)h['Authorization']='Bearer '+t;const r=await fetch(API_BASE+p,{...o,headers:h}),d=await r.json();if(!r.ok)throw new Error(d.error||'繧ｨ繝ｩ繝ｼ');return d}
+async function a(p,o={}){const t=sessionStorage.getItem('token'),h={'Content-Type':'application/json',...o.headers};if(t)h['Authorization']='Bearer '+t;const r=await fetch(API_BASE+p,{...o,headers:h}),d=await r.json();if(!r.ok)throw new Error(d.error||'エラー');return d}
 const $=id=>document.getElementById(id),esc=s=>{const d=document.createElement('div');d.textContent=s;return d.innerHTML};
 const cu=sessionStorage.getItem('username'),role=sessionStorage.getItem('role');
 if(!cu||!sessionStorage.getItem('token'))window.location.href='02login.html';
@@ -75,15 +75,15 @@ loadTeachers();
 // Send consultation
 $('consultBtn').addEventListener('click',async()=>{
   const msg=$('consultMsg').value.trim(),to=$('consultTo').value,anon=$('consultAnon').checked;
-  if(!msg){alert('蜀・ｮｹ繧貞・蜉帙＠縺ｦ縺上□縺輔＞');return}
-  $('consultBtn').disabled=true;$('consultBtn').textContent='騾∽ｿ｡荳ｭ...';
+  if(!msg){alert('内容を入力してください');return}
+  $('consultBtn').disabled=true;$('consultBtn').textContent='送信中...';
   try{
     const r=await a('/api/consult',{method:'POST',body:JSON.stringify({message:msg,to,anonymous:anon})});
     $('consultMsg').value='';
-    const status=$('consultStatus');status.style.display='block';status.textContent='笨・騾∽ｿ｡縺励∪縺励◆縲ょ・逕溘・霑比ｿ｡繧偵♀蠕・■縺上□縺輔＞縲・;
+    const status=$('consultStatus');status.style.display='block';status.textContent='✅ 送信しました。先生の返信をお待ちください。';
     if(isTeacher)loadConsults();
   }catch(e){alert(e.message)}
-  $('consultBtn').disabled=false;$('consultBtn').textContent='騾∽ｿ｡縺吶ｋ';
+  $('consultBtn').disabled=false;$('consultBtn').textContent='送信する';
 });
 
 // Load consultations (teachers only)
@@ -92,15 +92,15 @@ async function loadConsults(){
   const el=$('consultList');
   try{
     const data=await a('/api/consult');
-    if(!data.length){el.innerHTML='<div class="empty">逶ｸ隲・・縺ｾ縺縺ゅｊ縺ｾ縺帙ｓ</div>';return}
+    if(!data.length){el.innerHTML='<div class="empty">相談はまだありません</div>';return}
     el.innerHTML=data.map(item=>{
       const d=new Date(item.created_at);const ds=(d.getMonth()+1)+'/'+d.getDate()+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
       const msgText=esc(item.message||'');
-      const replyHtml=item.teacher_reply?`<div class="reply"><div class="label">笨擾ｸ・霑比ｿ｡・・{esc(item.replied_by||'')}・・/div>${esc(item.teacher_reply)}</div>`:'';
-      const replyForm=item.teacher_reply?'':`<div class="reply-input"><input type="text" placeholder="霑比ｿ｡繧貞・蜉・.." id="reply-${item.id}"><button class="reply-btn" onclick="sendReply('${item.id}')">霑比ｿ｡</button></div>`;
-      return `<div class="consult-card"><div class="meta">${ds} 竊・${esc(item.to||'蜈ｨ蜩｡')}${item.hasMessage?'':''}</div><div class="msg">${msgText||'白 證怜捷蛹悶Γ繝・そ繝ｼ繧ｸ'}</div>${replyHtml}${replyForm}</div>`;
+      const replyHtml=item.teacher_reply?`<div class="reply"><div class="label">✏️ 返信（${esc(item.replied_by||'')}）</div>${esc(item.teacher_reply)}</div>`:'';
+      const replyForm=item.teacher_reply?'':`<div class="reply-input"><input type="text" placeholder="返信を入力..." id="reply-${item.id}"><button class="reply-btn" onclick="sendReply('${item.id}')">返信</button></div>`;
+      return `<div class="consult-card"><div class="meta">${ds} → ${esc(item.to||'全員')}${item.hasMessage?'':''}</div><div class="msg">${msgText||'🔒 暗号化メッセージ'}</div>${replyHtml}${replyForm}</div>`;
     }).join('');
-  }catch(e){el.innerHTML='<div class="empty">隱ｭ縺ｿ霎ｼ縺ｿ繧ｨ繝ｩ繝ｼ</div>'}
+  }catch(e){el.innerHTML='<div class="empty">読み込みエラー</div>'}
 }
 async function sendReply(id){
   const inp=$('reply-'+id);if(!inp)return;
@@ -112,4 +112,3 @@ if(isTeacher)loadConsults();
 </script>
 </body>
 </html>
-

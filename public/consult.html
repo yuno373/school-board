@@ -93,13 +93,14 @@ async function loadConsults(){
     const data=await a('/api/consult');
     if(!data.length){el.innerHTML='<div class="empty">'+(isTeacher?'相談はまだありません':'相談履歴はまだありません')+'</div>';return}
     el.innerHTML=data.map(item=>{
-      const d=new Date(item.created_at);const ds=(d.getMonth()+1)+'/'+d.getDate()+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+      const d=new Date(item.created_at);if(isNaN(d.getTime()))return '';
+      const ds=(d.getMonth()+1)+'/'+d.getDate()+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
       const msgText=esc(item.message||'');
       const replyHtml=item.teacher_reply?`<div class="reply"><div class="label">✏️ 返信（${esc(item.replied_by||'')}）</div>${esc(item.teacher_reply)}</div>`:'';
       const replyForm=(isTeacher&&!item.teacher_reply)?`<div class="reply-input"><input type="text" placeholder="返信を入力..." id="reply-${item.id}"><button class="reply-btn" onclick="sendReply('${item.id}')">返信</button></div>`:'';
-      return `<div class="consult-card"><div class="meta">${ds} → ${esc(item.to==='all'?'全員':item.to)}${isTeacher?' / '+esc(item.from||item.username||''):''}</div><div class="msg">${msgText}</div>${replyHtml}${replyForm}</div>`;
+      return `<div class="consult-card"><div class="meta">${ds} → ${esc(item.to==='all'?'全員':item.to)}${isTeacher?' / '+esc(item.from||''):''}</div><div class="msg">${msgText}</div>${replyHtml}${replyForm}</div>`;
     }).join('');
-  }catch(e){el.innerHTML='<div class="empty">読み込みエラー</div>'}
+  }catch(e){el.innerHTML='<div class="empty">'+(isTeacher?'読み込みエラー':'相談履歴はまだありません')+'</div>'}
 }
 async function sendReply(id){
   const inp=$('reply-'+id);if(!inp)return;

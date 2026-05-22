@@ -16,12 +16,16 @@ const LOCK_DURATIONS = { warn: 10 * 60 * 1000, hard: 60 * 60 * 1000 };
 
 // ---- Rate limiter (in-memory) ----
 const rateMap = new Map();
+let rateLimitRemaining = 300;
+let rateLimitLimit = 300;
 function checkRate(ip) {
   const now = Date.now();
-  const entry = rateMap.get(ip) || { count: 0, reset: now + 60000 };
-  if (now > entry.reset) { entry.count = 0; entry.reset = now + 60000; }
+  let entry = rateMap.get(ip);
+  if (!entry || now > entry.reset) { entry = { count: 0, reset: now + 60000 }; }
   entry.count++;
   rateMap.set(ip, entry);
+  rateLimitRemaining = Math.max(0, 300 - entry.count);
+  rateLimitLimit = 300;
   if (entry.count > 300) return json({ error: 'リクエストが多すぎます' }, 429);
   return null;
 }
@@ -107,7 +111,9 @@ function json(data, status = 200) {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type,Authorization,X-CSRF-Token',
-      'X-Content-Type-Options': 'nosniff'
+      'X-Content-Type-Options': 'nosniff',
+      'X-RateLimit-Remaining': String(rateLimitRemaining),
+      'X-RateLimit-Limit': String(rateLimitLimit)
     }
   });
 }
@@ -241,7 +247,9 @@ async function handleRequest(request, env, ctx) {
       headers: {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type,Authorization,X-CSRF-Token'
+        'Access-Control-Allow-Headers': 'Content-Type,Authorization,X-CSRF-Token',
+        'X-RateLimit-Remaining': String(rateLimitRemaining),
+        'X-RateLimit-Limit': String(rateLimitLimit)
       }
     });
   }

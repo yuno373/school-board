@@ -102,7 +102,8 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
     <button class="tab-btn" data-tab="notifications">通知管理</button>
     <button class="tab-btn" data-tab="posts">投稿管理</button>
     <button class="tab-btn" data-tab="stats">統計</button>
-    <button class="tab-btn" data-tab="chat">チャット管理</button>
+     <button class="tab-btn" data-tab="chat">チャット管理</button>
+     <button class="tab-btn" data-tab="diagnosis">診断</button>
   </div>
 
   <!-- Notifications Tab -->
@@ -180,6 +181,17 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
     <div class="card"><h3>権限別ユーザー数</h3><div class="bar-chart" id="roleChart"></div></div>
     <div class="card"><h3>部活別ユーザー数</h3><div class="bar-chart" id="clubChart"></div></div>
     <div class="card"><h3>委員会別ユーザー数</h3><div class="bar-chart" id="committeeChart"></div></div>
+  </div>
+
+  <!-- Diagnosis Tab -->
+  <div class="tab-content" id="tab-diagnosis">
+    <div class="card">
+      <h3>🩺 システム診断</h3>
+      <p style="font-size:13px;color:var(--sub);margin-bottom:12px">各APIエンドポイント・静的ファイル・データ整合性をチェックし、問題を報告します。</p>
+      <button class="btn btn-primary" id="diagRun">診断を実行</button>
+      <div id="diagProgress" style="margin-top:10px;font-size:13px;color:var(--sub);display:none">診断中...</div>
+    </div>
+    <div id="diagResults"></div>
   </div>
 
   <!-- Chat Tab -->
@@ -402,6 +414,126 @@ function renderChatUsers(){
 }
 $('chatSearchInput').addEventListener('input',renderChatUsers);
 $('chatRoleFilter').addEventListener('change',renderChatUsers);
+
+// === Diagnosis ===
+const DIAG_CHECKS = [
+  { id: 'api-ping', label: 'API 接続確認', icon: '🌐' },
+  { id: 'endpoints', label: 'API エンドポイント一覧', icon: '🔌' },
+  { id: 'static', label: '静的ファイル配信確認', icon: '📄' },
+  { id: 'garbled', label: '文字化けデータチェック', icon: '🔍' },
+  { id: 'integrity', label: 'ユーザーデータ整合性', icon: '📋' },
+  { id: 'ratelimit', label: 'レート制限確認', icon: '⏱' }
+];
+
+async function runDiagnosis() {
+  const container = $('diagResults');
+  const progress = $('diagProgress');
+  const btn = $('diagRun');
+  btn.disabled = true;
+  progress.style.display = 'block';
+  container.innerHTML = '';
+
+  function addResult(checkId, status, msg) {
+    const icons = { pass: '✅', warn: '⚠️', fail: '❌', info: 'ℹ️' };
+    const c = DIAG_CHECKS.find(x => x.id === checkId);
+    const div = document.createElement('div');
+    div.className = 'card';
+    div.style.borderLeft = `4px solid ${status === 'pass' ? 'var(--primary)' : status === 'warn' ? '#d4a017' : status === 'fail' ? 'var(--danger)' : 'var(--sub)'}`;
+    div.dataset.status = status;
+    div.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:start"><strong>${c?c.icon+' '+c.label:checkId}</strong><span style="font-size:11px">${icons[status]||''}</span></div><div style="font-size:12px;color:var(--sub);margin-top:4px;white-space:pre-wrap">${esc(msg)}</div>`;
+    container.appendChild(div);
+  }
+
+  // 1. API Ping
+  try {
+    const t0 = Date.now();
+    const r = await fetch(API_BASE + '/api/me', { headers: { 'Authorization': 'Bearer '+token } });
+    const ms = Date.now() - t0;
+    addResult('api-ping', r.ok?'pass':'fail', r.ok ? `応答時間: ${ms}ms` : `HTTP ${r.status}`);
+  } catch(e) { addResult('api-ping','fail',`接続不可: ${e.message}`) }
+
+  // 2. All endpoints
+  const endpoints = [
+    '/api/users','/api/posts','/api/chat/messages','/api/notifications',
+    '/api/stats','/api/schedule','/api/consult'
+  ];
+  const ep = [];
+  for (const p of endpoints) {
+    try {
+      const r = await fetch(API_BASE + p, { headers: { 'Authorization': 'Bearer '+token } });
+      ep.push(`  ${r.ok?'✅':'❌'} ${p} (${r.status})`);
+    } catch(e) { ep.push(`  ❌ ${p} (接続エラー)`) }
+  }
+  addResult('endpoints', ep.some(l=>l.includes('❌'))?'warn':'pass', ep.join('\n'));
+
+  // 3. Static files
+  const sf = ['01index.html','02login.html','admin.html','consult.html','schedule.html','club-questions.html','post.html','chat.html','posts.html'];
+  const ss = [];
+  for (const f of sf) {
+    try {
+      const r = await fetch(f, { method:'HEAD' });
+      ss.push(`  ${r.ok?'✅':'❌'} ${f} (${r.status})`);
+    } catch(e) { ss.push(`  ❌ ${f} (接続エラー)`) }
+  }
+  addResult('static', ss.some(l=>l.includes('❌'))?'warn':'pass', ss.join('\n'));
+
+  // 4. Garbled text check
+  try {
+    const users = await a('/api/users');
+    const posts = await a('/api/admin/posts');
+    const issues = [];
+    const bad = /[^\x20-\x7E\u3000-\u9FFF\uF900-\uFAFF\u3040-\u309F\u30A0-\u30FF\uFF01-\uFF60\uFFE0-\uFFE6\u2000-\u206F\u2026\u3001-\u3002\uFF08-\uFF09\uFF0C\u30FB\u4E00-\u9FFF]/g;
+    for (const u of users) {
+      for (const f of ['display_name','club','committee','class_num']) {
+        if (u[f] && bad.test(u[f])) { bad.lastIndex=0; issues.push(`ユーザー「${u.username}」の${f}: "${u[f]}"`) }
+      }
+    }
+    for (const p of posts) {
+      if (p.title && bad.test(p.title)) { bad.lastIndex=0; issues.push(`投稿「${p.id}」のタイトル: "${p.title}"`) }
+      if (p.content && bad.test(p.content)) { bad.lastIndex=0; issues.push(`投稿「${p.id}」の本文に異常文字`) }
+    }
+    addResult('garbled', issues.length?'warn':'pass', issues.length ? `${issues.length}件:\n${issues.join('\n')}` : '異常なし');
+  } catch(e) { addResult('garbled','warn',`エラー: ${e.message}`) }
+
+  // 5. Data integrity
+  try {
+    const users = await a('/api/users');
+    const issues = [];
+    for (const u of users) {
+      if (!u.display_name) issues.push(`ユーザー「${u.username}」に表示名なし`);
+      if (!u.role) issues.push(`ユーザー「${u.username}」に権限なし`);
+    }
+    addResult('integrity', issues.length?'warn':'pass', issues.length ? `${issues.length}件:\n${issues.join('\n')}` : '全件問題なし');
+  } catch(e) { addResult('integrity','warn',`エラー: ${e.message}`) }
+
+  // 6. Rate limit
+  try {
+    const r = await fetch(API_BASE + '/api/me', { headers: { 'Authorization': 'Bearer '+token } });
+    const rem = r.headers.get('X-RateLimit-Remaining');
+    const lim = r.headers.get('X-RateLimit-Limit');
+    if (rem !== null && lim !== null) {
+      const pct = Math.round(parseInt(rem)/parseInt(lim)*100);
+      addResult('ratelimit', pct<20?'warn':'pass', `残り ${rem}/${lim} (${pct}%)`);
+    } else {
+      addResult('ratelimit','info','レート制限ヘッダーなし');
+    }
+  } catch(e) { addResult('ratelimit','warn',`エラー: ${e.message}`) }
+
+  // Summary
+  const all = container.querySelectorAll('.card[data-status]');
+  const pass = [...all].filter(d => d.dataset.status === 'pass').length;
+  const warn = [...all].filter(d => d.dataset.status === 'warn' || d.dataset.status === 'info').length;
+  const fail = [...all].filter(d => d.dataset.status === 'fail').length;
+  const summary = document.createElement('div');
+  summary.className = 'card';
+  summary.style.textAlign = 'center';
+  summary.innerHTML = `<div style="font-size:24px">${fail?'🔴':warn?'🟡':'🟢'}</div><div style="font-size:16px;font-weight:700">✅ ${pass} · ⚠️ ${warn} · ❌ ${fail}</div>`;
+  container.insertBefore(summary, container.firstChild);
+  btn.disabled = false;
+  progress.style.display = 'none';
+}
+
+$('diagRun').addEventListener('click', runDiagnosis);
 
 loadUsers();
 </script>

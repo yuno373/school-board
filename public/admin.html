@@ -417,12 +417,12 @@ $('chatRoleFilter').addEventListener('change',renderChatUsers);
 
 // === Diagnosis ===
 const DIAG_CHECKS = [
-  { id: 'api-ping', label: 'API 接続確認', icon: '' },
-  { id: 'endpoints', label: 'API エンドポイント一覧', icon: '' },
-  { id: 'static', label: '静的ファイル配信確認', icon: '' },
-  { id: 'garbled', label: '文字化けデータチェック', icon: '' },
-  { id: 'integrity', label: 'ユーザーデータ整合性', icon: '' },
-  { id: 'ratelimit', label: 'レート制限確認', icon: '' }
+  { id: 'api-ping', label: 'APIサーバー接続' },
+  { id: 'endpoints', label: '主要APIエンドポイント' },
+  { id: 'static', label: 'ページファイル配信' },
+  { id: 'garbled', label: '文字化けチェック' },
+  { id: 'integrity', label: 'ユーザーデータ整合性' },
+  { id: 'ratelimit', label: 'アクセス制限状況' }
 ];
 
 async function runDiagnosis() {
@@ -433,73 +433,125 @@ async function runDiagnosis() {
   progress.style.display = 'block';
   container.innerHTML = '';
 
-  function addResult(checkId, status, msg) {
-    const icons = { pass: 'OK', warn: '!!', fail: 'XX', info: 'ii' };
+  function addResult(checkId, status, msg, detail) {
     const c = DIAG_CHECKS.find(x => x.id === checkId);
+    const label = c ? c.label : checkId;
     const div = document.createElement('div');
     div.className = 'card';
     div.dataset.status = status;
-    div.style.borderLeft = `4px solid ${status === 'pass' ? 'var(--primary)' : status === 'warn' ? '#d4a017' : status === 'fail' ? 'var(--danger)' : 'var(--sub)'}`;
-    div.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:start"><strong>${c?c.icon+' '+c.label:checkId}</strong><span style="font-size:11px">${icons[status]||''}</span></div><div style="font-size:12px;color:var(--sub);margin-top:4px;white-space:pre-wrap">${esc(msg)}</div>`;
+    const borderColor = status === 'pass' ? 'var(--primary)' : status === 'warn' ? '#d4a017' : status === 'fail' ? 'var(--danger)' : 'var(--sub)';
+    div.style.borderLeft = `4px solid ${borderColor}`;
+    div.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center">` +
+      `<strong style="font-size:14px">${esc(label)}</strong>` +
+      `<span style="font-size:14px;font-weight:700;color:${borderColor}">${status === 'pass' ? '正常' : status === 'warn' ? '注意' : status === 'fail' ? '異常' : '情報'}</span></div>` +
+      `<div style="font-size:13px;margin-top:6px;white-space:pre-wrap">${esc(msg)}</div>` +
+      (detail ? `<div style="font-size:11px;color:var(--sub);margin-top:4px;white-space:pre-wrap">${esc(detail)}</div>` : '');
     container.appendChild(div);
   }
 
+  // 1. API Ping
   try {
     const t0 = Date.now();
     const r = await fetch(API_BASE + '/api/me', { headers: { 'Authorization': 'Bearer '+token } });
-    addResult('api-ping', r.ok?'pass':'fail', r.ok ? `OK (${Date.now()-t0}ms)` : `HTTP ${r.status}`);
-  } catch(e) { addResult('api-ping','fail',e.message) }
+    const ms = Date.now() - t0;
+    if (r.ok) {
+      addResult('api-ping', 'pass', `APIサーバーに接続できました（応答時間: ${ms}ms）`);
+    } else {
+      addResult('api-ping', 'fail', `APIサーバーが HTTP ${r.status} を返しました`, `学校タブレットからアクセスする場合、フィルターでブロックされていないか確認してください`);
+    }
+  } catch(e) {
+    addResult('api-ping', 'fail', `APIサーバーに接続できません`, `エラー: ${e.message}\n学校タブレットの場合、Render（onrender.com）経由でアクセスしているか確認してください`);
+  }
 
+  // 2. Endpoints
   const endpoints = ['/api/users','/api/posts','/api/chat/messages','/api/notifications','/api/stats','/api/schedule','/api/consult'];
-  const ep = [];
+  const epOk = [], epNg = [];
   for (const p of endpoints) {
-    try { const r = await fetch(API_BASE + p, { headers: { 'Authorization': 'Bearer '+token } }); ep.push(`  ${r.ok?'OK':'XX'} ${p} (${r.status})`) }
-    catch(e) { ep.push(`  XX ${p} (error)`) }
+    try { const r = await fetch(API_BASE + p, { headers: { 'Authorization': 'Bearer '+token } }); (r.ok ? epOk : epNg).push(p) }
+    catch(e) { epNg.push(p) }
   }
-  addResult('endpoints', ep.some(l=>l.includes('XX'))?'warn':'pass', ep.join('\n'));
+  if (epNg.length === 0) {
+    addResult('endpoints', 'pass', `全${endpoints.length}エンドポイント正常`);
+  } else {
+    addResult('endpoints', 'warn', `${epNg.length}/${endpoints.length} のエンドポイントで問題`, `異常: ${epNg.join(', ')}`);
+  }
 
+  // 3. Static files
   const sf = ['01index.html','02login.html','admin.html','consult.html','schedule.html','club-questions.html','post.html','chat.html','posts.html'];
-  const ss = [];
+  const sfOk = [], sfNg = [];
   for (const f of sf) {
-    try { const r = await fetch(f, { method:'HEAD' }); ss.push(`  ${r.ok?'OK':'XX'} ${f} (${r.status})`) }
-    catch(e) { ss.push(`  XX ${f} (error)`) }
+    try { const r = await fetch(f, { method:'HEAD' }); (r.ok ? sfOk : sfNg).push(f+'('+r.status+')') }
+    catch(e) { sfNg.push(f) }
   }
-  addResult('static', ss.some(l=>l.includes('XX'))?'warn':'pass', ss.join('\n'));
+  if (sfNg.length === 0) {
+    addResult('static', 'pass', `全${sf.length}ファイル正常配信中`);
+  } else {
+    addResult('static', 'warn', `${sfNg.length}ファイルに問題`, `異常: ${sfNg.join(', ')}`);
+  }
 
+  // 4. Garbled text
   try {
     const users = await a('/api/users');
     const posts = await a('/api/admin/posts');
     const issues = [];
     const bad = /[^\x20-\x7E\u3000-\u9FFF\uF900-\uFAFF\u3040-\u309F\u30A0-\u30FF\uFF01-\uFF60\uFFE0-\uFFE6\u2000-\u206F\u2026\u3001-\u3002\uFF08-\uFF09\uFF0C\u30FB\u4E00-\u9FFF]/g;
-    for (const u of users) { for (const f of ['display_name','club','committee','class_num']) { if (u[f] && bad.test(u[f])) { bad.lastIndex=0; issues.push('user '+u.username+' '+f) } } }
-    for (const p of posts) { if (p.title && bad.test(p.title)) { bad.lastIndex=0; issues.push('post '+p.id+' title') } }
-    addResult('garbled', issues.length?'warn':'pass', issues.length ? issues.join('\n') : 'none');
-  } catch(e) { addResult('garbled','warn','error: '+e.message) }
+    for (const u of users) { for (const f of ['display_name','club','committee','class_num']) { if (u[f] && bad.test(u[f])) { bad.lastIndex=0; issues.push(u.username+'の'+f) } } }
+    for (const p of posts) { if (p.title && bad.test(p.title)) { bad.lastIndex=0; issues.push('投稿「'+p.title+'」のタイトル') } }
+    if (issues.length === 0) {
+      addResult('garbled', 'pass', '文字化けデータは見つかりませんでした');
+    } else {
+      addResult('garbled', 'warn', `${issues.length}件の文字化けを検出`, issues.join('\n'));
+    }
+  } catch(e) { addResult('garbled','warn','チェック中にエラー', e.message) }
 
+  // 5. Data integrity
   try {
     const users = await a('/api/users');
     const issues = [];
-    for (const u of users) { if (!u.display_name) issues.push('user '+u.username+' no display_name'); if (!u.role) issues.push('user '+u.username+' no role') }
-    addResult('integrity', issues.length?'warn':'pass', issues.length ? issues.join('\n') : 'all ok');
-  } catch(e) { addResult('integrity','warn','error: '+e.message) }
+    for (const u of users) {
+      if (!u.display_name) issues.push(u.username+' 表示名なし');
+      if (!u.role) issues.push(u.username+' 権限なし');
+      if (!u.grade && !(u.role||'').includes('admin') && !(u.role||'').includes('teacher')) issues.push(u.username+' 学年なし');
+    }
+    if (issues.length === 0) {
+      addResult('integrity', 'pass', `全${users.length}ユーザーのデータに問題なし`);
+    } else {
+      addResult('integrity', 'warn', `${issues.length}件の問題`, issues.join('\n'));
+    }
+  } catch(e) { addResult('integrity','warn','チェック中にエラー', e.message) }
 
+  // 6. Rate limit
   try {
     const r = await fetch(API_BASE + '/api/me', { headers: { 'Authorization': 'Bearer '+token } });
     const rem = r.headers.get('X-RateLimit-Remaining');
     const lim = r.headers.get('X-RateLimit-Limit');
     if (rem !== null && lim !== null) {
-      addResult('ratelimit', parseInt(rem)/parseInt(lim) < 0.2 ? 'warn' : 'pass', `${rem}/${lim}`);
-    } else { addResult('ratelimit','info','no rate limit headers') }
-  } catch(e) { addResult('ratelimit','warn','error: '+e.message) }
+      const pct = Math.round(parseInt(rem)/parseInt(lim)*100);
+      if (pct < 20) {
+        addResult('ratelimit', 'warn', `残りわずか（残り${rem}/${lim}回、${pct}%）`);
+      } else {
+        addResult('ratelimit', 'pass', `十分な余裕あり（残り${rem}/${lim}回、${pct}%）`);
+      }
+    } else {
+      addResult('ratelimit', 'info', 'レート制限の情報が取得できませんでした（環境依存）');
+    }
+  } catch(e) { addResult('ratelimit','warn','取得エラー', e.message) }
 
+  // Summary
   const all = container.querySelectorAll('.card[data-status]');
   const pass = [...all].filter(d => d.dataset.status === 'pass').length;
   const warn = [...all].filter(d => d.dataset.status === 'warn' || d.dataset.status === 'info').length;
   const fail = [...all].filter(d => d.dataset.status === 'fail').length;
+  const now = new Date().toLocaleString('ja-JP');
   const summary = document.createElement('div');
   summary.className = 'card';
   summary.style.textAlign = 'center';
-  summary.innerHTML = `<div style="font-size:24px">${fail?'!!':warn?'??':'OK'}</div><div style="font-size:16px;font-weight:700">OK ${pass} / !! ${warn} / XX ${fail}</div>`;
+  const verdict = fail > 0 ? '一部のシステムに異常があります。管理者に報告してください。' : warn > 0 ? 'いくつか注意点があります。確認してください。' : '全て正常です。問題は見つかりませんでした。';
+  const icon = fail > 0 ? '🔴' : warn > 0 ? '🟡' : '🟢';
+  summary.innerHTML = `<div style="font-size:32px">${icon}</div>` +
+    `<div style="font-size:18px;font-weight:700;margin:8px 0">正常: ${pass} 項目 / 注意: ${warn} 項目 / 異常: ${fail} 項目</div>` +
+    `<div style="font-size:14px;color:${fail?'var(--danger)':warn?'#d4a017':'var(--primary)'}">${esc(verdict)}</div>` +
+    `<div style="font-size:11px;color:var(--sub);margin-top:8px">診断実行: ${now}</div>`;
   container.insertBefore(summary, container.firstChild);
   btn.disabled = false;
   progress.style.display = 'none';

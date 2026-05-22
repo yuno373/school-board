@@ -57,6 +57,13 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
 .user-table input[type=text]:focus{outline:none;border-color:var(--primary);background:#fff}
 .user-table select{padding:2px 4px;border:1px solid var(--border);border-radius:4px;font-size:11px;font-family:inherit;max-width:85px}
 .user-table .role-group{display:flex;flex-direction:column;gap:1px;font-size:10px}
+#batchYears{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
+.batch-year-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding:14px 18px;background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow)}
+.batch-year-row label{font-size:12px;font-weight:700;color:var(--sub);display:flex;flex-direction:column;gap:2px}
+.batch-year-row input[type=number]{padding:6px 10px;border:2px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit;width:60px;text-align:center;background:#faf8f5}
+.batch-year-row input.per-class{width:180px;text-align:left}
+.batch-year-row .btn-remove-year{background:#e74c3c;color:#fff;border:none;border-radius:8px;padding:6px 12px;cursor:pointer;font-size:12px;font-weight:700;margin-left:auto}
+.batch-year-row .btn-remove-year:hover{opacity:.8}
 .batch-form{display:flex;gap:12px;flex-wrap:wrap;align-items:end;padding:18px;background:var(--card);border-radius:var(--radius);margin-bottom:14px;box-shadow:var(--shadow)}
 .batch-form label{font-size:13px;font-weight:700;color:var(--sub);display:flex;flex-direction:column;gap:4px}
 .batch-form input{padding:8px 12px;border:2px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit;width:70px;text-align:center;background:#faf8f5}
@@ -145,14 +152,15 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
   <div class="tab-content" id="tab-batch">
     <div class="id-rule">
       <strong>生徒ID 自動生成</strong><br>
-      入学年度・クラス数・1クラス人数を指定すると、全ての生徒アカウントを自動生成します。<br>
-      ID形式: <strong>{入学年度下2桁 + 通し番号3桁}</strong><br>
-      例: 2026年入学 1組1番 → <strong>26001</strong>、1組2番 → <strong>26002</strong>、2組1番 → <strong>26031</strong>（各クラス30人の場合）
+      年度ごとにクラス数と各クラスの人数を指定できます。<br>
+      クラス人数をカンマ区切りで個別指定（例: 30,30,31,30）も可能。<br>
+      ID形式: <strong>{入学年度下2桁 + 通し番号3桁}</strong>（年度またぎで連番）
     </div>
-    <div class="batch-form">
-      <label>入学年度<input type="number" id="bYear" value="2026" min="2020" max="2035"></label>
-      <label>クラス数<input type="number" id="bClasses" value="4" min="1" max="10"></label>
-      <label>1クラス人数<input type="number" id="bPerClass" value="30" min="1" max="50"></label>
+    <div id="batchYears"></div>
+    <div style="margin:12px 0;display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-outline" id="addBatchYear">+ 年度を追加</button>
+    </div>
+    <div class="batch-form" style="flex-wrap:wrap">
       <label>初期パスワード<input type="text" id="bPassword" value="111111"></label>
       <button class="btn btn-primary" id="bGenerate">生成する</button>
     </div>
@@ -224,7 +232,7 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
 async function h(p){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(p));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('')}
 const API_BASE=''
 async function a(p,o={}){const t=sessionStorage.getItem('token'),h={'Content-Type':'application/json',...o.headers};if(t)h['Authorization']='Bearer '+t;const r=await fetch(API_BASE+p,{...o,headers:h}),d=await r.json();if(!r.ok)throw new Error(d.error||'エラー');return d}
-const $=id=>document.getElementById(id),esc=s=>{const d=document.createElement('div');d.textContent=s;return d.innerHTML};
+const $=id=>document.getElementById(id),$$=s=>Array.from(document.querySelectorAll(s)),esc=s=>{const d=document.createElement('div');d.textContent=s;return d.innerHTML};
 const u=sessionStorage.getItem('username'),r=sessionStorage.getItem('role'),token=sessionStorage.getItem('token');
 if(!u||!r||!token){window.location.href='02login.html'}
 if(!(r||'').split(',').map(s=>s.trim()).some(s=>['admin','teacher'].includes(s))){alert('権限がありません');window.location.href='01index.html'}
@@ -373,17 +381,56 @@ $('bulkGradeDeleteBtn').addEventListener('click', async () => {
 });
 
 // === Batch ===
+function renderBatchYears(){
+  const c=$('batchYears').children;
+  if(c.length===0) addBatchYearRow();
+}
+function addBatchYearRow(){
+  const div=document.createElement('div');div.className='batch-year-row';
+  div.innerHTML='<label>入学年度<input type="number" class="b-year" value="2026" min="2020" max="2035" style="width:70px"></label>'+
+    '<label>クラス数<input type="number" class="b-class-count" value="3" min="1" max="10" style="width:50px"></label>'+
+    '<label>各クラス人数（カンマ区切り）<input type="text" class="per-class" value="30,30,30" placeholder="例: 30,30,31,30"></label>'+
+    '<button class="btn-remove-year" onclick="this.parentElement.remove()">削除</button>';
+  $('batchYears').appendChild(div);
+}
+$('addBatchYear').addEventListener('click',addBatchYearRow);
+function formatClassSize(y){
+  if(Array.isArray(y.classes)) return y.classes.map((c,i)=>'<b>'+(i+1)+'組</b> '+c+'人').join(' ');
+  return '<b>'+y.classes+'クラス</b> 各'+y.perClass+'人';
+}
+function classSizePlain(y){
+  if(Array.isArray(y.classes)) return y.classes.map((c,i)=>(i+1)+'組'+c+'人').join(' ');
+  return y.classes+'クラス各'+y.perClass+'人';
+}
 $('bGenerate').addEventListener('click',async()=>{
-  const year=$('bYear').value,classes=$('bClasses').value,perClass=$('bPerClass').value,password=$('bPassword').value;
-  if(!confirm(year+'年度 入学 '+classes+'クラス '+perClass+'人/クラス で生成しますか？'))return;
+  const rows=$$('.batch-year-row');
+  if(rows.length===0){alert('年度を追加してください');return}
+  const years=[];
+  for(const r of rows){
+    const year=r.querySelector('.b-year').value;
+    const classCount=parseInt(r.querySelector('.b-class-count').value)||1;
+    const perClassRaw=r.querySelector('.per-class').value;
+    const parts=perClassRaw.split(',').map(x=>parseInt(x.trim())).filter(x=>x>0);
+    if(parts.length===0){alert(year+'年度: クラス人数が不正です');return}
+    if(parts.length===1){
+      years.push({year,classes:classCount,perClass:parts[0]});
+    }else{
+      if(parts.length!==classCount){alert(year+'年度: 人数指定('+parts.length+'クラス分)がクラス数('+classCount+')と一致しません');return}
+      years.push({year,classes:parts});
+    }
+  }
+  const password=$('bPassword').value;
+  const label=years.map(y=>y.year+'年度 '+classSizePlain(y)).join('、');
+  if(!confirm('以下の内容で生成しますか？\n'+label+'\nパスワード: '+password))return;
   $('bGenerate').disabled=true;$('bGenerate').textContent='生成中...';
   try{
-    const r=await a('/api/users/batch',{method:'POST',body:JSON.stringify({year,classes,perClass,password})});
+    const r=await a('/api/users/batch',{method:'POST',body:JSON.stringify({years,password})});
     const box=$('bResult');box.className='result-box show';
     box.innerHTML='<strong>'+r.created+'人</strong> の生徒IDを生成しました<br>初期パスワード: <strong>'+esc(r.password)+'</strong><br>生成ID: '+r.students.slice(0,5).join(', ')+(r.students.length>5?' …他'+(r.students.length-5)+'件':'');
   }catch(e){alert(e.message)}
   $('bGenerate').disabled=false;$('bGenerate').textContent='生成する';
 });
+renderBatchYears();
 
 // === Manual Create ===
 $('mCreate').addEventListener('click', async () => {

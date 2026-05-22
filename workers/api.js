@@ -616,31 +616,58 @@ async function handleRequest(request, env, ctx) {
     if (path === '/api/users/batch' && method === 'POST') {
       authErr = requireAuth(user, ['admin', 'teacher']);
       if (authErr) return authErr;
-      const { year, classes, perClass, password } = await request.json();
-      const y = parseInt(year), c = parseInt(classes), p = parseInt(perClass);
-      if (!y || !c || !p || c < 1 || p > 50) return json({ error: 'パラメータが不正です' }, 400);
-      const yr = y % 100;
+      const body = await request.json();
+      const password = body.password || '111111';
       const users = await r2Get(env.DATA, 'users.json') || [];
-      const pw = password || '111111';
       const created = [];
       let seq = 1;
-      for (let cl = 1; cl <= c; cl++) {
-        for (let seat = 1; seat <= p; seat++) {
-          const studentId = `${yr}${String(seq).padStart(3,'0')}`;
-          seq++;
-          if (users.find(u => u.username === studentId)) continue;
-          const newUser = {
-            id: uuid(), username: studentId, password: await hp(pw), password_plain: pw,
-            role: 'student', grade: String(y), class_num: String(cl), seat_num: String(seat),
-            club: '', committee: '', display_name: studentId, icon: '', created_at: new Date().toISOString()
-          };
-          users.push(newUser);
-          created.push(studentId);
+
+      // New format: { years: [{ year, classes: [{ perClass }] }] }
+      // Old format: { year, classes, perClass }
+      if (body.years) {
+        for (const yc of body.years) {
+          const y = parseInt(yc.year);
+          if (!y) continue;
+          const yr = y % 100;
+          // yc.classes can be a number (all same size) or an array
+          const classList = Array.isArray(yc.classes)
+            ? yc.classes.map((pc, i) => ({ num: i + 1, perClass: parseInt(pc) || 30 }))
+            : Array.from({ length: parseInt(yc.classes) || 1 }, (_, i) => ({ num: i + 1, perClass: parseInt(yc.perClass) || 30 }));
+          for (const cl of classList) {
+            for (let seat = 1; seat <= cl.perClass; seat++) {
+              const studentId = `${yr}${String(seq).padStart(3,'0')}`;
+              seq++;
+              if (users.find(u => u.username === studentId)) continue;
+              users.push({
+                id: uuid(), username: studentId, password: await hp(password), password_plain: password,
+                role: 'student', grade: String(y), class_num: String(cl.num), seat_num: String(seat),
+                club: '', committee: '', display_name: studentId, icon: '', created_at: new Date().toISOString()
+              });
+              created.push(studentId);
+            }
+          }
+        }
+      } else {
+        const y = parseInt(body.year), c = parseInt(body.classes), p = parseInt(body.perClass);
+        if (!y || !c || !p || c < 1 || p > 50) return json({ error: 'パラメータが不正です' }, 400);
+        const yr = y % 100;
+        for (let cl = 1; cl <= c; cl++) {
+          for (let seat = 1; seat <= p; seat++) {
+            const studentId = `${yr}${String(seq).padStart(3,'0')}`;
+            seq++;
+            if (users.find(u => u.username === studentId)) continue;
+            users.push({
+              id: uuid(), username: studentId, password: await hp(password), password_plain: password,
+              role: 'student', grade: String(y), class_num: String(cl), seat_num: String(seat),
+              club: '', committee: '', display_name: studentId, icon: '', created_at: new Date().toISOString()
+            });
+            created.push(studentId);
+          }
         }
       }
       await r2Put(env.DATA, 'users.json', users);
-      await auditLog(env, 'batch_create', user.username, { count: created.length, year, classes, perClass });
-      return json({ created: created.length, password: pw, students: created });
+      await auditLog(env, 'batch_create', user.username, { count: created.length, body: JSON.stringify(body) });
+      return json({ created: created.length, password, students: created });
     }
 
     // POST /api/users/batch-delete

@@ -255,6 +255,25 @@ async function handleRequest(request, env, ctx) {
     // ============================================================
     // 1. AUTH ENDPOINTS
     // ============================================================
+    if (path === '/api/setup' && method === 'POST') {
+      const { username, password, role } = await request.json();
+      if (!username || !password) return json({ error: '入力してください' }, 400);
+      const users = await r2Get(env.DATA, 'users.json') || [];
+      const existing = users.find(u => u.username === username);
+      if (existing) return json({ error: '既に存在します' }, 409);
+      const newUser = {
+        id: crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2),
+        username, password, password_plain: '',
+        role: role || 'student', role_subtype: '',
+        grade: '', class_num: '', seat_num: '',
+        club: '', committee: '',
+        display_name: username, created_at: new Date().toISOString()
+      };
+      users.push(newUser);
+      await r2Put(env.DATA, 'users.json', users);
+      await auditLog(env, 'setup', username, { action: 'create_first_admin' });
+      return json({ message: '作成しました', username });
+    }
     if (path === '/api/login' && method === 'POST') {
       const { username, password } = await request.json();
       if (!username || !password) return json({ error: '入力してください' }, 400);
@@ -488,7 +507,8 @@ async function handleRequest(request, env, ctx) {
       if (password.length < 6) return json({ error: '6文字以上' }, 400);
       const newRoles = role.split(',').map(r => r.trim());
       if (!newRoles.every(r => VALID_ROLES.includes(r))) return json({ error: '権限が不正です' }, 400);
-      if (newRoles.includes('admin')) return json({ error: '管理者は直接作成できません' }, 403);
+      const isSelfAdmin = newRoles.includes('admin');
+      if (isSelfAdmin && !user.role.split(',').map(r => r.trim()).includes('admin')) return json({ error: '管理者の作成は管理者のみ可能です' }, 403);
       const users = await r2Get(env.DATA, 'users.json') || [];
       if (users.find(u => u.username === username)) return json({ error: '既に存在します' }, 409);
       const newUser = {
@@ -1156,6 +1176,36 @@ async function handleRequest(request, env, ctx) {
         results[filename] = 'ok';
       }
       return json({ results });
+    }
+
+    // ============================================================
+    // 18. STATIC FILE UPLOAD (base64 → R2)
+    // ============================================================
+    if (path === '/api/static-upload' && method === 'POST') {
+      const authErr = requireAuth(user, ['admin']);
+      if (authErr) return authErr;
+      const { filename, content } = await request.json();
+      if (!filename || !content) return json({ error: 'filename と content が必要です' }, 400);
+      let decoded;
+      try { decoded = atob(content); } catch(e) { return json({ error: 'Base64 デコードエラー' }, 400); }
+      const decodedBytes = new Uint8Array(decoded.length);
+      for (let i = 0; i < decoded.length; i++) decodedBytes[i] = decoded.charCodeAt(i);
+      const ext = filename.includes('.') ? filename.split('.').pop() : 'html';
+      const mimeMap = { 'html': 'text/html; charset=utf-8', 'js': 'application/javascript; charset=utf-8', 'css': 'text/css; charset=utf-8', 'json': 'application/json' };
+      const contentType = mimeMap[ext] || 'text/plain; charset=utf-8';
+      await env.DATA.put('static/' + filename, decodedBytes, { httpMetadata: { contentType } });
+      await auditLog(env, 'static_upload', user.username, { filename });
+      return json({ ok: true, filename });
+    }
+
+    // ============================================================
+    // 19. STATIC FILES (serve from R2)
+    // ============================================================
+    const staticPath = 'static' + (path === '/' ? '/01index.html' : path);
+    const staticObj = await env.DATA.get(staticPath).catch(() => null);
+    if (staticObj) {
+      const headers = { 'Content-Type': staticObj.httpMetadata?.contentType || 'text/html; charset=utf-8' };
+      return new Response(staticObj.body, { headers });
     }
 
     // ============================================================

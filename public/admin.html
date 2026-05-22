@@ -44,14 +44,19 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
 .btn-danger:hover{background:#b55a5a}
 .btn-outline{background:0 0;border:2px solid var(--border);color:var(--sub)}
 .btn-outline:hover{border-color:var(--primary);color:var(--primary)}
-.btn-sm{padding:4px 10px;font-size:11px;border-radius:6px}
-.user-table{width:100%;border-collapse:separate;border-spacing:0;font-size:13px;border-radius:var(--radius);overflow:hidden}
-.user-table th{background:#f0ede8;padding:10px 12px;text-align:left;font-weight:700;color:var(--sub);border-bottom:1px solid var(--border);position:sticky;top:0}
-.user-table td{padding:8px 12px;border-bottom:1px solid var(--border);vertical-align:middle;background:var(--card)}
+.btn-sm{padding:2px 6px;font-size:10px;border-radius:4px}
+.user-table{width:100%;border-collapse:separate;border-spacing:0;font-size:11px;border-radius:var(--radius);overflow:hidden;table-layout:fixed}
+.user-table th{background:#f0ede8;padding:6px 4px;text-align:left;font-weight:700;color:var(--sub);border-bottom:1px solid var(--border);position:sticky;top:0;white-space:nowrap}
+.user-table td{padding:4px 4px;border-bottom:1px solid var(--border);vertical-align:middle;background:var(--card);white-space:nowrap}
+.user-table td:nth-child(6),.user-table th:nth-child(6){width:28px;text-align:center}
+.user-table td:nth-child(7),.user-table th:nth-child(7){width:28px;text-align:center}
+.user-table td:nth-child(8),.user-table th:nth-child(8){width:32px;text-align:center}
 .user-table tr:hover td{background:#faf8f5}
 .user-table select{padding:4px 8px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:inherit}
-.user-table input[type=text]{padding:4px 8px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:inherit;width:100%;min-width:50px;background:#faf8f5}
+.user-table input[type=text]{padding:2px 4px;border:1px solid var(--border);border-radius:4px;font-size:11px;font-family:inherit;width:100%;min-width:40px;background:#faf8f5}
 .user-table input[type=text]:focus{outline:none;border-color:var(--primary);background:#fff}
+.user-table select{padding:2px 4px;border:1px solid var(--border);border-radius:4px;font-size:11px;font-family:inherit;max-width:85px}
+.user-table .role-group{display:flex;flex-direction:column;gap:1px;font-size:10px}
 .batch-form{display:flex;gap:12px;flex-wrap:wrap;align-items:end;padding:18px;background:var(--card);border-radius:var(--radius);margin-bottom:14px;box-shadow:var(--shadow)}
 .batch-form label{font-size:13px;font-weight:700;color:var(--sub);display:flex;flex-direction:column;gap:4px}
 .batch-form input{padding:8px 12px;border:2px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit;width:70px;text-align:center;background:#faf8f5}
@@ -69,7 +74,15 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
 @media(max-width:600px){
   .header{flex-direction:column;align-items:flex-start;gap:8px}
   .header-right{width:100%;justify-content:space-between}
-  .user-table{font-size:11px}.user-table td,.user-table th{padding:4px 6px}
+  .user-table{font-size:10px}.user-table td,.user-table th{padding:3px 2px}
+  .user-table td:nth-child(6),.user-table th:nth-child(6){width:20px}
+  .user-table td:nth-child(7),.user-table th:nth-child(7){width:20px}
+  .user-table td:nth-child(8),.user-table th:nth-child(8){width:24px}
+}
+@media(max-width:480px){
+  .user-table{font-size:9px}
+  .user-table .role-group{font-size:8px}
+  .btn-sm{padding:1px 4px;font-size:9px}
 }
 </style>
 </head>
@@ -133,6 +146,22 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
       <button class="btn btn-primary" id="bGenerate">生成する</button>
     </div>
     <div class="result-box" id="bResult"></div>
+    <div style="margin-top:24px;border-top:2px dashed var(--border);padding-top:20px">
+      <h3 style="font-size:15px;font-weight:700;margin-bottom:12px;color:var(--text)">手動でユーザー登録</h3>
+      <div class="batch-form" style="flex-wrap:wrap">
+        <label>ログインID<input type="text" id="mUser" placeholder="例: 101005" style="width:90px"></label>
+        <label>表示名<input type="text" id="mDisp" placeholder="氏名" style="width:90px"></label>
+        <label>パスワード<input type="text" id="mPass" value="111111" style="width:70px"></label>
+        <label>権限<select id="mRole"><option value="student">生徒</option><option value="teacher">先生</option><option value="president">部長</option><option value="vice-president">副部長</option><option value="chairperson">委員長</option><option value="admin">管理者</option></select></label>
+        <label>学年<input type="number" id="mGrade" min="1" max="3" style="width:50px"></label>
+        <label>クラス<input type="number" id="mClass" min="1" max="10" style="width:50px"></label>
+        <label>番号<input type="number" id="mSeat" min="1" max="50" style="width:60px"></label>
+        <label>部活<select id="mClub"><option value="">---</option><option>吹奏楽部</option><option>茶道部</option><option>美術部</option><option>卓球部</option><option>テニス部女子</option><option>テニス部男子</option><option>サッカー部</option><option>野球部</option><option>陸上部</option><option>バスケ部女子</option><option>バスケ部男子</option><option>バレー部</option></select></label>
+        <label>委員会<select id="mComm"><option value="">---</option><option>整備委員会</option><option>生活委員会</option><option>選挙管理委員会</option><option>図書委員会</option><option>給食委員会</option><option>合唱委員会</option><option>体育委員会</option><option>保健委員会</option><option>放送委員会</option></select></label>
+        <button class="btn btn-primary" id="mCreate">登録</button>
+      </div>
+      <div id="mResult" style="margin-top:8px;font-size:13px"></div>
+    </div>
   </div>
 
   <!-- Posts Tab -->
@@ -227,17 +256,17 @@ function renderUsers(){
     const lockInfo=''; // would need separate lock query
     const roleHtml=ROLES.map(rr=>{
       const checked=userRoles.includes(rr.v);
-      return `<label style="font-size:11px;white-space:nowrap;cursor:pointer;display:flex;align-items:center;gap:3px"><input type="checkbox" ${checked?'checked':''} data-id="${x.id}" data-v="${rr.v}"> ${esc(rr.l)}</label>`;
+      return `<label style="font-size:10px;white-space:nowrap;cursor:pointer;display:flex;align-items:center;gap:2px"><input type="checkbox" ${checked?'checked':''} data-id="${x.id}" data-v="${rr.v}"> ${esc(rr.l)}</label>`;
     }).join('');
-    const actions=`<div style="display:flex;gap:4px;flex-wrap:wrap">
-      ${sd&&x.id!==u.id?`<button class="btn btn-danger btn-sm" onclick="delUser('${x.id}','${esc(x.username)}')">削除</button>`:''}
-      <button class="btn btn-outline btn-sm" onclick="resetPwd('${x.id}','${esc(x.username)}')">PW再発行</button>
-      <button class="btn btn-outline btn-sm" onclick="unlockUser('${x.id}')">ロック解除</button>
+    const actions=`<div style="display:flex;gap:2px;flex-wrap:nowrap">
+      ${sd&&x.id!==u.id?`<button class="btn btn-danger btn-sm" onclick="delUser('${x.id}','${esc(x.username)}')">削</button>`:''}
+      <button class="btn btn-outline btn-sm" onclick="resetPwd('${x.id}','${esc(x.username)}')">PW</button>
+      <button class="btn btn-outline btn-sm" onclick="unlockUser('${x.id}')">解除</button>
     </div>`;
-    tr.innerHTML=`<td>${esc(x.username)}</td>
-      <td><input type="text" value="${esc(x.display_name||'')}" onchange="updField('${x.id}','display_name',this.value)" style="width:90px"></td>
-      <td>${sd?pwShow+'<br><input type="text" placeholder="新PW" onchange="setPwd(\'${x.id}\',this)" style="width:70px;font-size:11px;margin-top:4px">':'—'}</td>
-      <td><div style="display:flex;flex-direction:column;gap:2px">${roleHtml}</div></td>
+    tr.innerHTML=`<td style="font-size:10px">${esc(x.username)}</td>
+      <td><input type="text" value="${esc(x.display_name||'')}" onchange="updField('${x.id}','display_name',this.value)" style="width:60px"></td>
+      <td style="white-space:normal">${sd?pwShow+'<br><input type="text" placeholder="新PW" onchange="setPwd(\'${x.id}\',this)" style="width:50px;font-size:10px;margin-top:2px">':'—'}</td>
+      <td><div class="role-group">${roleHtml}</div></td>
       <td>${isAdmin?'<span class="lock-badge">管理者</span>':''}</td>
       <td><input type="text" value="${esc(x.grade||'')}" onchange="updField('${x.id}','grade',this.value)" style="width:40px"></td>
       <td><input type="text" value="${esc(x.class_num||'')}" onchange="updField('${x.id}','class_num',this.value)" style="width:35px"></td>
@@ -279,6 +308,31 @@ $('bGenerate').addEventListener('click',async()=>{
     box.innerHTML='<strong>'+r.created+'人</strong> の生徒IDを生成しました<br>初期パスワード: <strong>'+esc(r.password)+'</strong><br>生成ID: '+r.students.slice(0,5).join(', ')+(r.students.length>5?' …他'+(r.students.length-5)+'件':'');
   }catch(e){alert(e.message)}
   $('bGenerate').disabled=false;$('bGenerate').textContent='生成する';
+});
+
+// === Manual Create ===
+$('mCreate').addEventListener('click', async () => {
+  const user = $('mUser').value.trim(), pass = $('mPass').value.trim();
+  const disp = $('mDisp').value.trim() || user, role = $('mRole').value;
+  const grade = $('mGrade').value, cls = $('mClass').value, seat = $('mSeat').value;
+  const club = $('mClub').value, comm = $('mComm').value;
+  if (!user || !pass) { $('mResult').textContent = 'IDとパスワードは必須です'; return }
+  if (!user.match(/^\d+$/)) { $('mResult').textContent = 'IDは数字のみです'; return }
+  $('mCreate').disabled = true; $('mCreate').textContent = '登録中...';
+  try {
+    const h = await h(pass);
+    const r = await a('/api/users', { method: 'POST', body: JSON.stringify({
+      username: user, password: h, role,
+      grade: grade || '', class_num: cls || '', seat_num: seat || '',
+      club, committee, display_name: disp
+    })});
+    $('mResult').style.color = 'var(--primary)';
+    $('mResult').textContent = '登録しました: ' + r.username;
+    $('mUser').value = ''; $('mDisp').value = '';
+    if ($('mGrade').value) { const n = parseInt($('mGrade').value) + 1; if (n <= 3) $('mGrade').value = n }
+    loadUsers();
+  } catch(e) { $('mResult').style.color = 'var(--danger)'; $('mResult').textContent = 'エラー: ' + e.message }
+  $('mCreate').disabled = false; $('mCreate').textContent = '登録';
 });
 
 // === Posts ===

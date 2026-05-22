@@ -4,7 +4,7 @@ const https = require('https');
 const app = express();
 
 app.use('/api', (req, res) => {
-  const u = new URL(req.url, 'https://school-board-api.dajianweixi.workers.dev');
+  const u = new URL('/api' + req.url, 'https://school-board-api.dajianweixi.workers.dev');
   const opts = {
     hostname: u.hostname, port: 443, path: u.pathname + u.search,
     method: req.method,

@@ -464,7 +464,7 @@ async function runDiagnosis() {
   }
 
   // 2. Endpoints
-  const endpoints = ['/api/users','/api/posts','/api/chat/messages','/api/notifications','/api/stats','/api/schedule','/api/consult'];
+  const endpoints = ['/api/users','/api/posts','/api/chat/messages','/api/notifications','/api/stats','/api/schedules','/api/consult'];
   const epOk = [], epNg = [];
   for (const p of endpoints) {
     try { const r = await fetch(API_BASE + p, { headers: { 'Authorization': 'Bearer '+token } }); (r.ok ? epOk : epNg).push(p) }
@@ -477,7 +477,7 @@ async function runDiagnosis() {
   }
 
   // 3. Static files
-  const sf = ['01index.html','02login.html','admin.html','consult.html','schedule.html','club-questions.html','post.html','chat.html','posts.html'];
+  const sf = ['01index.html','02login.html','admin.html','consult.html','schedule.html','club-questions.html','chat.html'];
   const sfOk = [], sfNg = [];
   for (const f of sf) {
     try { const r = await fetch(f, { method:'HEAD' }); (r.ok ? sfOk : sfNg).push(f+'('+r.status+')') }

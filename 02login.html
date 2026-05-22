@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>ログイン - 上藤沢中学校 部活動黒板</title>
+<title>繝ｭ繧ｰ繧､繝ｳ - 荳願陸豐｢荳ｭ蟄ｦ譬｡ 驛ｨ豢ｻ蜍暮ｻ呈攸</title>
 <style>
 :root{--primary:#1E4D2B;--primary-dark:#153820;--primary-light:#2D6B40;--accent-pink:#f5a0b8;--accent-blue:#a0c4e8;--accent-yellow:#f5e6a0;--accent-green:#a8d8a0;--bg:#f7f5f0;--card:#fff;--text:#2c2c2c;--sub:#8a8682;--border:#e0dcd4;--danger:#c96565;--radius:12px;--shadow:0 4px 20px rgba(30,77,43,0.08)}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -37,48 +37,49 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
 <div class="login-container">
   <div class="login-card">
     <div class="logo">
-      <div class="logo-icon">📋</div>
-      <h1>部活動黒板</h1>
-      <p>上藤沢中学校</p>
+      <div class="logo-icon">搭</div>
+      <h1>驛ｨ豢ｻ蜍暮ｻ呈攸</h1>
+      <p>荳願陸豐｢荳ｭ蟄ｦ譬｡</p>
     </div>
     <div class="error" id="errorMsg"></div>
     <div class="lock-info" id="lockInfo"></div>
     <form id="loginForm" autocomplete="off">
       <div class="form-group">
-        <label for="username">ログインID（表示名でも可）</label>
-        <input type="text" id="username" placeholder="ログインIDまたは表示名" autocomplete="username" required>
+        <label for="username">繝ｭ繧ｰ繧､繝ｳID・郁｡ｨ遉ｺ蜷阪〒繧ょ庄・・/label>
+        <input type="text" id="username" placeholder="繝ｭ繧ｰ繧､繝ｳID縺ｾ縺溘・陦ｨ遉ｺ蜷・ autocomplete="username" required>
       </div>
       <div class="form-group">
-        <label for="password">パスワード</label>
-        <input type="password" id="password" placeholder="パスワードを入力" autocomplete="current-password" required>
+        <label for="password">繝代せ繝ｯ繝ｼ繝・/label>
+        <input type="password" id="password" placeholder="繝代せ繝ｯ繝ｼ繝峨ｒ蜈･蜉・ autocomplete="current-password" required>
       </div>
-      <button type="submit" class="login-btn" id="loginBtn">ログイン</button>
+      <button type="submit" class="login-btn" id="loginBtn">繝ｭ繧ｰ繧､繝ｳ</button>
     </form>
-    <div class="footer"><a href="#">上藤沢中学校 部活動黒板</a></div>
+    <div class="footer"><a href="#">荳願陸豐｢荳ｭ蟄ｦ譬｡ 驛ｨ豢ｻ蜍暮ｻ呈攸</a></div>
   </div>
 </div>
 <script>
-const API_BASE='https://school-board-api.dajianweixi.workers.dev';
+const API_BASE=''
 const $=id=>document.getElementById(id);
 $('loginForm').addEventListener('submit',async e=>{
-  e.preventDefault();const btn=$('loginBtn');btn.disabled=true;btn.textContent='ログイン中...';
+  e.preventDefault();const btn=$('loginBtn');btn.disabled=true;btn.textContent='繝ｭ繧ｰ繧､繝ｳ荳ｭ...';
   $('errorMsg').className='error';$('lockInfo').className='lock-info';
   try{
     const u=$('username').value.trim(),p=$('password').value;
-    if(!u||!p){$('errorMsg').textContent='入力してください';$('errorMsg').className='error show';btn.disabled=false;btn.textContent='ログイン';return}
+    if(!u||!p){$('errorMsg').textContent='蜈･蜉帙＠縺ｦ縺上□縺輔＞';$('errorMsg').className='error show';btn.disabled=false;btn.textContent='繝ｭ繧ｰ繧､繝ｳ';return}
     const h=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(p)))).map(x=>x.toString(16).padStart(2,'0')).join('');
     const r=await fetch(API_BASE+'/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:u,password:h})});
     const d=await r.json();
     if(!r.ok){
-      if(d.locked){$('lockInfo').textContent='🔒 ログインがロックされました。あと'+d.remaining+'分お待ちください。';$('lockInfo').className='lock-info show'}
-      else{$('errorMsg').textContent=d.error||'ログインに失敗しました';$('errorMsg').className='error show'}
-      btn.disabled=false;btn.textContent='ログイン';return
+      if(d.locked){$('lockInfo').textContent='白 繝ｭ繧ｰ繧､繝ｳ縺後Ο繝・け縺輔ｌ縺ｾ縺励◆縲ゅ≠縺ｨ'+d.remaining+'蛻・♀蠕・■縺上□縺輔＞縲・;$('lockInfo').className='lock-info show'}
+      else{$('errorMsg').textContent=d.error||'繝ｭ繧ｰ繧､繝ｳ縺ｫ螟ｱ謨励＠縺ｾ縺励◆';$('errorMsg').className='error show'}
+      btn.disabled=false;btn.textContent='繝ｭ繧ｰ繧､繝ｳ';return
     }
     sessionStorage.setItem('token',d.token);sessionStorage.setItem('username',d.username);sessionStorage.setItem('role',d.role);
     sessionStorage.setItem('display_name',d.display_name||d.username);
     window.location.href='01index.html';
-  }catch(e){$('errorMsg').textContent='サーバーに接続できません';$('errorMsg').className='error show';btn.disabled=false;btn.textContent='ログイン'}
+  }catch(e){$('errorMsg').textContent='繧ｵ繝ｼ繝舌・縺ｫ謗･邯壹〒縺阪∪縺帙ｓ';$('errorMsg').className='error show';btn.disabled=false;btn.textContent='繝ｭ繧ｰ繧､繝ｳ'}
 });
 </script>
 </body>
 </html>
+

@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>管理画面 - 上藤沢中学校 部活動黒板</title>
+<title>邂｡逅・判髱｢ - 荳願陸豐｢荳ｭ蟄ｦ譬｡ 驛ｨ豢ｻ蜍暮ｻ呈攸</title>
 <style>
 :root{--primary:#1E4D2B;--primary-dark:#153820;--primary-light:#2D6B40;--accent-pink:#f5a0b8;--accent-blue:#a0c4e8;--accent-yellow:#f5e6a0;--accent-green:#a8d8a0;--bg:#f7f5f0;--card:#fff;--text:#2c2c2c;--sub:#8a8682;--border:#e0dcd4;--danger:#c96565;--radius:12px;--shadow:0 2px 12px rgba(30,77,43,0.06)}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -88,22 +88,22 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
 </head>
 <body>
 <header class="header">
-  <div class="header-title">📋 管理画面</div>
+  <div class="header-title">搭 邂｡逅・判髱｢</div>
   <div class="header-right">
     <span id="aUser" style="font-size:12px;color:rgba(255,255,255,.75)"></span>
-    <a href="01index.html" class="header-link">黒板に戻る</a>
-    <button class="header-link danger" id="aLogout">ログアウト</button>
+    <a href="01index.html" class="header-link">鮟呈攸縺ｫ謌ｻ繧・/a>
+    <button class="header-link danger" id="aLogout">繝ｭ繧ｰ繧｢繧ｦ繝・/button>
   </div>
 </header>
 <div class="main-content">
   <div class="tab-bar">
-    <button class="tab-btn active" data-tab="users">ユーザー管理</button>
-    <button class="tab-btn" data-tab="batch">ID一括生成</button>
-    <button class="tab-btn" data-tab="notifications">通知管理</button>
-    <button class="tab-btn" data-tab="posts">投稿管理</button>
-    <button class="tab-btn" data-tab="stats">統計</button>
-     <button class="tab-btn" data-tab="chat">チャット管理</button>
-     <button class="tab-btn" data-tab="diagnosis">診断</button>
+    <button class="tab-btn active" data-tab="users">繝ｦ繝ｼ繧ｶ繝ｼ邂｡逅・/button>
+    <button class="tab-btn" data-tab="batch">ID荳諡ｬ逕滓・</button>
+    <button class="tab-btn" data-tab="notifications">騾夂衍邂｡逅・/button>
+    <button class="tab-btn" data-tab="posts">謚慕ｨｿ邂｡逅・/button>
+    <button class="tab-btn" data-tab="stats">邨ｱ險・/button>
+     <button class="tab-btn" data-tab="chat">繝√Ε繝・ヨ邂｡逅・/button>
+     <button class="tab-btn" data-tab="diagnosis">險ｺ譁ｭ</button>
   </div>
 
   <!-- Notifications Tab -->
@@ -114,19 +114,19 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
   <!-- Users Tab -->
   <div class="tab-content active" id="tab-users">
     <div class="id-rule">
-      <strong>ログインID 生成ルール</strong><br>
-      学年(1桁) + クラス(2桁) + 出席番号(3桁)<br>
-      例: 1年1組 出席番号5番 → <strong>101005</strong><br>
-      例: 2年4組 出席番号12番 → <strong>204012</strong>
+      <strong>繝ｭ繧ｰ繧､繝ｳID 逕滓・繝ｫ繝ｼ繝ｫ</strong><br>
+      蟄ｦ蟷ｴ(1譯・ + 繧ｯ繝ｩ繧ｹ(2譯・ + 蜃ｺ蟶ｭ逡ｪ蜿ｷ(3譯・<br>
+      萓・ 1蟷ｴ1邨・蜃ｺ蟶ｭ逡ｪ蜿ｷ5逡ｪ 竊・<strong>101005</strong><br>
+      萓・ 2蟷ｴ4邨・蜃ｺ蟶ｭ逡ｪ蜿ｷ12逡ｪ 竊・<strong>204012</strong>
     </div>
     <div class="search-bar">
-      <input type="text" id="searchInput" placeholder="名前・部活・委員会・クラスで検索">
-      <select id="searchRole"><option value="">全権限</option><option value="teacher">先生</option><option value="president">部長</option><option value="vice-president">副部長</option><option value="chairperson">委員長</option><option value="student">生徒</option></select>
-      <button class="btn btn-primary btn-sm" id="aRefresh">更新</button>
+      <input type="text" id="searchInput" placeholder="蜷榊燕繝ｻ驛ｨ豢ｻ繝ｻ蟋泌藤莨壹・繧ｯ繝ｩ繧ｹ縺ｧ讀懃ｴ｢">
+      <select id="searchRole"><option value="">蜈ｨ讓ｩ髯・/option><option value="teacher">蜈育函</option><option value="president">驛ｨ髟ｷ</option><option value="vice-president">蜑ｯ驛ｨ髟ｷ</option><option value="chairperson">蟋泌藤髟ｷ</option><option value="student">逕溷ｾ・/option></select>
+      <button class="btn btn-primary btn-sm" id="aRefresh">譖ｴ譁ｰ</button>
     </div>
     <div style="overflow-x:auto">
       <table class="user-table">
-        <thead><tr><th>ログインID</th><th>表示名</th><th>パスワード</th><th>権限</th><th>状態</th><th>学年</th><th>クラス</th><th>番号</th><th>部活</th><th>委員会</th><th>登録日</th><th></th></tr></thead>
+        <thead><tr><th>繝ｭ繧ｰ繧､繝ｳID</th><th>陦ｨ遉ｺ蜷・/th><th>繝代せ繝ｯ繝ｼ繝・/th><th>讓ｩ髯・/th><th>迥ｶ諷・/th><th>蟄ｦ蟷ｴ</th><th>繧ｯ繝ｩ繧ｹ</th><th>逡ｪ蜿ｷ</th><th>驛ｨ豢ｻ</th><th>蟋泌藤莨・/th><th>逋ｻ骭ｲ譌･</th><th></th></tr></thead>
         <tbody id="userList"></tbody>
       </table>
     </div>
@@ -135,31 +135,31 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
   <!-- Batch Tab -->
   <div class="tab-content" id="tab-batch">
     <div class="id-rule">
-      <strong>生徒ID 自動生成</strong><br>
-      入学年度・クラス数・1クラス人数を指定すると、全ての生徒アカウントを自動生成します。<br>
-      ID形式: <strong>{学年}{クラス2桁}{出席番号3桁}</strong> （例: 1年1組1番 → 101001）
+      <strong>逕溷ｾ棚D 閾ｪ蜍慕函謌・/strong><br>
+      蜈･蟄ｦ蟷ｴ蠎ｦ繝ｻ繧ｯ繝ｩ繧ｹ謨ｰ繝ｻ1繧ｯ繝ｩ繧ｹ莠ｺ謨ｰ繧呈欠螳壹☆繧九→縲∝・縺ｦ縺ｮ逕溷ｾ偵い繧ｫ繧ｦ繝ｳ繝医ｒ閾ｪ蜍慕函謌舌＠縺ｾ縺吶・br>
+      ID蠖｢蠑・ <strong>{蟄ｦ蟷ｴ}{繧ｯ繝ｩ繧ｹ2譯±{蜃ｺ蟶ｭ逡ｪ蜿ｷ3譯±</strong> ・井ｾ・ 1蟷ｴ1邨・逡ｪ 竊・101001・・
     </div>
     <div class="batch-form">
-      <label>入学年度<input type="number" id="bYear" value="2026" min="2020" max="2035"></label>
-      <label>クラス数<input type="number" id="bClasses" value="4" min="1" max="10"></label>
-      <label>1クラス人数<input type="number" id="bPerClass" value="30" min="1" max="50"></label>
-      <label>初期パスワード<input type="text" id="bPassword" value="111111"></label>
-      <button class="btn btn-primary" id="bGenerate">生成する</button>
+      <label>蜈･蟄ｦ蟷ｴ蠎ｦ<input type="number" id="bYear" value="2026" min="2020" max="2035"></label>
+      <label>繧ｯ繝ｩ繧ｹ謨ｰ<input type="number" id="bClasses" value="4" min="1" max="10"></label>
+      <label>1繧ｯ繝ｩ繧ｹ莠ｺ謨ｰ<input type="number" id="bPerClass" value="30" min="1" max="50"></label>
+      <label>蛻晄悄繝代せ繝ｯ繝ｼ繝・input type="text" id="bPassword" value="111111"></label>
+      <button class="btn btn-primary" id="bGenerate">逕滓・縺吶ｋ</button>
     </div>
     <div class="result-box" id="bResult"></div>
     <div style="margin-top:24px;border-top:2px dashed var(--border);padding-top:20px">
-      <h3 style="font-size:15px;font-weight:700;margin-bottom:12px;color:var(--text)">手動でユーザー登録</h3>
+      <h3 style="font-size:15px;font-weight:700;margin-bottom:12px;color:var(--text)">謇句虚縺ｧ繝ｦ繝ｼ繧ｶ繝ｼ逋ｻ骭ｲ</h3>
       <div class="batch-form" style="flex-wrap:wrap">
-        <label>ログインID<input type="text" id="mUser" placeholder="例: 101005" style="width:90px"></label>
-        <label>表示名<input type="text" id="mDisp" placeholder="氏名" style="width:90px"></label>
-        <label>パスワード<input type="text" id="mPass" value="111111" style="width:70px"></label>
-        <label>権限<select id="mRole"><option value="student">生徒</option><option value="teacher">先生</option><option value="president">部長</option><option value="vice-president">副部長</option><option value="chairperson">委員長</option><option value="admin">管理者</option></select></label>
-        <label>学年<input type="number" id="mGrade" min="1" max="3" style="width:50px"></label>
-        <label>クラス<input type="number" id="mClass" min="1" max="10" style="width:50px"></label>
-        <label>番号<input type="number" id="mSeat" min="1" max="50" style="width:60px"></label>
-        <label>部活<select id="mClub"><option value="">---</option><option>吹奏楽部</option><option>茶道部</option><option>美術部</option><option>卓球部</option><option>テニス部女子</option><option>テニス部男子</option><option>サッカー部</option><option>野球部</option><option>陸上部</option><option>バスケ部女子</option><option>バスケ部男子</option><option>バレー部</option></select></label>
-        <label>委員会<select id="mComm"><option value="">---</option><option>整備委員会</option><option>生活委員会</option><option>選挙管理委員会</option><option>図書委員会</option><option>給食委員会</option><option>合唱委員会</option><option>体育委員会</option><option>保健委員会</option><option>放送委員会</option></select></label>
-        <button class="btn btn-primary" id="mCreate">登録</button>
+        <label>繝ｭ繧ｰ繧､繝ｳID<input type="text" id="mUser" placeholder="萓・ 101005" style="width:90px"></label>
+        <label>陦ｨ遉ｺ蜷・input type="text" id="mDisp" placeholder="豌丞錐" style="width:90px"></label>
+        <label>繝代せ繝ｯ繝ｼ繝・input type="text" id="mPass" value="111111" style="width:70px"></label>
+        <label>讓ｩ髯・select id="mRole"><option value="student">逕溷ｾ・/option><option value="teacher">蜈育函</option><option value="president">驛ｨ髟ｷ</option><option value="vice-president">蜑ｯ驛ｨ髟ｷ</option><option value="chairperson">蟋泌藤髟ｷ</option><option value="admin">邂｡逅・・/option></select></label>
+        <label>蟄ｦ蟷ｴ<input type="number" id="mGrade" min="1" max="3" style="width:50px"></label>
+        <label>繧ｯ繝ｩ繧ｹ<input type="number" id="mClass" min="1" max="10" style="width:50px"></label>
+        <label>逡ｪ蜿ｷ<input type="number" id="mSeat" min="1" max="50" style="width:60px"></label>
+        <label>驛ｨ豢ｻ<select id="mClub"><option value="">---</option><option>蜷ｹ螂乗･ｽ驛ｨ</option><option>闌ｶ驕馴Κ</option><option>鄒手｡馴Κ</option><option>蜊鍋帥驛ｨ</option><option>繝・ル繧ｹ驛ｨ螂ｳ蟄・/option><option>繝・ル繧ｹ驛ｨ逕ｷ蟄・/option><option>繧ｵ繝・き繝ｼ驛ｨ</option><option>驥守帥驛ｨ</option><option>髯ｸ荳企Κ</option><option>繝舌せ繧ｱ驛ｨ螂ｳ蟄・/option><option>繝舌せ繧ｱ驛ｨ逕ｷ蟄・/option><option>繝舌Ξ繝ｼ驛ｨ</option></select></label>
+        <label>蟋泌藤莨・select id="mComm"><option value="">---</option><option>謨ｴ蛯吝ｧ泌藤莨・/option><option>逕滓ｴｻ蟋泌藤莨・/option><option>驕ｸ謖咏ｮ｡逅・ｧ泌藤莨・/option><option>蝗ｳ譖ｸ蟋泌藤莨・/option><option>邨ｦ鬟溷ｧ泌藤莨・/option><option>蜷亥罰蟋泌藤莨・/option><option>菴楢ご蟋泌藤莨・/option><option>菫晏▼蟋泌藤莨・/option><option>謾ｾ騾∝ｧ泌藤莨・/option></select></label>
+        <button class="btn btn-primary" id="mCreate">逋ｻ骭ｲ</button>
       </div>
       <div id="mResult" style="margin-top:8px;font-size:13px"></div>
     </div>
@@ -169,7 +169,7 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
   <div class="tab-content" id="tab-posts">
     <div style="overflow-x:auto">
       <table class="user-table">
-        <thead><tr><th>カテゴリ</th><th>タイトル</th><th>投稿者</th><th>日付</th><th></th></tr></thead>
+        <thead><tr><th>繧ｫ繝・ざ繝ｪ</th><th>繧ｿ繧､繝医Ν</th><th>謚慕ｨｿ閠・/th><th>譌･莉・/th><th></th></tr></thead>
         <tbody id="postList"></tbody>
       </table>
     </div>
@@ -178,18 +178,18 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
   <!-- Stats Tab -->
   <div class="tab-content" id="tab-stats">
     <div class="stat-grid" id="statGrid"></div>
-    <div class="card"><h3>権限別ユーザー数</h3><div class="bar-chart" id="roleChart"></div></div>
-    <div class="card"><h3>部活別ユーザー数</h3><div class="bar-chart" id="clubChart"></div></div>
-    <div class="card"><h3>委員会別ユーザー数</h3><div class="bar-chart" id="committeeChart"></div></div>
+    <div class="card"><h3>讓ｩ髯仙挨繝ｦ繝ｼ繧ｶ繝ｼ謨ｰ</h3><div class="bar-chart" id="roleChart"></div></div>
+    <div class="card"><h3>驛ｨ豢ｻ蛻･繝ｦ繝ｼ繧ｶ繝ｼ謨ｰ</h3><div class="bar-chart" id="clubChart"></div></div>
+    <div class="card"><h3>蟋泌藤莨壼挨繝ｦ繝ｼ繧ｶ繝ｼ謨ｰ</h3><div class="bar-chart" id="committeeChart"></div></div>
   </div>
 
   <!-- Diagnosis Tab -->
   <div class="tab-content" id="tab-diagnosis">
     <div class="card">
-      <h3>🩺 システム診断</h3>
-      <p style="font-size:13px;color:var(--sub);margin-bottom:12px">各APIエンドポイント・静的ファイル・データ整合性をチェックし、問題を報告します。</p>
-      <button class="btn btn-primary" id="diagRun">診断を実行</button>
-      <div id="diagProgress" style="margin-top:10px;font-size:13px;color:var(--sub);display:none">診断中...</div>
+      <h3>ｩｺ 繧ｷ繧ｹ繝・Β險ｺ譁ｭ</h3>
+      <p style="font-size:13px;color:var(--sub);margin-bottom:12px">蜷БPI繧ｨ繝ｳ繝峨・繧､繝ｳ繝医・髱咏噪繝輔ぃ繧､繝ｫ繝ｻ繝・・繧ｿ謨ｴ蜷域ｧ繧偵メ繧ｧ繝・け縺励∝撫鬘後ｒ蝣ｱ蜻翫＠縺ｾ縺吶・/p>
+      <button class="btn btn-primary" id="diagRun">險ｺ譁ｭ繧貞ｮ溯｡・/button>
+      <div id="diagProgress" style="margin-top:10px;font-size:13px;color:var(--sub);display:none">險ｺ譁ｭ荳ｭ...</div>
     </div>
     <div id="diagResults"></div>
   </div>
@@ -197,13 +197,13 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
   <!-- Chat Tab -->
   <div class="tab-content" id="tab-chat">
     <div class="search-bar">
-      <input type="text" id="chatSearchInput" placeholder="ユーザー名で検索" style="max-width:200px">
-      <select id="chatRoleFilter"><option value="">全権限</option><option value="teacher">先生</option><option value="admin">管理者</option><option value="student">生徒</option><option value="president">部長</option><option value="vice-president">副部長</option><option value="chairperson">委員長</option></select>
-      <span style="font-size:13px;color:var(--sub);display:flex;align-items:center;gap:4px">参加者: <strong id="chatPartCount" style="color:var(--primary)">0</strong></span>
+      <input type="text" id="chatSearchInput" placeholder="繝ｦ繝ｼ繧ｶ繝ｼ蜷阪〒讀懃ｴ｢" style="max-width:200px">
+      <select id="chatRoleFilter"><option value="">蜈ｨ讓ｩ髯・/option><option value="teacher">蜈育函</option><option value="admin">邂｡逅・・/option><option value="student">逕溷ｾ・/option><option value="president">驛ｨ髟ｷ</option><option value="vice-president">蜑ｯ驛ｨ髟ｷ</option><option value="chairperson">蟋泌藤髟ｷ</option></select>
+      <span style="font-size:13px;color:var(--sub);display:flex;align-items:center;gap:4px">蜿ょ刈閠・ <strong id="chatPartCount" style="color:var(--primary)">0</strong></span>
     </div>
     <div style="overflow-x:auto">
       <table class="user-table">
-        <thead><tr><th>ユーザー名</th><th>権限</th><th>表示名</th><th>参加</th></tr></thead>
+        <thead><tr><th>繝ｦ繝ｼ繧ｶ繝ｼ蜷・/th><th>讓ｩ髯・/th><th>陦ｨ遉ｺ蜷・/th><th>蜿ょ刈</th></tr></thead>
         <tbody id="chatUserList"></tbody>
       </table>
     </div>
@@ -212,17 +212,17 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
 
 <script>
 async function h(p){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(p));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('')}
-const API_BASE='https://school-board-api.dajianweixi.workers.dev'
-async function a(p,o={}){const t=sessionStorage.getItem('token'),h={'Content-Type':'application/json',...o.headers};if(t)h['Authorization']='Bearer '+t;const r=await fetch(API_BASE+p,{...o,headers:h}),d=await r.json();if(!r.ok)throw new Error(d.error||'エラー');return d}
+const API_BASE=''
+async function a(p,o={}){const t=sessionStorage.getItem('token'),h={'Content-Type':'application/json',...o.headers};if(t)h['Authorization']='Bearer '+t;const r=await fetch(API_BASE+p,{...o,headers:h}),d=await r.json();if(!r.ok)throw new Error(d.error||'繧ｨ繝ｩ繝ｼ');return d}
 const $=id=>document.getElementById(id),esc=s=>{const d=document.createElement('div');d.textContent=s;return d.innerHTML};
 const u=sessionStorage.getItem('username'),r=sessionStorage.getItem('role'),token=sessionStorage.getItem('token');
 if(!u||!r||!token){window.location.href='02login.html'}
-if(!(r||'').split(',').map(s=>s.trim()).some(s=>['admin','teacher'].includes(s))){alert('権限がありません');window.location.href='01index.html'}
-$('aUser').textContent=u+'（管理者/先生）';
-const RL={'admin':'管理者','teacher':'先生','president':'部長','vice-president':'副部長','chairperson':'委員長','student':'生徒'};
-const ROLES=[{v:'teacher',l:'先生'},{v:'president',l:'部長'},{v:'vice-president',l:'副部長'},{v:'chairperson',l:'委員長'},{v:'student',l:'生徒'}];
-const CLUBS=['吹奏楽部','茶道部','美術部','卓球部','テニス部女子','テニス部男子','サッカー部','野球部','陸上部','バスケ部女子','バスケ部男子','バレー部'];
-const COMMS=['整備委員会','生活委員会','選挙管理委員会','図書委員会','給食委員会','合唱委員会','体育委員会','保健委員会','放送委員会'];
+if(!(r||'').split(',').map(s=>s.trim()).some(s=>['admin','teacher'].includes(s))){alert('讓ｩ髯舌′縺ゅｊ縺ｾ縺帙ｓ');window.location.href='01index.html'}
+$('aUser').textContent=u+'・育ｮ｡逅・・蜈育函・・;
+const RL={'admin':'邂｡逅・・,'teacher':'蜈育函','president':'驛ｨ髟ｷ','vice-president':'蜑ｯ驛ｨ髟ｷ','chairperson':'蟋泌藤髟ｷ','student':'逕溷ｾ・};
+const ROLES=[{v:'teacher',l:'蜈育函'},{v:'president',l:'驛ｨ髟ｷ'},{v:'vice-president',l:'蜑ｯ驛ｨ髟ｷ'},{v:'chairperson',l:'蟋泌藤髟ｷ'},{v:'student',l:'逕溷ｾ・}];
+const CLUBS=['蜷ｹ螂乗･ｽ驛ｨ','闌ｶ驕馴Κ','鄒手｡馴Κ','蜊鍋帥驛ｨ','繝・ル繧ｹ驛ｨ螂ｳ蟄・,'繝・ル繧ｹ驛ｨ逕ｷ蟄・,'繧ｵ繝・き繝ｼ驛ｨ','驥守帥驛ｨ','髯ｸ荳企Κ','繝舌せ繧ｱ驛ｨ螂ｳ蟄・,'繝舌せ繧ｱ驛ｨ逕ｷ蟄・,'繝舌Ξ繝ｼ驛ｨ'];
+const COMMS=['謨ｴ蛯吝ｧ泌藤莨・,'逕滓ｴｻ蟋泌藤莨・,'驕ｸ謖咏ｮ｡逅・ｧ泌藤莨・,'蝗ｳ譖ｸ蟋泌藤莨・,'邨ｦ鬟溷ｧ泌藤莨・,'蜷亥罰蟋泌藤莨・,'菴楢ご蟋泌藤莨・,'菫晏▼蟋泌藤莨・,'謾ｾ騾∝ｧ泌藤莨・];
 
 document.querySelectorAll('.tab-btn').forEach(b=>b.addEventListener('click',()=>{
   document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));
@@ -243,16 +243,16 @@ async function loadNotifications(){
   const el=$('notifList');
   try{
     const notifs=await a('/api/notifications');
-    if(!notifs.length){el.innerHTML='<div class="card" style="text-align:center;color:var(--sub);padding:30px">通知はありません</div>';return}
-    el.innerHTML=notifs.map(n=>`<div class="notif-card"><div style="display:flex;justify-content:space-between;align-items:start"><div class="notif-msg">${esc(n.message)}</div></div><div style="display:flex;justify-content:space-between;align-items:center"><span class="notif-time">${new Date(n.created_at).toLocaleString('ja-JP')}</span><button class="btn btn-sm btn-outline" onclick="dismissNotif('${n.id}')">解除</button></div></div>`).join('');
-  }catch(e){el.innerHTML='<div class="card" style="text-align:center;color:var(--sub)">読み込みエラー</div>'}
+    if(!notifs.length){el.innerHTML='<div class="card" style="text-align:center;color:var(--sub);padding:30px">騾夂衍縺ｯ縺ゅｊ縺ｾ縺帙ｓ</div>';return}
+    el.innerHTML=notifs.map(n=>`<div class="notif-card"><div style="display:flex;justify-content:space-between;align-items:start"><div class="notif-msg">${esc(n.message)}</div></div><div style="display:flex;justify-content:space-between;align-items:center"><span class="notif-time">${new Date(n.created_at).toLocaleString('ja-JP')}</span><button class="btn btn-sm btn-outline" onclick="dismissNotif('${n.id}')">隗｣髯､</button></div></div>`).join('');
+  }catch(e){el.innerHTML='<div class="card" style="text-align:center;color:var(--sub)">隱ｭ縺ｿ霎ｼ縺ｿ繧ｨ繝ｩ繝ｼ</div>'}
 }
 async function dismissNotif(id){try{await a('/api/notifications/'+id+'/dismiss',{method:'POST'});loadNotifications()}catch(e){}}
 
 // === Users ===
 let usersData=[];
 async function loadUsers(){
-  try{usersData=await a('/api/users');renderUsers()}catch(e){if(e.message.includes('認証')){sessionStorage.clear();window.location.href='02login.html'}}
+  try{usersData=await a('/api/users');renderUsers()}catch(e){if(e.message.includes('隱崎ｨｼ')){sessionStorage.clear();window.location.href='02login.html'}}
 }
 function renderUsers(){
   const q=$('searchInput').value.trim().toLowerCase(),roleFilter=$('searchRole').value;
@@ -263,33 +263,33 @@ function renderUsers(){
     const userRoles=(x.role||'').split(',').map(s=>s.trim());
     const isAdmin=userRoles.includes('admin');
     const sd=!isAdmin||(u.role||'').includes('admin');
-    const pwShow=x.password_plain?'<span class="pwd-show" onclick="this.textContent=this.textContent===\'******\'?\'"+esc(x.password_plain)+"\' :\'******\'">******</span>':'—';
-    const dt=x.created_at?new Date(x.created_at).toLocaleDateString('ja-JP',{month:'numeric',day:'numeric',year:'numeric'}):'—';
+    const pwShow=x.password_plain?'<span class="pwd-show" onclick="this.textContent=this.textContent===\'******\'?\'"+esc(x.password_plain)+"\' :\'******\'">******</span>':'窶・;
+    const dt=x.created_at?new Date(x.created_at).toLocaleDateString('ja-JP',{month:'numeric',day:'numeric',year:'numeric'}):'窶・;
     const lockInfo=''; // would need separate lock query
     const roleHtml=ROLES.map(rr=>{
       const checked=userRoles.includes(rr.v);
       return `<label style="font-size:10px;white-space:nowrap;cursor:pointer;display:flex;align-items:center;gap:2px"><input type="checkbox" ${checked?'checked':''} data-id="${x.id}" data-v="${rr.v}"> ${esc(rr.l)}</label>`;
     }).join('');
     const actions=`<div style="display:flex;gap:2px;flex-wrap:nowrap">
-      ${sd&&x.id!==u.id?`<button class="btn btn-danger btn-sm" onclick="delUser('${x.id}','${esc(x.username)}')">削</button>`:''}
+      ${sd&&x.id!==u.id?`<button class="btn btn-danger btn-sm" onclick="delUser('${x.id}','${esc(x.username)}')">蜑・/button>`:''}
       <button class="btn btn-outline btn-sm" onclick="resetPwd('${x.id}','${esc(x.username)}')">PW</button>
-      <button class="btn btn-outline btn-sm" onclick="unlockUser('${x.id}')">解除</button>
+      <button class="btn btn-outline btn-sm" onclick="unlockUser('${x.id}')">隗｣髯､</button>
     </div>`;
     tr.innerHTML=`<td style="font-size:10px">${esc(x.username)}</td>
       <td><input type="text" value="${esc(x.display_name||'')}" onchange="updField('${x.id}','display_name',this.value)" style="width:60px"></td>
-      <td style="white-space:normal">${sd?pwShow+'<br><input type="text" placeholder="新PW" onchange="setPwd(\'${x.id}\',this)" style="width:50px;font-size:10px;margin-top:2px">':'—'}</td>
+      <td style="white-space:normal">${sd?pwShow+'<br><input type="text" placeholder="譁ｰPW" onchange="setPwd(\'${x.id}\',this)" style="width:50px;font-size:10px;margin-top:2px">':'窶・}</td>
       <td><div class="role-group">${roleHtml}</div></td>
-      <td>${isAdmin?'<span class="lock-badge">管理者</span>':''}</td>
+      <td>${isAdmin?'<span class="lock-badge">邂｡逅・・/span>':''}</td>
       <td><input type="text" value="${esc(x.grade||'')}" onchange="updField('${x.id}','grade',this.value)" style="width:40px"></td>
       <td><input type="text" value="${esc(x.class_num||'')}" onchange="updField('${x.id}','class_num',this.value)" style="width:35px"></td>
       <td><input type="text" value="${esc(x.seat_num||'')}" onchange="updField('${x.id}','seat_num',this.value)" style="width:35px"></td>
-      <td><select onchange="updField('${x.id}','club',this.value)"><option value="">—</option>${CLUBS.map(c=>'<option value="'+c+'"'+(x.club===c?' selected':'')+'>'+c+'</option>').join('')}</select></td>
-      <td><select onchange="updField('${x.id}','committee',this.value)"><option value="">—</option>${COMMS.map(c=>'<option value="'+c+'"'+(x.committee===c?' selected':'')+'>'+c+'</option>').join('')}</select></td>
+      <td><select onchange="updField('${x.id}','club',this.value)"><option value="">窶・/option>${CLUBS.map(c=>'<option value="'+c+'"'+(x.club===c?' selected':'')+'>'+c+'</option>').join('')}</select></td>
+      <td><select onchange="updField('${x.id}','committee',this.value)"><option value="">窶・/option>${COMMS.map(c=>'<option value="'+c+'"'+(x.committee===c?' selected':'')+'>'+c+'</option>').join('')}</select></td>
       <td>${dt}</td><td>${actions}</td>`;
     tr.querySelectorAll('input[type=checkbox][data-id]').forEach(cb=>{cb.onchange=function(){updRole(this.dataset.id,this.dataset.v,this.checked)}});
     t.appendChild(tr);
   }
-  if(!flt.length)t.innerHTML='<tr><td colspan="12" style="text-align:center;padding:20px;color:var(--sub)">該当するユーザーがいません</td></tr>';
+  if(!flt.length)t.innerHTML='<tr><td colspan="12" style="text-align:center;padding:20px;color:var(--sub)">隧ｲ蠖薙☆繧九Θ繝ｼ繧ｶ繝ｼ縺後＞縺ｾ縺帙ｓ</td></tr>';
 }
 async function updRole(id,val,add){
   try{
@@ -301,10 +301,10 @@ async function updRole(id,val,add){
   }catch(e){alert(e.message);loadUsers()}
 }
 async function updField(id,field,val){try{await a('/api/users/'+id,{method:'PUT',body:JSON.stringify({[field]:val})})}catch(e){alert(e.message)}}
-async function delUser(id,un){if(!confirm('「'+un+'」を削除しますか？'))return;try{await a('/api/users/'+id,{method:'DELETE'});loadUsers()}catch(e){alert(e.message)}}
-async function resetPwd(id,un){if(!confirm('「'+un+'」のパスワードを再発行しますか？'))return;try{const r=await a('/api/users/'+id+'/reset-password',{method:'PUT'});alert('新しいパスワード: '+r.newPassword);loadUsers()}catch(e){alert(e.message)}}
-async function setPwd(id,inp){const pw=inp.value.trim();if(!pw||pw.length<6){alert('6文字以上入力してください');inp.value='';return}if(!confirm('パスワードを「'+pw+'」に変更しますか？')){inp.value='';return}try{await a('/api/users/'+id,{method:'PUT',body:JSON.stringify({password:pw})});alert('変更しました');inp.value='';loadUsers()}catch(e){alert(e.message);inp.value=''}}
-async function unlockUser(id){try{await a('/api/users/'+id+'/unlock',{method:'POST'});alert('ロックを解除しました');loadUsers()}catch(e){alert(e.message)}}
+async function delUser(id,un){if(!confirm('縲・+un+'縲阪ｒ蜑企勁縺励∪縺吶°・・))return;try{await a('/api/users/'+id,{method:'DELETE'});loadUsers()}catch(e){alert(e.message)}}
+async function resetPwd(id,un){if(!confirm('縲・+un+'縲阪・繝代せ繝ｯ繝ｼ繝峨ｒ蜀咲匱陦後＠縺ｾ縺吶°・・))return;try{const r=await a('/api/users/'+id+'/reset-password',{method:'PUT'});alert('譁ｰ縺励＞繝代せ繝ｯ繝ｼ繝・ '+r.newPassword);loadUsers()}catch(e){alert(e.message)}}
+async function setPwd(id,inp){const pw=inp.value.trim();if(!pw||pw.length<6){alert('6譁・ｭ嶺ｻ･荳雁・蜉帙＠縺ｦ縺上□縺輔＞');inp.value='';return}if(!confirm('繝代せ繝ｯ繝ｼ繝峨ｒ縲・+pw+'縲阪↓螟画峩縺励∪縺吶°・・)){inp.value='';return}try{await a('/api/users/'+id,{method:'PUT',body:JSON.stringify({password:pw})});alert('螟画峩縺励∪縺励◆');inp.value='';loadUsers()}catch(e){alert(e.message);inp.value=''}}
+async function unlockUser(id){try{await a('/api/users/'+id+'/unlock',{method:'POST'});alert('繝ｭ繝・け繧定ｧ｣髯､縺励∪縺励◆');loadUsers()}catch(e){alert(e.message)}}
 $('searchInput').addEventListener('input',renderUsers);
 $('searchRole').addEventListener('change',renderUsers);
 $('aRefresh').addEventListener('click',loadUsers);
@@ -312,14 +312,14 @@ $('aRefresh').addEventListener('click',loadUsers);
 // === Batch ===
 $('bGenerate').addEventListener('click',async()=>{
   const year=$('bYear').value,classes=$('bClasses').value,perClass=$('bPerClass').value,password=$('bPassword').value;
-  if(!confirm(year+'年度 入学 '+classes+'クラス '+perClass+'人/クラス で生成しますか？'))return;
-  $('bGenerate').disabled=true;$('bGenerate').textContent='生成中...';
+  if(!confirm(year+'蟷ｴ蠎ｦ 蜈･蟄ｦ '+classes+'繧ｯ繝ｩ繧ｹ '+perClass+'莠ｺ/繧ｯ繝ｩ繧ｹ 縺ｧ逕滓・縺励∪縺吶°・・))return;
+  $('bGenerate').disabled=true;$('bGenerate').textContent='逕滓・荳ｭ...';
   try{
     const r=await a('/api/users/batch',{method:'POST',body:JSON.stringify({year,classes,perClass,password})});
     const box=$('bResult');box.className='result-box show';
-    box.innerHTML='<strong>'+r.created+'人</strong> の生徒IDを生成しました<br>初期パスワード: <strong>'+esc(r.password)+'</strong><br>生成ID: '+r.students.slice(0,5).join(', ')+(r.students.length>5?' …他'+(r.students.length-5)+'件':'');
+    box.innerHTML='<strong>'+r.created+'莠ｺ</strong> 縺ｮ逕溷ｾ棚D繧堤函謌舌＠縺ｾ縺励◆<br>蛻晄悄繝代せ繝ｯ繝ｼ繝・ <strong>'+esc(r.password)+'</strong><br>逕滓・ID: '+r.students.slice(0,5).join(', ')+(r.students.length>5?' 窶ｦ莉・+(r.students.length-5)+'莉ｶ':'');
   }catch(e){alert(e.message)}
-  $('bGenerate').disabled=false;$('bGenerate').textContent='生成する';
+  $('bGenerate').disabled=false;$('bGenerate').textContent='逕滓・縺吶ｋ';
 });
 
 // === Manual Create ===
@@ -328,9 +328,9 @@ $('mCreate').addEventListener('click', async () => {
   const disp = $('mDisp').value.trim() || user, role = $('mRole').value;
   const grade = $('mGrade').value, cls = $('mClass').value, seat = $('mSeat').value;
   const club = $('mClub').value, comm = $('mComm').value;
-  if (!user || !pass) { $('mResult').textContent = 'IDとパスワードは必須です'; return }
-  if (!user.match(/^\d+$/)) { $('mResult').textContent = 'IDは数字のみです'; return }
-  $('mCreate').disabled = true; $('mCreate').textContent = '登録中...';
+  if (!user || !pass) { $('mResult').textContent = 'ID縺ｨ繝代せ繝ｯ繝ｼ繝峨・蠢・医〒縺・; return }
+  if (!user.match(/^\d+$/)) { $('mResult').textContent = 'ID縺ｯ謨ｰ蟄励・縺ｿ縺ｧ縺・; return }
+  $('mCreate').disabled = true; $('mCreate').textContent = '逋ｻ骭ｲ荳ｭ...';
   try {
     const passHash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pass));
     const hx = Array.from(new Uint8Array(passHash)).map(x => x.toString(16).padStart(2, '0')).join('');
@@ -340,30 +340,30 @@ $('mCreate').addEventListener('click', async () => {
       club, committee, display_name: disp
     })});
     $('mResult').style.color = 'var(--primary)';
-    $('mResult').textContent = '登録しました: ' + r.username;
+    $('mResult').textContent = '逋ｻ骭ｲ縺励∪縺励◆: ' + r.username;
     $('mUser').value = ''; $('mDisp').value = '';
     if ($('mGrade').value) { const n = parseInt($('mGrade').value) + 1; if (n <= 3) $('mGrade').value = n }
     loadUsers();
-  } catch(e) { $('mResult').style.color = 'var(--danger)'; $('mResult').textContent = 'エラー: ' + e.message }
-  $('mCreate').disabled = false; $('mCreate').textContent = '登録';
+  } catch(e) { $('mResult').style.color = 'var(--danger)'; $('mResult').textContent = '繧ｨ繝ｩ繝ｼ: ' + e.message }
+  $('mCreate').disabled = false; $('mCreate').textContent = '逋ｻ骭ｲ';
 });
 
 // === Posts ===
 async function loadPosts(){
-  const t=$('postList');t.innerHTML='<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--sub)">読み込み中...</td></tr>';
+  const t=$('postList');t.innerHTML='<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--sub)">隱ｭ縺ｿ霎ｼ縺ｿ荳ｭ...</td></tr>';
   try{
     const ps=await a('/api/admin/posts');
-    if(!ps.length){t.innerHTML='<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--sub)">投稿がありません</td></tr>';return}
+    if(!ps.length){t.innerHTML='<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--sub)">謚慕ｨｿ縺後≠繧翫∪縺帙ｓ</td></tr>';return}
     t.innerHTML='';
     ps.forEach(p=>{
       const d=new Date(p.created_at);const ds=(d.getMonth()+1)+'/'+d.getDate()+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
       const tr=document.createElement('tr');
-      tr.innerHTML='<td>'+esc(p.category)+'</td><td>'+esc(p.title)+'</td><td>'+esc(p.display_name||p.username)+'</td><td>'+ds+'</td><td><button class="btn btn-danger btn-sm" onclick="delPost(\''+p.id+'\')">削除</button></td>';
+      tr.innerHTML='<td>'+esc(p.category)+'</td><td>'+esc(p.title)+'</td><td>'+esc(p.display_name||p.username)+'</td><td>'+ds+'</td><td><button class="btn btn-danger btn-sm" onclick="delPost(\''+p.id+'\')">蜑企勁</button></td>';
       t.appendChild(tr);
     });
-  }catch(e){t.innerHTML='<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--sub)">エラー</td></tr>'}
+  }catch(e){t.innerHTML='<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--sub)">繧ｨ繝ｩ繝ｼ</td></tr>'}
 }
-async function delPost(id){if(!confirm('この投稿を削除しますか？'))return;try{await a('/api/posts/'+id,{method:'DELETE'});loadPosts()}catch(e){alert(e.message)}}
+async function delPost(id){if(!confirm('縺薙・謚慕ｨｿ繧貞炎髯､縺励∪縺吶°・・))return;try{await a('/api/posts/'+id,{method:'DELETE'});loadPosts()}catch(e){alert(e.message)}}
 
 // === Stats ===
 async function loadStats(){
@@ -371,19 +371,19 @@ async function loadStats(){
     const s=await a('/api/stats');
     const grid=$('statGrid');
     const cards=[
-      {label:'総ユーザー数',num:s.totalUsers},{label:'先生',num:s.byRole?.teacher||0},
-      {label:'部長',num:s.byRole?.president||0},{label:'副部長',num:s.byRole?.['vice-president']||0},
-      {label:'委員長',num:s.byRole?.chairperson||0},{label:'生徒',num:s.byRole?.student||0},
-      {label:'投稿数',num:s.totalPosts},{label:'ロック中',num:s.lockedAccounts||0}
+      {label:'邱上Θ繝ｼ繧ｶ繝ｼ謨ｰ',num:s.totalUsers},{label:'蜈育函',num:s.byRole?.teacher||0},
+      {label:'驛ｨ髟ｷ',num:s.byRole?.president||0},{label:'蜑ｯ驛ｨ髟ｷ',num:s.byRole?.['vice-president']||0},
+      {label:'蟋泌藤髟ｷ',num:s.byRole?.chairperson||0},{label:'逕溷ｾ・,num:s.byRole?.student||0},
+      {label:'謚慕ｨｿ謨ｰ',num:s.totalPosts},{label:'繝ｭ繝・け荳ｭ',num:s.lockedAccounts||0}
     ];
     grid.innerHTML=cards.map(c=>'<div class="stat-card"><div class="stat-num">'+c.num+'</div><div class="stat-label">'+c.label+'</div></div>').join('');
-    renderBar($('roleChart'),s.byRole,{'admin':'管理者','teacher':'先生','president':'部長','vice-president':'副部長','chairperson':'委員長','student':'生徒'});
+    renderBar($('roleChart'),s.byRole,{'admin':'邂｡逅・・,'teacher':'蜈育函','president':'驛ｨ髟ｷ','vice-president':'蜑ｯ驛ｨ髟ｷ','chairperson':'蟋泌藤髟ｷ','student':'逕溷ｾ・});
     renderBar($('clubChart'),s.byClub,{});
     renderBar($('committeeChart'),s.byCommittee,{});
   }catch(e){}
 }
 function renderBar(el,data,labels){
-  const keys=Object.keys(data);if(!keys.length){el.innerHTML='<div style="color:var(--sub);font-size:13px">データがありません</div>';return}
+  const keys=Object.keys(data);if(!keys.length){el.innerHTML='<div style="color:var(--sub);font-size:13px">繝・・繧ｿ縺後≠繧翫∪縺帙ｓ</div>';return}
   const mx=Math.max(...keys.map(k=>data[k]));
   el.innerHTML=keys.sort((a,b)=>data[b]-data[a]).map(k=>'<div class="bar-row"><span class="bar-label">'+esc(labels[k]||k)+'</span><span class="bar-val">'+data[k]+'</span><div class="bar-fill" style="width:'+Math.max(data[k]/mx*100,5)+'%"></div></div>').join('');
 }
@@ -401,7 +401,7 @@ function renderChatUsers(){
   const t=$('chatUserList');t.innerHTML='';
   flt.forEach(x=>{
     const inChat=partUsernames.has(x.username);
-    const roles=(x.role||'').split(',').map(r=>RL[r.trim()]||r.trim()).filter(Boolean).join('·');
+    const roles=(x.role||'').split(',').map(r=>RL[r.trim()]||r.trim()).filter(Boolean).join('ﾂｷ');
     const isProtected=(x.role||'').includes('admin')||(x.role||'').includes('teacher');
     const tr=document.createElement('tr');
     tr.innerHTML='<td>'+esc(x.username)+'</td><td>'+esc(roles)+'</td><td>'+esc(x.display_name||'')+'</td><td><input type="checkbox" '+(inChat?'checked':'')+' data-u="'+esc(x.username)+'" '+(isProtected?'disabled':'')+'></td>';
@@ -417,12 +417,12 @@ $('chatRoleFilter').addEventListener('change',renderChatUsers);
 
 // === Diagnosis ===
 const DIAG_CHECKS = [
-  { id: 'api-ping', label: 'API 接続確認', icon: '🌐' },
-  { id: 'endpoints', label: 'API エンドポイント一覧', icon: '🔌' },
-  { id: 'static', label: '静的ファイル配信確認', icon: '📄' },
-  { id: 'garbled', label: '文字化けデータチェック', icon: '🔍' },
-  { id: 'integrity', label: 'ユーザーデータ整合性', icon: '📋' },
-  { id: 'ratelimit', label: 'レート制限確認', icon: '⏱' }
+  { id: 'api-ping', label: 'API 謗･邯夂｢ｺ隱・, icon: '倹' },
+  { id: 'endpoints', label: 'API 繧ｨ繝ｳ繝峨・繧､繝ｳ繝井ｸ隕ｧ', icon: '伯' },
+  { id: 'static', label: '髱咏噪繝輔ぃ繧､繝ｫ驟堺ｿ｡遒ｺ隱・, icon: '塘' },
+  { id: 'garbled', label: '譁・ｭ怜喧縺代ョ繝ｼ繧ｿ繝√ぉ繝・け', icon: '剥' },
+  { id: 'integrity', label: '繝ｦ繝ｼ繧ｶ繝ｼ繝・・繧ｿ謨ｴ蜷域ｧ', icon: '搭' },
+  { id: 'ratelimit', label: '繝ｬ繝ｼ繝亥宛髯千｢ｺ隱・, icon: '竢ｱ' }
 ];
 
 async function runDiagnosis() {
@@ -434,7 +434,7 @@ async function runDiagnosis() {
   container.innerHTML = '';
 
   function addResult(checkId, status, msg) {
-    const icons = { pass: '✅', warn: '⚠️', fail: '❌', info: 'ℹ️' };
+    const icons = { pass: '笨・, warn: '笞・・, fail: '笶・, info: '邃ｹ・・ };
     const c = DIAG_CHECKS.find(x => x.id === checkId);
     const div = document.createElement('div');
     div.className = 'card';
@@ -449,8 +449,8 @@ async function runDiagnosis() {
     const t0 = Date.now();
     const r = await fetch(API_BASE + '/api/me', { headers: { 'Authorization': 'Bearer '+token } });
     const ms = Date.now() - t0;
-    addResult('api-ping', r.ok?'pass':'fail', r.ok ? `応答時間: ${ms}ms` : `HTTP ${r.status}`);
-  } catch(e) { addResult('api-ping','fail',`接続不可: ${e.message}`) }
+    addResult('api-ping', r.ok?'pass':'fail', r.ok ? `蠢懃ｭ疲凾髢・ ${ms}ms` : `HTTP ${r.status}`);
+  } catch(e) { addResult('api-ping','fail',`謗･邯壻ｸ榊庄: ${e.message}`) }
 
   // 2. All endpoints
   const endpoints = [
@@ -461,10 +461,10 @@ async function runDiagnosis() {
   for (const p of endpoints) {
     try {
       const r = await fetch(API_BASE + p, { headers: { 'Authorization': 'Bearer '+token } });
-      ep.push(`  ${r.ok?'✅':'❌'} ${p} (${r.status})`);
-    } catch(e) { ep.push(`  ❌ ${p} (接続エラー)`) }
+      ep.push(`  ${r.ok?'笨・:'笶・} ${p} (${r.status})`);
+    } catch(e) { ep.push(`  笶・${p} (謗･邯壹お繝ｩ繝ｼ)`) }
   }
-  addResult('endpoints', ep.some(l=>l.includes('❌'))?'warn':'pass', ep.join('\n'));
+  addResult('endpoints', ep.some(l=>l.includes('笶・))?'warn':'pass', ep.join('\n'));
 
   // 3. Static files
   const sf = ['01index.html','02login.html','admin.html','consult.html','schedule.html','club-questions.html','post.html','chat.html','posts.html'];
@@ -472,10 +472,10 @@ async function runDiagnosis() {
   for (const f of sf) {
     try {
       const r = await fetch(f, { method:'HEAD' });
-      ss.push(`  ${r.ok?'✅':'❌'} ${f} (${r.status})`);
-    } catch(e) { ss.push(`  ❌ ${f} (接続エラー)`) }
+      ss.push(`  ${r.ok?'笨・:'笶・} ${f} (${r.status})`);
+    } catch(e) { ss.push(`  笶・${f} (謗･邯壹お繝ｩ繝ｼ)`) }
   }
-  addResult('static', ss.some(l=>l.includes('❌'))?'warn':'pass', ss.join('\n'));
+  addResult('static', ss.some(l=>l.includes('笶・))?'warn':'pass', ss.join('\n'));
 
   // 4. Garbled text check
   try {
@@ -485,26 +485,26 @@ async function runDiagnosis() {
     const bad = /[^\x20-\x7E\u3000-\u9FFF\uF900-\uFAFF\u3040-\u309F\u30A0-\u30FF\uFF01-\uFF60\uFFE0-\uFFE6\u2000-\u206F\u2026\u3001-\u3002\uFF08-\uFF09\uFF0C\u30FB\u4E00-\u9FFF]/g;
     for (const u of users) {
       for (const f of ['display_name','club','committee','class_num']) {
-        if (u[f] && bad.test(u[f])) { bad.lastIndex=0; issues.push(`ユーザー「${u.username}」の${f}: "${u[f]}"`) }
+        if (u[f] && bad.test(u[f])) { bad.lastIndex=0; issues.push(`繝ｦ繝ｼ繧ｶ繝ｼ縲・{u.username}縲阪・${f}: "${u[f]}"`) }
       }
     }
     for (const p of posts) {
-      if (p.title && bad.test(p.title)) { bad.lastIndex=0; issues.push(`投稿「${p.id}」のタイトル: "${p.title}"`) }
-      if (p.content && bad.test(p.content)) { bad.lastIndex=0; issues.push(`投稿「${p.id}」の本文に異常文字`) }
+      if (p.title && bad.test(p.title)) { bad.lastIndex=0; issues.push(`謚慕ｨｿ縲・{p.id}縲阪・繧ｿ繧､繝医Ν: "${p.title}"`) }
+      if (p.content && bad.test(p.content)) { bad.lastIndex=0; issues.push(`謚慕ｨｿ縲・{p.id}縲阪・譛ｬ譁・↓逡ｰ蟶ｸ譁・ｭ輿) }
     }
-    addResult('garbled', issues.length?'warn':'pass', issues.length ? `${issues.length}件:\n${issues.join('\n')}` : '異常なし');
-  } catch(e) { addResult('garbled','warn',`エラー: ${e.message}`) }
+    addResult('garbled', issues.length?'warn':'pass', issues.length ? `${issues.length}莉ｶ:\n${issues.join('\n')}` : '逡ｰ蟶ｸ縺ｪ縺・);
+  } catch(e) { addResult('garbled','warn',`繧ｨ繝ｩ繝ｼ: ${e.message}`) }
 
   // 5. Data integrity
   try {
     const users = await a('/api/users');
     const issues = [];
     for (const u of users) {
-      if (!u.display_name) issues.push(`ユーザー「${u.username}」に表示名なし`);
-      if (!u.role) issues.push(`ユーザー「${u.username}」に権限なし`);
+      if (!u.display_name) issues.push(`繝ｦ繝ｼ繧ｶ繝ｼ縲・{u.username}縲阪↓陦ｨ遉ｺ蜷阪↑縺輿);
+      if (!u.role) issues.push(`繝ｦ繝ｼ繧ｶ繝ｼ縲・{u.username}縲阪↓讓ｩ髯舌↑縺輿);
     }
-    addResult('integrity', issues.length?'warn':'pass', issues.length ? `${issues.length}件:\n${issues.join('\n')}` : '全件問題なし');
-  } catch(e) { addResult('integrity','warn',`エラー: ${e.message}`) }
+    addResult('integrity', issues.length?'warn':'pass', issues.length ? `${issues.length}莉ｶ:\n${issues.join('\n')}` : '蜈ｨ莉ｶ蝠城｡後↑縺・);
+  } catch(e) { addResult('integrity','warn',`繧ｨ繝ｩ繝ｼ: ${e.message}`) }
 
   // 6. Rate limit
   try {
@@ -513,11 +513,11 @@ async function runDiagnosis() {
     const lim = r.headers.get('X-RateLimit-Limit');
     if (rem !== null && lim !== null) {
       const pct = Math.round(parseInt(rem)/parseInt(lim)*100);
-      addResult('ratelimit', pct<20?'warn':'pass', `残り ${rem}/${lim} (${pct}%)`);
+      addResult('ratelimit', pct<20?'warn':'pass', `谿九ｊ ${rem}/${lim} (${pct}%)`);
     } else {
-      addResult('ratelimit','info','レート制限ヘッダーなし');
+      addResult('ratelimit','info','繝ｬ繝ｼ繝亥宛髯舌・繝・ム繝ｼ縺ｪ縺・);
     }
-  } catch(e) { addResult('ratelimit','warn',`エラー: ${e.message}`) }
+  } catch(e) { addResult('ratelimit','warn',`繧ｨ繝ｩ繝ｼ: ${e.message}`) }
 
   // Summary
   const all = container.querySelectorAll('.card[data-status]');
@@ -527,7 +527,7 @@ async function runDiagnosis() {
   const summary = document.createElement('div');
   summary.className = 'card';
   summary.style.textAlign = 'center';
-  summary.innerHTML = `<div style="font-size:24px">${fail?'🔴':warn?'🟡':'🟢'}</div><div style="font-size:16px;font-weight:700">✅ ${pass} · ⚠️ ${warn} · ❌ ${fail}</div>`;
+  summary.innerHTML = `<div style="font-size:24px">${fail?'閥':warn?'泯':'泙'}</div><div style="font-size:16px;font-weight:700">笨・${pass} ﾂｷ 笞・・${warn} ﾂｷ 笶・${fail}</div>`;
   container.insertBefore(summary, container.firstChild);
   btn.disabled = false;
   progress.style.display = 'none';
@@ -539,3 +539,4 @@ loadUsers();
 </script>
 </body>
 </html>
+

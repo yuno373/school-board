@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>部長・副部長への質問 - 上藤沢中学校</title>
+<title>驛ｨ髟ｷ繝ｻ蜑ｯ驛ｨ髟ｷ縺ｸ縺ｮ雉ｪ蝠・- 荳願陸豐｢荳ｭ蟄ｦ譬｡</title>
 <style>
 :root{--primary:#1E4D2B;--primary-dark:#153820;--primary-light:#2D6B40;--accent-pink:#f5a0b8;--accent-blue:#a0c4e8;--accent-yellow:#f5e6a0;--accent-green:#a8d8a0;--bg:#f7f5f0;--card:#fff;--text:#2c2c2c;--sub:#8a8682;--border:#e0dcd4;--radius:12px;--shadow:0 2px 12px rgba(30,77,43,0.06)}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -36,55 +36,55 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
 </head>
 <body>
 <header class="header">
-  <div class="header-title">❓ 部長・副部長への質問</div>
+  <div class="header-title">笶・驛ｨ髟ｷ繝ｻ蜑ｯ驛ｨ髟ｷ縺ｸ縺ｮ雉ｪ蝠・/div>
   <div class="header-right">
-    <a href="01index.html" class="header-link">黒板に戻る</a>
+    <a href="01index.html" class="header-link">鮟呈攸縺ｫ謌ｻ繧・/a>
   </div>
 </header>
 <div class="main">
-  <div class="notice">📌 部長・副部長に個別に質問できます。通知は送られませんので、回答までお待ちください。</div>
+  <div class="notice">東 驛ｨ髟ｷ繝ｻ蜑ｯ驛ｨ髟ｷ縺ｫ蛟句挨縺ｫ雉ｪ蝠上〒縺阪∪縺吶る夂衍縺ｯ騾√ｉ繧後∪縺帙ｓ縺ｮ縺ｧ縲∝屓遲斐∪縺ｧ縺雁ｾ・■縺上□縺輔＞縲・/div>
   <div class="form-section">
-    <h2>✏️ 新しい質問</h2>
-    <select id="clubSelect"><option value="">部活を選択</option></select>
-    <textarea id="qMsg" placeholder="質問内容を書いてください..."></textarea>
-    <button class="submit-btn" id="qBtn">送信する</button>
+    <h2>笨擾ｸ・譁ｰ縺励＞雉ｪ蝠・/h2>
+    <select id="clubSelect"><option value="">驛ｨ豢ｻ繧帝∈謚・/option></select>
+    <textarea id="qMsg" placeholder="雉ｪ蝠丞・螳ｹ繧呈嶌縺・※縺上□縺輔＞..."></textarea>
+    <button class="submit-btn" id="qBtn">騾∽ｿ｡縺吶ｋ</button>
   </div>
   <div id="qList"></div>
 </div>
 <script>
-const API_BASE='https://school-board-api.dajianweixi.workers.dev'
-async function a(p,o={}){const t=sessionStorage.getItem('token'),h={'Content-Type':'application/json',...o.headers};if(t)h['Authorization']='Bearer '+t;const r=await fetch(API_BASE+p,{...o,headers:h}),d=await r.json();if(!r.ok)throw new Error(d.error||'エラー');return d}
+const API_BASE=''
+async function a(p,o={}){const t=sessionStorage.getItem('token'),h={'Content-Type':'application/json',...o.headers};if(t)h['Authorization']='Bearer '+t;const r=await fetch(API_BASE+p,{...o,headers:h}),d=await r.json();if(!r.ok)throw new Error(d.error||'繧ｨ繝ｩ繝ｼ');return d}
 const $=id=>document.getElementById(id),esc=s=>{const d=document.createElement('div');d.textContent=s;return d.innerHTML};
 const cu=sessionStorage.getItem('username'),role=sessionStorage.getItem('role');
 if(!cu||!sessionStorage.getItem('token'))window.location.href='02login.html';
 const userRoles=(role||'').split(',').map(r=>r.trim());
-const CLUBS=['吹奏楽部','茶道部','美術部','卓球部','テニス部女子','テニス部男子','サッカー部','野球部','陸上部','バスケ部女子','バスケ部男子','バレー部'];
+const CLUBS=['蜷ｹ螂乗･ｽ驛ｨ','闌ｶ驕馴Κ','鄒手｡馴Κ','蜊鍋帥驛ｨ','繝・ル繧ｹ驛ｨ螂ｳ蟄・,'繝・ル繧ｹ驛ｨ逕ｷ蟄・,'繧ｵ繝・き繝ｼ驛ｨ','驥守帥驛ｨ','髯ｸ荳企Κ','繝舌せ繧ｱ驛ｨ螂ｳ蟄・,'繝舌せ繧ｱ驛ｨ逕ｷ蟄・,'繝舌Ξ繝ｼ驛ｨ'];
 CLUBS.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;$('clubSelect').appendChild(o)});
 
 $('qBtn').addEventListener('click',async()=>{
   const msg=$('qMsg').value.trim(),club=$('clubSelect').value;
-  if(!msg||!club){alert('部活と質問内容を入力してください');return}
-  $('qBtn').disabled=true;$('qBtn').textContent='送信中...';
+  if(!msg||!club){alert('驛ｨ豢ｻ縺ｨ雉ｪ蝠丞・螳ｹ繧貞・蜉帙＠縺ｦ縺上□縺輔＞');return}
+  $('qBtn').disabled=true;$('qBtn').textContent='騾∽ｿ｡荳ｭ...';
   try{await a('/api/club-questions',{method:'POST',body:JSON.stringify({question:msg,club})});$('qMsg').value='';loadQs()}catch(e){alert(e.message)}
-  $('qBtn').disabled=false;$('qBtn').textContent='送信する';
+  $('qBtn').disabled=false;$('qBtn').textContent='騾∽ｿ｡縺吶ｋ';
 });
 
 async function loadQs(){
   try{
     const data=await a('/api/club-questions');
     const el=$('qList');
-    if(!data.length){el.innerHTML='<div class="empty">質問はまだありません</div>';return}
+    if(!data.length){el.innerHTML='<div class="empty">雉ｪ蝠上・縺ｾ縺縺ゅｊ縺ｾ縺帙ｓ</div>';return}
     el.innerHTML=data.map(q=>{
       const d=new Date(q.created_at);
       const ds=(d.getMonth()+1)+'/'+d.getDate()+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
       const canReply=!q.answered&&(userRoles.includes('president')||userRoles.includes('vice-president'));
       const isAdminView=userRoles.includes('admin')||userRoles.includes('teacher');
-      const replyForm=canReply?`<div class="reply-input"><input type="text" placeholder="回答を入力..." id="ar-${q.id}"><button class="reply-btn" onclick="answerQ('${q.id}')">回答</button></div>`:'';
-      const answerHtml=q.answered?`<div class="answer"><div class="label">✏️ 回答</div>${esc(q.reply||'')}</div>`:'';
-      const fromInfo=isAdminView?`<span>${esc(q.from_display||q.from_username)} → </span>`:'';
-      return `<div class="q-card"><div class="meta">${fromInfo}${esc(q.club)} · ${ds}</div><div class="question">${esc(q.question||'')}</div>${answerHtml}${replyForm}</div>`;
+      const replyForm=canReply?`<div class="reply-input"><input type="text" placeholder="蝗樒ｭ斐ｒ蜈･蜉・.." id="ar-${q.id}"><button class="reply-btn" onclick="answerQ('${q.id}')">蝗樒ｭ・/button></div>`:'';
+      const answerHtml=q.answered?`<div class="answer"><div class="label">笨擾ｸ・蝗樒ｭ・/div>${esc(q.reply||'')}</div>`:'';
+      const fromInfo=isAdminView?`<span>${esc(q.from_display||q.from_username)} 竊・</span>`:'';
+      return `<div class="q-card"><div class="meta">${fromInfo}${esc(q.club)} ﾂｷ ${ds}</div><div class="question">${esc(q.question||'')}</div>${answerHtml}${replyForm}</div>`;
     }).join('');
-  }catch(e){$('qList').innerHTML='<div class="empty">読み込みエラー</div>'}
+  }catch(e){$('qList').innerHTML='<div class="empty">隱ｭ縺ｿ霎ｼ縺ｿ繧ｨ繝ｩ繝ｼ</div>'}
 }
 async function answerQ(id){
   const inp=$('ar-'+id);if(!inp)return;
@@ -95,3 +95,4 @@ loadQs();
 </script>
 </body>
 </html>
+

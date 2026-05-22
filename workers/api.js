@@ -362,7 +362,7 @@ async function handleRequest(request, env, ctx) {
     if (path === '/api/me' && method === 'PUT') {
       authErr = requireAuth(user);
       if (authErr) return authErr;
-      const { display_name, icon, club, committee } = await request.json();
+      const { display_name, icon, club, committee, grade, class_num, seat_num } = await request.json();
       const users = await r2Get(env.DATA, 'users.json') || [];
       const u = users.find(x => x.id === user.id);
       if (!u) return json({ error: '見つかりません' }, 404);
@@ -370,6 +370,9 @@ async function handleRequest(request, env, ctx) {
       if (icon !== undefined) u.icon = icon;
       if (club !== undefined) u.club = club;
       if (committee !== undefined) u.committee = committee;
+      if (grade !== undefined) u.grade = String(grade);
+      if (class_num !== undefined) u.class_num = String(class_num);
+      if (seat_num !== undefined) u.seat_num = String(seat_num);
       await r2Put(env.DATA, 'users.json', users);
       await auditLog(env, 'update_profile', user.username, { fields: Object.keys({ display_name, icon, club, committee }).filter(k => arguments[1][k] !== undefined) });
       return json({ success: true });

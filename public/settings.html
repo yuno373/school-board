@@ -39,6 +39,11 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
 <div class="main">
   <div class="card">
     <h2>プロフィール</h2>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <div class="form-group" style="flex:1;min-width:70px"><label>学年</label><input type="number" id="sGrade" min="1" max="3" style="width:100%"></div>
+      <div class="form-group" style="flex:1;min-width:70px"><label>クラス</label><input type="number" id="sClass" min="1" max="10" style="width:100%"></div>
+      <div class="form-group" style="flex:1;min-width:70px"><label>番号</label><input type="number" id="sSeat" min="1" max="50" style="width:100%"></div>
+    </div>
     <div class="form-group"><label>表示名</label><input type="text" id="sDispName" placeholder="表示名"></div>
     <div class="form-group"><label>部活動</label><select id="sClub"><option value="">—</option></select></div>
     <div class="form-group"><label>委員会</label><select id="sCommittee"><option value="">—</option></select></div>
@@ -64,12 +69,13 @@ const COMMS=['整備委員会','生活委員会','選挙管理委員会','図書
 CLUBS.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;$('sClub').appendChild(o)});
 COMMS.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;$('sCommittee').appendChild(o)});
 
-async function loadProfile(){try{const u=await a('/api/me');$('sDispName').value=u.display_name||'';if(u.club)$('sClub').value=u.club;if(u.committee)$('sCommittee').value=u.committee}catch(e){}}
+async function loadProfile(){try{const u=await a('/api/me');$('sDispName').value=u.display_name||'';if(u.grade)$('sGrade').value=u.grade;if(u.class_num)$('sClass').value=u.class_num;if(u.seat_num)$('sSeat').value=u.seat_num;if(u.club)$('sClub').value=u.club;if(u.committee)$('sCommittee').value=u.committee}catch(e){}}
 loadProfile();
 
 $('saveProfile').addEventListener('click',async()=>{
   const dn=$('sDispName').value.trim(),club=$('sClub').value,comm=$('sCommittee').value;
-  try{await a('/api/me',{method:'PUT',body:JSON.stringify({display_name:dn,club,committee:comm})});$('profileStatus').textContent='✅ 保存しました';$('profileStatus').className='success'}catch(e){$('profileStatus').textContent='❌ '+e.message;$('profileStatus').className='error'}
+  const grade=$('sGrade').value,cls=$('sClass').value,seat=$('sSeat').value;
+  try{await a('/api/me',{method:'PUT',body:JSON.stringify({display_name:dn,club,committee:comm,grade,class_num:cls,seat_num:seat})});$('profileStatus').textContent='✅ 保存しました';$('profileStatus').className='success'}catch(e){$('profileStatus').textContent='❌ '+e.message;$('profileStatus').className='error'}
 });
 $('changePwBtn').addEventListener('click',async()=>{
   const cur=$('sCurPw').value,pw=$('sNewPw').value,pw2=$('sNewPw2').value;

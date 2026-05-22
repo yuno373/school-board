@@ -102,7 +102,7 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
     <div class="gemini-header" style="cursor:pointer" onclick="const n=this.nextElementSibling;n.style.display=n.style.display==='none'?'':'none'">❓ 部長・委員長に質問 <span style="font-size:11px;opacity:.7">▲</span></div>
     <div id="clubQArea">
       <div style="padding:10px 14px;background:var(--card);border-left:2px solid var(--border);border-right:2px solid var(--border)">
-        <select id="cqClub" style="width:100%;padding:6px 10px;border:2px solid var(--border);border-radius:6px;font-size:12px;font-family:inherit;margin-bottom:6px"><option value="">部活を選択</option></select>
+        <select id="cqClub" style="width:100%;padding:6px 10px;border:2px solid var(--border);border-radius:6px;font-size:12px;font-family:inherit;margin-bottom:6px"><option value="">送信先を選択</option></select>
         <textarea id="cqMsg" placeholder="質問内容..." style="width:100%;padding:6px 10px;border:2px solid var(--border);border-radius:6px;font-size:12px;font-family:inherit;min-height:50px;resize:vertical;margin-bottom:6px"></textarea>
         <button class="btn btn-primary" id="cqBtn" style="padding:6px 14px;font-size:12px;width:100%">送信</button>
       </div>
@@ -209,8 +209,15 @@ async function askGemini(){
 }
 
 // Club questions
-const CLUBS=['吹奏楽部','茶道部','美術部','卓球部','テニス部女子','テニス部男子','サッカー部','野球部','陸上部','バスケ部女子','バスケ部男子','バレー部'];
-const cqSel=$('cqClub');CLUBS.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;cqSel.appendChild(o)});
+async function initClubQ(){
+  const me=await a('/api/me');
+  const targets=[];
+  if(me.club)targets.push(me.club);
+  if(me.committee)targets.push(me.committee);
+  const cqSel=$('cqClub');
+  targets.forEach(t=>{const o=document.createElement('option');o.value=t;o.textContent=t;cqSel.appendChild(o)});
+  if(targets.length===0)cqSel.innerHTML='<option value="">所属クラブ・委員会がありません</option>';
+}
 $('cqBtn').addEventListener('click',async()=>{
   const msg=$('cqMsg').value.trim(),club=cqSel.value;
   if(!msg||!club){alert('部活と質問を入力してください');return}
@@ -230,6 +237,7 @@ async function loadClubQs(){
     }).join('');
   }catch(e){$('cqList').innerHTML='<div class="empty" style="padding:16px">読み込みエラー</div>'}
 }
+initClubQ();
 loadClubQs();
 </script>
 </body>

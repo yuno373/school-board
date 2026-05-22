@@ -128,8 +128,8 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
       <label><input type="checkbox" id="selectAll"> すべて選択</label>
       <button class="btn btn-danger btn-sm" id="bulkDeleteBtn">選択を削除</button>
       <span style="color:var(--sub);margin:0 4px">|</span>
-      <select id="bulkGrade" style="padding:4px 8px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:inherit"><option value="">全学年</option><option value="1">1年</option><option value="2">2年</option><option value="3">3年</option></select>
-      <select id="bulkClass" style="padding:4px 8px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:inherit"><option value="">全クラス</option><option value="1">1組</option><option value="2">2組</option><option value="3">3組</option><option value="4">4組</option><option value="5">5組</option></select>
+      <select id="bulkGrade" style="padding:4px 8px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:inherit"><option value="">学年を選択</option></select>
+      <select id="bulkClass" style="padding:4px 8px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:inherit"><option value="">全クラス</option></select>
       <button class="btn btn-danger btn-sm" id="bulkGradeDeleteBtn">学年・クラスで削除</button>
       <span id="bulkSelectedCount" style="color:var(--sub);font-size:11px">0人選択中</span>
     </div>
@@ -262,7 +262,19 @@ async function dismissNotif(id){try{await a('/api/notifications/'+id+'/dismiss',
 // === Users ===
 let usersData=[];
 async function loadUsers(){
-  try{usersData=await a('/api/users');renderUsers()}catch(e){if(e.message.includes('認証')){sessionStorage.clear();window.location.href='02login.html'}}
+  try{usersData=await a('/api/users');populateBulkFilters();renderUsers()}catch(e){if(e.message.includes('認証')){sessionStorage.clear();window.location.href='02login.html'}}
+}
+function populateBulkFilters(){
+  const grades = [...new Set(usersData.map(x => x.grade).filter(Boolean))].sort();
+  const gEl = $('bulkGrade');
+  gEl.innerHTML = '<option value="">学年を選択</option>' + grades.map(g => `<option value="${esc(g)}">${esc(g)}</option>`).join('');
+  updateBulkClasses();
+}
+function updateBulkClasses(){
+  const grade = $('bulkGrade').value;
+  const classes = [...new Set(usersData.filter(x => !grade || x.grade === grade).map(x => x.class_num).filter(Boolean))].sort();
+  const cEl = $('bulkClass');
+  cEl.innerHTML = '<option value="">全クラス</option>' + classes.map(c => `<option value="${esc(c)}">${esc(c)}組</option>`).join('');
 }
 function renderUsers(){
   const q=$('searchInput').value.trim().toLowerCase(),roleFilter=$('searchRole').value;
@@ -346,11 +358,12 @@ $('bulkDeleteBtn').addEventListener('click', async () => {
     loadUsers();
   } catch(e) { alert(e.message) }
 });
+$('bulkGrade').addEventListener('change', updateBulkClasses);
 $('bulkGradeDeleteBtn').addEventListener('click', async () => {
   const grade = $('bulkGrade').value;
   const cls = $('bulkClass').value;
   if (!grade) { alert('学年を選択してください'); return }
-  const label = cls ? grade + '年' + cls + '組' : grade + '年生';
+  const label = (cls ? grade + '年 ' + cls + '組' : grade + '年');
   if (!confirm(label + 'のユーザーを全員削除しますか？（管理者・自分自身を除く）')) return;
   try {
     const r = await a('/api/users/batch-delete', { method: 'POST', body: JSON.stringify({ grade, class_num: cls || undefined }) });

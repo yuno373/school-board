@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>管理画面 - 上藤沢中学校部活動黒板</title>
+<style>
+:root{--primary:#3a6b5c;--primary-dark:#2d5548;--primary-light:#5a8a7a;--accent:#e07a5f;--bg:#f7f4f0;--card:#fff;--text:#2c2c2c;--sub:#8a8682;--border:#e8e2d8;--danger:#c96565;--radius:12px;--shadow:0 2px 12px rgba(58,107,92,0.07)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sans',Meiryo,sans-serif;background:var(--bg);color:var(--text)}
+.header{background:linear-gradient(135deg,var(--primary),var(--primary-light));padding:12px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100}
+.header-title{font-size:18px;font-weight:700;color:#fff}
+.header-right{display:flex;align-items:center;gap:12px}
+.header-link{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);padding:4px 14px;font-size:12px;cursor:pointer;color:rgba(255,255,255,.85);border-radius:8px;text-decoration:none;transition:all .2s}
+.header-link:hover{background:rgba(255,255,255,.25);color:#fff}
+.header-link.danger{border-color:rgba(255,255,255,.2)}
+.header-link.danger:hover{border-color:rgba(200,100,100,.6);background:rgba(200,100,100,.2);color:#ffcdcd}
+.main-content{max-width:1000px;margin:0 auto;padding:20px}
+.tab-bar{display:flex;gap:0;margin-bottom:20px;overflow-x:auto;white-space:nowrap;background:var(--card);border-radius:var(--radius);padding:4px;box-shadow:var(--shadow)}
+.tab-btn{padding:8px 18px;font-size:13px;font-weight:700;cursor:pointer;border:none;background:0 0;color:var(--sub);border-radius:8px;transition:all .2s;font-family:inherit}
+.tab-btn:hover{color:var(--text);background:#f7f4f0}
+.tab-btn.active{color:var(--primary);background:rgba(58,107,92,0.1)}
+.tab-content{display:none}
+.tab-content.active{display:block}
+.card{background:var(--card);border-radius:var(--radius);padding:16px;margin-bottom:16px;box-shadow:var(--shadow)}
+.card h3{font-size:15px;font-weight:700;margin-bottom:12px;color:var(--text)}
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:20px}
+.stat-card{background:var(--card);border-radius:var(--radius);padding:20px 16px;text-align:center;box-shadow:var(--shadow);transition:transform .2s}
+.stat-card:hover{transform:translateY(-2px)}
+.stat-num{font-size:32px;font-weight:800;color:var(--primary)}
+.stat-label{font-size:13px;color:var(--sub);margin-top:4px}
+.bar-chart{margin-top:12px}
+.bar-row{display:flex;align-items:center;gap:10px;margin-bottom:6px;font-size:13px}
+.bar-label{min-width:80px;text-align:right;color:var(--text)}.bar-val{min-width:30px;text-align:right;font-weight:700}
+.bar-fill{height:20px;background:linear-gradient(90deg,var(--primary),var(--primary-light));border-radius:6px;transition:width .5s;min-width:4px;opacity:.8}
+.search-bar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.search-bar input,.search-bar select{padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;background:#faf8f5;transition:all .2s}
+.search-bar input:focus,.search-bar select:focus{outline:none;border-color:var(--primary);background:#fff}
+.search-bar input{flex:1;min-width:150px}
+.btn{padding:8px 18px;font-size:13px;font-weight:700;border:none;border-radius:8px;cursor:pointer;transition:all .2s;font-family:inherit}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:hover{background:var(--primary-dark);box-shadow:0 4px 12px rgba(58,107,92,0.25)}
+.btn-danger{background:var(--danger);color:#fff}
+.btn-danger:hover{background:#b55a5a;box-shadow:0 4px 12px rgba(201,101,101,0.2)}
+.btn-outline{background:0 0;border:1.5px solid var(--border);color:var(--sub)}
+.btn-outline:hover{border-color:var(--primary);color:var(--primary)}
+.btn-sm{padding:4px 10px;font-size:11px;border-radius:6px}
+.user-table,.post-table{width:100%;border-collapse:separate;border-spacing:0;font-size:13px;border-radius:var(--radius);overflow:hidden}
+.user-table th,.post-table th{background:#f5f2ec;padding:10px 12px;text-align:left;font-weight:700;color:var(--sub);border-bottom:1px solid var(--border);white-space:nowrap;position:sticky;top:0}
+.user-table td,.post-table td{padding:8px 12px;border-bottom:1px solid var(--border);vertical-align:middle;background:var(--card)}
+.user-table tr:last-child td,.post-table tr:last-child td{border-bottom:none}
+.user-table tr:hover td,.post-table tr:hover td{background:#faf8f5}
+.user-table select{padding:4px 8px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:inherit;background:#fff}
+.user-table input[type=text]{padding:4px 8px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:inherit;width:100%;min-width:60px;background:#faf8f5;transition:all .2s}
+.user-table input[type=text]:focus{outline:none;border-color:var(--primary);background:#fff}
+.batch-form{display:flex;gap:12px;flex-wrap:wrap;align-items:end;padding:20px;background:var(--card);border-radius:var(--radius);margin-bottom:16px;box-shadow:var(--shadow)}
+.batch-form label{font-size:13px;font-weight:700;color:var(--sub);display:flex;flex-direction:column;gap:4px}
+.batch-form input{padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit;width:80px;text-align:center;background:#faf8f5;transition:all .2s}
+.batch-form input:focus{outline:none;border-color:var(--primary);background:#fff}
+.result-box{background:#eaf3e8;color:#2d6b4a;padding:12px 16px;border-radius:8px;font-size:13px;margin-top:12px;display:none}
+.result-box.show{display:block}
+.pwd-show{font-size:11px;color:var(--sub);cursor:pointer;border-bottom:1px dashed var(--border);padding-bottom:1px}
+.pwd-show:hover{color:var(--primary)}
+@media(max-width:600px){
+  .header{flex-direction:column;align-items:flex-start;gap:8px}.header-right{width:100%;justify-content:space-between}
+  .stat-grid{grid-template-columns:repeat(2,1fr)}.user-table,.post-table{font-size:11px}.user-table td,.user-table th,.post-table td,.post-table th{padding:4px 6px}
+  .batch-form{flex-direction:column;align-items:stretch}.batch-form input{width:100%}
+}
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="header-title">管理画面</div>
+  <div class="header-right">
+    <span id="aUser" style="font-size:12px;color:rgba(255,255,255,.75)"></span>
+    <a href="01index.html" class="header-link">黒板に戻る</a>
+    <button class="header-link danger" id="aLogout">ログアウト</button>
+  </div>
+</header>
+<div class="main-content">
+  <div class="tab-bar">
+    <button class="tab-btn active" data-tab="users">ユーザー管理</button>
+    <button class="tab-btn" data-tab="batch">生徒ID一括生成</button>
+    <button class="tab-btn" data-tab="posts">投稿管理</button>
+    <button class="tab-btn" data-tab="stats">統計</button>
+    <button class="tab-btn" data-tab="chat">チャット管理</button>
+  </div>
+
+  <div class="tab-content active" id="tab-users">
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="名前・部活・委員会・クラスで検索">
+      <select id="searchRole"><option value="">全権限</option><option value="subadmin">先生</option><option value="manager">部長/委員長</option><option value="student-council">生徒会本部</option><option value="student">生徒</option></select>
+      <button class="btn btn-primary btn-sm" id="aRefresh">更新</button>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="user-table" id="userTable">
+        <thead><tr><th>ログインID</th><th>表示名</th><th>パスワード</th><th>権限</th><th>学年</th><th>クラス</th><th>番号</th><th>部活</th><th>委員会</th><th>登録日</th><th></th></tr></thead>
+        <tbody id="userList"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="tab-content" id="tab-batch">
+    <div class="batch-form">
+      <label>入学年度<input type="number" id="bYear" value="2026" min="2020" max="2035"></label>
+      <label>クラス数<input type="number" id="bClasses" value="4" min="1" max="10"></label>
+      <label>1クラス人数<input type="number" id="bPerClass" value="30" min="1" max="50"></label>
+      <label>初期パスワード<input type="text" id="bPassword" value="111111"></label>
+      <button class="btn btn-primary" id="bGenerate">生成する</button>
+    </div>
+    <div class="result-box" id="bResult"></div>
+  </div>
+
+  <div class="tab-content" id="tab-posts">
+    <div style="overflow-x:auto">
+      <table class="post-table" id="postTable">
+        <thead><tr><th>カテゴリ</th><th>タイトル</th><th>投稿者</th><th>日付</th><th></th></tr></thead>
+        <tbody id="postList"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="tab-content" id="tab-stats">
+    <div class="stat-grid" id="statGrid"></div>
+    <div class="card">
+      <h3>権限別ユーザー数</h3>
+      <div class="bar-chart" id="roleChart"></div>
+    </div>
+    <div class="card">
+      <h3>部活別ユーザー数</h3>
+      <div class="bar-chart" id="clubChart"></div>
+    </div>
+    <div class="card">
+      <h3>委員会別ユーザー数</h3>
+      <div class="bar-chart" id="committeeChart"></div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="tab-chat">
+    <div class="search-bar" style="margin-bottom:12px">
+      <input type="text" id="chatSearchInput" placeholder="ユーザー名で検索" style="max-width:240px">
+      <span style="font-size:13px;color:var(--sub);display:flex;align-items:center;gap:4px">参加者: <strong id="chatPartCount" style="color:var(--primary)">0</strong></span>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="user-table" id="chatUserTable">
+        <thead><tr><th>ユーザー名</th><th>権限</th><th>表示名</th><th>参加</th></tr></thead>
+        <tbody id="chatUserList"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+async function h(p){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(p));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('')}
+const API_BASE='https://school-board-api.dajianweixi.workers.dev'
+async function a(p,o={}){const t=sessionStorage.getItem('token'),h={'Content-Type':'application/json',...o.headers};if(t)h['Authorization']='Bearer '+t;const r=await fetch(API_BASE+p,{...o,headers:h}),d=await r.json();if(!r.ok)throw new Error(d.error||'エラー');return d}
+const A={requireAuth(){const u=sessionStorage.getItem('username'),r=sessionStorage.getItem('role'),t=sessionStorage.getItem('token');if(!u||!r||!t)return null;return{username:u,role:r,token:t}},canManageUsers(){const u=this.requireAuth();if(!u)return false;const roles=u.role.split(',').map(s=>s.trim());return roles.some(r=>['admin','subadmin'].includes(r))},logout(){sessionStorage.clear()},getUser(){return this.requireAuth()}};window.AUTH=A;
+const $=id=>document.getElementById(id),esc=s=>{const d=document.createElement('div');d.textContent=s;return d.innerHTML};
+const u=AUTH.requireAuth();if(!u)window.location.href='02login.html';
+if(!AUTH.canManageUsers()){alert('権限がありません');window.location.href='01index.html'}
+const RL={'admin':'管理者','subadmin':'先生','manager':'部長/委員長','student':'生徒','student-council':'生徒会本部'};
+$('aUser').textContent=u.username+'（'+(u.role||'').split(',').map(r=>RL[r.trim()]||r.trim()).filter(Boolean).join('·')+'）';
+$('aLogout').addEventListener('click',()=>{AUTH.logout();window.location.href='02login.html'});
+const ROLES=[{v:'subadmin',l:'先生'},{v:'manager-club',l:'部長'},{v:'manager-committee',l:'委員長'},{v:'student-council',l:'生徒会本部'},{v:'student',l:'生徒'}];
+function roleLabel(r){
+  const m={'subadmin':'先生','manager-club':'部長','manager-committee':'委員長','student-council':'生徒会本部','student':'生徒'};
+  return m[r]||r;
+}
+const CLUBS=['吹奏楽部','茶道部','美術部','卓球部','テニス部女子','テニス部男子','サッカー部','野球部','陸上部','バスケ部女子','バスケ部男子','バレー部'];
+const COMMS=['整備委員会','生活委員会','選挙管理委員会','図書委員会','給食委員会','合唱委員会','体育委員会','保健委員会','放送委員会'];
+
+document.querySelectorAll('.tab-btn').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');$(b.dataset.tab==='users'?'tab-users':b.dataset.tab==='batch'?'tab-batch':b.dataset.tab==='posts'?'tab-posts':b.dataset.tab==='stats'?'tab-stats':'tab-chat').classList.add('active');
+  if(b.dataset.tab==='users')loadUsers();if(b.dataset.tab==='posts')loadPosts();if(b.dataset.tab==='stats')loadStats();if(b.dataset.tab==='chat')loadChatUsers();
+}));
+
+let usersData=[];
+async function loadUsers(){
+  try{usersData=await a('/api/users');renderUsers()}catch(e){if(e.message.includes('認証')){AUTH.logout();window.location.href='02login.html'}}
+}
+function renderUsers(){
+  const q=$('searchInput').value.trim().toLowerCase(),r=$('searchRole').value;
+  const flt=usersData.filter(x=>(!q||x.username.toLowerCase().includes(q)||(x.display_name||'').toLowerCase().includes(q)||x.club.toLowerCase().includes(q)||x.committee.toLowerCase().includes(q)||x.class_num.includes(q))&&(!r||x.role.includes(r)));
+  const t=$('userList');t.innerHTML='';
+  flt.forEach(x=>{
+    const tr=document.createElement('tr');
+    const userRoles=x.role.split(',').map(s=>s.trim());
+    const isAdmin=userRoles.includes('admin');
+    const sd=u.role!=='admin'||!isAdmin;
+    const pwShow=x.password_plain?'<span class="pwd-show" onclick="this.textContent=this.textContent===\'******\'?\'"'+esc(x.password_plain)+'"\':\'******\'">******</span>':'—';
+    const dt=x.created_at?new Date(x.created_at).toLocaleDateString('ja-JP',{month:'numeric',day:'numeric',year:'numeric'}):'—';
+    const actions='<div style="display:flex;gap:4px;flex-wrap:wrap">'+(sd&&x.id!==u.id?'<button class="btn btn-danger btn-sm" onclick="delUser(\''+x.id+'\',\''+esc(x.username)+'\')">削除</button>':'')+(sd?'<button class="btn btn-outline btn-sm" onclick="resetPwd(\''+x.id+'\',\''+esc(x.username)+'\')">PW再発行</button>':'')+'</div>';
+    const roleHtml=ROLES.map(rr=>{
+      const checked=userRoles.includes(rr.v);
+      return '<label style="font-size:11px;white-space:nowrap;cursor:pointer;display:flex;align-items:center;gap:3px"><input type="checkbox" '+(checked?'checked':'')+' data-id="'+x.id+'" data-v="'+rr.v+'"> '+esc(rr.l)+'</label>';
+    }).join('');
+    tr.innerHTML='<td>'+esc(x.username)+'</td><td><input type="text" value="'+esc(x.display_name||'')+'" onchange="updField(\''+x.id+'\',\'display_name\',this.value)" style="width:100px"></td><td>'+(sd?pwShow+'<br><input type="text" placeholder="新PW" onchange="setPwd(\''+x.id+'\',this)" style="width:80px;font-size:11px;margin-top:4px">':'—')+'</td><td><div style="display:flex;flex-direction:column;gap:2px">'+roleHtml+'</div></td><td><input type="text" value="'+esc(x.grade||'')+'" onchange="updField(\''+x.id+'\',\'grade\',this.value)" style="width:50px"></td><td><input type="text" value="'+esc(x.class_num||'')+'" onchange="updField(\''+x.id+'\',\'class_num\',this.value)" style="width:40px"></td><td><input type="text" value="'+esc(x.seat_num||'')+'" onchange="updField(\''+x.id+'\',\'seat_num\',this.value)" style="width:40px"></td><td><select onchange="updField(\''+x.id+'\',\'club\',this.value)"><option value="">—</option>'+CLUBS.map(c=>'<option value="'+c+'"'+(x.club===c?' selected':'')+'>'+c+'</option>').join('')+'</select></td><td><select onchange="updField(\''+x.id+'\',\'committee\',this.value)"><option value="">—</option>'+COMMS.map(c=>'<option value="'+c+'"'+(x.committee===c?' selected':'')+'>'+c+'</option>').join('')+'</select></td><td>'+dt+'</td><td>'+actions+'</td>';
+    tr.querySelectorAll('input[type=checkbox][data-id]').forEach(cb=>{
+      cb.onchange=function(){updRole(this.dataset.id,this.dataset.v,this.checked)};
+    });
+    t.appendChild(tr);
+  });
+}
+async function updRole(id,val,add){
+  try{
+    const u=usersData.find(x=>x.id===id);if(!u)return;
+    let roles=u.role?u.role.split(',').map(r=>r.trim()).filter(Boolean):[];
+    if(add&&!roles.includes(val))roles.push(val);
+    else if(!add)roles=roles.filter(r=>r!==val);
+    await a('/api/users/'+id,{method:'PUT',body:JSON.stringify({role:roles.join(',')})});
+    loadUsers();
+  }catch(e){alert(e.message);loadUsers()}
+}
+async function updField(id,field,val){try{await a('/api/users/'+id,{method:'PUT',body:JSON.stringify({[field]:val})})}catch(e){alert(e.message)}}
+async function delUser(id,un){if(!confirm('「'+un+'」を削除しますか？'))return;try{await a('/api/users/'+id,{method:'DELETE'});loadUsers()}catch(e){alert(e.message)}}
+async function resetPwd(id,un){if(!confirm('「'+un+'」のパスワードを再発行しますか？'))return;try{const r=await a('/api/users/'+id+'/reset-password',{method:'PUT'});alert('新しいパスワード: '+r.newPassword+'\nこのパスワードをユーザーに伝えてください。');loadUsers()}catch(e){alert(e.message)}}
+async function setPwd(id,inp){const pw=inp.value.trim();if(!pw||pw.length<6){alert('6文字以上入力してください');inp.value='';return}if(!confirm('パスワードを「'+pw+'」に変更しますか？（取り消せません）')){inp.value='';return}try{await a('/api/users/'+id,{method:'PUT',body:JSON.stringify({password:pw})});alert('パスワードを変更しました');inp.value='';loadUsers()}catch(e){alert(e.message);inp.value=''}}
+$('searchInput').addEventListener('input',renderUsers);
+$('searchRole').addEventListener('change',renderUsers);
+$('aRefresh').addEventListener('click',loadUsers);
+
+$('bGenerate').addEventListener('click',async()=>{
+  const year=$('bYear').value,classes=$('bClasses').value,perClass=$('bPerClass').value,password=$('bPassword').value;
+  if(!confirm(year+'年度 入学 '+classes+'クラス '+perClass+'人/クラス で生成しますか？'))return;
+  $('bGenerate').disabled=true;$('bGenerate').textContent='生成中...';
+  try{
+    const r=await a('/api/users/batch',{method:'POST',body:JSON.stringify({year,classes,perClass,password})});
+    const box=$('bResult');box.className='result-box show';
+    box.innerHTML='<strong>'+r.created+'人</strong> の生徒IDを生成しました<br>初期パスワード: <strong>'+esc(r.password)+'</strong><br>生成ID: '+r.students.slice(0,5).join(', ')+(r.students.length>5?' …他'+(r.students.length-5)+'件':'');
+  }catch(e){alert(e.message)}
+  $('bGenerate').disabled=false;$('bGenerate').textContent='生成する';
+});
+
+async function loadPosts(){
+  const t=$('postList');t.innerHTML='<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--sub)">読み込み中...</td></tr>';
+  try{
+    const ps=await a('/api/admin/posts');
+    if(!ps.length){t.innerHTML='<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--sub)">投稿がありません</td></tr>';return}
+    t.innerHTML='';
+    ps.forEach(p=>{
+      const d=new Date(p.created_at);const ds=(d.getMonth()+1)+'/'+d.getDate()+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+      const tr=document.createElement('tr');
+      tr.innerHTML='<td>'+esc(p.category)+'</td><td>'+esc(p.title)+'</td><td>'+esc(p.username)+'</td><td>'+ds+'</td><td><button class="btn btn-danger btn-sm" onclick="delPost(\''+p.id+'\')">削除</button></td>';
+      t.appendChild(tr);
+    });
+  }catch(e){t.innerHTML='<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--sub)">エラー</td></tr>'}
+}
+async function delPost(id){
+  if(!confirm('この投稿を削除しますか？'))return;
+  try{await a('/api/posts/'+id,{method:'DELETE'});loadPosts()}catch(e){alert(e.message)}
+}
+
+async function loadStats(){
+  try{
+    const s=await a('/api/stats');
+    const grid=$('statGrid');
+    const subLbl={'club':'部長','committee':'委員長'};
+    const managers=Object.entries(s.bySubRole||{}).map(([k,v])=>'<div class="stat-card"><div class="stat-num">'+v+'</div><div class="stat-label">'+esc(subLbl[k]||k)+'</div></div>').join('');
+    const cards=[
+      {label:'総ユーザー数',num:s.totalUsers},{label:'先生',num:s.byRole.subadmin||0},
+      {label:'生徒会本部',num:s.byRole['student-council']||0},
+      {label:'生徒',num:s.byRole.student||0},{label:'投稿数',num:s.totalPosts}
+    ];
+    grid.innerHTML=cards.map(c=>'<div class="stat-card"><div class="stat-num">'+c.num+'</div><div class="stat-label">'+c.label+'</div></div>').join('')+managers;
+    renderBar($('roleChart'),s.byRole,{'subadmin':'先生','manager':'部長/委員長','student-council':'生徒会本部','student':'生徒','admin':'管理者'});
+    renderBar($('clubChart'),s.byClub,{});
+    renderBar($('committeeChart'),s.byCommittee,{});
+  }catch(e){}
+}
+function renderBar(el,data,labels){
+  const keys=Object.keys(data);if(!keys.length){el.innerHTML='<div style="color:var(--sub);font-size:13px">データがありません</div>';return}
+  const mx=Math.max(...keys.map(k=>data[k]));
+  el.innerHTML=keys.sort((a,b)=>data[b]-data[a]).map(k=>'<div class="bar-row"><span class="bar-label">'+esc(labels[k]||k)+'</span><span class="bar-val">'+data[k]+'</span><div class="bar-fill" style="width:'+Math.max(data[k]/mx*100,5)+'%"></div></div>').join('');
+}
+
+let chatAllUsers=[],chatParticipants=[];
+async function loadChatUsers(){
+  try{
+    [chatAllUsers,chatParticipants]=await Promise.all([a('/api/users'),a('/api/chat/participants')]);
+    renderChatUsers();
+  }catch(e){}
+}
+function renderChatUsers(){
+  const q=$('chatSearchInput').value.trim().toLowerCase();
+  const partUsernames=new Set(chatParticipants.map(p=>p.username));
+  $('chatPartCount').textContent=partUsernames.size;
+  const flt=chatAllUsers.filter(x=>!q||x.username.toLowerCase().includes(q));
+  const t=$('chatUserList');t.innerHTML='';
+  flt.forEach(x=>{
+    const inChat=partUsernames.has(x.username);
+    const tr=document.createElement('tr');
+    tr.innerHTML='<td>'+esc(x.username)+'</td><td>'+esc(RL[x.role]||x.role)+'</td><td>'+esc(x.display_name||'')+'</td><td><input type="checkbox" '+(inChat?'checked':'')+' data-u="'+esc(x.username)+'" '+(x.role==='admin'||x.role==='subadmin'?'disabled':'')+'></td>';
+    const cb=tr.querySelector('input[type=checkbox]');
+    cb.onchange=async function(){
+      try{
+        if(this.checked){
+          await a('/api/chat/participants',{method:'POST',body:JSON.stringify({username:x.username})});
+        }else{
+          await a('/api/chat/participants/'+encodeURIComponent(x.username),{method:'DELETE'});
+        }
+        loadChatUsers();
+      }catch(e){alert(e.message);loadChatUsers()}
+    };
+    t.appendChild(tr);
+  });
+}
+$('chatSearchInput').addEventListener('input',renderChatUsers);
+
+loadUsers();
+</script>
+</body>
+</html>

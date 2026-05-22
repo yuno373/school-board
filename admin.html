@@ -322,7 +322,7 @@ $('mCreate').addEventListener('click', async () => {
   try {
     const hp = await h(pass);
     const r = await a('/api/users', { method: 'POST', body: JSON.stringify({
-      username: user, password: h, role,
+      username: user, password: hp, role,
       grade: grade || '', class_num: cls || '', seat_num: seat || '',
       club, committee, display_name: disp
     })});

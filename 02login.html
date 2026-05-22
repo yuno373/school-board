@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ログイン - 上藤沢中学校 部活動黒板</title>
+<style>
+:root{--primary:#1E4D2B;--primary-dark:#153820;--primary-light:#2D6B40;--accent-pink:#f5a0b8;--accent-blue:#a0c4e8;--accent-yellow:#f5e6a0;--accent-green:#a8d8a0;--bg:#f7f5f0;--card:#fff;--text:#2c2c2c;--sub:#8a8682;--border:#e0dcd4;--danger:#c96565;--radius:12px;--shadow:0 4px 20px rgba(30,77,43,0.08)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sans',Meiryo,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center}
+.login-container{width:100%;max-width:420px;padding:20px}
+.login-card{background:var(--card);border-radius:var(--radius);padding:40px 32px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.login-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--primary)}
+.logo{text-align:center;margin-bottom:32px}
+.logo-icon{width:56px;height:56px;background:var(--primary);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:28px;color:#fff}
+.logo h1{font-size:18px;font-weight:700;color:var(--text)}
+.logo p{font-size:12px;color:var(--sub);margin-top:4px}
+.form-group{margin-bottom:20px}
+.form-group label{display:block;font-size:13px;font-weight:700;color:var(--sub);margin-bottom:6px}
+.form-group input{width:100%;padding:12px 16px;border:2px solid var(--border);border-radius:8px;font-size:15px;font-family:inherit;background:#faf8f5;transition:all .2s}
+.form-group input:focus{outline:none;border-color:var(--primary);background:#fff;box-shadow:0 0 0 3px rgba(30,77,43,0.08)}
+.login-btn{width:100%;padding:14px;background:var(--primary);color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s;font-family:inherit}
+.login-btn:hover{background:var(--primary-dark);box-shadow:0 4px 16px rgba(30,77,43,0.25)}
+.login-btn:disabled{opacity:.5;cursor:not-allowed}
+.error{background:#fce8e8;color:var(--danger);padding:12px 16px;border-radius:8px;font-size:13px;margin-bottom:16px;display:none}
+.error.show{display:block}
+.lock-info{background:#faf0e0;color:#8a6a20;padding:10px 14px;border-radius:8px;font-size:12px;margin-bottom:16px;display:none;line-height:1.5}
+.lock-info.show{display:block}
+.footer{text-align:center;margin-top:24px}
+.footer a{color:var(--sub);font-size:12px;text-decoration:none}
+.footer a:hover{color:var(--primary)}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.login-card{animation:fadeIn .4s ease}
+</style>
+</head>
+<body>
+<div class="login-container">
+  <div class="login-card">
+    <div class="logo">
+      <div class="logo-icon">📋</div>
+      <h1>部活動黒板</h1>
+      <p>上藤沢中学校</p>
+    </div>
+    <div class="error" id="errorMsg"></div>
+    <div class="lock-info" id="lockInfo"></div>
+    <form id="loginForm" autocomplete="off">
+      <div class="form-group">
+        <label for="username">ログインID</label>
+        <input type="text" id="username" placeholder="ログインIDを入力" autocomplete="username" required>
+      </div>
+      <div class="form-group">
+        <label for="password">パスワード</label>
+        <input type="password" id="password" placeholder="パスワードを入力" autocomplete="current-password" required>
+      </div>
+      <button type="submit" class="login-btn" id="loginBtn">ログイン</button>
+    </form>
+    <div class="footer"><a href="#">上藤沢中学校 部活動黒板</a></div>
+  </div>
+</div>
+<script>
+const API_BASE='https://school-board-api.dajianweixi.workers.dev';
+const $=id=>document.getElementById(id);
+$('loginForm').addEventListener('submit',async e=>{
+  e.preventDefault();const btn=$('loginBtn');btn.disabled=true;btn.textContent='ログイン中...';
+  $('errorMsg').className='error';$('lockInfo').className='lock-info';
+  try{
+    const u=$('username').value.trim(),p=$('password').value;
+    if(!u||!p){$('errorMsg').textContent='入力してください';$('errorMsg').className='error show';btn.disabled=false;btn.textContent='ログイン';return}
+    const h=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(p)))).map(x=>x.toString(16).padStart(2,'0')).join('');
+    const r=await fetch(API_BASE+'/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:u,password:h})});
+    const d=await r.json();
+    if(!r.ok){
+      if(d.locked){$('lockInfo').textContent='🔒 ログインがロックされました。あと'+d.remaining+'分お待ちください。';$('lockInfo').className='lock-info show'}
+      else{$('errorMsg').textContent=d.error||'ログインに失敗しました';$('errorMsg').className='error show'}
+      btn.disabled=false;btn.textContent='ログイン';return
+    }
+    sessionStorage.setItem('token',d.token);sessionStorage.setItem('username',d.username);sessionStorage.setItem('role',d.role);
+    sessionStorage.setItem('display_name',d.display_name||d.username);
+    window.location.href='01index.html';
+  }catch(e){$('errorMsg').textContent='サーバーに接続できません';$('errorMsg').className='error show';btn.disabled=false;btn.textContent='ログイン'}
+});
+</script>
+</body>
+</html>

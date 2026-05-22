@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>相談所 - 上藤沢中学校 部活動黒板</title>
+<style>
+:root{--primary:#1E4D2B;--primary-dark:#153820;--primary-light:#2D6B40;--accent-pink:#f5a0b8;--accent-blue:#a0c4e8;--accent-yellow:#f5e6a0;--accent-green:#a8d8a0;--bg:#f7f5f0;--card:#fff;--text:#2c2c2c;--sub:#8a8682;--border:#e0dcd4;--radius:12px;--shadow:0 2px 12px rgba(30,77,43,0.06)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sans',Meiryo,sans-serif;background:var(--bg);color:var(--text)}
+.header{background:var(--primary);padding:12px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100}
+.header-title{font-size:16px;font-weight:700;color:#fff}
+.header-right{display:flex;align-items:center;gap:8px}
+.header-link{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);padding:4px 12px;font-size:12px;cursor:pointer;color:rgba(255,255,255,.85);border-radius:8px;text-decoration:none;transition:all .2s;font-family:inherit}
+.header-link:hover{background:rgba(255,255,255,.25);color:#fff}
+.main{max-width:700px;margin:0 auto;padding:20px}
+.form-section{background:var(--card);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);margin-bottom:20px;border-left:4px solid var(--accent-pink)}
+.form-section h2{font-size:15px;font-weight:700;margin-bottom:12px;color:var(--text)}
+.form-section textarea{width:100%;padding:12px;border:2px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit;min-height:120px;resize:vertical;background:#faf8f5;transition:all .2s}
+.form-section textarea:focus{outline:none;border-color:var(--primary);background:#fff;box-shadow:0 0 0 3px rgba(30,77,43,0.08)}
+.form-section select{width:100%;padding:10px 12px;border:2px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit;background:#faf8f5;margin:10px 0;cursor:pointer}
+.form-section select:focus{outline:none;border-color:var(--primary)}
+.submit-btn{padding:12px 28px;background:var(--primary);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
+.submit-btn:hover{background:var(--primary-dark);box-shadow:0 4px 12px rgba(30,77,43,0.2)}
+.consult-list{display:flex;flex-direction:column;gap:10px}
+.consult-card{background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);border-left:3px solid var(--accent-blue)}
+.consult-card .meta{font-size:11px;color:var(--sub);margin-bottom:6px}
+.consult-card .msg{font-size:14px;line-height:1.6;margin-bottom:8px;white-space:pre-wrap}
+.consult-card .reply{background:#f0f6fc;padding:10px 14px;border-radius:8px;font-size:13px;margin-top:8px;border-left:3px solid var(--accent-green)}
+.consult-card .reply .label{font-size:11px;font-weight:700;color:var(--primary);margin-bottom:4px}
+.reply-input{display:flex;gap:8px;margin-top:10px}
+.reply-input input{flex:1;padding:8px 12px;border:2px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit}
+.reply-input input:focus{outline:none;border-color:var(--primary)}
+.reply-btn{padding:8px 16px;background:var(--primary);color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit}
+.empty{text-align:center;padding:40px;color:var(--sub);font-size:14px}
+.anon-notice{font-size:12px;color:var(--sub);margin:6px 0;display:flex;align-items:center;gap:6px}
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="header-title">📩 相談所</div>
+  <div class="header-right">
+    <a href="01index.html" class="header-link">黒板に戻る</a>
+  </div>
+</header>
+<div class="main">
+  <div class="form-section">
+    <h2>✏️ 新しい相談</h2>
+    <select id="consultTo"><option value="all">全ての先生へ</option></select>
+    <textarea id="consultMsg" placeholder="相談内容を書いてください..."></textarea>
+    <label class="anon-notice"><input type="checkbox" id="consultAnon" checked> 匿名で送信（先生には名前は見えません）</label>
+    <button class="submit-btn" id="consultBtn">送信する</button>
+    <div id="consultStatus" style="font-size:13px;color:var(--primary);margin-top:8px;display:none"></div>
+  </div>
+  <div id="consultList" class="consult-list"></div>
+</div>
+<script>
+const API_BASE='https://school-board-api.dajianweixi.workers.dev'
+async function a(p,o={}){const t=sessionStorage.getItem('token'),h={'Content-Type':'application/json',...o.headers};if(t)h['Authorization']='Bearer '+t;const r=await fetch(API_BASE+p,{...o,headers:h}),d=await r.json();if(!r.ok)throw new Error(d.error||'エラー');return d}
+const $=id=>document.getElementById(id),esc=s=>{const d=document.createElement('div');d.textContent=s;return d.innerHTML};
+const cu=sessionStorage.getItem('username'),role=sessionStorage.getItem('role');
+if(!cu||!sessionStorage.getItem('token'))window.location.href='02login.html';
+const isTeacher=(role||'').split(',').some(r=>['admin','teacher'].includes(r.trim()));
+
+// Load teachers for the "to" dropdown
+async function loadTeachers(){
+  try{
+    const teachers=await a('/api/consult/teachers');
+    const sel=$('consultTo');
+    teachers.forEach(t=>{const o=document.createElement('option');o.value=t.username;o.textContent=t.display_name||t.username;sel.appendChild(o)});
+  }catch(e){}
+}
+loadTeachers();
+
+// Send consultation
+$('consultBtn').addEventListener('click',async()=>{
+  const msg=$('consultMsg').value.trim(),to=$('consultTo').value,anon=$('consultAnon').checked;
+  if(!msg){alert('内容を入力してください');return}
+  $('consultBtn').disabled=true;$('consultBtn').textContent='送信中...';
+  try{
+    const r=await a('/api/consult',{method:'POST',body:JSON.stringify({message:msg,to,anonymous:anon})});
+    $('consultMsg').value='';
+    const status=$('consultStatus');status.style.display='block';status.textContent='✅ 送信しました。先生の返信をお待ちください。';
+    if(isTeacher)loadConsults();
+  }catch(e){alert(e.message)}
+  $('consultBtn').disabled=false;$('consultBtn').textContent='送信する';
+});
+
+// Load consultations (teachers only)
+async function loadConsults(){
+  if(!isTeacher)return;
+  const el=$('consultList');
+  try{
+    const data=await a('/api/consult');
+    if(!data.length){el.innerHTML='<div class="empty">相談はまだありません</div>';return}
+    el.innerHTML=data.map(item=>{
+      const d=new Date(item.created_at);const ds=(d.getMonth()+1)+'/'+d.getDate()+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+      const msgText=esc(item.message||'');
+      const replyHtml=item.teacher_reply?`<div class="reply"><div class="label">✏️ 返信（${esc(item.replied_by||'')}）</div>${esc(item.teacher_reply)}</div>`:'';
+      const replyForm=item.teacher_reply?'':`<div class="reply-input"><input type="text" placeholder="返信を入力..." id="reply-${item.id}"><button class="reply-btn" onclick="sendReply('${item.id}')">返信</button></div>`;
+      return `<div class="consult-card"><div class="meta">${ds} → ${esc(item.to||'全員')}${item.hasMessage?'':''}</div><div class="msg">${msgText||'🔒 暗号化メッセージ'}</div>${replyHtml}${replyForm}</div>`;
+    }).join('');
+  }catch(e){el.innerHTML='<div class="empty">読み込みエラー</div>'}
+}
+async function sendReply(id){
+  const inp=$('reply-'+id);if(!inp)return;
+  const reply=inp.value.trim();if(!reply)return;
+  try{await a('/api/consult/'+id+'/reply',{method:'POST',body:JSON.stringify({reply})});loadConsults()}catch(e){alert(e.message)}
+}
+
+if(isTeacher)loadConsults();
+</script>
+</body>
+</html>

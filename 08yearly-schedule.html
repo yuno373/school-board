@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>予定表 - 上藤沢中学校</title>
+<style>
+:root{--primary:#3a6b5c;--primary-dark:#2d5548;--primary-light:#5a8a7a;--accent:#e07a5f;--bg:#f7f4f0;--card:#fff;--text:#2c2c2c;--sub:#8a8682;--border:#e8e2d8;--danger:#c96565;--radius:12px;--shadow:0 2px 12px rgba(58,107,92,0.07)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sans',Meiryo,sans-serif;background:var(--bg);color:var(--text)}
+.header{background:linear-gradient(135deg,var(--primary),var(--primary-light));padding:14px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100}
+.header-title{font-size:17px;font-weight:700;color:#fff}
+.header-right{display:flex;align-items:center;gap:10px}
+.header-link{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);padding:4px 14px;font-size:12px;cursor:pointer;color:rgba(255,255,255,.85);border-radius:8px;text-decoration:none;transition:all .2s}
+.header-link:hover{background:rgba(255,255,255,.25);color:#fff}
+.header-link.active{background:rgba(255,255,255,.25);color:#fff}
+.main-content{max-width:900px;margin:0 auto;padding:20px}
+.card{background:var(--card);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);margin-bottom:16px}
+.card h2{font-size:16px;font-weight:700;margin-bottom:16px;color:var(--text);display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none}
+.card h2:hover{opacity:.8}
+.form-row{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap;align-items:end}
+.form-row label{font-size:12px;font-weight:700;color:var(--sub);display:flex;flex-direction:column;gap:4px}
+.form-row input,.form-row select,.form-row textarea{padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;background:#faf8f5;transition:all .2s}
+.form-row input:focus,.form-row select:focus,.form-row textarea:focus{outline:none;border-color:var(--primary);background:#fff}
+.form-row input[type=date]{width:140px}
+.form-row input[type=text]{width:200px}
+.form-row textarea{width:100%;min-height:60px;resize:vertical}
+.btn{padding:8px 18px;font-size:13px;font-weight:700;border:none;border-radius:8px;cursor:pointer;transition:all .2s;font-family:inherit}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:hover{background:var(--primary-dark);box-shadow:0 4px 12px rgba(58,107,92,0.25)}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed}
+.btn-accent{background:var(--accent);color:#fff}
+.btn-accent:hover{opacity:.9;box-shadow:0 4px 12px rgba(224,122,95,0.25)}
+.btn-accent:disabled{opacity:.5;cursor:not-allowed}
+.btn-outline{background:0 0;border:1.5px solid var(--border);color:var(--sub)}
+.btn-outline:hover{border-color:var(--primary);color:var(--primary)}
+.btn-danger{background:var(--danger);color:#fff}
+.btn-danger:hover{background:#b55a5a}
+.btn-sm{padding:4px 10px;font-size:11px;border-radius:6px}
+.cat-tabs{display:flex;gap:4px;margin-bottom:16px;flex-wrap:wrap}
+.cat-tab{padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;border:1.5px solid var(--border);border-radius:8px;background:0 0;color:var(--sub);transition:all .2s;font-family:inherit}
+.cat-tab.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.cat-tab:hover:not(.active){border-color:var(--primary);color:var(--primary)}
+.entry-list{display:flex;flex-direction:column;gap:6px}
+.entry-item{display:flex;gap:12px;padding:10px 14px;background:#faf8f5;border-radius:8px;align-items:flex-start}
+.entry-date{min-width:70px;font-size:13px;font-weight:700;color:var(--primary)}
+.entry-cat{font-size:11px;color:var(--sub);padding:2px 6px;background:#f0ede8;border-radius:4px;flex-shrink:0}
+.entry-body{flex:1}
+.entry-title{font-size:14px;font-weight:700;color:var(--text)}
+.entry-desc{font-size:12px;color:var(--sub);margin-top:2px}
+.empty-state{text-align:center;padding:40px 20px;color:#c5c0b8;font-size:14px}
+.sched-list{display:flex;flex-direction:column;gap:6px}
+.sched-item{display:flex;gap:12px;padding:10px 14px;background:#faf8f5;border-radius:8px;align-items:flex-start;cursor:default}
+.sched-item.expandable{cursor:pointer}
+.sched-item:hover{background:#f5f2ec}
+.sched-date{min-width:70px;font-size:13px;font-weight:700;color:var(--primary)}
+.sched-body{flex:1}
+.sched-title{font-size:14px;font-weight:700;color:var(--text)}
+.sched-meta{font-size:12px;color:var(--sub);margin-top:2px}
+.sched-desc{font-size:12px;color:var(--sub);margin-top:4px;display:none}
+.sched-item.expanded .sched-desc{display:block}
+.filter-bar{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.filter-bar input,.filter-bar select{padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;background:#faf8f5;transition:all .2s}
+.filter-bar input:focus,.filter-bar select:focus{outline:none;border-color:var(--primary);background:#fff}
+.filter-bar input{flex:1;min-width:150px}
+.gemini-box{background:#faf8f5;border:1.5px solid var(--border);border-radius:12px;padding:16px;margin-top:16px}
+.gemini-box .chat-area{display:flex;gap:8px;margin-top:12px}
+.gemini-box input{flex:1;padding:10px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:13px;font-family:inherit;background:#fff;transition:all .2s}
+.gemini-box input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(224,122,95,0.1)}
+.gemini-box .answer{padding:12px;background:#fff;border-radius:8px;font-size:13px;line-height:1.6;margin-top:10px;white-space:pre-wrap;display:none}
+.gemini-box .answer.show{display:block}
+.gemini-box .hint{font-size:12px;color:var(--sub);margin-top:8px}
+.collapse-toggle{font-size:12px;font-weight:400;color:var(--sub);margin-left:auto}
+.section-hide .section-body{display:none}
+@media(max-width:600px){
+  .header{flex-direction:column;align-items:flex-start;gap:8px}.header-right{width:100%;justify-content:space-between}
+  .form-row{flex-direction:column}.form-row input,.form-row select{width:100%!important}
+  .entry-item,.sched-item{flex-direction:column;gap:4px}.entry-date,.sched-date{min-width:auto}
+}
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="header-title">予定表</div>
+  <div class="header-right">
+    <span id="hUser" style="font-size:12px;color:rgba(255,255,255,.75)"></span>
+    <a href="/" class="header-link">黒板</a>
+  </div>
+</header>
+<main class="main-content">
+
+  <!-- 年間予定 -->
+  <div class="card" id="yearlyForm" style="display:none">
+    <h2>📅 学校行事を追加</h2>
+    <div class="form-row">
+      <label>タイトル<input type="text" id="yTitle" placeholder="体育祭"></label>
+      <label>日付<input type="date" id="yDate"></label>
+      <label>月
+        <select id="yMonth">
+          <option value="4">4月</option><option value="5">5月</option><option value="6">6月</option>
+          <option value="7">7月</option><option value="8">8月</option><option value="9">9月</option>
+          <option value="10">10月</option><option value="11">11月</option><option value="12">12月</option>
+          <option value="1">1月</option><option value="2">2月</option><option value="3">3月</option>
+        </select>
+      </label>
+    </div>
+    <div class="form-row">
+      <label>カテゴリ
+        <select id="yCat">
+          <option value="学校行事">学校行事</option>
+          <option value="部活動">部活動</option>
+          <option value="試験">試験</option>
+          <option value="休日">休日</option>
+          <option value="その他">その他</option>
+        </select>
+      </label>
+    </div>
+    <div class="form-row">
+      <label>備考<textarea id="yDesc" placeholder="任意"></textarea></label>
+    </div>
+    <button class="btn btn-primary" id="yAddBtn">追加</button>
+  </div>
+
+  <div class="card" id="yearlySection">
+    <h2 onclick="this.parentElement.classList.toggle('section-hide')">📅 学校行事・年間予定 <span class="collapse-toggle">▼</span></h2>
+    <div class="section-body">
+      <div class="cat-tabs" id="catTabs"></div>
+      <div class="entry-list" id="entryList"><div class="empty-state">読み込み中...</div></div>
+    </div>
+  </div>
+
+  <!-- 部活動予定 -->
+  <div class="card" id="clubForm" style="display:none">
+    <h2>⚽ 部活動予定を追加</h2>
+    <div class="form-row">
+      <label>タイトル<input type="text" id="sTitle" placeholder="練習試合"></label>
+      <label>日付<input type="date" id="sDate"></label>
+      <label>時間<input type="text" id="sTime" placeholder="15:00-17:00"></label>
+    </div>
+    <div class="form-row">
+      <label>場所<input type="text" id="sLoc" placeholder="体育館"></label>
+      <label>部活
+        <select id="sClub">
+          <option value="">— 全校 —</option>
+          <option>吹奏楽部</option><option>茶道部</option><option>美術部</option><option>卓球部</option>
+          <option>テニス部女子</option><option>テニス部男子</option><option>サッカー部</option>
+          <option>野球部</option><option>陸上部</option><option>バスケ部女子</option><option>バスケ部男子</option><option>バレー部</option>
+        </select>
+      </label>
+    </div>
+    <div class="form-row">
+      <label>備考<textarea id="sDesc" placeholder="任意"></textarea></label>
+    </div>
+    <button class="btn btn-primary" id="sAddBtn">追加</button>
+  </div>
+
+  <div class="card" id="clubSection">
+    <h2 onclick="this.parentElement.classList.toggle('section-hide')">⚽ 部活動予定表 <span class="collapse-toggle">▼</span></h2>
+    <div class="section-body">
+      <div class="filter-bar">
+        <input type="text" id="sSearch" placeholder="部活・タイトルで検索">
+        <select id="sMonthFilter"><option value="">全月</option>
+          <option value="01">1月</option><option value="02">2月</option><option value="03">3月</option><option value="04">4月</option>
+          <option value="05">5月</option><option value="06">6月</option><option value="07">7月</option><option value="08">8月</option>
+          <option value="09">9月</option><option value="10">10月</option><option value="11">11月</option><option value="12">12月</option>
+        </select>
+      </div>
+      <div class="sched-list" id="schedList"><div class="empty-state">読み込み中...</div></div>
+    </div>
+  </div>
+
+  <!-- Gemini -->
+  <div class="card">
+    <h2 onclick="this.parentElement.classList.toggle('section-hide')">🤖 Gemini に質問 <span class="collapse-toggle">▼</span></h2>
+    <div class="section-body">
+      <p style="font-size:13px;color:var(--sub);margin-bottom:8px">年間予定表のデータについて質問できます</p>
+      <div class="gemini-box">
+        <div class="chat-area">
+          <input type="text" id="gQuestion" placeholder="例：5月の予定は？" onkeydown="if(event.key==='Enter')askGemini()">
+          <button class="btn btn-accent" id="gAskBtn">質問</button>
+        </div>
+        <div class="answer" id="gAnswer"></div>
+        <div class="hint" id="gHint">「体育祭はいつ？」「夏休み前の行事を教えて」など</div>
+      </div>
+    </div>
+  </div>
+
+</main>
+<script>
+const API_BASE='https://school-board-api.dajianweixi.workers.dev'
+async function a(p,o={}){const t=sessionStorage.getItem('token'),h={'Content-Type':'application/json',...o.headers};if(t)h['Authorization']='Bearer '+t;const r=await fetch(API_BASE+p,{...o,headers:h}),d=await r.json();if(!r.ok)throw new Error(d.error||'エラー');return d}
+const A={requireAuth(){const u=sessionStorage.getItem('username'),r=sessionStorage.getItem('role'),t=sessionStorage.getItem('token');if(!u||!r||!t)return null;return{username:u,role:r,token:t}},canManageUsers(){const u=this.requireAuth();return u&&['admin','subadmin'].includes(u.role)},logout(){sessionStorage.clear()}};window.AUTH=A
+const $=id=>document.getElementById(id),esc=s=>{const d=document.createElement('div');d.textContent=s;return d.innerHTML}
+const u=AUTH.requireAuth();if(!u)window.location.href='02login.html'
+$('hUser').textContent=u.username
+const isTeacher=u.role==='admin'||u.role==='subadmin'
+if(isTeacher){$('yearlyForm').style.display='block';$('clubForm').style.display='block'}
+
+// ---- 年間予定 ----
+let allData=[],curCat='all',cats=['学校行事','部活動','試験','休日','その他'];
+function renderCatTabs(){
+  const el=$('catTabs');
+  el.innerHTML='<button class="cat-tab '+(curCat==='all'?'active':'')+'" data-cat="all">すべて</button>'+
+    cats.map(c=>'<button class="cat-tab '+(curCat===c?'active':'')+'" data-cat="'+c+'">'+c+'</button>').join('');
+  el.querySelectorAll('.cat-tab').forEach(b=>b.addEventListener('click',()=>{curCat=b.dataset.cat;renderCatTabs();renderList()}));
+}
+function renderList(){
+  const el=$('entryList');
+  const flt=curCat==='all'?allData:allData.filter(e=>e.category===curCat);
+  if(!flt.length){el.innerHTML='<div class="empty-state">予定がありません</div>';return}
+  flt.sort((a,b)=>a.date.localeCompare(b.date)||a.month-b.month);
+  el.innerHTML=flt.map(e=>{
+    const d=new Date(e.date+'T00:00:00');const md=(d.getMonth()+1)+'/'+d.getDate()+'('+'日月火水木金土'[d.getDay()]+')';
+    let html='<div class="entry-item"><div class="entry-date">'+md+'</div><div class="entry-cat">'+esc(e.category)+'</div><div class="entry-body"><div class="entry-title">'+esc(e.title)+'</div>'+(e.description?'<div class="entry-desc">'+esc(e.description)+'</div>':'')+'</div>';
+    if(isTeacher)html+='<button class="btn btn-danger btn-sm" data-id="'+e.id+'" style="flex-shrink:0">削除</button>';
+    return html+'</div>';
+  }).join('');
+  if(isTeacher)el.querySelectorAll('[data-id]').forEach(b=>b.addEventListener('click',async function(){if(!confirm('削除しますか？'))return;try{await a('/api/yearly-schedule/'+this.dataset.id,{method:'DELETE'});loadYearly()}catch(e){alert(e.message)}}));
+}
+async function loadYearly(){
+  try{allData=await a('/api/yearly-schedule');renderCatTabs();renderList()}catch(e){$('entryList').innerHTML='<div class="empty-state">エラー</div>'}
+}
+$('yAddBtn').addEventListener('click',async()=>{
+  const title=$('yTitle').value.trim(),date=$('yDate').value,month=$('yMonth').value,cat=$('yCat').value;
+  if(!title||!date){alert('タイトルと日付は必須です');return}
+  $('yAddBtn').disabled=true;$('yAddBtn').textContent='追加中...';
+  try{
+    await a('/api/yearly-schedule',{method:'POST',body:JSON.stringify({title,date,month,category:cat,description:$('yDesc').value.trim()})});
+    $('yTitle').value='';$('yDate').value='';$('yDesc').value='';loadYearly();
+  }catch(e){alert(e.message)}
+  $('yAddBtn').disabled=false;$('yAddBtn').textContent='追加';
+});
+
+// ---- 部活動予定 ----
+async function loadClub(){
+  try{
+    const data=await a('/api/schedules');
+    const q=$('sSearch').value.trim().toLowerCase(),mf=$('sMonthFilter').value;
+    const flt=data.filter(d=>(!q||d.title.toLowerCase().includes(q)||d.club.toLowerCase().includes(q))&&(!mf||d.date.startsWith('2026-'+mf)));
+    const el=$('schedList');el.innerHTML='';
+    if(!flt.length){el.innerHTML='<div class="empty-state">予定はありません</div>';return}
+    flt.sort((a,b)=>a.date.localeCompare(b.date)||a.time.localeCompare(b.time));
+    flt.forEach(d=>{
+      const item=document.createElement('div');item.className='sched-item';
+      const dateStr=new Date(d.date+'T00:00:00');const md=(dateStr.getMonth()+1)+'/'+dateStr.getDate()+'('+'日月火水木金土'[dateStr.getDay()]+')';
+      let html='<div class="sched-date">'+md+'</div><div class="sched-body"><div class="sched-title">'+esc(d.title)+(d.time?' <span style="font-size:12px;color:var(--sub);font-weight:400">'+esc(d.time)+'</span>':'')+'</div><div class="sched-meta">'+(d.club?esc(d.club)+' · ':'')+(d.location?esc(d.location):'')+'</div>'+(d.description?'<div class="sched-desc">'+esc(d.description)+'</div>':'')+'</div>';
+      html+=isTeacher?'<button class="btn btn-danger btn-sm" style="flex-shrink:0" data-id="'+d.id+'">削除</button>':'';
+      item.innerHTML=html;
+      if(d.description){item.classList.add('expandable');item.onclick=function(e){if(e.target.tagName!=='BUTTON')this.classList.toggle('expanded')}}
+      item.querySelector('[data-id]')?.addEventListener('click',async function(e){e.stopPropagation();if(!confirm('削除しますか？'))return;try{await a('/api/schedules/'+this.dataset.id,{method:'DELETE'});loadClub()}catch(e){alert(e.message)}});
+      el.appendChild(item);
+    });
+  }catch(e){$('schedList').innerHTML='<div class="empty-state">エラー</div>'}
+}
+$('sAddBtn').addEventListener('click',async()=>{
+  const title=$('sTitle').value.trim(),date=$('sDate').value;
+  if(!title||!date){alert('タイトルと日付は必須です');return}
+  $('sAddBtn').disabled=true;$('sAddBtn').textContent='追加中...';
+  try{
+    await a('/api/schedules',{method:'POST',body:JSON.stringify({title,date,time:$('sTime').value.trim(),location:$('sLoc').value.trim(),club:$('sClub').value,description:$('sDesc').value.trim()})});
+    $('sTitle').value='';$('sDate').value='';$('sTime').value='';$('sLoc').value='';$('sClub').value='';$('sDesc').value='';
+    loadClub();
+  }catch(e){alert(e.message)}
+  $('sAddBtn').disabled=false;$('sAddBtn').textContent='追加';
+});
+$('sSearch').addEventListener('input',loadClub);
+$('sMonthFilter').addEventListener('change',loadClub);
+
+// ---- Gemini ----
+async function askGemini(){
+  const q=$('gQuestion').value.trim();
+  if(!q)return;
+  const btn=$('gAskBtn'),ans=$('gAnswer'),hint=$('gHint');
+  btn.disabled=true;btn.textContent='考え中...';ans.className='answer show';ans.textContent='Gemini に質問しています...';hint.style.display='none';
+  try{
+    const r=await a('/api/gemini/ask',{method:'POST',body:JSON.stringify({question:q})});
+    ans.textContent=r.answer;
+  }catch(e){ans.textContent='エラー: '+e.message}
+  btn.disabled=false;btn.textContent='質問';
+}
+$('gAskBtn').addEventListener('click',askGemini);
+
+loadYearly();loadClub();
+</script>
+</body>
+</html>

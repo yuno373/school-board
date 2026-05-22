@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>初期セットアップ - 上藤沢中学校部活動黒板</title>
+<link rel="stylesheet" href="01style.css">
+</head>
+<body class="setup-body">
+<div class="setup-box">
+<h1>上藤沢中学校<br>部活動黒板</h1>
+<p class="setup-subtitle">初回セットアップ</p>
+<p style="font-size:13px;color:#888;margin-bottom:20px;padding:12px 14px;background:#fafafa;border:1px solid #eee">サーバー起動後、このページで管理者アカウントを作成します</p>
+<label>管理者ユーザー名</label>
+<input type="text" id="sUser" value="大見">
+<label>パスワード</label>
+<input type="password" id="sPass" value="112661">
+<button class="setup-btn" id="sBtn">管理者アカウントを作成</button>
+<div class="setup-success" id="sOk">作成しました！<br><a href="02login.html" style="color:#222;font-weight:700">ログインページへ</a></div>
+<div class="setup-error" id="sErr"></div>
+</div>
+<script>
+const API_BASE='https://school-board-api.dajianweixi.workers.dev'
+async function hashPassword(p){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(p));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('')}
+const $=id=>document.getElementById(id);
+$('sBtn').addEventListener('click',async()=>{
+  const u=$('sUser').value.trim(),p=$('sPass').value.trim();
+  $('sOk').style.display='none';$('sErr').textContent='';
+  if(!u||!p){$('sErr').textContent='入力してください';return}
+  if(p.length<6){$('sErr').textContent='6文字以上';return}
+  $('sBtn').disabled=true;$('sBtn').textContent='作成中...';
+  try{
+    const h=await hashPassword(p);
+    const r=await fetch(API_BASE+'/api/setup',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:u,password:h,role:'admin'})});
+    const d=await r.json();
+    if(!r.ok)throw new Error(d.error);
+    $('sOk').style.display='block';$('sBtn').textContent='✓ 完了';
+  }catch(e){$('sErr').textContent='エラー: '+e.message;$('sBtn').disabled=false;$('sBtn').textContent='管理者アカウントを作成'}
+});
+</script>
+</body>
+</html>

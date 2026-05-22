@@ -58,14 +58,14 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
 .user-table select{padding:2px 4px;border:1px solid var(--border);border-radius:4px;font-size:11px;font-family:inherit;max-width:85px}
 .user-table .role-group{display:flex;flex-direction:column;gap:1px;font-size:10px}
 #batchYears{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
-.batch-year-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:12px 16px;background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow)}
-.batch-year-row label{font-size:12px;font-weight:700;color:var(--sub);display:flex;flex-direction:column;gap:2px}
-.batch-year-row input[type=number]{padding:6px 10px;border:2px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit;width:54px;text-align:center;background:#faf8f5}
-.batch-year-row input.b-year{width:68px}
-.batch-year-row .class-sizes{display:flex;gap:4px;flex-wrap:wrap;align-items:center}
-.batch-year-row .class-sizes label{font-size:11px;font-weight:600;color:var(--text);flex-direction:row;align-items:center;gap:2px}
-.batch-year-row .class-sizes input[type=number]{width:42px;padding:4px 6px;font-size:13px}
-.batch-year-row .btn-remove-year{background:#e74c3c;color:#fff;border:none;border-radius:8px;padding:6px 12px;cursor:pointer;font-size:12px;font-weight:700;margin-left:auto}
+.batch-year-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:10px 14px;background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow)}
+.batch-year-row>label{font-size:12px;font-weight:700;color:var(--sub);display:flex;flex-direction:column;gap:2px;white-space:nowrap}
+.batch-year-row input[type=number]{padding:4px 6px;border:2px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;width:48px;text-align:center;background:#faf8f5}
+.batch-year-row input.b-year{width:60px}
+.batch-year-row .class-sizes{display:flex;gap:3px;flex-wrap:wrap;align-items:center;flex:1 1 100%;order:10;margin-top:2px}
+.batch-year-row .class-sizes label{font-size:11px;font-weight:600;color:var(--text);display:inline-flex;align-items:center;gap:1px;white-space:nowrap;background:#f5f3f0;padding:2px 6px;border-radius:6px}
+.batch-year-row .class-sizes input[type=number]{width:36px;padding:2px 4px;font-size:12px;border-radius:4px}
+.batch-year-row .btn-remove-year{background:#e74c3c;color:#fff;border:none;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:11px;font-weight:700;margin-left:auto}
 .batch-year-row .btn-remove-year:hover{opacity:.8}
 .batch-form{display:flex;gap:12px;flex-wrap:wrap;align-items:end;padding:18px;background:var(--card);border-radius:var(--radius);margin-bottom:14px;box-shadow:var(--shadow)}
 .batch-form label{font-size:13px;font-weight:700;color:var(--sub);display:flex;flex-direction:column;gap:4px}
@@ -156,7 +156,7 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
     <div class="id-rule">
       <strong>生徒ID 自動生成</strong><br>
       年度ごとにクラス数と各クラスの人数を指定できます。<br>
-      クラス人数をカンマ区切りで個別指定（例: 30,30,31,30）も可能。<br>
+      「クラス数」を変えると各クラスの入力欄が自動で増減します。<br>
       ID形式: <strong>{入学年度下2桁 + 通し番号3桁}</strong>（年度またぎで連番）
     </div>
     <div id="batchYears"></div>
@@ -395,15 +395,12 @@ function initBatchRow(row){
 function renderClassSizes(row){
   const n=parseInt(row.querySelector('.b-class-count').value)||1;
   const container=row.querySelector('.class-sizes');
-  const existing=container.querySelectorAll('.class-size-wrap');
-  // Get current size values
   const vals=[];
-  existing.forEach(el=>{const v=parseInt(el.querySelector('input').value);if(v>0)vals.push(v)});
-  // Build new HTML
-  let html='<span style="font-size:11px;color:var(--sub);font-weight:700;min-width:70px">各クラス人数:</span>';
+  container.querySelectorAll('.class-size-wrap').forEach(el=>{const v=parseInt(el.querySelector('input').value);if(v>0)vals.push(v)});
+  let html='';
   for(let i=0;i<n;i++){
     const v=vals[i]||30;
-    html+='<label class="class-size-wrap">'+(i+1)+'組<input type="number" class="class-size-input" value="'+v+'" min="1" max="50" onfocus="this.select()"></label>';
+    html+='<label class="class-size-wrap">'+(i+1)+'組<input type="number" class="class-size-input" value="'+v+'" min="1" max="50"></label>';
   }
   container.innerHTML=html;
 }

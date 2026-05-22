@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
@@ -103,7 +103,7 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
 </div>
 <script>
 async function h(p){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(p));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('')}
-const API_BASE='https://school-board-api.dajianweixi.workers.dev'
+const API_BASE=''
 async function a(p,o={}){const t=sessionStorage.getItem('token'),h={'Content-Type':'application/json',...o.headers};if(t)h['Authorization']='Bearer '+t;const r=await fetch(API_BASE+p,{...o,headers:h}),d=await r.json();if(!r.ok)throw new Error(d.error||'エラー');return d}
 const $=id=>document.getElementById(id),esc=s=>{const d=document.createElement('div');d.textContent=s;return d.innerHTML};
 const cu=sessionStorage.getItem('username'),role=sessionStorage.getItem('role');

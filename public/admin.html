@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>管理画面 - 上藤沢中学校 部活動黒板</title>
 <style>
 :root{--primary:#1E4D2B;--primary-dark:#153820;--primary-light:#2D6B40;--accent-pink:#f5a0b8;--accent-blue:#a0c4e8;--accent-yellow:#f5e6a0;--accent-green:#a8d8a0;--bg:#f7f5f0;--card:#fff;--text:#2c2c2c;--sub:#8a8682;--border:#e0dcd4;--danger:#c96565;--radius:12px;--shadow:0 2px 12px rgba(30,77,43,0.06)}
@@ -321,7 +324,7 @@ function renderUsers(){
       <td><input type="text" value="${esc(x.class_num||'')}" onchange="updField('${x.id}','class_num',this.value)" style="width:35px"></td>
       <td><input type="text" value="${esc(x.seat_num||'')}" onchange="updField('${x.id}','seat_num',this.value)" style="width:35px"></td>
       <td><select onchange="updField('${x.id}','club',this.value)"><option value="">—</option>${CLUBS.map(c=>'<option value="'+c+'"'+(x.club===c?' selected':'')+'>'+c+'</option>').join('')}</select></td>
-      <td><select onchange="updField('${x.id}','committee',this.value)"><option value="">—</option>${ALL_COMMS.map(c=>'<option value="'+c+'"'+(x.committee===c?' selected':'')+'>'+c+'</option>').join('')}</select></td>
+      <td><select onchange="updField('${x.id}','committee',this.value)"><option value="">—</option>${Object.entries(COMM_GROUPS).map(([g,items])=>'<optgroup label="'+g+'">'+items.map(c=>'<option value="'+c+'"'+(x.committee===c?' selected':'')+'>'+c+'</option>').join('')+'</optgroup>').join('')}</select></td>
       <td>${dt}</td><td>${actions}</td>`;
     tr.querySelectorAll('input[type=checkbox][data-v]').forEach(cb=>{cb.onchange=function(){updRole(this.dataset.id,this.dataset.v,this.checked)}});
     t.appendChild(tr);
@@ -680,5 +683,6 @@ $('diagRun').addEventListener('click', runDiagnosis);
 
 loadUsers();
 </script>
+<script>if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js')</script>
 </body>
 </html>

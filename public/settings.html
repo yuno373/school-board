@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>ユーザー設定 - 上藤沢中学校</title>
 <style>
 :root{--primary:#1E4D2B;--primary-dark:#153820;--primary-light:#2D6B40;--bg:#f7f5f0;--card:#fff;--text:#2c2c2c;--sub:#8a8682;--border:#e0dcd4;--radius:12px;--shadow:0 2px 12px rgba(30,77,43,0.06)}
@@ -89,5 +92,6 @@ $('changePwBtn').addEventListener('click',async()=>{
   try{await a('/api/me/password',{method:'POST',body:JSON.stringify({currentPassword:cur,newPassword:pw})});$('pwStatus').textContent='✅ 変更しました';$('pwStatus').className='success';$('sCurPw').value='';$('sNewPw').value='';$('sNewPw2').value=''}catch(e){$('pwStatus').textContent='❌ '+e.message;$('pwStatus').className='error'}
 });
 </script>
+<script>if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js')</script>
 </body>
 </html>

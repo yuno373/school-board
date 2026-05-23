@@ -56,7 +56,7 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
   <div id="ngWarning" style="display:none;background:#faf0e0;border:2px solid #c97b4a;border-radius:var(--radius);padding:12px 16px;margin-bottom:12px">
     <div id="ngWarningText" style="font-size:13px;line-height:1.6"></div>
   </div>
-  <div class="form-section">
+  <div class="form-section" id="consultForm">
     <h2>✏️ 新しい相談</h2>
     <select id="consultTo"><option value="all">全ての先生へ</option></select>
     <textarea id="consultMsg" placeholder="相談内容を書いてください..."></textarea>
@@ -83,8 +83,7 @@ async function checkAccess(){
       document.getElementById('suspendedBanner').style.display='block';
       const d=new Date(r.suspended_until);
       document.getElementById('suspendedText').textContent=`不適切な言葉の使用が${r.count}回確認されたため、${d.getMonth()+1}/${d.getDate()}まで相談所を利用できません。`;
-      document.getElementById('consultBtn').disabled=true;
-      document.getElementById('consultMsg').disabled=true;
+      document.getElementById('consultForm').style.display='none';
       document.getElementById('ngWarning').style.display='none';
     }
   }catch(e){}

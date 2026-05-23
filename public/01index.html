@@ -12,16 +12,6 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
 .header-title{font-size:16px;font-weight:700;color:#fff;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .header-title .hd{display:inline-flex;align-items:center;gap:6px}
 .header-title .hdate{font-size:12px;font-weight:400;opacity:.8;white-space:nowrap}
-.header-title .hwbgt{font-size:11px;font-weight:700;padding:2px 10px;border-radius:6px}
-.header-title .hdisaster{font-size:11px;font-weight:700;padding:2px 10px;border-radius:6px}
-.hd-info{background:rgba(46,125,50,.35)}
-.hd-warning{background:rgba(230,81,0,.35)}
-.hd-danger{background:rgba(198,40,40,.35)}
-.hw0{background:rgba(46,125,50,.35)}
-.hw1{background:rgba(245,127,23,.35)}
-.hw2{background:rgba(230,81,0,.35)}
-.hw3{background:rgba(198,40,40,.35)}
-.hw4{background:rgba(106,27,154,.35)}
 .header-right{display:flex;align-items:center;gap:6px;overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch;flex-shrink:0;max-width:100%}
 .header-right::-webkit-scrollbar{display:none}
 .user-badge{background:rgba(255,255,255,.2);color:#fff;font-size:11px;padding:3px 10px;border-radius:6px;font-weight:700;flex-shrink:0}
@@ -110,7 +100,7 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
 </head>
 <body>
 <header class="header">
-  <div class="header-title"><span class="hd">📋 上藤沢中学校</span><span class="hdate" id="hDate"></span><span class="hwbgt" id="hWbgt" style="display:none"></span><span class="hdisaster" id="hDisaster" style="display:none"></span></div>
+  <div class="header-title"><span class="hd">📋 上藤沢中学校</span><span class="hdate" id="hDate"></span></div>
   <div class="header-right">
     <span id="bUser" style="font-size:12px;color:rgba(255,255,255,.75)"></span>
     <span class="user-badge" id="bRole"></span>
@@ -304,10 +294,9 @@ if(chatLink.style.display!=='none'){
 function wbgt(){
   function upd(t,h){
     const e=(h/100)*6.105*Math.exp(17.27*t/(t+237.3));const wbgt=0.567*t+0.393*e+3.94;
-    const bar=$('wbgtBar'),hw=$('hWbgt');    const levels=[{max:21,lbl:'注意',adv:'適度に水分補給',cls:'l0',hcls:'hw0'},{max:25,lbl:'警戒',adv:'積極的に水分補給',cls:'l1',hcls:'hw1'},{max:28,lbl:'厳重警戒',adv:'積極的に休息',cls:'l2',hcls:'hw2'},{max:31,lbl:'危険',adv:'激しい運動は中止',cls:'l3',hcls:'hw3'},{max:99,lbl:'極度危険',adv:'運動は原則中止',cls:'l4',hcls:'hw4'}];
+    const bar=$('wbgtBar');    const levels=[{max:21,lbl:'注意',adv:'適度に水分補給',cls:'l0'},{max:25,lbl:'警戒',adv:'積極的に水分補給',cls:'l1'},{max:28,lbl:'厳重警戒',adv:'積極的に休息',cls:'l2'},{max:31,lbl:'危険',adv:'激しい運動は中止',cls:'l3'},{max:99,lbl:'極度危険',adv:'運動は原則中止',cls:'l4'}];
     const lv=levels.find(l=>wbgt<l.max)||levels[levels.length-1];
     bar.className='wbgt-'+lv.cls;bar.innerHTML='<div class="wbgt-val">'+wbgt.toFixed(1)+'</div><div><div class="wbgt-label">埼玉県入間市 WBGT '+lv.lbl+'</div><div class="wbgt-advice">'+lv.adv+'</div></div><div class="wbgt-detail"><span>'+t+'°C</span><span>'+h+'%</span></div>';
-    hw.style.display='inline-flex';hw.className='hwbgt '+lv.hcls;hw.textContent='埼玉県入間市 WBGT '+wbgt.toFixed(1)+'°C '+lv.lbl;
   }
   const lat=35.84,lon=139.39; // 埼玉県入間市
   function w(){fetch('https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&current=temperature_2m,relative_humidity_2m,weather_code&timezone=Asia%2FTokyo').then(r=>r.json()).then(d=>{if(d.current)upd(d.current.temperature_2m,d.current.relative_humidity_2m)}).catch(()=>{})}
@@ -322,11 +311,10 @@ let disasterLoc='埼玉県入間市';
 async function loadDisaster(){
   try{
     const d=await api('/api/disaster-info');
-    const bar=$('disasterBar'),msg=$('disasterMsg'),hd=$('hDisaster');
+    const bar=$('disasterBar'),msg=$('disasterMsg');
     if(d.active&&d.message){
       bar.style.display='flex';bar.className='disaster-'+d.level;
       msg.textContent=d.message;
-      hd.style.display='inline-flex';hd.className='hdisaster hd-'+d.level;hd.textContent='⚠ '+d.message.slice(0,12)+(d.message.length>12?'…':'');
       const isTeacher=curUser&&hasRole(curUser.role,['admin','teacher']);
       if(isTeacher&&!bar.querySelector('.disaster-clear')){
         const btn=document.createElement('button');btn.className='disaster-clear';btn.textContent='解除';
@@ -339,13 +327,11 @@ async function loadDisaster(){
     if(jma){
       bar.style.display='flex';bar.className='disaster-danger';
       msg.textContent=jma;
-      hd.style.display='inline-flex';hd.className='hdisaster hd-danger';hd.textContent='⚠ '+jma.slice(0,15)+(jma.length>15?'…':'');
       bar.querySelector('.disaster-clear')?.remove();
     }else{
       bar.style.display='flex';bar.className='disaster-info';
       const txt='🌤 埼玉県入間市に警報・注意報はありません';
       msg.textContent=txt;
-      hd.style.display='inline-flex';hd.className='hdisaster hd-info';hd.textContent=txt.slice(0,18)+(txt.length>18?'…':'');
       bar.querySelector('.disaster-clear')?.remove();
     }
   }catch(e){}

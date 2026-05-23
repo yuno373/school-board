@@ -697,31 +697,38 @@ $('chatRoleFilter').addEventListener('change',renderChatUsers);
 
 // === Diagnosis ===
 const DIAG_CHECKS = [
-  { id: 'api-ping', label: 'APIサーバー疎通' },
-  { id: 'auth', label: '認証システム' },
-  { id: 'endpoints-get', label: 'GETエンドポイント全件' },
-  { id: 'endpoints-post', label: 'POSTエンドポイント応答' },
-  { id: 'static', label: 'ページファイル配信' },
-  { id: 'pwa', label: 'PWA設定' },
-  { id: 'push', label: 'プッシュ通知設定' },
-  { id: 'users', label: 'ユーザーデータ整合性' },
-  { id: 'posts', label: '投稿データ整合性' },
-  { id: 'chat', label: '部長チャット' },
-  { id: 'dm', label: 'DM機能' },
-  { id: 'consult', label: '相談所' },
-  { id: 'clubq', label: '部長質問' },
-  { id: 'schedule', label: '予定表' },
-  { id: 'password-reset', label: 'パスワード再設定' },
-  { id: 'reactions', label: 'リアクション' },
-  { id: 'claims', label: '忘れ物申請' },
-  { id: 'private-posts', label: 'プライベート投稿' },
-  { id: 'expired', label: '投稿自動削除' },
-  { id: 'ratelimit', label: 'アクセス制限状況' },
-  { id: 'cors', label: 'CORSヘッダー' },
-  { id: 'audit', label: '監査ログ' },
-  { id: 'setup', label: '初期セットアップ状態' },
-  { id: 'teacher-setup', label: '先生セットアップ進捗' },
-  { id: 'garbled', label: '文字化けチェック' }
+  // サーバー
+  { id: 'api-ping', label: 'APIサーバー疎通', section: '🔌 サーバー' },
+  { id: 'auth', label: '認証システム', section: '🔌 サーバー' },
+  { id: 'endpoints-get', label: 'GETエンドポイント全件', section: '🔌 サーバー' },
+  { id: 'endpoints-post', label: 'POSTエンドポイント応答', section: '🔌 サーバー' },
+  // フロント
+  { id: 'static', label: 'ページファイル配信', section: '📄 フロントエンド' },
+  { id: 'pwa', label: 'PWA設定', section: '📄 フロントエンド' },
+  { id: 'push', label: 'プッシュ通知', section: '📄 フロントエンド' },
+  // データ
+  { id: 'users', label: 'ユーザーデータ整合性', section: '🗃️ データ' },
+  { id: 'posts', label: '投稿データ整合性', section: '🗃️ データ' },
+  { id: 'chat', label: '部長チャット', section: '🗃️ データ' },
+  { id: 'dm', label: 'DM機能', section: '🗃️ データ' },
+  { id: 'consult', label: '相談所', section: '🗃️ データ' },
+  { id: 'consult-ng', label: '相談所NGフィルター', section: '🗃️ データ' },
+  { id: 'clubq', label: '部長質問', section: '🗃️ データ' },
+  // 機能
+  { id: 'schedule', label: '黒板予定', section: '⚙️ 機能' },
+  { id: 'teacher-schedule', label: '先生時間割', section: '⚙️ 機能' },
+  { id: 'password-reset', label: 'パスワード再設定', section: '⚙️ 機能' },
+  { id: 'reactions', label: 'リアクション', section: '⚙️ 機能' },
+  { id: 'claims', label: '忘れ物申請', section: '⚙️ 機能' },
+  { id: 'private-posts', label: 'プライベート投稿', section: '⚙️ 機能' },
+  { id: 'login-lock', label: 'ログインロック', section: '⚙️ 機能' },
+  // 状態
+  { id: 'expired', label: '投稿期限切れ', section: '📊 システム状態' },
+  { id: 'ratelimit', label: 'アクセス制限状況', section: '📊 システム状態' },
+  { id: 'cors', label: 'CORS設定', section: '📊 システム状態' },
+  { id: 'setup', label: '初期セットアップ状態', section: '📊 システム状態' },
+  { id: 'teacher-setup', label: '先生セットアップ進捗', section: '📊 システム状態' },
+  { id: 'garbled', label: '文字化けチェック', section: '📊 システム状態' }
 ];
 
 async function runDiagnosis() {
@@ -736,6 +743,24 @@ async function runDiagnosis() {
     results.push({ checkId, status, msg, detail });
     const c = DIAG_CHECKS.find(x => x.id === checkId);
     const label = c ? c.label : checkId;
+    const section = c ? c.section : '';
+    // Section header
+    if (section && (!results.sectionShown || !results.sectionShown[section])) {
+      if (!results.sectionShown) results.sectionShown = {};
+      results.sectionShown[section] = true;
+      const hdr = document.createElement('div');
+      hdr.className = 'card';
+      hdr.style.background = 'var(--primary)';
+      hdr.style.color = '#fff';
+      hdr.style.fontWeight = '700';
+      hdr.style.fontSize = '14px';
+      hdr.style.padding = '8px 16px';
+      hdr.style.borderRadius = 'var(--radius)';
+      hdr.style.marginTop = '12px';
+      hdr.style.marginBottom = '6px';
+      hdr.textContent = section;
+      container.appendChild(hdr);
+    }
     const div = document.createElement('div');
     div.className = 'card';
     div.dataset.status = status;
@@ -867,6 +892,11 @@ async function runDiagnosis() {
     const consults = await a('/api/consult');
     addResult('consult', 'pass', `相談可能先生: ${teachers.length}人, 相談件数: ${consults.length}件`);
   } catch(e) { addResult('consult', 'warn', '相談所チェックエラー', e.message) }
+  // 12b. Consult NG filter
+  try {
+    const check = await a('/api/consult/check-access');
+    addResult('consult-ng', 'pass', `NGフィルター稼働中（違反回数: ${check.count}回, 停止中: ${check.suspended?'✅':'❌'}）`);
+  } catch(e) { addResult('consult-ng', 'warn', 'NGフィルターチェックエラー', e.message) }
   // 13. Club questions
   try {
     const r = await fetch(API_BASE + '/api/club-questions', { headers: { 'Authorization': 'Bearer '+token } });
@@ -876,8 +906,14 @@ async function runDiagnosis() {
   // 14. Schedule
   try {
     const sched = await a('/api/schedules');
-    addResult('schedule', 'pass', `予定: ${sched.length}件`);
+    addResult('schedule', 'pass', `黒板予定: ${sched.length}件`);
   } catch(e) { addResult('schedule', 'pass', '予定: データ取得できず') }
+  // 14b. Teacher schedule
+  try {
+    const r = await fetch(API_BASE + '/api/teacher-schedule', { headers: { 'Authorization': 'Bearer '+token } });
+    if (r.ok) { const d = await r.json(); addResult('teacher-schedule', 'pass', `時間割登録: ${Array.isArray(d)?d.length:0}コマ`) }
+    else addResult('teacher-schedule', 'pass', '時間割: 未設定または非対応');
+  } catch(e) { addResult('teacher-schedule', 'pass', '時間割: エラー', e.message) }
   // 15. Password reset
   try {
     const reqs = await a('/api/password-reset/requests');
@@ -904,6 +940,12 @@ async function runDiagnosis() {
     const privatePosts = posts.filter(p => p.has_private || p.private_password);
     addResult('private-posts', 'pass', `プライベート投稿: ${privatePosts.length}件（1・2・3学年委員会のみ）`);
   } catch(e) { addResult('private-posts', 'pass', 'チェックできず', e.message) }
+  // 18b. Login lock
+  try {
+    const users = await a('/api/users');
+    const locked = users.filter(u => u.lock_count >= 5);
+    locked.length === 0 ? addResult('login-lock', 'pass', 'ログインロックされたユーザーなし') : addResult('login-lock', 'warn', `${locked.length}ユーザーがロック中`, locked.map(u => u.username).join(', '));
+  } catch(e) { addResult('login-lock', 'pass', 'ロックチェックエラー', e.message) }
   // 19. Expired posts
   try {
     const posts = await a('/api/admin/posts');

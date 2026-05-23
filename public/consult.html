@@ -37,6 +37,8 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
 .reply-btn{padding:8px 16px;background:var(--primary);color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit}
 .empty{text-align:center;padding:40px;color:var(--sub);font-size:14px}
 .anon-notice{font-size:12px;color:var(--sub);margin:6px 0;display:flex;align-items:center;gap:6px}
+.ng-warn{background:#faf0e0;border:2px solid #c97b4a;border-radius:8px;padding:12px 16px;margin-bottom:12px;font-size:13px;line-height:1.6}
+.ng-warn .ng-title{font-weight:700;color:#c97b4a;margin-bottom:2px}
 </style>
 </head>
 <body>
@@ -47,6 +49,13 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
   </div>
 </header>
 <div class="main">
+  <div id="suspendedBanner" style="display:none;background:#fce8e8;border:2px solid var(--danger);border-radius:var(--radius);padding:16px 20px;margin-bottom:16px">
+    <div style="font-size:16px;font-weight:700;color:var(--danger);margin-bottom:4px">🚫 相談所利用停止</div>
+    <div id="suspendedText" style="font-size:13px;line-height:1.6;color:var(--text)"></div>
+  </div>
+  <div id="ngWarning" style="display:none;background:#faf0e0;border:2px solid #c97b4a;border-radius:var(--radius);padding:12px 16px;margin-bottom:12px">
+    <div id="ngWarningText" style="font-size:13px;line-height:1.6"></div>
+  </div>
   <div class="form-section">
     <h2>✏️ 新しい相談</h2>
     <select id="consultTo"><option value="all">全ての先生へ</option></select>
@@ -64,6 +73,22 @@ const $=id=>document.getElementById(id),esc=s=>{const d=document.createElement('
 const cu=sessionStorage.getItem('username'),role=sessionStorage.getItem('role');
 if(!cu||!sessionStorage.getItem('token'))window.location.href='02login.html';
 const isTeacher=(role||'').split(',').some(r=>['admin','teacher'].includes(r.trim()));
+
+// Check access
+async function checkAccess(){
+  if(isTeacher) return;
+  try{
+    const r=await a('/api/consult/check-access');
+    if(r.suspended){
+      document.getElementById('suspendedBanner').style.display='block';
+      const d=new Date(r.suspended_until);
+      document.getElementById('suspendedText').textContent=`不適切な言葉の使用が${r.count}回確認されたため、${d.getMonth()+1}/${d.getDate()}まで相談所を利用できません。`;
+      document.getElementById('consultBtn').disabled=true;
+      document.getElementById('consultMsg').disabled=true;
+      document.getElementById('ngWarning').style.display='none';
+    }
+  }catch(e){}
+}
 
 // Load teachers for the "to" dropdown
 async function loadTeachers(){
@@ -84,8 +109,16 @@ $('consultBtn').addEventListener('click',async()=>{
     const r=await a('/api/consult',{method:'POST',body:JSON.stringify({message:msg,to,anonymous:anon})});
     $('consultMsg').value='';
     const status=$('consultStatus');status.style.display='block';status.textContent='✅ 送信しました。先生の返信をお待ちください。';
-    loadConsults();
-  }catch(e){alert(e.message)}
+checkAccess(); loadConsults();
+  }catch(e){
+    if(e.message.includes('不適切な言葉')){
+      const warn=$('ngWarning');warn.style.display='block';
+      document.getElementById('ngWarningText').textContent='⚠️ '+e.message;
+      checkAccess(); // Refresh suspension status
+    } else {
+      alert(e.message);
+    }
+  }
   $('consultBtn').disabled=false;$('consultBtn').textContent='送信する';
 });
 

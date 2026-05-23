@@ -35,6 +35,14 @@ const enc = s => new TextEncoder().encode(s);
 const dec = b => new TextDecoder().decode(b);
 const uuid = () => crypto.randomUUID();
 
+const NG_WORDS = ['死ね','消えろ','うざい','きもい','ばか','あほ','くそ','バカ','アホ','クソ','殺す','ころす','しね','kys','死','カス'];
+
+function checkNGWords(text) {
+  if (!text) return null;
+  const found = NG_WORDS.find(w => text.includes(w));
+  return found || null;
+}
+
 async function hashPwd(pwd, salt) {
   const d = enc(salt + pwd);
   const h = await crypto.subtle.digest('SHA-256', d);
@@ -1424,6 +1432,18 @@ if (path === '/api/users' && method === 'GET') {
     // ============================================================
     const AES_KEY = await deriveAesKey(env.COOKIE_SECRET || 'default-consult-key', 'consult-aes-salt');
 
+    // GET /api/consult/check-access - Check if user is suspended
+    if (path === '/api/consult/check-access' && method === 'GET') {
+      authErr = requireAuth(user);
+      if (authErr) return authErr;
+      const offenses = await r2Get(env.DATA, 'consult_offenses.json') || [];
+      const record = offenses.find(o => o.username === user.username);
+      if (record && record.suspended_until && new Date(record.suspended_until) > new Date()) {
+        return json({ suspended: true, suspended_until: record.suspended_until, count: record.count });
+      }
+      return json({ suspended: false, count: record ? record.count : 0 });
+    }
+
     if (path === '/api/consult/teachers' && method === 'GET') {
       const users = await r2Get(env.DATA, 'users.json') || [];
       const teachers = users.filter(u => ['admin','teacher'].some(r => (u.role || '').includes(r)))
@@ -1481,6 +1501,34 @@ if (path === '/api/users' && method === 'GET') {
       if (authErr) return authErr;
       const { message, to, anonymous } = await request.json();
       if (!message || !message.trim()) return json({ error: '内容を入力してください' }, 400);
+
+      // NG word check
+      const ng = checkNGWords(message);
+      if (ng) {
+        let offenses = await r2Get(env.DATA, 'consult_offenses.json') || [];
+        let record = offenses.find(o => o.username === user.username);
+        if (!record) {
+          record = { username: user.username, count: 0, suspended_until: null };
+          offenses.push(record);
+        }
+        record.count++;
+        if (record.count >= 3) {
+          // 3rd+ offense: 1 month suspension
+          record.suspended_until = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+          await r2Put(env.DATA, 'consult_offenses.json', offenses);
+          return json({ error: '不適切な言葉が検出されました。3回目の違反のため、相談所を1ヶ月利用停止とします。', ng: true, suspended: true, count: record.count }, 403);
+        }
+        if (record.count >= 2) {
+          // 2nd offense: notify teacher with name
+          await r2Put(env.DATA, 'consult_offenses.json', offenses);
+          await addNotification(env, 'consult_ng', `${user.display_name || user.username}さんが相談所で不適切な言葉を2回使用しました（${sanitize(ng)}）`, '/admin?tab=consult');
+          return json({ error: '不適切な言葉が検出されました。2回目の違反のため、先生に通知されました。次回は1ヶ月利用停止になります。', ng: true, count: record.count }, 403);
+        }
+        // 1st offense: just warn
+        await r2Put(env.DATA, 'consult_offenses.json', offenses);
+        return json({ error: '不適切な言葉が検出されました。優しい言葉を使いましょう。次回は先生に通知されます。', ng: true, count: record.count }, 403);
+      }
+
       const encrypted = await aesEncrypt(message, AES_KEY);
       const entry = {
         id: uuid(), encrypted, created_at: new Date().toISOString(),

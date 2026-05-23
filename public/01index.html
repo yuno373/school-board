@@ -86,12 +86,23 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
 .claim-btn:hover{background:var(--accent-pink);color:#fff}
 .claim-btn.claimed{background:var(--accent-pink);color:#fff}
 .claim-count{font-size:12px;color:var(--sub);font-weight:700}
-.reaction-bar{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
-.reaction-btn{font-size:13px;padding:3px 10px;border:1.5px solid var(--border);border-radius:16px;background:var(--card);cursor:pointer;transition:all .2s;font-family:inherit;display:flex;align-items:center;gap:4px}
-.reaction-btn:hover{border-color:var(--accent-blue);background:#f0f6fc}
-.reaction-btn.active{background:var(--accent-blue);border-color:var(--accent-blue);color:#1a4a6a}
-.reaction-btn .count{font-size:11px;font-weight:700;color:var(--sub)}
-.reaction-btn.active .count{color:inherit}
+.reaction-bar{display:flex;gap:4px;margin-top:8px;align-items:center}
+.react-toggle-btn{font-size:11px;padding:2px 8px;border:1.5px solid var(--border);border-radius:12px;background:var(--card);cursor:pointer;transition:all .2s;font-family:inherit;color:var(--sub);display:flex;align-items:center;gap:3px}
+.react-toggle-btn:hover{border-color:var(--accent-blue);color:var(--primary);background:#f0f6fc}
+.react-toggle-btn .rt-count{font-weight:700;font-size:10px}
+.react-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:999;align-items:center;justify-content:center}
+.react-overlay.show{display:flex}
+.react-modal{background:var(--card);border-radius:14px;padding:20px;max-width:340px;width:90%;max-height:70vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,.15);animation:fadeIn .2s}
+.react-modal h3{font-size:15px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between}
+.react-modal .rm-close{background:0 0;border:none;font-size:18px;cursor:pointer;color:var(--sub);padding:2px 6px}
+.react-group{margin-bottom:12px}
+.react-group-head{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700;margin-bottom:4px;cursor:pointer;padding:4px 0}
+.react-group-head .rg-count{font-weight:400;color:var(--sub);font-size:12px}
+.react-group-head .rg-btn{background:0 0;border:1.5px solid var(--border);border-radius:14px;padding:2px 10px;font-size:11px;cursor:pointer;font-family:inherit;margin-left:auto;transition:all .2s}
+.react-group-head .rg-btn.active{background:var(--accent-blue);border-color:var(--accent-blue);color:#1a4a6a}
+.react-group-head .rg-btn:hover{border-color:var(--accent-blue)}
+.react-users{display:flex;flex-wrap:wrap;gap:4px;padding-left:24px;font-size:12px;color:var(--sub)}
+.react-users span{background:var(--bg);padding:2px 8px;border-radius:4px}
 .notif-badge{background:var(--accent-pink);color:#fff;font-size:10px;font-weight:700;min-width:18px;height:18px;padding:0 5px;border-radius:9px;margin-left:4px;vertical-align:middle;text-align:center;line-height:18px;display:none}
 @media(max-width:800px){
   .header{flex-direction:column;align-items:stretch;gap:6px}
@@ -146,6 +157,7 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
   </section>
   <section id="bList"><div class="empty-state">読み込み中...</div></section>
 </main>
+<div class="react-overlay" id="reactOverlay"><div class="react-modal" id="reactModal"><h3>リアクション <button class="rm-close" id="reactClose">✕</button></h3><div id="reactContent"></div></div></div>
 
 <script>
 async function h(p){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(p));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('')}
@@ -221,20 +233,51 @@ function renderPosts(){
   c.innerHTML='';p.forEach(x=>render(x,c));
 }
 async function loadReactions(el,targetType,targetId){
-  try{const r=await api('/api/reactions/'+targetType+'/'+targetId);const data=r||{};renderReactions(el,targetType,targetId,data)}catch(e){}
+  const toggle=document.createElement('button');toggle.className='react-toggle-btn';toggle.innerHTML='💬 リアクション';
+  const countSpan=document.createElement('span');countSpan.className='rt-count';
+  try{
+    const r=await api('/api/reactions/'+targetType+'/'+targetId);
+    const data=r||{};renderToggleCount(toggle,data);
+    toggle.addEventListener('click',()=>showReactModal(targetType,targetId,data));
+  }catch(e){}
+  el.innerHTML='';el.appendChild(toggle);
 }
-function renderReactions(el,targetType,targetId,data){
-  el.innerHTML='';const myU=curUser?.username;
+function renderToggleCount(toggle,data){
+  const total=Object.values(data).reduce((a,b)=>a+(b?.length||0),0);
+  toggle.innerHTML='💬 リアクション'+(total?' <span class="rt-count">'+total+'</span>':'');
+}
+let reactTarget=null;
+async function showReactModal(targetType,targetId,data){
+  reactTarget={targetType,targetId,data};
+  const el=$('reactContent');el.innerHTML='';
+  let hasAny=false;
   Object.entries(REACT_ICONS).forEach(([type,icon])=>{
-    const users=data[type]||[];const count=users.length;const active=users.includes(myU);
-    const btn=document.createElement('button');btn.className='reaction-btn'+(active?' active':'');
-    btn.innerHTML=icon+' <span class="count">'+(count||'')+'</span>';
+    const users=data[type]||[];const myU=curUser?.username;const active=users.includes(myU);
+    if(users.length||active)hasAny=true;
+    const row=document.createElement('div');row.className='react-group';
+    const head=document.createElement('div');head.className='react-group-head';
+    const btn=document.createElement('button');btn.className='rg-btn'+(active?' active':'');
+    btn.textContent=active?'取り消す':icon;
+    head.innerHTML=icon+' <span class="rg-label">'+type+'</span><span class="rg-count">'+(users.length||'')+'</span>';
+    head.appendChild(btn);
+    const userList=document.createElement('div');userList.className='react-users';
+    users.forEach(u=>{const s=document.createElement('span');s.textContent=u;userList.appendChild(s)});
+    row.appendChild(head);row.appendChild(userList);
     btn.addEventListener('click',async()=>{
-      try{const r=await api('/api/reactions',{method:'POST',body:JSON.stringify({targetType,targetId,reaction:type})});renderReactions(el,targetType,targetId,r.reactions||{})}catch(e){}
+      try{
+        const r=await api('/api/reactions',{method:'POST',body:JSON.stringify({targetType,targetId,reaction:type})});
+        reactTarget.data=r.reactions||{};
+        showReactModal(targetType,targetId,reactTarget.data);
+        const re=$('react-'+targetId);if(re){const t=re.querySelector('.react-toggle-btn');if(t)renderToggleCount(t,reactTarget.data)}
+      }catch(e){}
     });
-    el.appendChild(btn);
+    el.appendChild(row);
   });
+  if(!hasAny)el.innerHTML='<div style="text-align:center;padding:20px;color:var(--sub);font-size:13px">まだリアクションはありません</div>';
+  $('reactOverlay').classList.add('show');
 }
+$('reactClose').addEventListener('click',()=>$('reactOverlay').classList.remove('show'));
+$('reactOverlay').addEventListener('click',e=>{if(e.target===$('reactOverlay'))$('reactOverlay').classList.remove('show')});
 function render(p,c){
   const card=document.createElement('div');card.className='post-card';
   const canDel=curUser&&(hasRole(curUser.role,['admin','teacher'])||curUser.username===p.username);

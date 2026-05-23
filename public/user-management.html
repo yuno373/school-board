@@ -160,7 +160,7 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
     </div>
     <div style="overflow-x:auto">
       <table class="user-table">
-        <thead><tr><th style="width:24px"><input type="checkbox" id="selectAllH"></th><th>ログインID</th><th>表示名</th><th>パスワード</th><th>権限</th><th>状態</th><th>学年</th><th>クラス</th><th>番号</th><th>部活</th><th>委員会</th><th>登録日</th><th></th></tr></thead>
+        <thead><tr><th style="width:24px"><input type="checkbox" id="selectAllH"></th><th>ログインID</th><th>表示名</th><th>パスワード</th><th>権限</th><th>状態</th><th>学年</th><th>クラス</th><th>番号</th><th>部活</th><th>委員会</th><th>担当学年</th><th>担当教科</th><th>担任</th><th>登録日</th><th></th></tr></thead>
         <tbody id="userList"></tbody>
       </table>
     </div>
@@ -366,11 +366,14 @@ function renderUsers(){
       <td><input type="text" value="${esc(x.seat_num||'')}" onchange="updField('${x.id}','seat_num',this.value)" style="width:35px"></td>
       <td><select onchange="updField('${x.id}','club',this.value)"><option value="">—</option>${CLUBS.map(c=>'<option value="'+c+'"'+(x.club===c?' selected':'')+'>'+c+'</option>').join('')}</select></td>
       <td><select onchange="updField('${x.id}','committee',this.value)"><option value="">—</option>${Object.entries(COMM_GROUPS).map(([g,items])=>'<optgroup label="'+g+'">'+items.map(c=>'<option value="'+c+'"'+(x.committee===c?' selected':'')+'>'+c+'</option>').join('')+'</optgroup>').join('')}</select></td>
+      <td>${isAdmin||userRolesX.includes('teacher')?`<select onchange="updField('${x.id}','teacher_grade',this.value)"><option value="">—</option><option value="1"${x.teacher_grade==='1'?' selected':''}>1年</option><option value="2"${x.teacher_grade==='2'?' selected':''}>2年</option><option value="3"${x.teacher_grade==='3'?' selected':''}>3年</option><option value="other"${x.teacher_grade==='other'?' selected':''}>その他</option></select>`:'—'}</td>
+      <td>${isAdmin||userRolesX.includes('teacher')?`<input type="text" value="${esc(x.teacher_subject||'')}" onchange="updField('${x.id}','teacher_subject',this.value)" style="width:50px">`:'—'}</td>
+      <td>${isAdmin||userRolesX.includes('teacher')?`<select onchange="updField('${x.id}','teacher_homeroom',this.value)"><option value="">—</option>${[1,2,3,4,5,6,7,8,9,10].map(n=>'<option value="'+n+'"'+(x.teacher_homeroom==String(n)?' selected':'')+'>'+n+'組</option>').join('')}</select>`:'—'}</td>
       <td>${dt}</td><td>${actions}</td>`;
     tr.querySelectorAll('input[type=checkbox][data-v]').forEach(cb=>{cb.onchange=function(){updRole(this.dataset.id,this.dataset.v,this.checked)}});
     t.appendChild(tr);
   }
-  if(!flt.length)t.innerHTML='<tr><td colspan="13" style="text-align:center;padding:20px;color:var(--sub)">該当するユーザーがいません</td></tr>';
+  if(!flt.length)t.innerHTML='<tr><td colspan="16" style="text-align:center;padding:20px;color:var(--sub)">該当するユーザーがいません</td></tr>';
   updateBulkCount();
 }
 async function updRole(id,val,add){

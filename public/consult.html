@@ -70,7 +70,7 @@ async function loadTeachers(){
   try{
     const teachers=await a('/api/consult/teachers');
     const sel=$('consultTo');
-    teachers.forEach(t=>{const o=document.createElement('option');o.value=t.username;o.textContent=t.display_name||t.username;sel.appendChild(o)});
+    teachers.forEach(t=>{const o=document.createElement('option');o.value=t.username;const sub=t.teacher_subject?'（'+t.teacher_subject+'）':'';o.textContent=(t.display_name||t.username)+sub;sel.appendChild(o)});
   }catch(e){}
 }
 loadTeachers();

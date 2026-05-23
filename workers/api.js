@@ -751,7 +751,7 @@ async function handleRequest(request, env, ctx) {
       const users = await r2Get(env.DATA, 'users.json') || [];
       return json(parts.map(u => {
         const pu = users.find(x => x.username === u);
-        return { username: u, display_name: (pu && pu.display_name) || u, role: (pu && pu.role) || '' };
+        return { username: u, display_name: (pu && pu.display_name) || u, role: (pu && pu.role) || '', teacher_subject: (pu && pu.teacher_subject) || '' };
       }));
     }
 
@@ -894,7 +894,7 @@ async function handleRequest(request, env, ctx) {
     if (path === '/api/consult/teachers' && method === 'GET') {
       const users = await r2Get(env.DATA, 'users.json') || [];
       const teachers = users.filter(u => ['admin','teacher'].some(r => (u.role || '').includes(r)))
-        .map(u => ({ username: u.username, display_name: u.display_name || u.username }));
+        .map(u => ({ username: u.username, display_name: u.display_name || u.username, teacher_grade: u.teacher_grade || '', teacher_subject: u.teacher_subject || '', teacher_homeroom: u.teacher_homeroom || '' }));
       return json(teachers);
     }
 

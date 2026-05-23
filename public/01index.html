@@ -111,8 +111,6 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
     <a href="schedule.html" class="header-link">予定表</a>
     <a href="consult.html" class="header-link" id="bConsultLink">相談所</a>
     <a href="user-management.html" class="header-link" id="bUserMgmtLink" style="display:none">ユーザー管理</a>
-    <a href="admin.html" class="header-link" id="bAdminLink" style="display:none">管理</a>
-    <a href="settings.html" class="header-link">設定</a>
     <button class="header-link danger" id="bLogout">ログアウト</button>
   </div>
 </header>
@@ -270,11 +268,10 @@ const roleNames={'admin':'管理者','teacher':'先生','president':'部長','vi
 $('bRole').textContent=(curUser.role||'').split(',').map(r=>roleNames[r.trim()]||r.trim()).filter(Boolean).join('·');
 const userRolesArr=(curUser.role||'').split(',').map(r=>r.trim());
 $('postForm').classList.toggle('hidden',!AUTH.canPost());
-$('bAdminLink').style.display=hasRole(curUser.role,['admin','teacher'])?'':'none';
 $('bChatLink').style.display=hasRole(curUser.role,['admin','teacher','president','vice-president','chairperson'])?'':'none';
 $('bClubQLink').style.display='';
-$('bConsultLink').style.display='';
 $('bUserMgmtLink').style.display=hasRole(curUser.role,['admin','teacher'])?'':'none';
+$('bConsultLink').style.display='';
 $('createBtn').addEventListener('click',create);
 $('bLogout').addEventListener('click',()=>{AUTH.logout();window.location.href='02login.html'});
 

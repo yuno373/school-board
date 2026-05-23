@@ -723,8 +723,7 @@ async function runDiagnosis() {
   for (const p of getEndpoints) {
     try {
       const r = await fetch(API_BASE + p, { headers: { 'Authorization': 'Bearer '+token } });
-      if (p === '/api/reactions') { if (r.ok || r.status === 400) epOk.push(p); else epNg.push(p+'('+r.status+')') }
-      else { (r.ok ? epOk : epNg).push(p+'('+r.status+')') }
+      (r.ok ? epOk : epNg).push(p+'('+r.status+')')
     } catch(e) { epNg.push(p) }
   }
   epNg.length === 0 ? addResult('endpoints-get', 'pass', `全${getEndpoints.length}GETエンドポイント正常`) : addResult('endpoints-get', 'warn', `${epNg.length}/${getEndpoints.length} で問題`, `異常: ${epNg.join(', ')}`);

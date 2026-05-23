@@ -1572,6 +1572,12 @@ if (path === '/api/users' && method === 'GET') {
     // 10. REACTIONS
     // ============================================================
     const reactionsMatch = path.match(/^\/api\/reactions\/([^/]+)\/([^/]+)$/);
+    if (path === '/api/reactions' && method === 'GET') {
+      authErr = requireAuth(user);
+      if (authErr) return authErr;
+      return json({ ok: true, message: 'リアクションAPI稼働中' });
+    }
+
     if (path === '/api/reactions' && method === 'POST') {
       authErr = requireAuth(user);
       if (authErr) return authErr;

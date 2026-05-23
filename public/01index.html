@@ -150,6 +150,7 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
     <div id="bFileList" style="font-size:12px;color:#8a8682;margin-bottom:10px"></div>
     <label style="font-size:11px;color:var(--sub)">自動削除日（最大2ヶ月後）</label>
     <input type="date" id="bExpires" style="padding:5px 8px;border:2px solid var(--border);border-radius:6px;font-size:12px;font-family:inherit;width:170px;display:block;margin-top:2px">
+    <div id="bPrivateField" style="display:none;margin-top:8px"><label style="font-size:12px;font-weight:700;color:var(--sub);display:flex;align-items:center;gap:6px"><input type="checkbox" id="bPrivate"> 🔒 プライベート投稿（パスワード必須）</label><input type="text" id="bPrivatePwd" placeholder="パスワードを入力" style="padding:5px 8px;border:2px solid var(--border);border-radius:6px;font-size:12px;font-family:inherit;width:170px;display:none;margin-top:4px"></div>
     <button id="createBtn">投稿する</button>
   </section>
   <section id="bList"><div class="empty-state">読み込み中...</div></section>
@@ -279,6 +280,15 @@ function render(p,c){
   const card=document.createElement('div');card.className='post-card';
   const canDel=curUser&&(hasRole(curUser.role,['admin','teacher'])||curUser.username===p.username);
   const d=new Date(p.created_at);const ds=(d.getMonth()+1)+'/'+d.getDate()+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+  const isPrivate=p.has_private;
+  let contentHtml='';
+  if(isPrivate){
+    const isAuthor=curUser&&curUser.username===p.username;
+    if(isAuthor)contentHtml='<div class="post-body">'+esc(p.content)+'</div>';
+    else contentHtml='<div class="post-body private-lock">🔒 プライベート投稿です <button class="claim-btn" onclick="unlockPost(\''+p.id+'\',this)">パスワードを入力</button></div><div id="unlock-'+p.id+'" style="display:none;margin:4px 0"><input type="password" id="pwd-'+p.id+'" placeholder="パスワード" style="padding:4px 8px;border:2px solid var(--border);border-radius:4px;font-size:12px;width:120px"><button class="claim-btn" onclick="verifyPwd(\''+p.id+'\')">開く</button><span id="pwdErr-'+p.id+'" style="font-size:11px;color:var(--danger);margin-left:6px"></span></div>';
+  }else{
+    contentHtml='<div class="post-body">'+esc(p.content)+'</div>';
+  }
   const fls=p.files?.map(f=>'<a href="'+esc(f.url)+'" target="_blank" class="attachment"><span>📎</span> '+esc(f.name)+'</a>').join('')||'';
   let exp='',expCls='';
   if(p.expires_at){const r=Math.ceil((new Date(p.expires_at)-Date.now())/86400000);exp='あと'+r+'日';expCls=r>30?'safe':r>10?'warn':''}
@@ -288,24 +298,53 @@ function render(p,c){
     const claimers=claims.map(c=>esc(c.display_name||c.username)).join(', ');
     claimHtml='<div class="claim-area"><button class="claim-btn '+(myClaim?'claimed':'')+'" data-id="'+p.id+'">'+(myClaim?'取り消す':'私のです🙋')+'</button>'+(claims.length?'<span class="claim-count">'+claims.length+'人</span>':'')+'</div>'+(claimers?'<div style="font-size:12px;color:var(--sub)">🙋 '+claimers+'</div>':'');
   }
-  card.innerHTML='<div class="post-category">'+esc(p.category)+'</div><div class="post-title">'+esc(p.title)+'</div><div class="post-body">'+esc(p.content)+'</div>'+(fls?'<div>'+fls+'</div>':'')+claimHtml+'<div class="post-footer"><div class="post-meta">'+esc(p.display_name||p.username)+' · '+ds+'</div>'+(exp?'<div class="post-deadline '+expCls+'">'+exp+'</div>':'')+'</div><div class="reaction-bar" id="react-'+p.id+'"></div>';
+  card.innerHTML='<div class="post-category">'+esc(p.category)+(isPrivate?' 🔒':'')+'</div><div class="post-title">'+esc(p.title)+'</div>'+contentHtml+(fls?'<div>'+fls+'</div>':'')+claimHtml+'<div class="post-footer"><div class="post-meta">'+esc(p.display_name||p.username)+' · '+ds+'</div>'+(exp?'<div class="post-deadline '+expCls+'">'+exp+'</div>':'')+'</div><div class="reaction-bar" id="react-'+p.id+'"></div>';
   if(canDel){const db=document.createElement('button');db.className='delete-btn';db.textContent='削除';db.addEventListener('click',()=>delPost(p.id));card.querySelector('.post-footer').appendChild(db)}
+  if(canDel&&isPrivate){const sp=document.createElement('button');sp.className='delete-btn';sp.textContent='🔑PW';sp.title='パスワード設定';sp.addEventListener('click',()=>setPostPassword(p.id));card.querySelector('.post-footer').appendChild(sp)}
   if(p.category==='忘れ物'){const btn=card.querySelector('.claim-btn');if(btn)btn.addEventListener('click',async function(){const id=this.dataset.id;try{if(this.classList.contains('claimed')){await api('/api/posts/'+id+'/claim',{method:'DELETE'})}else{await api('/api/posts/'+id+'/claim',{method:'POST'})}load()}catch(e){alert(e.message)}})}
   c.appendChild(card);
   loadReactions(card.querySelector('#react-'+p.id),'post',p.id);
+}
+function unlockPost(id,btn){
+  const el=$('unlock-'+id);
+  el.style.display=el.style.display==='none'?'block':'none';
+}
+async function verifyPwd(id){
+  const pwd=$('pwd-'+id).value;
+  if(!pwd){$('pwdErr-'+id).textContent='パスワードを入力してください';return}
+  try{
+    const r=await api('/api/posts/'+id+'/verify-password',{method:'POST',body:JSON.stringify({password:pwd})});
+    if(r.error){$('pwdErr-'+id).textContent=r.error;return}
+    load();
+  }catch(e){$('pwdErr-'+id).textContent=e.message||'エラー'}
+}
+async function setPostPassword(id){
+  const pwd=prompt('新しいパスワードを入力（空欄で解除）');
+  if(pwd===null)return;
+  try{
+    await api('/api/posts/'+id+'/set-password',{method:'POST',body:JSON.stringify({password:pwd||''})});
+    alert(pwd?'パスワードを設定しました':'プライベートを解除しました');
+    load();
+  }catch(e){alert(e.message)}
 }
 
 async function create(){
   const t=$('bTitle').value.trim(),c=$('bContent').value.trim(),cat=$('bCat').value;
   if(!t||!c){alert('入力してください');return}
+  const privateCats=['1学年委員会','2学年委員会','3学年委員会'];
+  const isPrivate=$('bPrivate').checked&&privateCats.includes(cat);
+  const privatePwd=isPrivate?$('bPrivatePwd').value.trim():'';
+  if(isPrivate&&!privatePwd){alert('プライベート投稿のパスワードを入力してください');return}
   $('createBtn').disabled=true;$('createBtn').textContent='投稿中...';
   try{
     const files=[];const fileInput=$('bFile');
     if(fileInput.files.length){for(const f of fileInput.files){const fd=new FormData();fd.append('file',f);const token=sessionStorage.getItem('token');const r=await fetch(API_BASE+'/api/upload',{method:'POST',headers:{'Authorization':'Bearer '+token},body:fd});const d=await r.json();if(r.ok)files.push({url:d.url,name:d.name,type:d.type});else{alert('ファイルアップロード失敗: '+d.error);$('createBtn').disabled=false;$('createBtn').textContent='投稿する';return}}}
     const expDate=$('bExpires').value;
     const expiresIn=expDate?Math.round((new Date(expDate+'T23:59:59')-Date.now())/86400000):30;
-    await api('/api/posts',{method:'POST',body:JSON.stringify({title:t,content:c,category:cat,files,expiresIn})});
-    $('bTitle').value='';$('bContent').value='';$('bFile').value='';$('bFileList').textContent='';
+    const body={title:t,content:c,category:cat,files,expiresIn};
+    if(isPrivate)body.private_password=privatePwd;
+    await api('/api/posts',{method:'POST',body:JSON.stringify(body)});
+    $('bTitle').value='';$('bContent').value='';$('bFile').value='';$('bFileList').textContent='';$('bPrivate').checked=false;$('bPrivatePwd').value='';$('bPrivatePwd').style.display='none';$('bPrivateField').style.display='none';
     initExpiresDate();
     loadCounts();load();
     try{const notifyCat=cat==='上中連絡'?'general':cat==='忘れ物'?'lost':cat;await api('/api/push/notify',{method:'POST',body:JSON.stringify({category:notifyCat,title:t,body:c.slice(0,80),url:'/01index.html?cat='+encodeURIComponent(cat),excludeUser:curUser?.username})})}catch(e){}
@@ -329,6 +368,16 @@ $('bUserMgmtLink').style.display=hasRole(curUser.role,['admin','teacher'])?'':'n
 $('bSettingsLink').style.display=hasRole(curUser.role,['admin','teacher'])?'none':'';
 $('bConsultLink').style.display='';
 $('createBtn').addEventListener('click',create);
+$('bCat').addEventListener('change',function(){
+  const privateCats=['1学年委員会','2学年委員会','3学年委員会'];
+  const show=privateCats.includes(this.value)&&AUTH.canPost();
+  $('bPrivateField').style.display=show?'block':'none';
+  if(!show){$('bPrivate').checked=false;$('bPrivatePwd').value='';$('bPrivatePwd').style.display='none'}
+});
+$('bPrivate').addEventListener('change',function(){
+  $('bPrivatePwd').style.display=this.checked?'block':'none';
+  if(!this.checked)$('bPrivatePwd').value='';
+});
 $('bLogout').addEventListener('click',()=>{AUTH.logout();window.location.href='02login.html'});
 function initExpiresDate(){const n=new Date();const d=new Date(n);d.setDate(d.getDate()+30);const m=new Date(n);m.setDate(m.getDate()+60);const inp=$('bExpires');inp.value=d.toISOString().split('T')[0];inp.max=m.toISOString().split('T')[0];inp.min=n.toISOString().split('T')[0]}
 initExpiresDate();

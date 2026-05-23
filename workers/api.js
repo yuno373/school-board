@@ -301,6 +301,7 @@ async function handleRequest(request, env, ctx) {
 
       if (!validUser) {
         const fail = await recordFailedAttempt(env, username);
+        await notifyHomeroomOnFail(env, username);
         return json({ error: 'ユーザー名またはパスワードが違います', attempts: fail.attempts || 0 }, 401);
       }
 
@@ -430,14 +431,25 @@ async function handleRequest(request, env, ctx) {
       let posts = await r2Get(env.DATA, 'posts.json') || [];
       if (category) posts = posts.filter(p => p.category === category);
       posts.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      // Strip private content for non-authors
+      posts = posts.map(p => {
+        if (!p.private_password) return p;
+        const isAuthor = user && user.username === p.username;
+        const resp = { ...p };
+        if (!isAuthor) { resp.has_private = true; delete resp.content; }
+        delete resp.private_password; delete resp.private_wrong; delete resp.private_notified;
+        return resp;
+      });
       return json(posts);
     }
 
     if (path === '/api/posts' && method === 'POST') {
       authErr = requireAuth(user, ['admin', 'teacher', 'president', 'vice-president', 'chairperson']);
       if (authErr) return authErr;
-      const { title, content, category, files, expiresIn } = await request.json();
+      const { title, content, category, files, expiresIn, private_password } = await request.json();
       if (!title || !category) return json({ error: 'タイトルとカテゴリは必須です' }, 400);
+      const privateCats = ['1学年委員会','2学年委員会','3学年委員会'];
+      const isPrivate = privateCats.includes(category) && private_password;
       const posts = await r2Get(env.DATA, 'posts.json') || [];
       const expires_at = expiresIn ? new Date(Date.now() + parseInt(expiresIn) * 86400000).toISOString() : null;
       const post = {
@@ -445,10 +457,70 @@ async function handleRequest(request, env, ctx) {
         username: user.username, display_name: user.display_name || user.username,
         created_at: new Date().toISOString(), expires_at, claims: [], files: files || []
       };
+      if (isPrivate) {
+        post.private_password = await hp(private_password);
+        post.private_wrong = {};
+        post.private_notified = {};
+      }
       posts.push(post);
       if (posts.length > 200) posts.splice(0, posts.length - 200);
       await r2Put(env.DATA, 'posts.json', posts);
-      return json(post, 201);
+      // Strip private content from response
+      const resp = { ...post };
+      if (resp.private_password) { resp.has_private = true; delete resp.content; delete resp.private_password; delete resp.private_wrong; delete resp.private_notified; }
+      return json(resp, 201);
+    }
+
+    // POST /api/posts/:id/verify-password
+    const verifyPwd = path.match(/^\/api\/posts\/([^/]+)\/verify-password$/);
+    if (verifyPwd && method === 'POST') {
+      authErr = requireAuth(user);
+      if (authErr) return authErr;
+      const { password } = await request.json();
+      if (!password) return json({ error: 'パスワードが必要です' }, 400);
+      const posts = await r2Get(env.DATA, 'posts.json') || [];
+      const p = posts.find(x => x.id === verifyPwd[1]);
+      if (!p) return json({ error: '見つかりません' }, 404);
+      if (!p.private_password) return json(p);
+      const inputHash = await hp(password);
+      if (p.private_password !== inputHash) {
+        if (!p.private_wrong) p.private_wrong = {};
+        if (!p.private_notified) p.private_notified = {};
+        p.private_wrong[user.username] = (p.private_wrong[user.username] || 0) + 1;
+        if (p.private_wrong[user.username] >= 5 && !p.private_notified[user.username]) {
+          p.private_notified[user.username] = true;
+          await addNotification(env, 'private_password_fail', `${user.display_name||user.username}さんが「${p.title}」のパスワードを5回間違えました`, `/01index.html?cat=${encodeURIComponent(p.category)}`);
+          await auditLog(env, 'private_password_fail', user.username, { postId: p.id, title: p.title });
+        }
+        await r2Put(env.DATA, 'posts.json', posts);
+        return json({ error: 'パスワードが違います', attempts: p.private_wrong[user.username] }, 403);
+      }
+      // Reset attempts on success
+      if (p.private_wrong) delete p.private_wrong[user.username];
+      await r2Put(env.DATA, 'posts.json', posts);
+      const resp = { ...p };
+      delete resp.private_password; delete resp.private_wrong; delete resp.private_notified;
+      return json(resp);
+    }
+
+    // POST /api/posts/:id/set-password
+    const setPwd = path.match(/^\/api\/posts\/([^/]+)\/set-password$/);
+    if (setPwd && method === 'POST') {
+      authErr = requireAuth(user, ['admin', 'teacher']);
+      if (authErr) return authErr;
+      const { password } = await request.json();
+      const posts = await r2Get(env.DATA, 'posts.json') || [];
+      const p = posts.find(x => x.id === setPwd[1]);
+      if (!p) return json({ error: '見つかりません' }, 404);
+      if (password) {
+        p.private_password = await hp(password);
+        if (!p.private_wrong) p.private_wrong = {};
+        if (!p.private_notified) p.private_notified = {};
+      } else {
+        delete p.private_password; delete p.private_wrong; delete p.private_notified;
+      }
+      await r2Put(env.DATA, 'posts.json', posts);
+      return json({ ok: true });
     }
 
     const postDel = path.match(/^\/api\/posts\/([^/]+)$/);
@@ -505,7 +577,16 @@ async function handleRequest(request, env, ctx) {
     // ============================================================
     // 3. USERS
     // ============================================================
-    if (path === '/api/users' && method === 'GET') {
+    // GET /api/users/public (no auth, just teacher names for password reset)
+if (path === '/api/users/public' && method === 'GET') {
+  const users = await r2Get(env.DATA, 'users.json') || [];
+  return json(users.map(u => ({
+    username: u.username, display_name: u.display_name || u.username,
+    role: u.role
+  })));
+}
+
+if (path === '/api/users' && method === 'GET') {
       authErr = requireAuth(user, ['admin', 'teacher']);
       if (authErr) return authErr;
       const users = await r2Get(env.DATA, 'users.json') || [];
@@ -859,7 +940,101 @@ async function handleRequest(request, env, ctx) {
     }
 
     // ============================================================
-    // 5b. DIRECT MESSAGES (teacher/admin → anyone, no student→student)
+    // 5b. PASSWORD RESET
+    // ============================================================
+    // POST /api/password-reset/request (no auth required)
+    if (path === '/api/password-reset/request' && method === 'POST') {
+      const { username, teacher } = await request.json();
+      if (!username || !teacher) return json({ error: 'ユーザー名と先生を選択してください' }, 400);
+      const users = await r2Get(env.DATA, 'users.json') || [];
+      const u = users.find(x => x.username === username || x.display_name === username);
+      if (!u) return json({ error: 'ユーザーが見つかりません' }, 404);
+      const t = users.find(x => x.username === teacher);
+      if (!t) return json({ error: '先生が見つかりません' }, 404);
+      const reqs = await r2Get(env.DATA, 'password_resets.json') || [];
+      const req = {
+        id: uuid(), username: u.username, display_name: u.display_name || u.username,
+        teacher, teacher_name: t.display_name || t.username,
+        status: 'pending', created_at: new Date().toISOString()
+      };
+      reqs.push(req);
+      if (reqs.length > 200) reqs.splice(0, reqs.length - 200);
+      await r2Put(env.DATA, 'password_resets.json', reqs);
+      await addNotification(env, 'password_reset', `${u.display_name||u.username}さんがパスワード再設定をリクエストしています`, `/user-management.html?tab=password-reset`);
+      return json({ id: req.id, status: 'pending' }, 201);
+    }
+
+    // GET /api/password-reset/requests (teacher/admin)
+    if (path === '/api/password-reset/requests' && method === 'GET') {
+      authErr = requireAuth(user, ['admin', 'teacher']);
+      if (authErr) return authErr;
+      const reqs = await r2Get(env.DATA, 'password_resets.json') || [];
+      const myReqs = reqs.filter(r => r.teacher === user.username || user.role.includes('admin'));
+      myReqs.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      return json(myReqs.map(r => ({ ...r, fullfilled: r.fullfilled || false })));
+    }
+
+    // POST /api/password-reset/fulfill/:id
+    const fulfillReq = path.match(/^\/api\/password-reset\/fulfill\/(.+)$/);
+    if (fulfillReq && method === 'POST') {
+      authErr = requireAuth(user, ['admin', 'teacher']);
+      if (authErr) return authErr;
+      const { password } = await request.json();
+      if (!password || password.length < 6) return json({ error: 'パスワードは6文字以上必要です' }, 400);
+      const reqs = await r2Get(env.DATA, 'password_resets.json') || [];
+      const req = reqs.find(r => r.id === fulfillReq[1]);
+      if (!req) return json({ error: '見つかりません' }, 404);
+      if (req.teacher !== user.username && !user.role.includes('admin')) return json({ error: '権限がありません' }, 403);
+      if (req.fullfilled) return json({ error: '既に処理済みです' }, 400);
+      const users = await r2Get(env.DATA, 'users.json') || [];
+      const u = users.find(x => x.username === req.username);
+      if (!u) return json({ error: 'ユーザーが見つかりません' }, 404);
+      const passHash = await hp(password);
+      const hashedInput = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', enc(password)))).map(x => x.toString(16).padStart(2, '0')).join('');
+      u.password = passHash;
+      u.password_plain = password;
+      req.fullfilled = true;
+      req.new_password_plain = password;
+      req.fullfilled_at = new Date().toISOString();
+      req.fullfilled_by = user.username;
+      await r2Put(env.DATA, 'users.json', users);
+      await r2Put(env.DATA, 'password_resets.json', reqs);
+      await auditLog(env, 'password_reset_fulfill', user.username, { target: req.username });
+      return json({ ok: true, username: req.username });
+    }
+
+    // GET /api/password-reset/check/:id (no auth - uses request id as token)
+    const checkReq = path.match(/^\/api\/password-reset\/check\/(.+)$/);
+    if (checkReq && method === 'GET') {
+      const reqs = await r2Get(env.DATA, 'password_resets.json') || [];
+      const req = reqs.find(r => r.id === checkReq[1]);
+      if (!req) return json({ error: '見つかりません' }, 404);
+      return json({
+        status: req.fullfilled ? 'done' : 'pending',
+        new_password: req.fullfilled ? req.new_password_plain : null,
+        username: req.username
+      });
+    }
+
+    // Notify homeroom teacher on 5 failed login attempts
+    async function notifyHomeroomOnFail(env, username) {
+      const locks = await r2Get(env.DATA, 'login_locks.json') || {};
+      const lock = locks[username];
+      if (lock && lock.count >= 5 && lock.count % 5 === 0) {
+        const users = await r2Get(env.DATA, 'users.json') || [];
+        const u = users.find(x => x.username === username);
+        if (!u || !u.grade || !u.class_num) return;
+        const homeroomTeacher = users.find(t =>
+          t.role && t.role.includes('teacher') && t.teacher_homeroom && t.teacher_grades && t.teacher_grades.includes(u.grade)
+        );
+        if (homeroomTeacher) {
+          await addNotification(env, 'login_fail', `${u.display_name||u.username}さんがログインに${lock.count}回失敗しました`, `/user-management.html`);
+        }
+      }
+    }
+
+    // ============================================================
+    // 5c. DIRECT MESSAGES (teacher/admin → anyone, no student→student)
     // ============================================================
     const dmPrefix = '/api/dm';
     // POST /api/dm/send

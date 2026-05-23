@@ -129,13 +129,8 @@ const chatRoles=role.split(',').map(r=>r.trim()).some(r=>['president','vice-pres
 if(chatRoles&&'serviceWorker'in navigator&&'PushManager'in window){
   (async()=>{
     try{
-      const reg=await navigator.serviceWorker.ready;
-      const sub=await reg.pushManager.getSubscription();
-      if(sub){
-        const vk=await a('/api/push/vapid-key');
-        const ck=localStorage.getItem('chatNotifAsked_'+cu);
-        if(!ck){$('chatNotifBanner').style.display='flex'}
-      }
+      const ck=localStorage.getItem('chatNotifAsked_'+cu);
+      if(!ck){$('chatNotifBanner').style.display='flex'}
     }catch(e){}
   })();
 }

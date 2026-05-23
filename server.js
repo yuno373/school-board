@@ -90,8 +90,30 @@ app.post('/api/push/notify', express.json(), async (req, res) => {
 
 // Admin broadcast to all subscribers
 app.post('/api/push/send', express.json(), async (req, res) => {
+  try {
+    const { title, body, url } = req.body;
+    if (!title) return res.status(400).json({ error: 'タイトルは必須です' });
+    const user = await verifyToken(req.headers.authorization);
+    if (!user || !['admin', 'teacher'].some(r => (user.role || '').split(',').map(x => x.trim()).includes(r)))
+      return res.status(403).json({ error: '権限がありません' });
+    const results = { sent: 0, failed: 0 };
+    await Promise.all(pushSubs.map(async sub => {
+      try {
+        await webPush.sendNotification(sub, JSON.stringify({ title, body: body || '', icon: '/icon.svg', data: { url: url || '/' } }));
+        results.sent++;
+      } catch (e) {
+        results.failed++;
+        if (e.statusCode === 410 || e.statusCode === 404) { pushSubs = pushSubs.filter(s => s.endpoint !== sub.endpoint); saveSubs(); }
+      }
+    }));
+    res.json(results);
+  } catch (e) {
+    console.error('Push send error:', e.message);
+    res.status(500).json({ error: e.message });
+  }
+});
 
-  app.use('/api', async (req, res) => {
+app.use('/api', async (req, res) => {
   try {
     const target = new URL('/api' + req.url, 'https://school-board-api.dajianweixi.workers.dev');
     let body;

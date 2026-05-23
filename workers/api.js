@@ -1601,6 +1601,16 @@ if (path === '/api/users' && method === 'GET') {
     // ============================================================
     // 11. NOTIFICATIONS
     // ============================================================
+    // POST /api/notifications (admin only - for diagnostics alerts)
+    if (path === '/api/notifications' && method === 'POST') {
+      authErr = requireAuth(user, ['admin']);
+      if (authErr) return authErr;
+      const { type, message, link } = await request.json();
+      if (!message) return json({ error: 'メッセージ必須' }, 400);
+      await addNotification(env, type || 'diagnostics', sanitize(message.trim()), link || '');
+      return json({ ok: true });
+    }
+
     if (path === '/api/notifications' && method === 'GET') {
       authErr = requireAuth(user, ['admin', 'teacher']);
       if (authErr) return authErr;

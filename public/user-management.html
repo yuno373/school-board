@@ -922,6 +922,13 @@ async function runDiagnosis() {
   const icon = fail > 0 ? '🔴' : warn > 0 ? '🟡' : '🟢';
   summary.innerHTML = `<div style="font-size:32px">${icon}</div><div style="font-size:18px;font-weight:700;margin:8px 0">正常: ${pass} / 注意: ${warn} / 情報: ${info} / 異常: ${fail}</div><div style="font-size:14px;color:${fail?'var(--danger)':warn?'#d4a017':'var(--primary)'}">${esc(verdict)}</div><div style="font-size:11px;color:var(--sub);margin-top:8px">診断実行: ${now} | チェック項目数: ${results.length}</div>`;
   container.insertBefore(summary, container.firstChild);
+  // Notify admin if anomalies found
+  if (fail > 0 || warn > 0) {
+    const failItems = results.filter(r => r.status === 'fail').map(r => { const c = DIAG_CHECKS.find(x => x.id === r.checkId); return (c?c.label:r.checkId)+': '+r.msg; });
+    const warnItems = results.filter(r => r.status === 'warn').map(r => { const c = DIAG_CHECKS.find(x => x.id === r.checkId); return (c?c.label:r.checkId)+': '+r.msg; });
+    const msg = '🔴 診断で異常検出: 異常' + fail + '件/注意' + warn + '件\n' + (failItems.length ? '【異常】' + failItems.join(' | ') : '') + (warnItems.length ? '【注意】' + warnItems.join(' | ') : '');
+    try { await a('/api/notifications', { method: 'POST', body: JSON.stringify({ type: 'diagnostics', message: msg.slice(0, 500), link: '/user-management.html?tab=diagnosis' }) }) } catch(e) {}
+  }
   btn.disabled = false;
   progress.style.display = 'none';
 }

@@ -347,7 +347,36 @@ features.forEach(f => {
   tbody.appendChild(tr2);
 });
 
-// Tab switching
+// Tab switching with role filtering
+const cu = sessionStorage.getItem('username');
+const role = sessionStorage.getItem('role') || '';
+const roles = role.split(',').map(r => r.trim());
+function hasRole(r) { return roles.some(x => r.includes(x)); }
+const isStudent = !hasRole(['admin','teacher','president','vice-president','chairperson']);
+const isPresident = hasRole(['president','vice-president']);
+const isChair = hasRole(['chairperson']);
+const isTeacher = hasRole(['teacher','admin']);
+const isAdmin = hasRole(['admin']);
+
+// Show/hide tabs based on role
+document.querySelectorAll('.tab-btn').forEach(b => {
+  const tab = b.dataset.tab;
+  if (tab === 'student' && isStudent) { /* show */ }
+  else if (tab === 'student') { b.style.display = 'none'; }
+  if (tab === 'president' && !isPresident && !isChair && !isTeacher) { b.style.display = 'none'; }
+  if (tab === 'teacher' && !isTeacher) { b.style.display = 'none'; }
+  if (tab === 'admin' && !isAdmin) { b.style.display = 'none'; }
+});
+
+// Auto-switch to first visible tab
+const firstVisible = Array.from(document.querySelectorAll('.tab-btn')).find(b => b.style.display !== 'none');
+if (firstVisible) {
+  document.querySelectorAll('.tab-btn').forEach(x => x.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(x => x.classList.remove('active'));
+  firstVisible.classList.add('active');
+  document.getElementById('tab-' + firstVisible.dataset.tab).classList.add('active');
+}
+
 document.querySelectorAll('.tab-btn').forEach(b => b.addEventListener('click', () => {
   document.querySelectorAll('.tab-btn').forEach(x => x.classList.remove('active'));
   document.querySelectorAll('.tab-content').forEach(x => x.classList.remove('active'));

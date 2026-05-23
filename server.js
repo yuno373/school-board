@@ -1,7 +1,9 @@
 const express = require('express');
 const path = require('path');
+const fs = require('fs');
 const webPush = require('web-push');
 const app = express();
+const DATA_FILE = path.join(__dirname, 'push_subs.json');
 
 let VAPID_PUBLIC = process.env.VAPID_PUBLIC_KEY;
 const VAPID_PRIVATE = process.env.VAPID_PRIVATE_KEY;
@@ -17,6 +19,8 @@ if (VAPID_PUBLIC && VAPID_PRIVATE) {
 
 const WORKER = 'https://school-board-api.dajianweixi.workers.dev';
 let pushSubs = [];
+try { pushSubs = JSON.parse(fs.readFileSync(DATA_FILE, 'utf-8')); console.log('Loaded ' + pushSubs.length + ' push subscriptions'); } catch(e) {}
+function saveSubs() { try { fs.writeFileSync(DATA_FILE, JSON.stringify(pushSubs)); } catch(e) { console.error('Failed to save subscriptions:', e.message); } }
 
 async function verifyToken(token) {
   if (!token) return null;
@@ -35,9 +39,11 @@ app.post('/api/push/subscribe', express.json(), async (req, res) => {
   try {
     const user = await verifyToken(req.headers.authorization);
     if (!user) return res.status(401).json({ error: '認証が必要です' });
+    const { topics } = req.body;
     pushSubs = pushSubs.filter(s => s.username !== user.username);
-    pushSubs.push({ ...req.body, username: user.username, createdAt: new Date().toISOString() });
-    res.json({ ok: true });
+    pushSubs.push({ ...req.body, username: user.username, topics: topics || [], createdAt: new Date().toISOString() });
+    saveSubs();
+    res.json({ ok: true, topics: topics || [] });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
@@ -46,6 +52,7 @@ app.post('/api/push/unsubscribe', express.json(), async (req, res) => {
     const user = await verifyToken(req.headers.authorization);
     if (!user) return res.status(401).json({ error: '認証が必要です' });
     pushSubs = pushSubs.filter(s => s.username !== user.username);
+    saveSubs();
     res.json({ ok: true });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
@@ -59,6 +66,29 @@ app.get('/api/push/subscriptions', async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+// Send notification to subscribers of a specific category
+app.post('/api/push/notify', express.json(), async (req, res) => {
+  try {
+    const { category, title, body, url, excludeUser } = req.body;
+    if (!category || !title) return res.status(400).json({ error: 'カテゴリとタイトルは必須です' });
+    const user = await verifyToken(req.headers.authorization);
+    if (!user) return res.status(401).json({ error: '認証が必要です' });
+    const targets = pushSubs.filter(s => s.topics && (s.topics.includes(category) || s.topics.includes('all')) && s.username !== excludeUser);
+    const results = { sent: 0, failed: 0 };
+    await Promise.all(targets.map(async sub => {
+      try {
+        await webPush.sendNotification(sub, JSON.stringify({ title, body: body || '', icon: '/icon.svg', data: { url: url || '/' } }));
+        results.sent++;
+      } catch (e) {
+        results.failed++;
+        if (e.statusCode === 410 || e.statusCode === 404) { pushSubs = pushSubs.filter(s => s.endpoint !== sub.endpoint); saveSubs(); }
+      }
+    }));
+    res.json(results);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// Admin broadcast to all subscribers
 app.post('/api/push/send', express.json(), async (req, res) => {
   try {
     const { title, body, url } = req.body;
@@ -73,7 +103,7 @@ app.post('/api/push/send', express.json(), async (req, res) => {
         results.sent++;
       } catch (e) {
         results.failed++;
-        if (e.statusCode === 410 || e.statusCode === 404) pushSubs = pushSubs.filter(s => s.endpoint !== sub.endpoint);
+        if (e.statusCode === 410 || e.statusCode === 404) { pushSubs = pushSubs.filter(s => s.endpoint !== sub.endpoint); saveSubs(); }
       }
     }));
     res.json(results);

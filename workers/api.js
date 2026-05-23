@@ -174,9 +174,9 @@ function hasAbuse(text) {
 }
 
 // ---- Audit log ----
-async function auditLog(env, action, username, details = {}) {
+async function auditLog(env, action, username, details = {}, ip = 'unknown') {
   const log = await r2Get(env.DATA, 'audit.json') || [];
-  log.unshift({ id: uuid(), action, username, details, ip: 'unknown', timestamp: new Date().toISOString() });
+  log.unshift({ id: uuid(), action, username, details, ip, timestamp: new Date().toISOString() });
   if (log.length > 1000) log.length = 1000;
   await r2Put(env.DATA, 'audit.json', log);
 }
@@ -331,7 +331,7 @@ async function handleRequest(request, env, ctx) {
         teacher_setup_done: validUser.teacher_setup_done || false, exp
       };
       const token = await hmacSign(sessionData, env.COOKIE_SECRET);
-      await auditLog(env, 'login', validUser.username);
+      await auditLog(env, 'login', validUser.username, {}, ip);
       return new Response(JSON.stringify({
         token, username: validUser.username, role: validUser.role,
         display_name: validUser.display_name || validUser.username,
@@ -587,6 +587,14 @@ async function handleRequest(request, env, ctx) {
       return json(posts);
     }
 
+    // GET /api/admin/login-locks
+    if (path === '/api/admin/login-locks' && method === 'GET') {
+      authErr = requireAuth(user, ['admin']);
+      if (authErr) return authErr;
+      const locks = await r2Get(env.DATA, 'login_locks.json') || {};
+      return json(Object.entries(locks).map(([username, data]) => ({ username, ...data })));
+    }
+
     // ============================================================
     // 3. USERS
     // ============================================================
@@ -732,7 +740,8 @@ if (path === '/api/users' && method === 'GET') {
       authErr = requireAuth(user, ['admin', 'teacher']);
       if (authErr) return authErr;
       const body = await request.json();
-      const password = body.password || '111111';
+      const rawPassword = body.password || '111111';
+      const password = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', enc(rawPassword)))).map(x => x.toString(16).padStart(2, '0')).join('');
       const users = await r2Get(env.DATA, 'users.json') || [];
       const created = [];
       let seq = 1;
@@ -748,7 +757,7 @@ if (path === '/api/users' && method === 'GET') {
           const disp = body.displayPrefix ? body.displayPrefix + String(nextNum) : tid;
           if (users.find(u => u.username === tid)) continue;
           users.push({
-            id: uuid(), username: tid, password: await hp(password), password_plain: password,
+            id: uuid(), username: tid, password: await hp(password), password_plain: rawPassword,
             role: 'teacher', grade: '', class_num: '', seat_num: '',
             club: '', committee: '', display_name: disp, icon: '',
             teacher_grades: '', teacher_subject: '', teacher_homeroom: false,
@@ -760,7 +769,7 @@ if (path === '/api/users' && method === 'GET') {
         }
         await r2Put(env.DATA, 'users.json', users);
         await auditLog(env, 'batch_create_teacher', user.username, { count: created.length, body: JSON.stringify(body) });
-        return json({ created: created.length, password, users: created });
+        return json({ created: created.length, password: rawPassword, users: created });
       }
 
       // New format: { years: [{ year, classes: [{ perClass }] }] }
@@ -780,7 +789,7 @@ if (path === '/api/users' && method === 'GET') {
               seq++;
               if (users.find(u => u.username === studentId)) continue;
               users.push({
-                id: uuid(), username: studentId, password: await hp(password), password_plain: password,
+                id: uuid(), username: studentId, password: await hp(password), password_plain: rawPassword,
                 role: 'student', grade: String(y), class_num: String(cl.num), seat_num: String(seat),
                 club: '', committee: '', display_name: studentId, icon: '', created_at: new Date().toISOString()
               });
@@ -798,7 +807,7 @@ if (path === '/api/users' && method === 'GET') {
             seq++;
             if (users.find(u => u.username === studentId)) continue;
             users.push({
-              id: uuid(), username: studentId, password: await hp(password), password_plain: password,
+              id: uuid(), username: studentId, password: await hp(password), password_plain: rawPassword,
               role: 'student', grade: String(y), class_num: String(cl), seat_num: String(seat),
               club: '', committee: '', display_name: studentId, icon: '', created_at: new Date().toISOString()
             });
@@ -808,7 +817,7 @@ if (path === '/api/users' && method === 'GET') {
       }
       await r2Put(env.DATA, 'users.json', users);
       await auditLog(env, 'batch_create', user.username, { count: created.length, body: JSON.stringify(body) });
-      return json({ created: created.length, password, students: created });
+      return json({ created: created.length, password: rawPassword, students: created });
     }
 
     // POST /api/users/batch-delete

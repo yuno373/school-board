@@ -101,11 +101,11 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
 async function h(p){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(p));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('')}
 const API_BASE=''
 async function a(p,o={}){const t=sessionStorage.getItem('token'),h={'Content-Type':'application/json',...o.headers};if(t)h['Authorization']='Bearer '+t;const r=await fetch(API_BASE+p,{...o,headers:h}),d=await r.json();if(!r.ok)throw new Error(d.error||'エラー');return d}
-const A={requireAuth(){const u=sessionStorage.getItem('username'),r=sessionStorage.getItem('role'),t=sessionStorage.getItem('token');if(!u||!r||!t)return null;return{username:u,role:r,token:t}},canManageUsers(){const u=this.requireAuth();return u&&['admin','subadmin'].includes(u.role)},logout(){sessionStorage.clear()}};window.AUTH=A
+const A={requireAuth(){const u=sessionStorage.getItem('username'),r=sessionStorage.getItem('role'),t=sessionStorage.getItem('token');if(!u||!r||!t)return null;return{username:u,role:r,token:t}},canManageUsers(){const u=this.requireAuth();return u&&(u.role||'').includes('admin')},logout(){sessionStorage.clear()}};window.AUTH=A
 const $=id=>document.getElementById(id),esc=s=>{const d=document.createElement('div');d.textContent=s;return d.innerHTML}
 const u=AUTH.requireAuth();if(!u){window.location.href='02login.html'}
 $('hUser').textContent=u.username
-const isTeacher=u.role==='admin'||u.role==='subadmin'
+const isTeacher=(u.role||'').includes('admin')
 $('addForm').style.display=isTeacher?'block':'none'
 
 async function load(){

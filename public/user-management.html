@@ -942,9 +942,9 @@ async function runDiagnosis() {
   } catch(e) { addResult('private-posts', 'pass', 'チェックできず', e.message) }
   // 18b. Login lock
   try {
-    const users = await a('/api/users');
-    const locked = users.filter(u => u.lock_count >= 5);
-    locked.length === 0 ? addResult('login-lock', 'pass', 'ログインロックされたユーザーなし') : addResult('login-lock', 'warn', `${locked.length}ユーザーがロック中`, locked.map(u => u.username).join(', '));
+    const locks = await a('/api/admin/login-locks');
+    const active = locks.filter(l => l.until && l.until > Date.now());
+    active.length === 0 ? addResult('login-lock', 'pass', 'ログインロックされたユーザーなし') : addResult('login-lock', 'warn', `${active.length}ユーザーがロック中`, active.map(l => `${l.username}（残り${Math.ceil((new Date(l.until)-Date.now())/60000)}分）`).join(', '));
   } catch(e) { addResult('login-lock', 'pass', 'ロックチェックエラー', e.message) }
   // 19. Expired posts
   try {
@@ -969,7 +969,7 @@ async function runDiagnosis() {
   } catch(e) { addResult('cors', 'pass', 'CORSチェックできず', e.message) }
   // 22. Audit log
   try {
-    const r = await fetch(API_BASE + '/api/audit/log', { headers: { 'Authorization': 'Bearer '+token } });
+    const r = await fetch(API_BASE + '/api/audit', { headers: { 'Authorization': 'Bearer '+token } });
     if (r.ok) { const log = await r.json(); addResult('audit', 'pass', `監査ログ: ${Array.isArray(log)?log.length:0}件`) }
     else addResult('audit', 'pass', '監査ログエンドポイントなし（管理画面内で管理）');
   } catch(e) { addResult('audit', 'pass', '監査ログ: 別途管理') }

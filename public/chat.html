@@ -41,6 +41,11 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
 .empty-chat{text-align:center;padding:40px;color:var(--sub);font-size:14px}
 @keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
 @media(max-width:600px){.chat-sidebar{display:none}}
+.chat-notif-banner{background:#e8f0e8;border:1px solid #c0d6c0;border-radius:8px;padding:10px 14px;margin:0 16px 8px;display:none;align-items:center;gap:10px;font-size:13px;flex-shrink:0}
+.chat-notif-banner .cnb-text{flex:1}
+.chat-notif-banner .cnb-btn{background:var(--primary);color:#fff;border:none;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap}
+.chat-notif-banner .cnb-btn:hover{background:var(--primary-dark)}
+.chat-notif-banner .cnb-skip{background:0 0;border:1px solid var(--border);padding:6px 14px;border-radius:6px;font-size:12px;cursor:pointer;color:var(--sub);font-family:inherit}
 </style>
 </head>
 <body>
@@ -50,6 +55,7 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
     <a href="01index.html" class="header-link">黒板に戻る</a>
   </div>
 </header>
+<div class="chat-notif-banner" id="chatNotifBanner"><span class="cnb-text">💬 新しいメッセージがあったら通知でお知らせしますか？</span><button class="cnb-btn" id="chatNotifYes">はい</button><button class="cnb-skip" id="chatNotifNo">いいえ</button></div>
 <div class="chat-body">
   <div class="chat-sidebar" id="partSidebar">
     <h3>👥 参加者</h3>
@@ -116,6 +122,46 @@ async function delMsg(id){try{await a('/api/chat/'+id,{method:'DELETE'});$('msgL
 $('sendBtn').addEventListener('click',sendMsg);
 $('msgInput').addEventListener('keydown',e=>{if(e.key==='Enter')sendMsg()});
 loadParticipants();loadMsgs();setInterval(loadMsgs,3000);
+
+// Chat notification prompt
+const role=sessionStorage.getItem('role')||'';
+const chatRoles=role.split(',').map(r=>r.trim()).some(r=>['president','vice-president','chairperson','teacher','admin'].includes(r));
+if(chatRoles&&'serviceWorker'in navigator&&'PushManager'in window){
+  (async()=>{
+    try{
+      const reg=await navigator.serviceWorker.ready;
+      const sub=await reg.pushManager.getSubscription();
+      if(sub){
+        const vk=await a('/api/push/vapid-key');
+        const ck=localStorage.getItem('chatNotifAsked_'+cu);
+        if(!ck){$('chatNotifBanner').style.display='flex'}
+      }
+    }catch(e){}
+  })();
+}
+async function enableChatNotif(){
+  try{
+    const reg=await navigator.serviceWorker.ready;
+    let sub=await reg.pushManager.getSubscription();
+    if(!sub){
+      const vk=await a('/api/push/vapid-key');
+      sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:urlBase64ToUint8Array(vk.publicKey)});
+    }
+    const subJson=JSON.parse(JSON.stringify(sub));
+    const my=await a('/api/me');
+    const topics=['general','lost'];
+    if(my.club)topics.push('club_'+my.club);
+    if(my.committee)topics.push('committee_'+my.committee);
+    if(chatRoles)topics.push('chat');
+    subJson.topics=topics;
+    await a('/api/push/subscribe',{method:'POST',body:JSON.stringify(subJson)});
+    localStorage.setItem('chatNotifAsked_'+cu,'yes');
+    $('chatNotifBanner').style.display='none';
+  }catch(e){}
+}
+function urlBase64ToUint8Array(b){const p=(b+'='.repeat((4-b.length%4)%4)).replace(/-/g,'+').replace(/_/g,'/');const s=atob(p);const r=new Uint8Array(s.length);for(let i=0;i<s.length;i++)r[i]=s.charCodeAt(i);return r}
+$('chatNotifYes').addEventListener('click',enableChatNotif);
+$('chatNotifNo').addEventListener('click',()=>{localStorage.setItem('chatNotifAsked_'+cu,'no');$('chatNotifBanner').style.display='none'});
 </script>
 <script>if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js')</script>
 </body>

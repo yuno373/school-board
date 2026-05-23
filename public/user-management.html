@@ -123,38 +123,37 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
     <div class="card">
       <h3>⏰ 授業時間割設定</h3>
       <p style="font-size:13px;color:var(--sub);margin-bottom:12px">毎週の授業スケジュールを設定してください。授業開始10分前に通知されます。</p>
-      <div id="scheduleEditor">
-        <table style="width:100%;border-collapse:collapse;font-size:13px">
-          <thead><tr><th style="text-align:left;padding:4px 8px">曜日</th><th style="text-align:left;padding:4px 8px">時限</th><th style="text-align:left;padding:4px 8px">教科</th><th style="text-align:left;padding:4px 8px">クラス</th><th style="width:40px"></th></tr></thead>
-          <tbody id="scheduleRows"></tbody>
-        </table>
-        <div style="margin:10px 0;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-          <select id="schDay" style="padding:6px 10px;border:2px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;background:#faf8f5">
-            <option value="0">日曜</option><option value="1">月曜</option><option value="2">火曜</option><option value="3">水曜</option><option value="4">木曜</option><option value="5">金曜</option><option value="6">土曜</option>
-          </select>
-          <select id="schPeriod" style="padding:6px 10px;border:2px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;background:#faf8f5">
-            <option value="1">1限 (8:40-9:30)</option><option value="2">2限 (9:40-10:30)</option><option value="3">3限 (10:40-11:30)</option><option value="4">4限 (11:40-12:30)</option><option value="5">5限 (13:30-14:20)</option><option value="6">6限 (14:30-15:20)</option>
-          </select>
-          <input type="text" id="schSubject" placeholder="教科（例: 数学）" style="padding:6px 10px;border:2px solid var(--border);border-radius:6px;font-size:13px;width:100px;font-family:inherit;background:#faf8f5">
-          <input type="text" id="schClass" placeholder="クラス（例: 1-1）" style="padding:6px 10px;border:2px solid var(--border);border-radius:6px;font-size:13px;width:100px;font-family:inherit;background:#faf8f5">
-          <button class="btn btn-primary btn-sm" id="addSchRow">追加</button>
+      <div style="margin-bottom:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <select id="schDay" style="padding:6px 10px;border:2px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;background:#faf8f5">
+          <option value="0">日曜</option><option value="1">月曜</option><option value="2">火曜</option><option value="3">水曜</option><option value="4">木曜</option><option value="5">金曜</option><option value="6">土曜</option>
+        </select>
+        <select id="schPeriod" style="padding:6px 10px;border:2px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;background:#faf8f5">
+          <option value="1">1限 (8:40-9:30)</option><option value="2">2限 (9:40-10:30)</option><option value="3">3限 (10:40-11:30)</option><option value="4">4限 (11:40-12:30)</option><option value="5">5限 (13:30-14:20)</option><option value="6">6限 (14:30-15:20)</option>
+        </select>
+        <input type="text" id="schSubject" placeholder="教科" style="padding:6px 10px;border:2px solid var(--border);border-radius:6px;font-size:13px;width:90px;font-family:inherit;background:#faf8f5">
+        <input type="text" id="schClass" placeholder="クラス" style="padding:6px 10px;border:2px solid var(--border);border-radius:6px;font-size:13px;width:80px;font-family:inherit;background:#faf8f5">
+        <button class="btn btn-primary btn-sm" id="addSchRow">追加</button>
+      </div>
+      <table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:10px">
+        <thead><tr><th style="text-align:left;padding:4px 8px;border-bottom:2px solid var(--border)">曜日</th><th style="text-align:left;padding:4px 8px;border-bottom:2px solid var(--border)">時限</th><th style="text-align:left;padding:4px 8px;border-bottom:2px solid var(--border)">教科</th><th style="text-align:left;padding:4px 8px;border-bottom:2px solid var(--border)">クラス</th><th style="width:40px;border-bottom:2px solid var(--border)"></th></tr></thead>
+        <tbody id="scheduleRows"></tbody>
+      </table>
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px">
+        <button class="btn btn-primary" id="saveSchBtn">保存</button>
+        <div id="schStatus" style="font-size:12px"></div>
+      </div>
+      <details style="font-size:13px;border-top:1px solid var(--border);padding-top:10px;margin-top:4px">
+        <summary style="cursor:pointer;font-weight:700;color:var(--sub)">📋 テキストから一括登録</summary>
+        <p style="font-size:12px;color:var(--sub);margin:8px 0">タブ区切りで複数行まとめて追加:</p>
+        <pre style="font-size:11px;color:var(--sub);background:var(--bg);padding:8px;border-radius:6px;margin-bottom:8px">月曜	1限	数学	1-1
+火曜	3限	英語	2-2</pre>
+        <textarea id="schBatchText" style="width:100%;min-height:80px;padding:10px;border:2px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;background:#faf8f5" placeholder="曜日(タブ)時限(タブ)教科(タブ)クラス"></textarea>
+        <div style="margin-top:8px;display:flex;gap:8px">
+          <button class="btn btn-primary btn-sm" id="schBatchParse">解析して追加</button>
+          <button class="btn btn-outline btn-sm" id="schBatchClear">クリア</button>
         </div>
-        <button class="btn btn-primary" id="saveSchBtn" style="margin-top:8px">保存</button>
-        <div id="schStatus" style="font-size:12px;margin-top:8px"></div>
-      </div>
-    </div>
-    <div class="card">
-      <h3>📋 テキストから一括登録</h3>
-      <p style="font-size:13px;color:var(--sub);margin-bottom:8px">タブ区切りで一括貼り付け。例:</p>
-      <pre style="font-size:11px;color:var(--sub);background:var(--bg);padding:8px;border-radius:6px;margin-bottom:8px">月曜	1限	数学	1-1
-火曜	3限	英語	2-2
-水曜	4限	理科	3-1</pre>
-      <textarea id="schBatchText" style="width:100%;min-height:100px;padding:10px;border:2px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;background:#faf8f5" placeholder="タブ区切りで貼り付け&#10;1行 = 曜日(タブ)時限(タブ)教科(タブ)クラス"></textarea>
-      <div style="margin-top:8px;display:flex;gap:8px">
-        <button class="btn btn-primary btn-sm" id="schBatchParse">解析して追加</button>
-        <button class="btn btn-outline btn-sm" id="schBatchClear">クリア</button>
-      </div>
-      <div id="schBatchResult" style="font-size:12px;margin-top:6px"></div>
+        <div id="schBatchResult" style="font-size:12px;margin-top:6px"></div>
+      </details>
     </div>
   </div>
 

@@ -118,7 +118,6 @@ const $=id=>document.getElementById(id.replace('#',''));const esc=s=>{const d=do
 const cu=sessionStorage.getItem('username'),role=sessionStorage.getItem('role')||'';
 if(!cu||!role)window.location.href='02login.html';
 const isStaff=['admin','teacher'].some(r=>role.includes(r));
-if(!isStaff){document.body.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100vh;font-size:16px;color:var(--sub)">この機能は先生・管理者専用です</div>'}
 
 let convs=[],activeConv=null,activeType=null,lastTimes={},loadedOnce={};
 
@@ -254,7 +253,8 @@ function renderUserList(q,multi){
   }
 }
 
-// New DM (1-on-1)
+// New DM (1-on-1) - teachers/admins only
+if(isStaff){
 $('#dmNewBtn').addEventListener('click',()=>{
   $('#dmNewTitle').textContent='宛先を選択';
   $('#dmNewModalContent').innerHTML='<h3 id="dmNewTitle">宛先を選択</h3><input type="text" id="dmUserSearch" placeholder="名前またはIDで検索..." style="width:100%;padding:8px 10px;border:2px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;margin-bottom:8px"><div class="dm-user-list" id="dmUserList"></div><div class="dm-new-actions"><button class="btn-cancel" id="dmNewCancel">キャンセル</button></div>';
@@ -265,8 +265,9 @@ $('#dmNewBtn').addEventListener('click',()=>{
   $('#dmNewCancel').addEventListener('click',()=>$('#dmOverlay').classList.remove('show'));
   $('#dmOverlay').addEventListener('click',e=>{if(e.target===$('#dmOverlay'))$('#dmOverlay').classList.remove('show')});
 });
-
-// New Group DM
+}
+// New Group DM - teachers/admins only
+if(isStaff){
 $('#dmNewGroupBtn').addEventListener('click',()=>{
   $('#dmNewModalContent').innerHTML='<h3>👥 グループを作成</h3><label>グループ名</label><input type="text" id="dmGroupName" placeholder="グループ名"><label>メンバーを選択</label><input type="text" id="dmUserSearch" placeholder="検索..." style="width:100%;padding:8px 10px;border:2px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;margin-bottom:4px"><div class="dm-user-list" id="dmUserList"></div><div class="dm-new-actions"><button class="btn-cancel" id="dmNewCancel">キャンセル</button><button class="btn-primary" id="dmGroupCreateBtn">作成</button></div>';
   $('#dmOverlay').classList.add('show');
@@ -287,6 +288,9 @@ $('#dmNewGroupBtn').addEventListener('click',()=>{
     }catch(e){alert(e.message)}
   });
 });
+}
+// Also hide new message buttons for students
+if(!isStaff){$('#dmNewBtn').style.display='none';$('#dmNewGroupBtn').style.display='none'}
 
 loadConvs();
 loadUsersForNew();

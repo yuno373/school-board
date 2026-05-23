@@ -1043,12 +1043,21 @@ if (path === '/api/users' && method === 'GET') {
       if (authErr) return authErr;
       const userRole = (user.role || '');
       const isStaff = ['admin', 'teacher'].some(r => userRole.includes(r));
-      if (!isStaff) return json({ error: '先生・管理者のみ送信できます' }, 403);
       const { to, message } = await request.json();
       if (!to || !message || !message.trim()) return json({ error: '宛先とメッセージは必須です' }, 400);
-      const users = await r2Get(env.DATA, 'users.json') || [];
-      const recipient = users.find(u => u.username === to);
-      if (!recipient) return json({ error: 'ユーザーが見つかりません' }, 404);
+      if (!isStaff) {
+        // Students can only reply to teachers who have DMed them first
+        const msgs = await r2Get(env.DATA, 'dm_messages.json') || [];
+        const hasExisting = msgs.some(m => (m.from === to && m.to === user.username) || (m.from === user.username && m.to === to));
+        const users = await r2Get(env.DATA, 'users.json') || [];
+        const target = users.find(u => u.username === to);
+        const targetIsStaff = target && ['admin', 'teacher'].some(r => (target.role || '').includes(r));
+        if (!hasExisting || !targetIsStaff) return json({ error: 'この機能は先生・管理者専用です' }, 403);
+      } else {
+        const users = await r2Get(env.DATA, 'users.json') || [];
+        const recipient = users.find(u => u.username === to);
+        if (!recipient) return json({ error: 'ユーザーが見つかりません' }, 404);
+      }
       const msgs = await r2Get(env.DATA, 'dm_messages.json') || [];
       const dm = {
         id: uuid(), from: user.username, to,

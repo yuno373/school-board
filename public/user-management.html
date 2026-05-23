@@ -143,6 +143,26 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
         <div id="schStatus" style="font-size:12px;margin-top:8px"></div>
       </div>
     </div>
+    <div class="card">
+      <h3>📋 テキストから一括登録</h3>
+      <p style="font-size:13px;color:var(--sub);margin-bottom:8px">タブ区切りで一括貼り付け。例:</p>
+      <pre style="font-size:11px;color:var(--sub);background:var(--bg);padding:8px;border-radius:6px;margin-bottom:8px">月曜	1限	数学	1-1
+火曜	3限	英語	2-2
+水曜	4限	理科	3-1</pre>
+      <textarea id="schBatchText" style="width:100%;min-height:100px;padding:10px;border:2px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;background:#faf8f5" placeholder="タブ区切りで貼り付け&#10;1行 = 曜日(タブ)時限(タブ)教科(タブ)クラス"></textarea>
+      <div style="margin-top:8px;display:flex;gap:8px">
+        <button class="btn btn-primary btn-sm" id="schBatchParse">解析して追加</button>
+        <button class="btn btn-outline btn-sm" id="schBatchClear">クリア</button>
+      </div>
+      <div id="schBatchResult" style="font-size:12px;margin-top:6px"></div>
+    </div>
+    <div class="card">
+      <h3>📸 写真から読み取り（Gemini）</h3>
+      <p style="font-size:13px;color:var(--sub);margin-bottom:8px">時間割の写真をアップロードすると自動で読み取ります</p>
+      <input type="file" id="schPhotoInput" accept="image/*" style="margin-bottom:8px">
+      <button class="btn btn-primary btn-sm" id="schPhotoBtn" disabled>読み取り中...</button>
+      <div id="schPhotoResult" style="font-size:12px;margin-top:6px"></div>
+    </div>
   </div>
 
   <!-- Settings Tab (last) -->
@@ -1078,6 +1098,79 @@ $('saveSchBtn').addEventListener('click', async () => {
     renderSchedule();
   } catch(e) { console.log('Schedule load error:', e); }
 })();
+
+// ===== BATCH PASTE =====
+const DAY_MAP = { '日':0,'日曜':0,'日曜日':0,'月':1,'月曜':1,'月曜日':1,'火':2,'火曜':2,'火曜日':2,'水':3,'水曜':3,'水曜日':3,'木':4,'木曜':4,'木曜日':4,'金':5,'金曜':5,'金曜日':5,'土':6,'土曜':6,'土曜日':6 };
+const PERIOD_MAP = { '1限':1,'2限':2,'3限':3,'4限':4,'5限':5,'6限':6,'1':1,'2':2,'3':3,'4':4,'5':5,'6':6 };
+$('schBatchParse').addEventListener('click', () => {
+  const text = $('schBatchText').value.trim();
+  if (!text) { $('schBatchResult').textContent = 'テキストを入力してください'; return; }
+  const lines = text.split('\n').filter(l => l.trim());
+  let added = 0, errors = [];
+  for (const line of lines) {
+    const parts = line.split('\t');
+    if (parts.length < 3) { errors.push(`行「${line}」: 書式が違います`); continue; }
+    const dayStr = parts[0].trim(), periodStr = parts[1].trim(), subject = parts[2].trim(), cls = (parts[3]||'').trim();
+    const day = DAY_MAP[dayStr];
+    if (day === undefined) { errors.push(`行「${line}」: 曜日「${dayStr}」が不明です`); continue; }
+    const period = PERIOD_MAP[periodStr];
+    if (!period) { errors.push(`行「${line}」: 時限「${periodStr}」が不明です`); continue; }
+    if (!subject) { errors.push(`行「${line}」: 教科が空です`); continue; }
+    const dup = scheduleData.some(s => s.day_of_week === day && s.period === period);
+    if (dup) { errors.push(`行「${line}」: 既に登録済みです`); continue; }
+    scheduleData.push({ day_of_week: day, period, subject, class_name: cls });
+    added++;
+  }
+  renderSchedule();
+  const msg = added > 0 ? `✅ ${added}件追加` : '';
+  const err = errors.length > 0 ? `⚠️ ${errors.length}件エラー（先頭: ${errors[0]}）` : '';
+  $('schBatchResult').textContent = [msg, err].filter(Boolean).join(' | ');
+  if (errors.length <= 1 && added > 0) $('schBatchText').value = '';
+});
+$('schBatchClear').addEventListener('click', () => { $('schBatchText').value = ''; $('schBatchResult').textContent = ''; });
+
+// ===== PHOTO OCR =====
+const schPhotoBtn = $('schPhotoBtn');
+$('schPhotoInput').addEventListener('change', () => {
+  const file = $('schPhotoInput').files[0];
+  schPhotoBtn.disabled = !file;
+  schPhotoBtn.textContent = file ? '📸 読み取り開始' : '読み取り中...';
+});
+schPhotoBtn.addEventListener('click', async () => {
+  const file = $('schPhotoInput').files[0];
+  if (!file) return;
+  schPhotoBtn.disabled = true; schPhotoBtn.textContent = '読み取り中...';
+  $('schPhotoResult').textContent = 'Geminiで解析中...';
+  try {
+    const b64 = await new Promise((resolve, reject) => {
+      const r = new FileReader();
+      r.onload = () => resolve(r.result);
+      r.onerror = reject;
+      r.readAsDataURL(file);
+    });
+    const prompt = 'この時間割写真から授業スケジュールを読み取り、以下のJSON形式のみで出力してください（説明不要）。' +
+      '曜日は0=日曜,1=月曜,2=火曜,3=水曜,4=木曜,5=金曜,6=土曜の数字で。時限は1-6の数字で。' +
+      '形式: [{"day_of_week":1,"period":1,"subject":"数学","class_name":"1-1"}]';
+    const r = await a('/api/gemini/ask', { method:'POST', body: JSON.stringify({ question: prompt, image: b64 }) });
+    const jsonMatch = r.answer.match(/\[[\s\S]*\]/);
+    if (!jsonMatch) throw new Error('JSONをパースできませんでした: ' + r.answer);
+    const parsed = JSON.parse(jsonMatch[0]);
+    if (!Array.isArray(parsed)) throw new Error('配列ではありません');
+    let added = 0, errors = [];
+    for (const item of parsed) {
+      if (!item.subject || item.day_of_week === undefined || !item.period) { errors.push(`項目不足: ${JSON.stringify(item)}`); continue; }
+      const dup = scheduleData.some(s => s.day_of_week === item.day_of_week && s.period === item.period);
+      if (dup) { errors.push(`${item.subject}(${['日','月','火','水','木','金','土'][item.day_of_week]||'?'}${item.period}限): 重複`); continue; }
+      scheduleData.push({ day_of_week: item.day_of_week, period: item.period, subject: item.subject, class_name: item.class_name || '' });
+      added++;
+    }
+    renderSchedule();
+    const msg = added > 0 ? `✅ ${added}件追加` : '';
+    const err = errors.length > 0 ? `⚠️ ${errors.length}件エラー（先頭: ${errors[0]}）` : '';
+    $('schPhotoResult').textContent = [msg, err].filter(Boolean).join(' | ');
+  } catch(e) { $('schPhotoResult').textContent = '❌ '+e.message; }
+  schPhotoBtn.disabled = false; schPhotoBtn.textContent = '📸 読み取り開始';
+});
 
 loadUsers();
 </script>

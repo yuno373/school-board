@@ -1,0 +1,359 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>上藤沢中学校 部活動黒板</title>
+<style>
+:root{--primary:#1E4D2B;--primary-dark:#153820;--primary-light:#2D6B40;--accent-pink:#f5a0b8;--accent-blue:#a0c4e8;--accent-yellow:#f5e6a0;--accent-green:#a8d8a0;--bg:#f7f5f0;--card:#fff;--text:#2c2c2c;--sub:#8a8682;--border:#e0dcd4;--danger:#c96565;--radius:12px;--shadow:0 2px 12px rgba(30,77,43,0.06)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sans',Meiryo,sans-serif;background:var(--bg);color:var(--text)}
+.header{background:var(--primary);padding:12px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100}
+.header-title{font-size:16px;font-weight:700;color:#fff;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.header-title .hd{display:inline-flex;align-items:center;gap:6px}
+.header-title .hdate{font-size:12px;font-weight:400;opacity:.8;white-space:nowrap}
+.header-right{display:flex;align-items:center;gap:6px;overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch;flex-shrink:0;max-width:100%}
+.header-right::-webkit-scrollbar{display:none}
+.user-badge{background:rgba(255,255,255,.2);color:#fff;font-size:11px;padding:3px 10px;border-radius:6px;font-weight:700;flex-shrink:0}
+.user-badge{background:rgba(255,255,255,.2);color:#fff;font-size:11px;padding:3px 10px;border-radius:6px;font-weight:700}
+.header-link{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);padding:4px 10px;font-size:12px;cursor:pointer;color:rgba(255,255,255,.85);border-radius:8px;text-decoration:none;transition:all .2s;font-family:inherit;white-space:nowrap;flex-shrink:0}
+.header-link:hover{background:rgba(255,255,255,.25);color:#fff}
+.header-link.danger{border-color:rgba(255,255,255,.2)}
+.header-link.danger:hover{border-color:rgba(200,100,100,.6);background:rgba(200,100,100,.2);color:#ffcdcd}
+.nav-container{background:var(--card);border-bottom:1px solid var(--border);overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch}
+.nav-container::-webkit-scrollbar{display:none}
+.nav-tabs{display:flex;padding:0 10px}
+.tab{padding:10px 16px;color:var(--sub);text-decoration:none;font-size:13px;font-weight:700;border-bottom:3px solid transparent;transition:all .2s;cursor:pointer;background:0 0;border-top:none;border-left:none;border-right:none;font-family:inherit}
+.tab.active{color:#fff;background:var(--primary);border-radius:8px 8px 0 0;border-bottom-color:var(--primary)}
+.tab:hover:not(.active){background:#f0ede8;color:var(--text);border-radius:8px 8px 0 0}
+.tab.separator{color:#b5b0a8;padding:10px 6px;font-size:11px;font-weight:600;cursor:pointer}
+.tab-dot{display:inline-flex;align-items:center;justify-content:center;background:var(--accent-pink);color:#fff;font-size:10px;font-weight:700;min-width:18px;height:18px;padding:0 5px;margin-left:5px;vertical-align:middle;border-radius:9px}
+.search-bar{padding:8px 14px;display:flex;gap:8px;justify-content:center;position:sticky;top:0;z-index:89;background:var(--bg)}
+.search-bar input{width:100%;max-width:400px;padding:8px 14px;border:2px solid var(--border);border-radius:20px;font-size:13px;font-family:inherit;background:var(--card);transition:all .2s;box-shadow:var(--shadow)}
+.search-bar input:focus{outline:none;border-color:var(--primary);background:#fff;box-shadow:0 0 0 3px rgba(30,77,43,0.08)}
+.main-content{max-width:800px;margin:0 auto;padding:16px 20px}
+.post-card{background:var(--card);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);margin-bottom:14px;transition:transform .15s;border-left:3px solid var(--primary-light)}
+.post-card:hover{transform:translateY(-1px)}
+.post-category{font-size:11px;color:var(--sub);margin-bottom:4px;font-weight:600}
+.post-title{font-size:16px;font-weight:700;margin-bottom:8px;color:var(--text)}
+.post-body{font-size:14px;line-height:1.7;margin-bottom:12px;white-space:pre-wrap;word-break:break-word}
+.attachment{display:inline-flex;align-items:center;background:#f5f2ec;border:1px solid var(--border);padding:5px 10px;border-radius:6px;font-size:13px;color:var(--text);margin-bottom:12px;text-decoration:none;transition:all .2s}
+.attachment:hover{border-color:var(--primary);background:#eaf3e8}
+.post-footer{display:flex;justify-content:space-between;align-items:center;font-size:12px;border-top:1px solid var(--border);padding-top:10px}
+.post-meta{color:var(--sub)}
+.post-deadline{color:var(--danger);font-weight:700;background:#fce8e8;padding:3px 10px;border-radius:6px;font-size:11px}
+.post-deadline.safe{color:var(--primary);background:#eaf3e8}
+.post-deadline.warn{color:#c97b4a;background:#faf0e0}
+#postForm{background:var(--card);padding:18px 20px;margin-bottom:18px;border-radius:var(--radius);box-shadow:var(--shadow)}
+#postForm.hidden{display:none}
+#postForm h2{font-size:15px;font-weight:700;margin-bottom:12px;color:var(--text)}
+#postForm input,#postForm textarea,#postForm select{width:100%;padding:10px 12px;border:2px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit;background:#faf8f5;transition:all .25s}
+#postForm input:focus,#postForm textarea:focus,#postForm select:focus{outline:none;border-color:var(--primary);background:#fff;box-shadow:0 0 0 3px rgba(30,77,43,0.08)}
+#postForm input{margin-bottom:10px}
+#postForm textarea{min-height:90px;resize:vertical;margin-bottom:10px}
+#postForm select{margin-bottom:10px;cursor:pointer}
+#postForm .form-row{display:flex;gap:10px;margin-bottom:10px}
+#postForm .form-row input{flex:1;margin-bottom:0}
+#createBtn{background:var(--primary);color:#fff;border:none;padding:10px 24px;font-size:14px;font-weight:700;cursor:pointer;border-radius:8px;transition:all .25s;font-family:inherit}
+#createBtn:hover{background:var(--primary-dark);box-shadow:0 4px 12px rgba(30,77,43,0.2)}
+#createBtn:disabled{opacity:.5;cursor:not-allowed}
+.delete-btn{background:0 0;border:1px solid var(--border);color:var(--sub);padding:4px 10px;font-size:11px;cursor:pointer;border-radius:6px;transition:all .2s;font-family:inherit}
+.delete-btn:hover{border-color:var(--danger);color:var(--danger);background:#fce8e8}
+.empty-state{text-align:center;padding:50px 20px;color:#c5c0b8;font-size:14px}
+#wbgtBar{display:flex;align-items:center;gap:10px;padding:8px 20px;font-size:13px;font-weight:700;transition:background .5s,color .5s;overflow-x:auto}
+.wbgt-val{font-size:18px;min-width:45px;text-align:center;font-weight:800}
+.wbgt-label{font-size:13px;font-weight:700}
+.wbgt-advice{font-size:12px;font-weight:400;opacity:.9}
+.wbgt-detail{display:flex;gap:8px;font-weight:400;font-size:11px;opacity:.8}
+.wbgt-l0{background:#eaf3e8;color:#2d6b4a}
+.wbgt-l1{background:#faf5e0;color:#b57a20}
+.wbgt-l2{background:#faf0e0;color:#c97b4a}
+.wbgt-l3{background:#fce8e8;color:#b54a4a}
+.wbgt-l4{background:#f3eaf5;color:#7a3a8a}
+#disasterBar{display:none;align-items:center;gap:8px;padding:6px 20px;font-size:12px;font-weight:700;transition:all .3s;overflow-x:auto;border-bottom:1px solid rgba(200,0,0,.15)}
+.disaster-icon{font-size:14px;flex-shrink:0}
+.disaster-msg{flex:1;font-size:12px}
+.disaster-danger{background:#fce8e8;color:#b54a4a}
+.disaster-warning{background:#faf5e0;color:#b57a20}
+.disaster-info{background:#eaf3e8;color:#2d6b4a}
+.disaster-clear{background:rgba(255,255,255,.15);border:none;color:inherit;font-size:10px;opacity:.7;cursor:pointer;padding:2px 8px;border-radius:4px;font-weight:700}
+.disaster-clear:hover{opacity:1;background:rgba(0,0,0,.1)}
+.claim-area{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.claim-btn{padding:6px 14px;font-size:12px;font-weight:700;border:2px solid var(--accent-pink);background:0 0;color:var(--accent-pink);border-radius:8px;cursor:pointer;transition:all .2s;font-family:inherit}
+.claim-btn:hover{background:var(--accent-pink);color:#fff}
+.claim-btn.claimed{background:var(--accent-pink);color:#fff}
+.claim-count{font-size:12px;color:var(--sub);font-weight:700}
+.reaction-bar{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.reaction-btn{font-size:13px;padding:3px 10px;border:1.5px solid var(--border);border-radius:16px;background:var(--card);cursor:pointer;transition:all .2s;font-family:inherit;display:flex;align-items:center;gap:4px}
+.reaction-btn:hover{border-color:var(--accent-blue);background:#f0f6fc}
+.reaction-btn.active{background:var(--accent-blue);border-color:var(--accent-blue);color:#1a4a6a}
+.reaction-btn .count{font-size:11px;font-weight:700;color:var(--sub)}
+.reaction-btn.active .count{color:inherit}
+.notif-badge{background:var(--accent-pink);color:#fff;font-size:10px;font-weight:700;min-width:18px;height:18px;padding:0 5px;border-radius:9px;margin-left:4px;vertical-align:middle;text-align:center;line-height:18px;display:none}
+@media(max-width:800px){
+  .header{flex-direction:column;align-items:stretch;gap:6px}
+  .header-right{width:100%;justify-content:flex-start}
+  .main-content{padding:12px 14px}
+  .post-card{padding:14px 16px}
+}
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="header-title"><span class="hd">📋 上藤沢中学校</span><span class="hdate" id="hDate"></span></div>
+  <div class="header-right">
+    <span id="bUser" style="font-size:12px;color:rgba(255,255,255,.75)"></span>
+    <span class="user-badge" id="bRole"></span>
+    <a href="https://miraiseed2.benesse.ne.jp/seed/start/FpgtwCRY" target="_blank" rel="noopener" class="header-link" id="bMiraiseedLink">📚 ミライシード</a>
+    <a href="https://ed-cl.com" target="_blank" rel="noopener" class="header-link" id="bMekubittoLink">📖 メクビット</a>
+    <a href="schedule.html" class="header-link">予定表</a>
+    <a href="consult.html" class="header-link" id="bConsultLink">相談所</a>
+    <a href="club-questions.html" class="header-link" id="bClubQLink" style="display:none">質問</a>
+    <a href="chat.html" class="header-link" id="bChatLink" style="display:none">部長チャット<span class="notif-badge" id="chatBadge"></span></a>
+    <a href="user-management.html" class="header-link" id="bUserMgmtLink" style="display:none">ユーザー管理</a>
+    <a href="settings.html" class="header-link" id="bSettingsLink">ユーザー設定</a>
+    <button class="header-link danger" id="bLogout">ログアウト</button>
+  </div>
+</header>
+<div id="disasterBar"><span class="disaster-icon">⚠️</span><span class="disaster-msg" id="disasterMsg"></span></div>
+<div id="wbgtBar"><div class="wbgt-val">--.-</div><div><div class="wbgt-label">WBGT</div><div class="wbgt-advice">取得中...</div></div><div class="wbgt-detail"><span>--°C</span><span>--%</span></div></div>
+<div class="nav-container"><nav class="nav-tabs" id="bTabs"></nav></div>
+<div class="search-bar"><input type="text" id="bSearch" placeholder="🔍 部活・委員会・カテゴリを検索"></div>
+<main class="main-content">
+  <section id="postForm">
+    <h2>新規投稿</h2>
+    <input type="text" id="bTitle" placeholder="タイトル">
+    <textarea id="bContent" placeholder="内容を入力してください"></textarea>
+    <select id="bCat"></select>
+    <div class="form-row"><input type="file" id="bFile" multiple accept=".pdf,.jpg,.jpeg,.png,.gif,.txt,.doc,.docx"></div>
+    <div id="bFileList" style="font-size:12px;color:#8a8682;margin-bottom:10px"></div>
+    <select id="bExpires">
+      <option value="30" selected>30日後に消える</option>
+      <option value="15">15日後に消える</option>
+      <option value="60">60日後に消える</option>
+      <option value="90">90日後に消える</option>
+    </select>
+    <button id="createBtn">投稿する</button>
+  </section>
+  <section id="bList"><div class="empty-state">読み込み中...</div></section>
+</main>
+
+<script>
+async function h(p){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(p));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('')}
+const API_BASE=''
+async function a(p,o={}){const t=sessionStorage.getItem('token'),h={'Content-Type':'application/json',...o.headers};if(t)h['Authorization']='Bearer '+t;const r=await fetch(API_BASE+p,{...o,headers:h}),d=await r.json();if(!r.ok)throw new Error(d.error||'エラー');return d}
+function hasRole(r,t){return (r||'').split(',').map(s=>s.trim()).some(s=>t.includes(s))}
+const A={async login(u,p){const k=await h(p),d=await a('/api/login',{method:'POST',body:JSON.stringify({username:u,password:k})});sessionStorage.setItem('token',d.token);sessionStorage.setItem('username',d.username);sessionStorage.setItem('role',d.role);return d},logout(){sessionStorage.clear()},getUser(){const u=sessionStorage.getItem('username'),r=sessionStorage.getItem('role');return u&&r?{username:u,role:r}:null},requireAuth(){const u=this.getUser();if(!u){window.location.href='02login.html';return null}return u},canManageUsers(){const u=this.getUser();return u&&hasRole(u.role,['admin','teacher'])},canPost(){const u=this.getUser();return u&&hasRole(u.role,['admin','teacher','president','vice-president','chairperson'])},async api(p,o){return a(p,o)},hashPassword(p){return h(p)}};window.AUTH=A;window.api=a
+
+const CATS=[
+{l:'上中連絡',n:'上中連絡'},
+{l:'忘れ物',n:'忘れ物'},
+{l:'生徒会',n:'生徒会'},
+{l:'3学年委員会',n:'3学年委員会'},{l:'2学年委員会',n:'2学年委員会'},{l:'1学年委員会',n:'1学年委員会'},
+{l:'中央委員会',n:'中央委員会',roles:['admin','teacher','president','vice-president','chairperson']},
+{l:'部活動委員会',n:'部活動委員会',roles:['admin','teacher','president','vice-president','chairperson']},
+{l:'— 部活動 —',g:true},
+{l:'吹奏楽部',n:'吹奏楽部'},{l:'茶道部',n:'茶道部'},{l:'美術部',n:'美術部'},{l:'卓球部',n:'卓球部'},
+{l:'テニス部女子',n:'テニス部女子'},{l:'テニス部男子',n:'テニス部男子'},{l:'サッカー部',n:'サッカー部'},
+{l:'野球部',n:'野球部'},{l:'陸上部',n:'陸上部'},{l:'バスケ部女子',n:'バスケ部女子'},{l:'バスケ部男子',n:'バスケ部男子'},{l:'バレー部',n:'バレー部'},
+{l:'— 委員会 —',g:true},
+{l:'整備委員会',n:'整備委員会'},{l:'生活委員会',n:'生活委員会'},{l:'選挙管理委員会',n:'選挙管理委員会'},{l:'図書委員会',n:'図書委員会'},
+{l:'給食委員会',n:'給食委員会'},{l:'合唱委員会',n:'合唱委員会'},{l:'体育委員会',n:'体育委員会'},
+{l:'保健委員会',n:'保健委員会'},{l:'放送委員会',n:'放送委員会'}
+];
+const ALL_NAMES=CATS.filter(c=>!c.g).map(c=>c.n);
+function visibleCats(){return CATS.filter(c=>!c.g&&(!c.roles||(curUser&&c.roles.some(r=>userRolesArr.includes(r))))).map(c=>c.n)}
+let curCat='上中連絡',curUser=null,allPosts=[],searchQuery='';
+const $=id=>document.getElementById(id);
+function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
+const REACT_ICONS={like:'👍',heart:'❤️',ok:'✅',question:'❓',thanks:'🙏'};
+
+let counts={},collapsedGroups={'部活動':true,'委員会':true};
+function tabs(){
+  const c=$('bTabs');c.innerHTML='';const q=searchQuery.trim().toLowerCase();let inGroup=false,groupCollapsed=false,groupName='';
+  CATS.forEach(t=>{
+    if(t.roles&&(!curUser||!t.roles.some(r=>userRolesArr.includes(r))))return;
+    if(q&&!t.g&&!t.n.toLowerCase().includes(q))return;
+    const b=document.createElement('button');b.className='tab';
+    if(t.g){
+      inGroup=true;const gName=t.l.replace(/^—\s*|\s*—$/g,'');groupName=gName;groupCollapsed=collapsedGroups[gName];
+      b.classList.add('separator');b.style.cursor='pointer';
+      b.textContent=(groupCollapsed?'▶ ':'▼ ')+t.l;
+      b.addEventListener('click',()=>{collapsedGroups[gName]=!collapsedGroups[gName];tabs()});
+    }else{
+      if(!q&&inGroup&&groupCollapsed){b.style.display='none'}
+      if(t.n===curCat)b.classList.add('active');
+      b.addEventListener('click',()=>{curCat=t.n;tabs();sel();load()});
+      if(counts[t.n]){const dot=document.createElement('span');dot.className='tab-dot';dot.textContent=counts[t.n];b.appendChild(dot)}
+    }
+    if(!t.g)b.textContent=t.l;c.appendChild(b);
+  });
+}
+
+async function loadCounts(){try{counts=await api('/api/posts/counts')}catch(e){}}
+
+function sel(){
+  const s=$('bCat');if(!s)return;s.innerHTML='';
+  const cats=visibleCats();
+  cats.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;if(c===curCat)o.selected=true;s.appendChild(o)})
+}
+
+async function load(){
+  const c=$('bList');c.innerHTML='<div class="empty-state">読み込み中...</div>';
+  try{
+    const p=await api('/api/posts?category='+encodeURIComponent(curCat));
+    allPosts=p||[];renderPosts();
+  }catch(e){if(e.message.includes('認証')){sessionStorage.clear();window.location.href='02login.html'}c.innerHTML='<div class="empty-state">エラー</div>'}
+}
+function renderPosts(){
+  const c=$('bList');const q=searchQuery.trim().toLowerCase();
+  const p=q?allPosts.filter(x=>x.title.toLowerCase().includes(q)||x.content.toLowerCase().includes(q)||x.category.toLowerCase().includes(q)):allPosts;
+  if(!p.length){c.innerHTML='<div class="empty-state">'+(q?'「'+esc(searchQuery.trim())+'」に一致する投稿はありません':'投稿はまだありません')+'</div>';return}
+  c.innerHTML='';p.forEach(x=>render(x,c));
+}
+async function loadReactions(el,targetType,targetId){
+  try{const r=await api('/api/reactions/'+targetType+'/'+targetId);const data=r||{};renderReactions(el,targetType,targetId,data)}catch(e){}
+}
+function renderReactions(el,targetType,targetId,data){
+  el.innerHTML='';const myU=curUser?.username;
+  Object.entries(REACT_ICONS).forEach(([type,icon])=>{
+    const users=data[type]||[];const count=users.length;const active=users.includes(myU);
+    const btn=document.createElement('button');btn.className='reaction-btn'+(active?' active':'');
+    btn.innerHTML=icon+' <span class="count">'+(count||'')+'</span>';
+    btn.addEventListener('click',async()=>{
+      try{const r=await api('/api/reactions',{method:'POST',body:JSON.stringify({targetType,targetId,reaction:type})});renderReactions(el,targetType,targetId,r.reactions||{})}catch(e){}
+    });
+    el.appendChild(btn);
+  });
+}
+function render(p,c){
+  const card=document.createElement('div');card.className='post-card';
+  const canDel=curUser&&(hasRole(curUser.role,['admin','teacher'])||curUser.username===p.username);
+  const d=new Date(p.created_at);const ds=(d.getMonth()+1)+'/'+d.getDate()+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+  const fls=p.files?.map(f=>'<a href="'+esc(f.url)+'" target="_blank" class="attachment"><span>📎</span> '+esc(f.name)+'</a>').join('')||'';
+  let exp='',expCls='';
+  if(p.expires_at){const r=Math.ceil((new Date(p.expires_at)-Date.now())/86400000);exp='あと'+r+'日';expCls=r>30?'safe':r>10?'warn':''}
+  let claimHtml='';
+  if(p.category==='忘れ物'){
+    const claims=p.claims||[];const myClaim=claims.some(c=>c.username===curUser?.username);
+    const claimers=claims.map(c=>esc(c.display_name||c.username)).join(', ');
+    claimHtml='<div class="claim-area"><button class="claim-btn '+(myClaim?'claimed':'')+'" data-id="'+p.id+'">'+(myClaim?'取り消す':'私のです🙋')+'</button>'+(claims.length?'<span class="claim-count">'+claims.length+'人</span>':'')+'</div>'+(claimers?'<div style="font-size:12px;color:var(--sub)">🙋 '+claimers+'</div>':'');
+  }
+  card.innerHTML='<div class="post-category">'+esc(p.category)+'</div><div class="post-title">'+esc(p.title)+'</div><div class="post-body">'+esc(p.content)+'</div>'+(fls?'<div>'+fls+'</div>':'')+claimHtml+'<div class="post-footer"><div class="post-meta">'+esc(p.display_name||p.username)+' · '+ds+'</div>'+(exp?'<div class="post-deadline '+expCls+'">'+exp+'</div>':'')+'</div><div class="reaction-bar" id="react-'+p.id+'"></div>';
+  if(canDel){const db=document.createElement('button');db.className='delete-btn';db.textContent='削除';db.addEventListener('click',()=>delPost(p.id));card.querySelector('.post-footer').appendChild(db)}
+  if(p.category==='忘れ物'){const btn=card.querySelector('.claim-btn');if(btn)btn.addEventListener('click',async function(){const id=this.dataset.id;try{if(this.classList.contains('claimed')){await api('/api/posts/'+id+'/claim',{method:'DELETE'})}else{await api('/api/posts/'+id+'/claim',{method:'POST'})}load()}catch(e){alert(e.message)}})}
+  c.appendChild(card);
+  loadReactions(card.querySelector('#react-'+p.id),'post',p.id);
+}
+
+async function create(){
+  const t=$('bTitle').value.trim(),c=$('bContent').value.trim(),cat=$('bCat').value;
+  if(!t||!c){alert('入力してください');return}
+  $('createBtn').disabled=true;$('createBtn').textContent='投稿中...';
+  try{
+    const files=[];const fileInput=$('bFile');
+    if(fileInput.files.length){for(const f of fileInput.files){const fd=new FormData();fd.append('file',f);const token=sessionStorage.getItem('token');const r=await fetch(API_BASE+'/api/upload',{method:'POST',headers:{'Authorization':'Bearer '+token},body:fd});const d=await r.json();if(r.ok)files.push({url:d.url,name:d.name,type:d.type});else{alert('ファイルアップロード失敗: '+d.error);$('createBtn').disabled=false;$('createBtn').textContent='投稿する';return}}}
+    await api('/api/posts',{method:'POST',body:JSON.stringify({title:t,content:c,category:cat,files,expiresIn:$('bExpires').value})});
+    $('bTitle').value='';$('bContent').value='';$('bFile').value='';$('bFileList').textContent='';
+    loadCounts();load();
+  }catch(e){alert('失敗: '+e.message)}
+  $('createBtn').disabled=false;$('createBtn').textContent='投稿する';
+}
+
+$('bFile').addEventListener('change',()=>{const fs=$('bFile').files;$('bFileList').textContent=fs.length?'選択: '+Array.from(fs).map(f=>f.name).join(', '):''});
+async function delPost(id){if(!confirm('削除しますか？'))return;try{await api('/api/posts/'+id,{method:'DELETE'});loadCounts();load()}catch(e){alert('失敗')}}
+
+curUser=AUTH.requireAuth();if(!curUser)window.location.href='02login.html';
+$('bUser').textContent=curUser.username;
+const roleNames={'admin':'管理者','teacher':'先生','president':'部長','vice-president':'副部長','chairperson':'委員長','student':'生徒'};
+$('bRole').textContent=(curUser.role||'').split(',').map(r=>roleNames[r.trim()]||r.trim()).filter(Boolean).join('·');
+const userRolesArr=(curUser.role||'').split(',').map(r=>r.trim());
+$('postForm').classList.toggle('hidden',!AUTH.canPost());
+$('bChatLink').style.display=hasRole(curUser.role,['admin','teacher','president','vice-president','chairperson'])?'':'none';
+$('bClubQLink').style.display='';
+$('bUserMgmtLink').style.display=hasRole(curUser.role,['admin','teacher'])?'':'none';
+$('bSettingsLink').style.display=hasRole(curUser.role,['admin','teacher'])?'none':'';
+$('bConsultLink').style.display='';
+$('createBtn').addEventListener('click',create);
+$('bLogout').addEventListener('click',()=>{AUTH.logout();window.location.href='02login.html'});
+
+function clock(){function u(){const n=new Date();$('hDate').textContent=(n.getMonth()+1)+'/'+n.getDate()+'('+'日月火水木金土'[n.getDay()]+')'}u();setInterval(u,1000)}
+clock();
+$('bSearch').addEventListener('input',function(){searchQuery=this.value;tabs();renderPosts()});
+loadCounts().then(()=>{tabs();sel();load()});
+setInterval(()=>{loadCounts();tabs();load()},5000);
+
+const chatBadge=$('chatBadge'),chatLink=$('bChatLink');
+if(chatLink.style.display!=='none'){
+  const ls='chatLastSeen_'+curUser.username;
+  if(!localStorage.getItem(ls))localStorage.setItem(ls,Date.now());
+  async function checkChat(){try{const r=await api('/api/chat/count?since='+localStorage.getItem(ls));if(r.count>0){chatBadge.style.display='inline-flex';chatBadge.textContent=r.count>99?'99+':r.count}else{chatBadge.style.display='none'}}catch(e){}}
+  checkChat();setInterval(checkChat,10000);
+  chatLink.addEventListener('click',()=>{localStorage.setItem(ls,Date.now());chatBadge.style.display='none'});
+}
+
+// WBGT from Open-Meteo (埼玉県入間市)
+function wbgt(){
+  function upd(t,h){
+    const e=(h/100)*6.105*Math.exp(17.27*t/(t+237.3));const wbgt=0.567*t+0.393*e+3.94;
+    const bar=$('wbgtBar');    const levels=[{max:21,lbl:'注意',adv:'適度に水分補給',cls:'l0'},{max:25,lbl:'警戒',adv:'積極的に水分補給',cls:'l1'},{max:28,lbl:'厳重警戒',adv:'積極的に休息',cls:'l2'},{max:31,lbl:'危険',adv:'激しい運動は中止',cls:'l3'},{max:99,lbl:'極度危険',adv:'運動は原則中止',cls:'l4'}];
+    const lv=levels.find(l=>wbgt<l.max)||levels[levels.length-1];
+    bar.className='wbgt-'+lv.cls;bar.innerHTML='<div class="wbgt-val">'+wbgt.toFixed(1)+'</div><div><div class="wbgt-label">埼玉県入間市 WBGT '+lv.lbl+'</div><div class="wbgt-advice">'+lv.adv+'</div></div><div class="wbgt-detail"><span>'+t+'°C</span><span>'+h+'%</span></div>';
+  }
+  const lat=35.84,lon=139.39; // 埼玉県入間市
+  function w(){fetch('https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&current=temperature_2m,relative_humidity_2m,weather_code&timezone=Asia%2FTokyo').then(r=>r.json()).then(d=>{if(d.current)upd(d.current.temperature_2m,d.current.relative_humidity_2m)}).catch(()=>{})}
+  w();setInterval(w,300000);
+}
+wbgt();
+
+// Disaster info (JMA + manual)
+const JMA_CODES={'北海道':10000,'青森県':20000,'岩手県':30000,'宮城県':40000,'秋田県':50000,'山形県':60000,'福島県':70000,'茨城県':80000,'栃木県':90000,'群馬県':100000,'埼玉県':110000,'千葉県':120000,'東京都':130000,'神奈川県':140000,'新潟県':150000,'富山県':160000,'石川県':170000,'福井県':180000,'山梨県':190000,'長野県':200000,'岐阜県':210000,'静岡県':220000,'愛知県':230000,'三重県':240000,'滋賀県':250000,'京都府':260000,'大阪府':270000,'兵庫県':280000,'奈良県':290000,'和歌山県':300000,'鳥取県':310000,'島根県':320000,'岡山県':330000,'広島県':340000,'山口県':350000,'徳島県':360000,'香川県':370000,'愛媛県':380000,'高知県':390000,'福岡県':400000,'佐賀県':410000,'長崎県':420000,'熊本県':430000,'大分県':440000,'宮崎県':450000,'鹿児島県':460000,'沖縄県':471000};
+const WARN_JP={'02':'大雨','03':'洪水','04':'暴風','05':'暴風雪','06':'大雪','07':'波浪','08':'高潮','10':'大雨注意報','12':'大雪注意報','14':'暴風雪注意報','15':'波浪注意報','16':'高潮注意報','18':'洪水注意報','20':'雷注意報','21':'融雪注意報','22':'濃霧注意報','23':'乾燥注意報','24':'なだれ注意報','25':'低温注意報','26':'霜注意報','27':'着氷注意報','28':'着雪注意報','29':'高温注意報'};
+let disasterLoc='埼玉県入間市';
+async function loadDisaster(){
+  try{
+    const d=await api('/api/disaster-info');
+    const bar=$('disasterBar'),msg=$('disasterMsg');
+    if(d.active&&d.message){
+      bar.style.display='flex';bar.className='disaster-'+d.level;
+      msg.textContent=d.message;
+      const isTeacher=curUser&&hasRole(curUser.role,['admin','teacher']);
+      if(isTeacher&&!bar.querySelector('.disaster-clear')){
+        const btn=document.createElement('button');btn.className='disaster-clear';btn.textContent='解除';
+        btn.onclick=async()=>{try{await api('/api/disaster-info/clear',{method:'POST'});loadDisaster()}catch(e){}};
+        bar.appendChild(btn);
+      }
+      return;
+    }
+    const jma=await fetchJMASaitama();
+    if(jma){
+      bar.style.display='flex';bar.className='disaster-danger';
+      msg.textContent=jma;
+      bar.querySelector('.disaster-clear')?.remove();
+    }else{
+      bar.style.display='flex';bar.className='disaster-info';
+      const txt='🌤 埼玉県入間市に警報・注意報はありません';
+      msg.textContent=txt;
+      bar.querySelector('.disaster-clear')?.remove();
+    }
+  }catch(e){}
+}
+async function fetchJMASaitama(){
+  try{
+    const warn=await fetch('https://www.jma.go.jp/bosai/warning/data/warning/110000.json').then(r=>r.json());
+    if(!warn?.timeSeries?.length){return null}
+    const list=[];
+    (warn.timeSeries[0]?.areas||[]).forEach(a=>{(a.warnings||[]).forEach(w=>{const wl=WARN_JP[w.code]||w.code;if(!list.includes(wl)&&w.status==='発表')list.push(wl)})});
+    (warn.timeSeries[0]?.areas||[]).forEach(a=>{(a.forecasts||[]).forEach(f=>{(f.warnings||[]).forEach(w=>{const wl=WARN_JP[w.code]||w.code;if(!list.includes(wl))list.push(wl)})})});
+    if(!list.length){return null}
+    return '⚠️ 埼玉県入間市に'+list.slice(0,4).join('・')+'警報発表';
+  }catch(e){return null}
+}
+loadDisaster();setInterval(loadDisaster,60000);
+</script>
+<script>if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js')</script>
+</body>
+</html>

@@ -65,9 +65,13 @@ async function a(p,o={}){const t=sessionStorage.getItem('token'),h={'Content-Typ
 const $=id=>document.getElementById(id);
 if(!sessionStorage.getItem('token'))window.location.href='02login.html';
 const CLUBS=['吹奏楽部','茶道部','美術部','卓球部','テニス部女子','テニス部男子','サッカー部','野球部','陸上部','バスケ部女子','バスケ部男子','バレー部'];
-const COMMS=['整備委員会','生活委員会','選挙管理委員会','図書委員会','給食委員会','合唱委員会','体育委員会','保健委員会','放送委員会'];
 CLUBS.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;$('sClub').appendChild(o)});
-COMMS.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;$('sCommittee').appendChild(o)});
+function populateCommitteeSelect(sel){
+  sel.innerHTML='<option value="">—</option>';
+  const groups={'学級委員会':['1学年委員会','2学年委員会','3学年委員会'],'専門委員会':['整備委員会','生活委員会','選挙管理委員会','図書委員会','給食委員会','合唱委員会','体育委員会','保健委員会','放送委員会'],'特別委員会':['中央委員会','部活動委員会']};
+  for(const[g,items]of Object.entries(groups)){const og=document.createElement('optgroup');og.label=g;items.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;og.appendChild(o)});sel.appendChild(og)}
+}
+populateCommitteeSelect($('sCommittee'));
 
 async function loadProfile(){try{const u=await a('/api/me');$('sDispName').value=u.display_name||'';if(u.grade)$('sGrade').value=u.grade;if(u.class_num)$('sClass').value=u.class_num;if(u.seat_num)$('sSeat').value=u.seat_num;if(u.club)$('sClub').value=u.club;if(u.committee)$('sCommittee').value=u.committee}catch(e){}}
 loadProfile();

@@ -240,7 +240,13 @@ $('aUser').textContent=u+'（管理者/先生）';
 const RL={'admin':'管理者','teacher':'先生','president':'部長','vice-president':'副部長','chairperson':'委員長','student':'生徒'};
 const ROLES=[{v:'teacher',l:'先生'},{v:'president',l:'部長'},{v:'vice-president',l:'副部長'},{v:'chairperson',l:'委員長'},{v:'student',l:'生徒'}];
 const CLUBS=['吹奏楽部','茶道部','美術部','卓球部','テニス部女子','テニス部男子','サッカー部','野球部','陸上部','バスケ部女子','バスケ部男子','バレー部'];
-const COMMS=['整備委員会','生活委員会','選挙管理委員会','図書委員会','給食委員会','合唱委員会','体育委員会','保健委員会','放送委員会'];
+const COMM_GROUPS={'学級委員会':['1学年委員会','2学年委員会','3学年委員会'],'専門委員会':['整備委員会','生活委員会','選挙管理委員会','図書委員会','給食委員会','合唱委員会','体育委員会','保健委員会','放送委員会'],'特別委員会':['中央委員会','部活動委員会']};
+const ALL_COMMS=Object.values(COMM_GROUPS).flat();
+function populateCommitteeSelect(sel){
+  sel.innerHTML='<option value="">---</option>';
+  for(const[g,items]of Object.entries(COMM_GROUPS)){const og=document.createElement('optgroup');og.label=g;items.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;og.appendChild(o)});sel.appendChild(og)}
+}
+populateCommitteeSelect($('mComm'));
 
 document.querySelectorAll('.tab-btn').forEach(b=>b.addEventListener('click',()=>{
   document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));
@@ -315,7 +321,7 @@ function renderUsers(){
       <td><input type="text" value="${esc(x.class_num||'')}" onchange="updField('${x.id}','class_num',this.value)" style="width:35px"></td>
       <td><input type="text" value="${esc(x.seat_num||'')}" onchange="updField('${x.id}','seat_num',this.value)" style="width:35px"></td>
       <td><select onchange="updField('${x.id}','club',this.value)"><option value="">—</option>${CLUBS.map(c=>'<option value="'+c+'"'+(x.club===c?' selected':'')+'>'+c+'</option>').join('')}</select></td>
-      <td><select onchange="updField('${x.id}','committee',this.value)"><option value="">—</option>${COMMS.map(c=>'<option value="'+c+'"'+(x.committee===c?' selected':'')+'>'+c+'</option>').join('')}</select></td>
+      <td><select onchange="updField('${x.id}','committee',this.value)"><option value="">—</option>${ALL_COMMS.map(c=>'<option value="'+c+'"'+(x.committee===c?' selected':'')+'>'+c+'</option>').join('')}</select></td>
       <td>${dt}</td><td>${actions}</td>`;
     tr.querySelectorAll('input[type=checkbox][data-v]').forEach(cb=>{cb.onchange=function(){updRole(this.dataset.id,this.dataset.v,this.checked)}});
     t.appendChild(tr);
@@ -590,7 +596,7 @@ async function runDiagnosis() {
   }
 
   // 3. Static files
-  const sf = ['01index.html','02login.html','admin.html','consult.html','schedule.html','club-questions.html','chat.html'];
+  const sf = ['01index.html','02login.html','admin.html','consult.html','schedule.html','club-questions.html','chat.html','user-management.html'];
   const sfOk = [], sfNg = [];
   for (const f of sf) {
     try { const r = await fetch(f, { method:'HEAD' }); (r.ok ? sfOk : sfNg).push(f+'('+r.status+')') }

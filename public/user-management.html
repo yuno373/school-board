@@ -800,7 +800,7 @@ async function runDiagnosis() {
   const postEndpoints = ['/api/login','/api/posts','/api/chat/messages','/api/chat/participants','/api/consult','/api/dm/send','/api/dm/groups','/api/password-reset/request','/api/password-reset/fulfill','/api/reactions','/api/push/subscribe','/api/push/unsubscribe','/api/push/notify','/api/push/send','/api/upload','/api/me/password','/api/me/verify','/api/posts/*/claim','/api/posts/*/verify-password','/api/posts/*/set-password'];
   addResult('endpoints-post', 'pass', `POSTエンドポイント定義数: ${postEndpoints.length}`, postEndpoints.join(', '));
   // 5. Static files
-  const sf = ['01index.html','02login.html','user-management.html','admin.html','consult.html','schedule.html','club-questions.html','chat.html','dm.html','settings.html','teacher-setup.html','install.html','manifest.json','sw.js','icon.svg'];
+  const sf = ['01index.html','02login.html','user-management.html','admin.html','consult.html','club-questions.html','chat.html','dm.html','settings.html','teacher-setup.html','install.html','manifest.json','sw.js','icon.svg'];
   const sfOk = [], sfNg = [];
   for (const f of sf) { try { const ac = new AbortController(); const tid = setTimeout(() => ac.abort(), 5000); const r = await fetch(f, { method:'HEAD', signal: ac.signal }); clearTimeout(tid); (r.ok ? sfOk : sfNg).push(f+'('+r.status+')') } catch(e) { sfNg.push(f) } }
   sfNg.length === 0 ? addResult('static', 'pass', `全${sf.length}ファイル正常配信`) : addResult('static', 'warn', `${sfNg.length}ファイルに問題`, sfNg.join(', '));

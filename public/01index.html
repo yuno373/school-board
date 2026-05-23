@@ -110,6 +110,7 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
     <a href="https://ed-cl.com" target="_blank" rel="noopener" class="header-link" id="bMekubittoLink">📖 メクビット</a>
     <a href="schedule.html" class="header-link">予定表</a>
     <a href="consult.html" class="header-link" id="bConsultLink">相談所</a>
+    <a href="user-management.html" class="header-link" id="bUserMgmtLink" style="display:none">ユーザー管理</a>
     <a href="admin.html" class="header-link" id="bAdminLink" style="display:none">管理</a>
     <a href="settings.html" class="header-link">設定</a>
     <button class="header-link danger" id="bLogout">ログアウト</button>
@@ -273,6 +274,7 @@ $('bAdminLink').style.display=hasRole(curUser.role,['admin','teacher'])?'':'none
 $('bChatLink').style.display=hasRole(curUser.role,['admin','teacher','president','vice-president','chairperson'])?'':'none';
 $('bClubQLink').style.display='';
 $('bConsultLink').style.display='';
+$('bUserMgmtLink').style.display=hasRole(curUser.role,['admin','teacher'])?'':'none';
 $('createBtn').addEventListener('click',create);
 $('bLogout').addEventListener('click',()=>{AUTH.logout();window.location.href='02login.html'});
 

@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ユーザー管理 - 上藤沢中学校</title>
+<style>
+:root{--primary:#1E4D2B;--primary-dark:#153820;--primary-light:#2D6B40;--accent-pink:#f5a0b8;--accent-blue:#a0c4e8;--accent-yellow:#f5e6a0;--accent-green:#a8d8a0;--bg:#f7f5f0;--card:#fff;--text:#2c2c2c;--sub:#8a8682;--border:#e0dcd4;--danger:#c96565;--radius:12px;--shadow:0 2px 12px rgba(30,77,43,0.06)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sans',Meiryo,sans-serif;background:var(--bg);color:var(--text)}
+.header{background:var(--primary);padding:12px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100}
+.header-title{font-size:16px;font-weight:700;color:#fff}
+.header-right{display:flex;align-items:center;gap:10px}
+.header-link{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);padding:4px 12px;font-size:12px;cursor:pointer;color:rgba(255,255,255,.85);border-radius:8px;text-decoration:none;transition:all .2s;font-family:inherit}
+.header-link:hover{background:rgba(255,255,255,.25);color:#fff}
+.header-link.danger{border-color:rgba(255,255,255,.2)}
+.header-link.danger:hover{border-color:rgba(200,100,100,.6);background:rgba(200,100,100,.2);color:#ffcdcd}
+.main{max-width:1000px;margin:0 auto;padding:20px}
+.section{background:var(--card);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);margin-bottom:20px}
+.section h2{font-size:15px;font-weight:700;margin-bottom:12px;color:var(--text)}
+.search-bar{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.search-bar input,.search-bar select{padding:8px 12px;border:2px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;background:#faf8f5}
+.search-bar input:focus,.search-bar select:focus{outline:none;border-color:var(--primary);background:#fff}
+.search-bar input{flex:1;min-width:140px}
+.bulk-bar{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center;padding:8px 12px;background:var(--bg);border-radius:8px;font-size:12px}
+.btn{padding:8px 16px;font-size:13px;font-weight:700;border:none;border-radius:8px;cursor:pointer;transition:all .2s;font-family:inherit}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:hover{background:var(--primary-dark);box-shadow:0 4px 12px rgba(30,77,43,0.2)}
+.btn-danger{background:var(--danger);color:#fff}
+.btn-danger:hover{background:#b55a5a}
+.btn-outline{background:0 0;border:2px solid var(--border);color:var(--sub)}
+.btn-outline:hover{border-color:var(--primary);color:var(--primary)}
+.btn-sm{padding:2px 6px;font-size:10px;border-radius:4px}
+.user-table{width:100%;border-collapse:separate;border-spacing:0;font-size:11px;border-radius:var(--radius);overflow:hidden}
+.user-table th{background:#f0ede8;padding:6px 8px;text-align:left;font-weight:700;color:var(--sub);border-bottom:1px solid var(--border);position:sticky;top:0;white-space:nowrap}
+.user-table td{padding:4px 8px;border-bottom:1px solid var(--border);vertical-align:middle;background:var(--card);white-space:nowrap}
+.user-table tr:hover td{background:#faf8f5}
+.role-group{display:flex;gap:2px;flex-wrap:wrap}
+.role-group label{font-size:10px;white-space:nowrap;cursor:pointer;display:flex;align-items:center;gap:2px}
+.lock-badge{background:rgba(198,40,40,.1);color:var(--danger);font-size:9px;padding:1px 4px;border-radius:3px;font-weight:700}
+.pwd-show{cursor:pointer;color:var(--primary);font-size:10px}
+.id-rule{font-size:12px;color:var(--sub);margin-bottom:12px;padding:10px 14px;background:var(--bg);border-radius:8px;line-height:1.6}
+.batch-form{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;margin-bottom:10px}
+.batch-form label{font-size:12px;font-weight:700;color:var(--sub);display:flex;flex-direction:column;gap:4px}
+.batch-form label select,.batch-form label input{padding:6px 8px;border:2px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;background:#faf8f5}
+.batch-form input:focus,.batch-form select:focus{outline:none;border-color:var(--primary)}
+.batch-year-row{background:var(--bg);padding:12px;border-radius:8px;margin-bottom:8px;display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;font-size:12px}
+.batch-year-row label{font-weight:700;color:var(--sub);display:flex;flex-direction:column;gap:2px}
+.batch-year-row input{padding:4px 6px;border:2px solid var(--border);border-radius:4px;font-size:13px;width:60px;font-family:inherit}
+.batch-year-row .class-sizes{display:flex;gap:4px;flex-wrap:wrap}
+.class-size-wrap{font-size:11px;display:flex;align-items:center;gap:2px;color:var(--sub)}
+.class-size-wrap input{width:40px}
+.btn-remove-year{background:var(--danger);color:#fff;border:none;padding:4px 8px;border-radius:4px;cursor:pointer;font-size:11px}
+.batch-form .result-box{display:none;margin-top:10px;padding:12px;background:#e8f5e9;border-radius:8px;font-size:13px}
+.batch-form .result-box.show{display:block}
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-size:13px;font-weight:700;color:var(--sub);margin-bottom:4px}
+.form-group input,.form-group select{width:100%;padding:10px 12px;border:2px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit;background:#faf8f5}
+.form-group input:focus,.form-group select:focus{outline:none;border-color:var(--primary);background:#fff;box-shadow:0 0 0 3px rgba(30,77,43,0.08)}
+.form-row{display:flex;gap:10px;flex-wrap:wrap}
+.form-row .form-group{flex:1;min-width:70px}
+.success{color:#2d6b4a;font-size:13px;margin-top:6px}
+.error{color:var(--danger);font-size:13px;margin-top:6px}
+@media(max-width:800px){.user-table{font-size:10px}.user-table th,.user-table td{padding:2px 4px}.role-group label{font-size:9px}}
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="header-title">👥 ユーザー管理</div>
+  <div class="header-right">
+    <a href="01index.html" class="header-link">黒板に戻る</a>
+    <button class="header-link danger" id="aLogout">ログアウト</button>
+  </div>
+</header>
+<div class="main">
+
+  <!-- Settings Section -->
+  <div class="section">
+    <h2>⚙️ 自分の設定</h2>
+    <div class="form-row">
+      <div class="form-group"><label>学年</label><input type="number" id="sGrade" min="1" max="3"></div>
+      <div class="form-group"><label>クラス</label><input type="number" id="sClass" min="1" max="10"></div>
+      <div class="form-group"><label>番号</label><input type="number" id="sSeat" min="1" max="50"></div>
+    </div>
+    <div class="form-group"><label>表示名</label><input type="text" id="sDispName" placeholder="表示名"></div>
+    <div class="form-group"><label>部活動</label><select id="sClub"><option value="">—</option></select></div>
+    <div class="form-group"><label>委員会</label><select id="sCommittee"><option value="">—</option></select></div>
+    <button class="btn btn-primary" id="saveProfile">保存</button>
+    <div id="profileStatus"></div>
+    <div style="margin-top:20px;border-top:1px solid var(--border);padding-top:16px">
+      <h2 style="font-size:14px">🔑 パスワード変更</h2>
+      <div class="form-group"><label>現在のパスワード</label><input type="password" id="sCurPw"></div>
+      <div class="form-group"><label>新しいパスワード</label><input type="password" id="sNewPw"></div>
+      <div class="form-group"><label>新しいパスワード（確認）</label><input type="password" id="sNewPw2"></div>
+      <button class="btn btn-primary" id="changePwBtn">変更</button>
+      <div id="pwStatus"></div>
+    </div>
+  </div>
+
+  <!-- Batch + Manual Registration -->
+  <div class="section">
+    <h2>📋 ID一括生成</h2>
+    <div class="id-rule">
+      <strong>生徒ID 自動生成</strong><br>
+      年度ごとにクラス数と各クラスの人数を指定できます。<br>
+      ID形式: <strong>{入学年度下2桁 + 通し番号3桁}</strong>
+    </div>
+    <div id="batchYears"></div>
+    <div style="margin:12px 0;display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-outline" id="addBatchYear">+ 年度を追加</button>
+    </div>
+    <div class="batch-form">
+      <label>初期パスワード<input type="text" id="bPassword" value="111111"></label>
+      <button class="btn btn-primary" id="bGenerate">生成する</button>
+    </div>
+    <div class="result-box" id="bResult"></div>
+
+    <div style="margin-top:24px;border-top:2px dashed var(--border);padding-top:20px">
+      <h3 style="font-size:15px;font-weight:700;margin-bottom:12px;color:var(--text)">手動でユーザー登録</h3>
+      <div class="batch-form">
+        <label>ログインID<input type="text" id="mUser" placeholder="例: 101005" style="width:90px"></label>
+        <label>表示名<input type="text" id="mDisp" placeholder="氏名" style="width:90px"></label>
+        <label>パスワード<input type="text" id="mPass" value="111111" style="width:70px"></label>
+        <label>権限<select id="mRole"><option value="student">生徒</option><option value="teacher">先生</option><option value="president">部長</option><option value="vice-president">副部長</option><option value="chairperson">委員長</option><option value="admin">管理者</option></select></label>
+        <label>学年<input type="number" id="mGrade" min="1" max="3" style="width:50px"></label>
+        <label>クラス<input type="number" id="mClass" min="1" max="10" style="width:50px"></label>
+        <label>番号<input type="number" id="mSeat" min="1" max="50" style="width:60px"></label>
+        <label>部活<select id="mClub" style="width:100px"><option value="">---</option></select></label>
+        <label>委員会<select id="mComm" style="width:100px"><option value="">---</option></select></label>
+        <button class="btn btn-primary" id="mCreate">登録</button>
+      </div>
+      <div id="mResult" style="margin-top:8px;font-size:13px"></div>
+    </div>
+  </div>
+
+  <!-- User List -->
+  <div class="section">
+    <h2>📋 生徒一覧</h2>
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="名前・部活・委員会・クラスで検索">
+      <select id="searchRole"><option value="">全権限</option><option value="teacher">先生</option><option value="president">部長</option><option value="vice-president">副部長</option><option value="chairperson">委員長</option><option value="student">生徒</option></select>
+      <button class="btn btn-primary btn-sm" id="aRefresh">更新</button>
+    </div>
+    <div class="bulk-bar">
+      <label><input type="checkbox" id="selectAll"> すべて選択</label>
+      <button class="btn btn-danger btn-sm" id="bulkDeleteBtn">選択を削除</button>
+      <span style="color:var(--sub);margin:0 4px">|</span>
+      <select id="bulkGrade" style="padding:4px 8px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:inherit"><option value="">学年を選択</option></select>
+      <select id="bulkClass" style="padding:4px 8px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:inherit"><option value="">全クラス</option></select>
+      <button class="btn btn-danger btn-sm" id="bulkGradeDeleteBtn">学年・クラスで削除</button>
+      <span id="bulkSelectedCount" style="color:var(--sub);font-size:11px">0人選択中</span>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="user-table">
+        <thead><tr><th style="width:24px"><input type="checkbox" id="selectAllH"></th><th>ログインID</th><th>表示名</th><th>パスワード</th><th>権限</th><th>状態</th><th>学年</th><th>クラス</th><th>番号</th><th>部活</th><th>委員会</th><th>登録日</th><th></th></tr></thead>
+        <tbody id="userList"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<script>
+async function h(p){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(p));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('')}
+const API_BASE=''
+async function a(p,o={}){const t=sessionStorage.getItem('token'),h={'Content-Type':'application/json',...o.headers};if(t)h['Authorization']='Bearer '+t;const r=await fetch(API_BASE+p,{...o,headers:h}),d=await r.json();if(!r.ok)throw new Error(d.error||'エラー');return d}
+const $=id=>document.getElementById(id),$$=s=>Array.from(document.querySelectorAll(s)),esc=s=>{const d=document.createElement('div');d.textContent=s;return d.innerHTML};
+const cu=sessionStorage.getItem('username'),role=sessionStorage.getItem('role'),token=sessionStorage.getItem('token');
+if(!cu||!token){window.location.href='02login.html'}
+
+const userRoles=(role||'').split(',').map(r=>r.trim());
+const RL={'admin':'管理者','teacher':'先生','president':'部長','vice-president':'副部長','chairperson':'委員長','student':'生徒'};
+const ROLES=[{v:'teacher',l:'先生'},{v:'president',l:'部長'},{v:'vice-president',l:'副部長'},{v:'chairperson',l:'委員長'},{v:'student',l:'生徒'}];
+const CLUBS=['吹奏楽部','茶道部','美術部','卓球部','テニス部女子','テニス部男子','サッカー部','野球部','陸上部','バスケ部女子','バスケ部男子','バレー部'];
+const COMMS=['整備委員会','生活委員会','選挙管理委員会','図書委員会','給食委員会','合唱委員会','体育委員会','保健委員会','放送委員会'];
+
+$('aLogout').addEventListener('click',()=>{sessionStorage.clear();window.location.href='02login.html'});
+
+// === Settings ===
+CLUBS.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;$('sClub').appendChild(o)});
+COMMS.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;$('sCommittee').appendChild(o)});
+CLUBS.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;$('mClub').appendChild(o)});
+COMMS.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;$('mComm').appendChild(o)});
+
+async function loadProfile(){try{const u=await a('/api/me');$('sDispName').value=u.display_name||'';if(u.grade)$('sGrade').value=u.grade;if(u.class_num)$('sClass').value=u.class_num;if(u.seat_num)$('sSeat').value=u.seat_num;if(u.club)$('sClub').value=u.club;if(u.committee)$('sCommittee').value=u.committee}catch(e){}}
+loadProfile();
+
+$('saveProfile').addEventListener('click',async()=>{
+  const dn=$('sDispName').value.trim(),club=$('sClub').value,comm=$('sCommittee').value;
+  const grade=$('sGrade').value,cls=$('sClass').value,seat=$('sSeat').value;
+  try{await a('/api/me',{method:'PUT',body:JSON.stringify({display_name:dn,club,committee:comm,grade,class_num:cls,seat_num:seat})});$('profileStatus').textContent='✅ 保存しました';$('profileStatus').className='success'}catch(e){$('profileStatus').textContent='❌ '+e.message;$('profileStatus').className='error'}
+});
+$('changePwBtn').addEventListener('click',async()=>{
+  const cur=$('sCurPw').value,pw=$('sNewPw').value,pw2=$('sNewPw2').value;
+  if(!cur||!pw){$('pwStatus').textContent='入力してください';$('pwStatus').className='error';return}
+  if(pw.length<6){$('pwStatus').textContent='6文字以上必要です';$('pwStatus').className='error';return}
+  if(pw!==pw2){$('pwStatus').textContent='パスワードが一致しません';$('pwStatus').className='error';return}
+  try{await a('/api/me/password',{method:'POST',body:JSON.stringify({currentPassword:cur,newPassword:pw})});$('pwStatus').textContent='✅ 変更しました';$('pwStatus').className='success';$('sCurPw').value='';$('sNewPw').value='';$('sNewPw2').value=''}catch(e){$('pwStatus').textContent='❌ '+e.message;$('pwStatus').className='error'}
+});
+
+// === User list ===
+let usersData=[];
+async function loadUsers(){
+  try{usersData=await a('/api/users');populateBulkFilters();renderUsers()}catch(e){if(e.message.includes('認証')){sessionStorage.clear();window.location.href='02login.html'}}
+}
+function populateBulkFilters(){
+  const grades = [...new Set(usersData.map(x => x.grade).filter(Boolean))].sort();
+  const gEl = $('bulkGrade');
+  gEl.innerHTML = '<option value="">学年を選択</option>' + grades.map(g => `<option value="${esc(g)}">${esc(g)}</option>`).join('');
+  updateBulkClasses();
+}
+function updateBulkClasses(){
+  const grade = $('bulkGrade').value;
+  const classes = [...new Set(usersData.filter(x => !grade || x.grade === grade).map(x => x.class_num).filter(Boolean))].sort();
+  const cEl = $('bulkClass');
+  cEl.innerHTML = '<option value="">全クラス</option>' + classes.map(c => `<option value="${esc(c)}">${esc(c)}組</option>`).join('');
+}
+function renderUsers(){
+  const q=$('searchInput').value.trim().toLowerCase(),roleFilter=$('searchRole').value;
+  const flt=usersData.filter(x=>(!q||x.username.toLowerCase().includes(q)||(x.display_name||'').toLowerCase().includes(q)||x.club.toLowerCase().includes(q)||x.committee.toLowerCase().includes(q)||x.class_num.includes(q))&&(!roleFilter||(x.role||'').includes(roleFilter)));
+  const t=$('userList');t.innerHTML='';
+  for(const x of flt){
+    const tr=document.createElement('tr');
+    const userRolesX=(x.role||'').split(',').map(s=>s.trim());
+    const isAdmin=userRolesX.includes('admin');
+    const sd=!isAdmin||userRoles.includes('admin');
+    const pwShow=x.password_plain?'<span class="pwd-show" onclick="this.textContent=this.textContent===\'******\'?\'"+esc(x.password_plain)+"\' :\'******\'">******</span>':'—';
+    const dt=x.created_at?new Date(x.created_at).toLocaleDateString('ja-JP',{month:'numeric',day:'numeric',year:'numeric'}):'—';
+    const roleHtml=ROLES.map(rr=>{
+      const checked=userRolesX.includes(rr.v);
+      const disabled=isAdmin&&!userRoles.includes('admin')?'disabled':'';
+      return `<label style="font-size:10px;white-space:nowrap;cursor:pointer;display:flex;align-items:center;gap:2px"><input type="checkbox" ${checked?'checked':''} data-id="${x.id}" data-v="${rr.v}" ${disabled}> ${esc(rr.l)}</label>`;
+    }).join('');
+    const actions=`<div style="display:flex;gap:2px;flex-wrap:nowrap">
+      ${sd&&x.id!==cu?`<button class="btn btn-danger btn-sm" onclick="delUser('${x.id}','${esc(x.username)}')">削</button>`:''}
+      <button class="btn btn-outline btn-sm" onclick="unlockUser('${x.id}')">解除</button>
+    </div>`;
+    tr.innerHTML=`<td style="width:24px;text-align:center"><input type="checkbox" class="user-select" data-id="${esc(x.id)}"></td><td style="font-size:10px">${esc(x.username)}</td>
+      <td><input type="text" value="${esc(x.display_name||'')}" onchange="updField('${x.id}','display_name',this.value)" style="width:60px"></td>
+      <td style="white-space:normal">${sd?pwShow+'<br><input type="text" placeholder="新PW" onchange="setPwd(\'${x.id}\',this)" style="width:50px;font-size:10px;margin-top:2px">':'—'}</td>
+      <td><div class="role-group">${roleHtml}</div></td>
+      <td>${isAdmin?'<span class="lock-badge">管理者</span>':''}</td>
+      <td><input type="text" value="${esc(x.grade||'')}" onchange="updField('${x.id}','grade',this.value)" style="width:40px"></td>
+      <td><input type="text" value="${esc(x.class_num||'')}" onchange="updField('${x.id}','class_num',this.value)" style="width:35px"></td>
+      <td><input type="text" value="${esc(x.seat_num||'')}" onchange="updField('${x.id}','seat_num',this.value)" style="width:35px"></td>
+      <td><select onchange="updField('${x.id}','club',this.value)"><option value="">—</option>${CLUBS.map(c=>'<option value="'+c+'"'+(x.club===c?' selected':'')+'>'+c+'</option>').join('')}</select></td>
+      <td><select onchange="updField('${x.id}','committee',this.value)"><option value="">—</option>${COMMS.map(c=>'<option value="'+c+'"'+(x.committee===c?' selected':'')+'>'+c+'</option>').join('')}</select></td>
+      <td>${dt}</td><td>${actions}</td>`;
+    tr.querySelectorAll('input[type=checkbox][data-v]').forEach(cb=>{cb.onchange=function(){updRole(this.dataset.id,this.dataset.v,this.checked)}});
+    t.appendChild(tr);
+  }
+  if(!flt.length)t.innerHTML='<tr><td colspan="13" style="text-align:center;padding:20px;color:var(--sub)">該当するユーザーがいません</td></tr>';
+  updateBulkCount();
+}
+async function updRole(id,val,add){
+  try{
+    const uu=usersData.find(x=>x.id===id);if(!uu)return;
+    let roles=uu.role?uu.role.split(',').map(r=>r.trim()).filter(Boolean):[];
+    if(add&&!roles.includes(val))roles.push(val);else if(!add)roles=roles.filter(r=>r!==val);
+    await a('/api/users/'+id,{method:'PUT',body:JSON.stringify({role:roles.join(',')})});
+    loadUsers();
+  }catch(e){alert(e.message);loadUsers()}
+}
+async function updField(id,field,val){try{await a('/api/users/'+id,{method:'PUT',body:JSON.stringify({[field]:val})})}catch(e){alert(e.message)}}
+async function delUser(id,un){if(!confirm('「'+un+'」を削除しますか？'))return;try{await a('/api/users/'+id,{method:'DELETE'});loadUsers()}catch(e){alert(e.message)}}
+async function setPwd(id,inp){const pw=inp.value.trim();if(!pw||pw.length<6){alert('6文字以上入力してください');inp.value='';return}if(!confirm('パスワードを「'+pw+'」に変更しますか？')){inp.value='';return}try{await a('/api/users/'+id,{method:'PUT',body:JSON.stringify({password:pw})});alert('変更しました');inp.value='';loadUsers()}catch(e){alert(e.message);inp.value=''}}
+async function unlockUser(id){try{await a('/api/users/'+id+'/unlock',{method:'POST'});alert('ロックを解除しました');loadUsers()}catch(e){alert(e.message)}}
+$('searchInput').addEventListener('input',renderUsers);
+$('searchRole').addEventListener('change',renderUsers);
+$('aRefresh').addEventListener('click',loadUsers);
+
+// === Bulk actions ===
+function updateBulkCount() {
+  const checked = document.querySelectorAll('.user-select:checked').length;
+  $('bulkSelectedCount').textContent = checked + '人選択中';
+}
+document.addEventListener('change', e => {
+  if (e.target.classList.contains('user-select')) updateBulkCount();
+});
+$('selectAll').addEventListener('change', function() {
+  document.querySelectorAll('.user-select').forEach(cb => cb.checked = this.checked);
+  updateBulkCount();
+});
+$('selectAllH').addEventListener('change', function() {
+  document.querySelectorAll('.user-select').forEach(cb => cb.checked = this.checked);
+  updateBulkCount();
+});
+$('bulkDeleteBtn').addEventListener('click', async () => {
+  const ids = [...document.querySelectorAll('.user-select:checked')].map(cb => cb.dataset.id);
+  if (!ids.length) { alert('削除するユーザーを選択してください'); return }
+  if (!confirm(ids.length + '人のユーザーを削除しますか？')) return;
+  try {
+    await a('/api/users/batch-delete', { method: 'POST', body: JSON.stringify({ ids }) });
+    alert(ids.length + '人を削除しました');
+    loadUsers();
+  } catch(e) { alert(e.message) }
+});
+$('bulkGrade').addEventListener('change', updateBulkClasses);
+$('bulkGradeDeleteBtn').addEventListener('click', async () => {
+  const grade = $('bulkGrade').value;
+  const cls = $('bulkClass').value;
+  if (!grade) { alert('学年を選択してください'); return }
+  const label = (cls ? grade + '年 ' + cls + '組' : grade + '年');
+  if (!confirm(label + 'のユーザーを全員削除しますか？（管理者・自分自身を除く）')) return;
+  try {
+    const r = await a('/api/users/batch-delete', { method: 'POST', body: JSON.stringify({ grade, class_num: cls || undefined }) });
+    alert(r.deleted + '人を削除しました');
+    loadUsers();
+  } catch(e) { alert(e.message) }
+});
+
+// === Batch generation ===
+function renderBatchYears(){
+  if($$('.batch-year-row').length===0) addBatchYearRow();
+}
+function addBatchYearRow(){
+  const div=document.createElement('div');div.className='batch-year-row';
+  div.innerHTML='<label>入学年度<input type="number" class="b-year" value="2026" min="2020" max="2035"></label>'+
+    '<label>クラス数<input type="number" class="b-class-count" value="3" min="1" max="10"></label>'+
+    '<div class="class-sizes"></div>'+
+    '<button class="btn-remove-year" onclick="this.parentElement.remove()">削除</button>';
+  $('batchYears').appendChild(div);
+  const cnt=div.querySelector('.b-class-count');
+  cnt.addEventListener('input',()=>renderClassSizes(div));
+  renderClassSizes(div);
+}
+function renderClassSizes(row){
+  const n=parseInt(row.querySelector('.b-class-count').value)||1;
+  const container=row.querySelector('.class-sizes');
+  const vals=[];
+  container.querySelectorAll('.class-size-wrap').forEach(el=>{const v=parseInt(el.querySelector('input').value);if(v>0)vals.push(v)});
+  let html='';
+  for(let i=0;i<n;i++){
+    const v=vals[i]||30;
+    html+='<label class="class-size-wrap">'+(i+1)+'組<input type="number" class="class-size-input" value="'+v+'" min="1" max="50"></label>';
+  }
+  container.innerHTML=html;
+}
+$('addBatchYear').addEventListener('click',addBatchYearRow);
+$('bGenerate').addEventListener('click',async()=>{
+  const rows=$$('.batch-year-row');
+  if(rows.length===0){alert('年度を追加してください');return}
+  const years=[];
+  for(const r of rows){
+    const year=r.querySelector('.b-year').value;
+    const sizes=Array.from(r.querySelectorAll('.class-size-input')).map(x=>parseInt(x.value));
+    if(!sizes.every(s=>s>0)){alert(year+'年度: クラス人数が不正です');return}
+    years.push({year,classes:sizes});
+  }
+  const password=$('bPassword').value;
+  const label=years.map(y=>y.year+'年度 '+y.classes.map((s,i)=>(i+1)+'組'+s+'人').join(' ')).join('、');
+  if(!confirm('以下の内容で生成しますか？\n'+label+'\nパスワード: '+password))return;
+  $('bGenerate').disabled=true;$('bGenerate').textContent='生成中...';
+  try{
+    const r=await a('/api/users/batch',{method:'POST',body:JSON.stringify({years,password})});
+    const box=$('bResult');box.className='result-box show';
+    box.innerHTML='<strong>'+r.created+'人</strong> の生徒IDを生成しました<br>初期パスワード: <strong>'+esc(r.password)+'</strong><br>生成ID: '+r.students.slice(0,5).join(', ')+(r.students.length>5?' …他'+(r.students.length-5)+'件':'');
+  }catch(e){alert(e.message)}
+  $('bGenerate').disabled=false;$('bGenerate').textContent='生成する';
+});
+renderBatchYears();
+
+// === Manual Create ===
+$('mCreate').addEventListener('click', async () => {
+  const user = $('mUser').value.trim(), pass = $('mPass').value.trim();
+  const disp = $('mDisp').value.trim() || user, mr = $('mRole').value;
+  const grade = $('mGrade').value, cls = $('mClass').value, seat = $('mSeat').value;
+  const club = $('mClub').value, comm = $('mComm').value;
+  if (!user || !pass) { $('mResult').textContent = 'IDとパスワードは必須です'; return }
+  if (!user.match(/^\d+$/)) { $('mResult').textContent = 'IDは数字のみです'; return }
+  $('mCreate').disabled = true; $('mCreate').textContent = '登録中...';
+  try {
+    const passHash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pass));
+    const hx = Array.from(new Uint8Array(passHash)).map(x => x.toString(16).padStart(2, '0')).join('');
+    const r = await a('/api/users', { method: 'POST', body: JSON.stringify({
+      username: user, password: hx, role: mr,
+      grade: grade || '', class_num: cls || '', seat_num: seat || '',
+      club, committee: comm, display_name: disp
+    })});
+    $('mResult').style.color = 'var(--primary)';
+    $('mResult').textContent = '登録しました: ' + r.username;
+    $('mUser').value = ''; $('mDisp').value = '';
+    loadUsers();
+  } catch(e) { $('mResult').style.color = 'var(--danger)'; $('mResult').textContent = 'エラー: ' + e.message }
+  $('mCreate').disabled = false; $('mCreate').textContent = '登録';
+});
+
+loadUsers();
+</script>
+</body>
+</html>

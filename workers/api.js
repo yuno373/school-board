@@ -521,7 +521,7 @@ async function handleRequest(request, env, ctx) {
     if (path === '/api/users' && method === 'POST') {
       authErr = requireAuth(user, ['admin', 'teacher']);
       if (authErr) return authErr;
-      const { username, password, role, grade, class_num, seat_num, club, committee, display_name } = await request.json();
+      const { username, password, role, grade, class_num, seat_num, club, committee, display_name, teacher_grades, teacher_subject, teacher_homeroom } = await request.json();
       if (!username || !password || !role) return json({ error: '必須項目不足' }, 400);
       if (password.length < 6) return json({ error: '6文字以上' }, 400);
       const newRoles = role.split(',').map(r => r.trim());
@@ -536,6 +536,12 @@ async function handleRequest(request, env, ctx) {
         club: club || '', committee: committee || '', display_name: display_name || username,
         icon: '', created_at: new Date().toISOString()
       };
+      if (newRoles.includes('teacher')) {
+        newUser.teacher_grades = teacher_grades || '';
+        newUser.teacher_subject = teacher_subject || '';
+        newUser.teacher_homeroom = !!teacher_homeroom;
+        newUser.teacher_setup_done = false;
+      }
       users.push(newUser);
       await r2Put(env.DATA, 'users.json', users);
       await auditLog(env, 'create_user', user.username, { target: username, role });

@@ -194,6 +194,19 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
       </div>
       <div class="result-box" id="tResult"></div>
     </div>
+    <div style="margin-top:20px;border-top:2px dashed var(--border);padding-top:20px">
+      <h3 style="font-size:15px;font-weight:700;margin-bottom:12px;color:var(--text)">📝 先生を手動登録</h3>
+      <div class="batch-form">
+        <label>ログインID<input type="text" id="mtUser" placeholder="例: T001" style="width:80px"></label>
+        <label>表示名<input type="text" id="mtDisp" placeholder="氏名" style="width:80px"></label>
+        <label>パスワード<input type="text" id="mtPass" value="111111" style="width:70px"></label>
+        <label>担当教科<input type="text" id="mtSubject" placeholder="例: 数学" style="width:70px"></label>
+        <label>担当学年<select id="mtGrades" style="width:80px"><option value="">---</option><option value="1">1年</option><option value="2">2年</option><option value="3">3年</option><option value="1,2">1・2年</option><option value="1,3">1・3年</option><option value="2,3">2・3年</option><option value="1,2,3">全学年</option></select></label>
+        <label><input type="checkbox" id="mtHomeroom" value="1"> 担任</label>
+        <button class="btn btn-primary" id="mtCreate">登録</button>
+      </div>
+      <div class="result-box" id="mtResult"></div>
+    </div>
     <div style="margin-top:24px;border-top:2px dashed var(--border);padding-top:20px">
       <h3 style="font-size:15px;font-weight:700;margin-bottom:12px;color:var(--text)">手動でユーザー登録</h3>
       <div class="batch-form">
@@ -512,6 +525,30 @@ $('tGenerate').addEventListener('click',async()=>{
     box.innerHTML='<strong>'+r.created+'人</strong> の先生IDを生成しました<br>初期パスワード: <strong>'+esc(r.password)+'</strong><br>生成ID: '+r.users.slice(0,5).join(', ')+(r.users.length>5?' …他'+(r.users.length-5)+'件':'');
   }catch(e){alert(e.message)}
   $('tGenerate').disabled=false;$('tGenerate').textContent='生成する';
+});
+
+// === Manual Teacher Create ===
+$('mtCreate').addEventListener('click',async()=>{
+  const user=$('mtUser').value.trim(),pass=$('mtPass').value.trim();
+  const disp=$('mtDisp').value.trim()||user;
+  const subject=$('mtSubject').value.trim();
+  const grades=$('mtGrades').value;
+  const homeroom=!!$('mtHomeroom').checked;
+  if(!user||!pass){$('mtResult').textContent='IDとパスワードは必須です';return}
+  $('mtCreate').disabled=true;$('mtCreate').textContent='登録中...';
+  try{
+    const passHash=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(pass));
+    const hx=Array.from(new Uint8Array(passHash)).map(x=>x.toString(16).padStart(2,'0')).join('');
+    const r=await a('/api/users',{method:'POST',body:JSON.stringify({
+      username:user,password:hx,role:'teacher',
+      display_name:disp,teacher_subject:subject,teacher_grades:grades,teacher_homeroom:homeroom
+    })});
+    $('mtResult').style.color='var(--primary)';
+    $('mtResult').textContent='登録しました: '+r.username;
+    $('mtUser').value='';$('mtDisp').value='';$('mtSubject').value='';$('mtGrades').value='';$('mtHomeroom').checked=false;
+    loadUsers();
+  }catch(e){$('mtResult').style.color='var(--danger)';$('mtResult').textContent='エラー: '+e.message}
+  $('mtCreate').disabled=false;$('mtCreate').textContent='登録';
 });
 
 // === Manual Create ===

@@ -92,18 +92,29 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
 </header>
 <div class="main">
   <div class="tab-bar">
-    <button class="tab-btn active" data-tab="settings">⚙️ 設定</button>
-    <button class="tab-btn" data-tab="users">📋 生徒管理</button>
+    <button class="tab-btn active" data-tab="users">📋 生徒管理</button>
     <button class="tab-btn" data-tab="batch">📋 ID一括生成</button>
     <button class="tab-btn" data-tab="notifications">🔔 通知管理</button>
     <button class="tab-btn" data-tab="posts">📝 投稿管理</button>
     <button class="tab-btn" data-tab="stats">📊 統計</button>
     <button class="tab-btn" data-tab="chat">💬 チャット管理</button>
     <button class="tab-btn" data-tab="diagnosis">🔍 診断</button>
+    <button class="tab-btn" data-tab="settings">⚙️ 設定</button>
   </div>
 
-  <!-- Settings Tab -->
-  <div class="tab-content active" id="tab-settings">
+  <!-- Diagnosis Tab -->
+  <div class="tab-content" id="tab-diagnosis">
+    <div class="card">
+      <h3>システム診断</h3>
+      <p style="font-size:13px;color:var(--sub);margin-bottom:12px">各APIエンドポイント・静的ファイル・データ整合性をチェックし、問題を報告します。</p>
+      <button class="btn btn-primary" id="diagRun">診断を実行</button>
+      <div id="diagProgress" style="margin-top:10px;font-size:13px;color:var(--sub);display:none">診断中...</div>
+    </div>
+    <div id="diagResults"></div>
+  </div>
+
+  <!-- Settings Tab (last) -->
+  <div class="tab-content" id="tab-settings">
     <div class="card">
       <h3>⚙️ 自分の設定</h3>
       <div class="form-row">
@@ -221,17 +232,6 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
         <tbody id="chatUserList"></tbody>
       </table>
     </div>
-  </div>
-
-  <!-- Diagnosis Tab -->
-  <div class="tab-content" id="tab-diagnosis">
-    <div class="card">
-      <h3>システム診断</h3>
-      <p style="font-size:13px;color:var(--sub);margin-bottom:12px">各APIエンドポイント・静的ファイル・データ整合性をチェックし、問題を報告します。</p>
-      <button class="btn btn-primary" id="diagRun">診断を実行</button>
-      <div id="diagProgress" style="margin-top:10px;font-size:13px;color:var(--sub);display:none">診断中...</div>
-    </div>
-    <div id="diagResults"></div>
   </div>
 </div>
 

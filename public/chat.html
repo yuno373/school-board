@@ -14,7 +14,7 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
 .header-link{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);padding:4px 12px;font-size:12px;cursor:pointer;color:rgba(255,255,255,.85);border-radius:8px;text-decoration:none;transition:all .2s;font-family:inherit}
 .header-link:hover{background:rgba(255,255,255,.25);color:#fff}
 .chat-body{flex:1;display:flex;max-width:1000px;width:100%;overflow:hidden}
-.chat-sidebar{width:20%;min-width:140px;background:var(--card);border-right:1px solid var(--border);padding:12px;overflow-y:auto;flex-shrink:0}
+.chat-sidebar{width:22%;min-width:170px;background:var(--card);border-right:1px solid var(--border);padding:12px;overflow-y:auto;flex-shrink:0}
 .chat-sidebar h3{font-size:11px;font-weight:700;color:var(--sub);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
 .chat-part{font-size:12px;padding:6px 8px;border-radius:6px;margin-bottom:2px;display:flex;align-items:center;gap:6px}
 .chat-part .part-role{font-size:9px;color:var(--sub);background:var(--bg);padding:1px 5px;border-radius:3px}
@@ -73,7 +73,7 @@ const roleNames={'admin':'管理者','teacher':'先生','president':'部長','vi
 async function loadParticipants(){
   try{
     const parts=await a('/api/chat/participants');
-    $('partList').innerHTML=parts.map(p=>'<div class="chat-part"><span class="part-online"></span><span>'+esc(p.display_name||p.username)+'</span><span class="part-role">'+(roleNames[p.role]||p.role)+'</span></div>').join('');
+    $('partList').innerHTML=parts.map(p=>'<div class="chat-part"><span class="part-online"></span><span>'+esc(p.display_name||p.username)+'</span><span class="part-role">'+(p.role||'').split(',').map(r=>roleNames[r.trim()]||r.trim()).filter(Boolean).join('·')+'</span></div>').join('');
   }catch(e){$('partList').textContent='取得できませんでした'}
 }
 

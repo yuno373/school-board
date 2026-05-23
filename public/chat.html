@@ -54,12 +54,13 @@ const $=id=>document.getElementById(id);const esc=s=>{const d=document.createEle
 const cu=sessionStorage.getItem('username');
 if(!cu||!sessionStorage.getItem('token'))window.location.href='02login.html';
 
-let lastTime=Date.now();
+let lastTime=Date.now();let loadedOnce=false;
 async function loadMsgs(){
   try{
     const msgs=await a('/api/chat?since='+lastTime);
+    const list=$('msgList');
+    if(!loadedOnce){loadedOnce=true;list.innerHTML='<div class="empty-chat">メッセージはまだありません</div>'}
     if(msgs.length){
-      const list=$('msgList');
       if(list.querySelector('.empty-chat'))list.innerHTML='';
       msgs.forEach(m=>{lastTime=Math.max(lastTime,new Date(m.created_at).getTime()+1);renderMsg(m,list)});
       list.scrollTop=list.scrollHeight;

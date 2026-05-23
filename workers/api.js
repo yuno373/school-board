@@ -1331,7 +1331,66 @@ if (path === '/api/users' && method === 'GET') {
     }
 
     // ============================================================
-    // 7. YEARLY SCHEDULE
+    // 6b. TEACHER SCHEDULE (period-based weekly timetable)
+    // ============================================================
+    const PERIOD_TIMES = [
+      { period: 1, start: 500, end: 570 },   // 8:40-9:30 (minutes from midnight)
+      { period: 2, start: 580, end: 650 },   // 9:40-10:30
+      { period: 3, start: 660, end: 730 },   // 10:40-11:30
+      { period: 4, start: 740, end: 810 },   // 11:40-12:30
+      { period: 5, start: 850, end: 920 },   // 13:30-14:20 (after lunch: 12:30-13:30)
+      { period: 6, start: 930, end: 1000 }   // 14:30-15:20
+    ];
+
+    // POST /api/teacher-schedule - Save teacher's weekly schedule
+    if (path === '/api/teacher-schedule' && method === 'POST') {
+      authErr = requireAuth(user, ['admin', 'teacher']);
+      if (authErr) return authErr;
+      const { schedule } = await request.json();
+      if (!Array.isArray(schedule)) return json({ error: 'スケジュールが必要です' }, 400);
+      const valid = schedule.every(s => s.day_of_week >= 0 && s.day_of_week <= 6 && s.period >= 1 && s.period <= 7 && s.subject);
+      if (!valid) return json({ error: '不正なデータです' }, 400);
+      const schedules = await r2Get(env.DATA, 'teacher_schedules.json') || [];
+      const existing = schedules.find(s => s.teacher_username === user.username);
+      if (existing) { existing.schedule = schedule; }
+      else { schedules.push({ id: uuid(), teacher_username: user.username, schedule }); }
+      await r2Put(env.DATA, 'teacher_schedules.json', schedules);
+      return json({ ok: true });
+    }
+
+    // GET /api/teacher-schedule - Get my schedule
+    if (path === '/api/teacher-schedule' && method === 'GET') {
+      authErr = requireAuth(user, ['admin', 'teacher']);
+      if (authErr) return authErr;
+      const schedules = await r2Get(env.DATA, 'teacher_schedules.json') || [];
+      const s = schedules.find(x => x.teacher_username === user.username);
+      return json(s ? s.schedule : []);
+    }
+
+    // GET /api/teacher-schedule/next - Get next class info
+    if (path === '/api/teacher-schedule/next' && method === 'GET') {
+      authErr = requireAuth(user, ['admin', 'teacher']);
+      if (authErr) return authErr;
+      const schedules = await r2Get(env.DATA, 'teacher_schedules.json') || [];
+      const s = schedules.find(x => x.teacher_username === user.username);
+      if (!s || !s.schedule.length) return json({ next: null, message: 'スケジュールが設定されていません' });
+      const now = new Date();
+      const jst = new Date(now.getTime() + 9 * 3600000);
+      const day = jst.getUTCDay();
+      const mins = jst.getUTCHours() * 60 + jst.getUTCMinutes();
+      const todayClasses = s.schedule.filter(e => e.day_of_week === day).sort((a, b) => a.period - b.period);
+      if (!todayClasses.length) return json({ next: null, message: '今日は授業がありません' });
+      // Find next class
+      for (const cls of todayClasses) {
+        const pt = PERIOD_TIMES.find(p => p.period === cls.period);
+        if (!pt) continue;
+        if (mins < pt.start) {
+          const diff = pt.start - mins;
+          return json({ next: { period: cls.period, subject: cls.subject, class_name: cls.class_name || '', startsIn: diff, startsInMin: Math.floor(diff) }, message: `${cls.subject}${cls.class_name?'('+cls.class_name+')':''}が${Math.floor(diff)}分後にあります` });
+        }
+      }
+      return json({ next: null, message: '今日の授業は全て終了しました' });
+    }
     // ============================================================
     if (path === '/api/yearly-schedule' && method === 'GET') {
       const data = await r2Get(env.DATA, 'yearly_schedule.json') || [];

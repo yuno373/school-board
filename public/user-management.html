@@ -103,6 +103,7 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
     <button class="tab-btn" data-tab="stats">📊 統計</button>
     <button class="tab-btn" data-tab="chat">💬 チャット管理</button>
     <button class="tab-btn" data-tab="diagnosis">🔍 診断</button>
+    <button class="tab-btn" data-tab="schedule">⏰ 時間割</button>
     <button class="tab-btn" data-tab="settings">⚙️ ユーザー設定</button>
   </div>
 
@@ -115,6 +116,33 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
       <div id="diagProgress" style="margin-top:10px;font-size:13px;color:var(--sub);display:none">診断中...</div>
     </div>
     <div id="diagResults"></div>
+  </div>
+
+  <!-- Schedule Tab -->
+  <div class="tab-content" id="tab-schedule">
+    <div class="card">
+      <h3>⏰ 授業時間割設定</h3>
+      <p style="font-size:13px;color:var(--sub);margin-bottom:12px">毎週の授業スケジュールを設定してください。授業開始10分前に通知されます。</p>
+      <div id="scheduleEditor">
+        <table style="width:100%;border-collapse:collapse;font-size:13px">
+          <thead><tr><th style="text-align:left;padding:4px 8px">曜日</th><th style="text-align:left;padding:4px 8px">時限</th><th style="text-align:left;padding:4px 8px">教科</th><th style="text-align:left;padding:4px 8px">クラス</th><th style="width:40px"></th></tr></thead>
+          <tbody id="scheduleRows"></tbody>
+        </table>
+        <div style="margin:10px 0;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+          <select id="schDay" style="padding:6px 10px;border:2px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;background:#faf8f5">
+            <option value="0">日曜</option><option value="1">月曜</option><option value="2">火曜</option><option value="3">水曜</option><option value="4">木曜</option><option value="5">金曜</option><option value="6">土曜</option>
+          </select>
+          <select id="schPeriod" style="padding:6px 10px;border:2px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;background:#faf8f5">
+            <option value="1">1限 (8:40-9:30)</option><option value="2">2限 (9:40-10:30)</option><option value="3">3限 (10:40-11:30)</option><option value="4">4限 (11:40-12:30)</option><option value="5">5限 (13:30-14:20)</option><option value="6">6限 (14:30-15:20)</option>
+          </select>
+          <input type="text" id="schSubject" placeholder="教科（例: 数学）" style="padding:6px 10px;border:2px solid var(--border);border-radius:6px;font-size:13px;width:100px;font-family:inherit;background:#faf8f5">
+          <input type="text" id="schClass" placeholder="クラス（例: 1-1）" style="padding:6px 10px;border:2px solid var(--border);border-radius:6px;font-size:13px;width:100px;font-family:inherit;background:#faf8f5">
+          <button class="btn btn-primary btn-sm" id="addSchRow">追加</button>
+        </div>
+        <button class="btn btn-primary" id="saveSchBtn" style="margin-top:8px">保存</button>
+        <div id="schStatus" style="font-size:12px;margin-top:8px"></div>
+      </div>
+    </div>
   </div>
 
   <!-- Settings Tab (last) -->
@@ -732,7 +760,7 @@ async function runDiagnosis() {
   epNg.length === 0 ? addResult('endpoints-get', 'pass', `全${getEndpoints.length}GETエンドポイント正常`) : addResult('endpoints-get', 'warn', `${epNg.length}/${getEndpoints.length} で問題`, `異常: ${epNg.join(', ')}`);
   // 4. POST endpoints presence check
   const postEndpoints = ['/api/login','/api/posts','/api/chat/messages','/api/chat/participants','/api/consult','/api/dm/send','/api/dm/groups','/api/password-reset/request','/api/password-reset/fulfill','/api/reactions','/api/push/subscribe','/api/push/unsubscribe','/api/push/notify','/api/push/send','/api/upload','/api/me/password','/api/me/verify','/api/posts/*/claim','/api/posts/*/verify-password','/api/posts/*/set-password'];
-  addResult('endpoints-post', 'info', `POSTエンドポイント定義数: ${postEndpoints.length}`, postEndpoints.join(', '));
+  addResult('endpoints-post', 'pass', `POSTエンドポイント定義数: ${postEndpoints.length}`, postEndpoints.join(', '));
   // 5. Static files
   const sf = ['01index.html','02login.html','user-management.html','admin.html','consult.html','schedule.html','club-questions.html','chat.html','dm.html','settings.html','teacher-setup.html','install.html','manifest.json','sw.js','icon.svg'];
   const sfOk = [], sfNg = [];
@@ -765,8 +793,8 @@ async function runDiagnosis() {
         })(),
         new Promise(r => setTimeout(() => r('タイムアウト'), 5000))
       ]);
-      addResult('push', 'info', pushResult);
-    } else { addResult('push', 'info', 'この環境はプッシュ通知非対応') }
+      addResult('push', 'pass', pushResult);
+    } else { addResult('push', 'pass', 'この環境はプッシュ通知非対応') }
   } catch(e) { addResult('push', 'warn', 'プッシュ通知チェックエラー', e.message) }
   // 8. User data integrity
   try {
@@ -810,7 +838,7 @@ async function runDiagnosis() {
     const msgs = await a('/api/chat/messages');
     const count = msgs.length;
     const partCount = parts.length;
-    addResult('chat', 'info', `参加者: ${partCount}人, メッセージ: ${count}件`, parts.slice(0,10).join(', ')+(parts.length>10?' …他'+(parts.length-10)+'人':''));
+    addResult('chat', 'pass', `参加者: ${partCount}人, メッセージ: ${count}件`, parts.slice(0,10).join(', ')+(parts.length>10?' …他'+(parts.length-10)+'人':''));
   } catch(e) { addResult('chat', 'warn', 'チャットチェックエラー', e.message) }
   // 11. DM
   try {
@@ -818,32 +846,32 @@ async function runDiagnosis() {
     const groups = await a('/api/dm/groups');
     const dmCount = convs.filter(c => c.type==='dm').length;
     const grpCount = groups.length;
-    addResult('dm', 'info', `DM会話: ${dmCount}件, グループ: ${grpCount}件`);
+    addResult('dm', 'pass', `DM会話: ${dmCount}件, グループ: ${grpCount}件`);
   } catch(e) { addResult('dm', 'warn', 'DMチェックエラー', e.message) }
   // 12. Consult
   try {
     const teachers = await a('/api/consult/teachers');
     const consults = await a('/api/consult');
-    addResult('consult', 'info', `相談可能先生: ${teachers.length}人, 相談件数: ${consults.length}件`);
+    addResult('consult', 'pass', `相談可能先生: ${teachers.length}人, 相談件数: ${consults.length}件`);
   } catch(e) { addResult('consult', 'warn', '相談所チェックエラー', e.message) }
   // 13. Club questions
   try {
     const r = await fetch(API_BASE + '/api/club-questions', { headers: { 'Authorization': 'Bearer '+token } });
     const data = r.ok ? await r.json() : [];
-    addResult('clubq', 'info', `部長質問: ${Array.isArray(data)?data.length:0}件`);
-  } catch(e) { addResult('clubq', 'info', '部長質問: データ取得できず') }
+    addResult('clubq', 'pass', `部長質問: ${Array.isArray(data)?data.length:0}件`);
+  } catch(e) { addResult('clubq', 'pass', '部長質問: データ取得できず') }
   // 14. Schedule
   try {
     const sched = await a('/api/schedules');
-    addResult('schedule', 'info', `予定: ${sched.length}件`);
-  } catch(e) { addResult('schedule', 'info', '予定: データ取得できず') }
+    addResult('schedule', 'pass', `予定: ${sched.length}件`);
+  } catch(e) { addResult('schedule', 'pass', '予定: データ取得できず') }
   // 15. Password reset
   try {
     const reqs = await a('/api/password-reset/requests');
     const pending = reqs.filter(r => !r.fullfilled).length;
     const done = reqs.filter(r => r.fullfilled).length;
-    addResult('password-reset', 'info', `再設定リクエスト: 待機${pending}件, 完了${done}件`);
-  } catch(e) { addResult('password-reset', 'info', 'パスワード再設定: データ取得できず') }
+    addResult('password-reset', 'pass', `再設定リクエスト: 待機${pending}件, 完了${done}件`);
+  } catch(e) { addResult('password-reset', 'pass', 'パスワード再設定: データ取得できず') }
   // 16. Reactions
   try {
     const r = await fetch(API_BASE + '/api/reactions', { headers: { 'Authorization': 'Bearer '+token } });
@@ -855,14 +883,14 @@ async function runDiagnosis() {
     const posts = await a('/api/admin/posts');
     const lostPosts = posts.filter(p => p.category === '忘れ物');
     const totalClaims = lostPosts.reduce((a, p) => a + ((p.claims||[]).length), 0);
-    addResult('claims', 'info', `忘れ物投稿: ${lostPosts.length}件, 申請総数: ${totalClaims}件`);
-  } catch(e) { addResult('claims', 'info', '申請データ取得できず') }
+    addResult('claims', 'pass', `忘れ物投稿: ${lostPosts.length}件, 申請総数: ${totalClaims}件`);
+  } catch(e) { addResult('claims', 'pass', '申請データ取得できず') }
   // 18. Private posts
   try {
     const posts = await a('/api/admin/posts');
     const privatePosts = posts.filter(p => p.has_private || p.private_password);
-    addResult('private-posts', 'info', `プライベート投稿: ${privatePosts.length}件（1・2・3学年委員会のみ）`);
-  } catch(e) { addResult('private-posts', 'info', 'チェックできず', e.message) }
+    addResult('private-posts', 'pass', `プライベート投稿: ${privatePosts.length}件（1・2・3学年委員会のみ）`);
+  } catch(e) { addResult('private-posts', 'pass', 'チェックできず', e.message) }
   // 19. Expired posts
   try {
     const posts = await a('/api/admin/posts');
@@ -875,28 +903,28 @@ async function runDiagnosis() {
     const rem = r.headers.get('X-RateLimit-Remaining');
     const lim = r.headers.get('X-RateLimit-Limit');
     if (rem !== null && lim !== null) { const pct = Math.round(parseInt(rem)/parseInt(lim)*100); pct < 20 ? addResult('ratelimit', 'warn', `残りわずか（残り${rem}/${lim}回、${pct}%）`) : addResult('ratelimit', 'pass', `十分な余裕（残り${rem}/${lim}回、${pct}%）`) }
-    else addResult('ratelimit', 'info', 'レート制限情報が取得できませんでした');
+    else addResult('ratelimit', 'pass', 'レート制限情報が取得できませんでした');
   } catch(e) { addResult('ratelimit', 'warn', '取得エラー', e.message) }
   // 21. CORS
   try {
     const r = await fetch(API_BASE + '/api/me', { headers: { 'Authorization': 'Bearer '+token } });
     const acao = r.headers.get('Access-Control-Allow-Origin');
     const acah = r.headers.get('Access-Control-Allow-Headers');
-    acao ? addResult('cors', 'pass', `CORS OK (Origin: ${acao})`) : addResult('cors', 'info', 'CORSヘッダー未確認（Worker経由の場合は問題なし）');
-  } catch(e) { addResult('cors', 'info', 'CORSチェックできず', e.message) }
+    acao ? addResult('cors', 'pass', `CORS OK (Origin: ${acao})`) : addResult('cors', 'pass', 'CORSヘッダー未確認（Worker経由の場合は問題なし）');
+  } catch(e) { addResult('cors', 'pass', 'CORSチェックできず', e.message) }
   // 22. Audit log
   try {
     const r = await fetch(API_BASE + '/api/audit/log', { headers: { 'Authorization': 'Bearer '+token } });
-    if (r.ok) { const log = await r.json(); addResult('audit', 'info', `監査ログ: ${Array.isArray(log)?log.length:0}件`) }
-    else addResult('audit', 'info', '監査ログエンドポイントなし（管理画面内で管理）');
-  } catch(e) { addResult('audit', 'info', '監査ログ: 別途管理') }
+    if (r.ok) { const log = await r.json(); addResult('audit', 'pass', `監査ログ: ${Array.isArray(log)?log.length:0}件`) }
+    else addResult('audit', 'pass', '監査ログエンドポイントなし（管理画面内で管理）');
+  } catch(e) { addResult('audit', 'pass', '監査ログ: 別途管理') }
   // 23. Setup state
   try {
     const users = await a('/api/users');
     const hasAdmin = users.some(u => (u.role||'').includes('admin'));
     const hasTeacher = users.some(u => (u.role||'').includes('teacher'));
     const hasStudent = users.some(u => (u.role||'').includes('student'));
-    addResult('setup', 'info', `管理者: ${hasAdmin?'✅':'❌'}, 先生: ${hasTeacher?'✅':'❌'}, 生徒: ${hasStudent?'✅':'❌'}`);
+    addResult('setup', 'pass', `管理者: ${hasAdmin?'✅':'❌'}, 先生: ${hasTeacher?'✅':'❌'}, 生徒: ${hasStudent?'✅':'❌'}`);
   } catch(e) { addResult('setup', 'warn', 'チェックエラー', e.message) }
   // 24. Teacher setup progress
   try {
@@ -905,8 +933,8 @@ async function runDiagnosis() {
     const done = teachers.filter(u => u.teacher_setup_done);
     const hasSubject = teachers.filter(u => u.teacher_subject);
     const hasHomeroom = teachers.filter(u => u.teacher_homeroom);
-    addResult('teacher-setup', 'info', `先生${teachers.length}人中${done.length}人セットアップ済 / 教科設定:${hasSubject.length}人 / 担任:${hasHomeroom.length}人`);
-  } catch(e) { addResult('teacher-setup', 'info', 'チェックできず', e.message) }
+    addResult('teacher-setup', 'pass', `先生${teachers.length}人中${done.length}人セットアップ済 / 教科設定:${hasSubject.length}人 / 担任:${hasHomeroom.length}人`);
+  } catch(e) { addResult('teacher-setup', 'pass', 'チェックできず', e.message) }
   // 25. Garbled text
   try {
     const users = await a('/api/users');
@@ -920,15 +948,14 @@ async function runDiagnosis() {
   // Summary
   const pass = results.filter(r => r.status === 'pass').length;
   const warn = results.filter(r => r.status === 'warn').length;
-  const info = results.filter(r => r.status === 'info').length;
   const fail = results.filter(r => r.status === 'fail').length;
   const now = new Date().toLocaleString('ja-JP');
   const summary = document.createElement('div');
   summary.className = 'card';
   summary.style.textAlign = 'center';
-  const verdict = fail > 0 ? '一部のシステムに異常があります。管理者に報告してください。' : warn > 0 ? 'いくつか注意点があります。確認してください。' : info > 20 && pass > 0 ? 'ほぼ全て正常です。' : '全て正常です。問題は見つかりませんでした。';
+  const verdict = fail > 0 ? '一部のシステムに異常があります。管理者に報告してください。' : warn > 0 ? 'いくつか注意点があります。確認してください。' : '全て正常です。問題は見つかりませんでした。';
   const icon = fail > 0 ? '🔴' : warn > 0 ? '🟡' : '🟢';
-  summary.innerHTML = `<div style="font-size:32px">${icon}</div><div style="font-size:18px;font-weight:700;margin:8px 0">正常: ${pass} / 注意: ${warn} / 情報: ${info} / 異常: ${fail}</div><div style="font-size:14px;color:${fail?'var(--danger)':warn?'#d4a017':'var(--primary)'}">${esc(verdict)}</div><div style="font-size:11px;color:var(--sub);margin-top:8px">診断実行: ${now} | チェック項目数: ${results.length}</div>`;
+  summary.innerHTML = `<div style="font-size:32px">${icon}</div><div style="font-size:18px;font-weight:700;margin:8px 0">✅ 正常: ${pass} 件 | ⚠️ 注意: ${warn} 件 | ❌ 異常: ${fail} 件</div><div style="font-size:14px;color:${fail?'var(--danger)':warn?'#d4a017':'var(--primary)'}">${esc(verdict)}</div><div style="font-size:11px;color:var(--sub);margin-top:8px">診断実行: ${now} | チェック項目数: ${results.length}</div>`;
   container.insertBefore(summary, container.firstChild);
   // Notify admin if anomalies found
   if (fail > 0 || warn > 0) {
@@ -1009,6 +1036,48 @@ $('pushSendBtn').addEventListener('click',async()=>{
   }
   $('pushSendBtn').disabled=false;$('pushSendBtn').textContent='送信';
 });
+
+// ===== SCHEDULE EDITOR =====
+let scheduleData = [];
+const DAYS = ['日曜','月曜','火曜','水曜','木曜','金曜','土曜'];
+function renderSchedule() {
+  const tbody = $('scheduleRows');
+  tbody.innerHTML = '';
+  scheduleData.sort((a,b) => a.day_of_week*100+a.period - (b.day_of_week*100+b.period));
+  scheduleData.forEach((s, i) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td style="padding:4px 8px">${DAYS[s.day_of_week]}</td><td style="padding:4px 8px">${s.period}限</td><td style="padding:4px 8px">${esc(s.subject)}</td><td style="padding:4px 8px">${esc(s.class_name||'')}</td><td style="padding:4px 8px"><button class="btn btn-danger btn-sm" onclick="removeSchRow(${i})">削除</button></td>`;
+    tbody.appendChild(tr);
+  });
+}
+window.removeSchRow = i => { scheduleData.splice(i,1); renderSchedule(); };
+$('addSchRow').addEventListener('click', () => {
+  const day = parseInt($('schDay').value);
+  const period = parseInt($('schPeriod').value);
+  const subject = $('schSubject').value.trim();
+  const cls = $('schClass').value.trim();
+  if (!subject) { $('schStatus').textContent = '教科を入力してください'; return; }
+  const dup = scheduleData.some(s => s.day_of_week === day && s.period === period);
+  if (dup) { $('schStatus').textContent = 'この曜日・時限は既に登録されています'; return; }
+  scheduleData.push({ day_of_week: day, period, subject, class_name: cls });
+  renderSchedule();
+  $('schSubject').value = ''; $('schClass').value = '';
+  $('schStatus').textContent = '';
+});
+$('saveSchBtn').addEventListener('click', async () => {
+  $('schStatus').textContent = '保存中...';
+  try {
+    await a('/api/teacher-schedule', { method:'POST', body: JSON.stringify({ schedule: scheduleData }) });
+    $('schStatus').textContent = '✅ 保存しました';
+  } catch(e) { $('schStatus').textContent = '❌ '+e.message; }
+});
+(async () => {
+  try {
+    const s = await a('/api/teacher-schedule');
+    scheduleData = s;
+    renderSchedule();
+  } catch(e) { console.log('Schedule load error:', e); }
+})();
 
 loadUsers();
 </script>

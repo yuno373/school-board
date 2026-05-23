@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>部長・副部長への質問 - 上藤沢中学校</title>
+<title>部長・副部長・委員長への質問 - 上藤沢中学校</title>
 <style>
 :root{--primary:#1E4D2B;--primary-dark:#153820;--primary-light:#2D6B40;--accent-pink:#f5a0b8;--accent-blue:#a0c4e8;--accent-yellow:#f5e6a0;--accent-green:#a8d8a0;--bg:#f7f5f0;--card:#fff;--text:#2c2c2c;--sub:#8a8682;--border:#e0dcd4;--radius:12px;--shadow:0 2px 12px rgba(30,77,43,0.06)}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -36,18 +36,21 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
 </head>
 <body>
 <header class="header">
-  <div class="header-title">❓ 部長・副部長への質問</div>
+  <div class="header-title">❓ 部長・副部長・委員長への質問</div>
   <div class="header-right">
     <a href="01index.html" class="header-link">黒板に戻る</a>
   </div>
 </header>
 <div class="main">
-  <div class="notice">📌 部長・副部長に個別に質問できます。通知は送られませんので、回答までお待ちください。</div>
+  <div class="notice">📌 部長・副部長・委員長に個別に質問できます。通知は送られませんので、回答までお待ちください。</div>
+  <div id="noAccess" style="display:none;background:var(--card);border-radius:var(--radius);padding:40px 20px;box-shadow:var(--shadow);margin-bottom:20px;text-align:center;color:var(--sub);font-size:14px">この機能は部活・委員会に所属している人のみ利用できます。<br><a href="settings.html" style="color:var(--primary);font-weight:700">設定ページ</a>で所属を登録してください。</div>
+  <div id="qFormArea">
   <div class="form-section">
     <h2>✏️ 新しい質問</h2>
-    <select id="clubSelect"><option value="">部活を選択</option></select>
+    <select id="clubSelect"><option value="">送る先を選択</option></select>
     <textarea id="qMsg" placeholder="質問内容を書いてください..."></textarea>
     <button class="submit-btn" id="qBtn">送信する</button>
+  </div>
   </div>
   <div id="qList"></div>
 </div>
@@ -58,12 +61,22 @@ const $=id=>document.getElementById(id),esc=s=>{const d=document.createElement('
 const cu=sessionStorage.getItem('username'),role=sessionStorage.getItem('role');
 if(!cu||!sessionStorage.getItem('token'))window.location.href='02login.html';
 const userRoles=(role||'').split(',').map(r=>r.trim());
-const CLUBS=['吹奏楽部','茶道部','美術部','卓球部','テニス部女子','テニス部男子','サッカー部','野球部','陸上部','バスケ部女子','バスケ部男子','バレー部'];
-CLUBS.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;$('clubSelect').appendChild(o)});
+
+let myClub='',myCommittee='';
+async function loadProfile(){
+  try{
+    const u=await a('/api/me');
+    myClub=u.club||'';myCommittee=u.committee||'';
+    const sel=$('clubSelect');
+    if(myClub){const o=document.createElement('option');o.value=myClub;o.textContent=myClub+'（部活）';sel.appendChild(o)}
+    if(myCommittee){const o=document.createElement('option');o.value=myCommittee;o.textContent=myCommittee+'（委員会）';sel.appendChild(o)}
+    if(!myClub&&!myCommittee){$('noAccess').style.display='block';$('qFormArea').style.display='none'}
+  }catch(e){}
+}
 
 $('qBtn').addEventListener('click',async()=>{
   const msg=$('qMsg').value.trim(),club=$('clubSelect').value;
-  if(!msg||!club){alert('部活と質問内容を入力してください');return}
+  if(!msg||!club){alert('送り先と質問内容を入力してください');return}
   $('qBtn').disabled=true;$('qBtn').textContent='送信中...';
   try{await a('/api/club-questions',{method:'POST',body:JSON.stringify({question:msg,club})});$('qMsg').value='';loadQs()}catch(e){alert(e.message)}
   $('qBtn').disabled=false;$('qBtn').textContent='送信する';
@@ -77,7 +90,7 @@ async function loadQs(){
     el.innerHTML=data.map(q=>{
       const d=new Date(q.created_at);
       const ds=(d.getMonth()+1)+'/'+d.getDate()+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
-      const canReply=!q.answered&&(userRoles.includes('president')||userRoles.includes('vice-president'));
+      const canReply=!q.answered&&(userRoles.includes('president')||userRoles.includes('vice-president')||userRoles.includes('chairperson'));
       const isAdminView=userRoles.includes('admin')||userRoles.includes('teacher');
       const replyForm=canReply?`<div class="reply-input"><input type="text" placeholder="回答を入力..." id="ar-${q.id}"><button class="reply-btn" onclick="answerQ('${q.id}')">回答</button></div>`:'';
       const answerHtml=q.answered?`<div class="answer"><div class="label">✏️ 回答</div>${esc(q.reply||'')}</div>`:'';
@@ -91,7 +104,7 @@ async function answerQ(id){
   const reply=inp.value.trim();if(!reply)return;
   try{await a('/api/club-questions/'+id+'/reply',{method:'POST',body:JSON.stringify({reply})});loadQs()}catch(e){alert(e.message)}
 }
-loadQs();
+loadProfile().then(()=>loadQs());
 </script>
 </body>
 </html>

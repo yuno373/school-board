@@ -991,18 +991,19 @@ async function handleRequest(request, env, ctx) {
       let filtered;
       if (userRoles.includes('admin') || userRoles.includes('teacher')) {
         filtered = allQ; // Can view all
-      } else if (userRoles.includes('president') || userRoles.includes('vice-president')) {
-        // Can view questions for their own club only
+      } else if (userRoles.some(r => ['president','vice-president','chairperson'].includes(r))) {
+        // Can view questions for their own club/committee
         const users = await r2Get(env.DATA, 'users.json') || [];
         const u = users.find(x => x.id === user.id);
-        filtered = allQ.filter(q => q.club === (u?.club || ''));
+        if (!u) filtered = [];
+        else filtered = allQ.filter(q => q.club === u.club || (userRoles.includes('chairperson') && q.club === u.committee));
       } else {
         // Students see only their own questions
         filtered = allQ.filter(q => q.from_username === user.username);
       }
       // Decrypt for owners/repliers
       for (const q of filtered) {
-        if (q.encrypted && (q.from_username === user.username || userRoles.includes('admin') || userRoles.includes('teacher') || userRoles.includes('president') || userRoles.includes('vice-president'))) {
+        if (q.encrypted && (q.from_username === user.username || userRoles.includes('admin') || userRoles.includes('teacher') || userRoles.includes('president') || userRoles.includes('vice-president') || userRoles.includes('chairperson'))) {
           try { q.question = await aesDecrypt(q.encrypted, AES_KEY); } catch(e) { q.question = '[復号できません]'; }
         }
         if (q.reply_encrypted && q.reply) {
@@ -1016,7 +1017,10 @@ async function handleRequest(request, env, ctx) {
       authErr = requireAuth(user);
       if (authErr) return authErr;
       const { question, club } = await request.json();
-      if (!question || !club) return json({ error: '内容と部活名は必須です' }, 400);
+      if (!question || !club) return json({ error: '内容と送信先は必須です' }, 400);
+      const users = await r2Get(env.DATA, 'users.json') || [];
+      const u = users.find(x => x.id === user.id);
+      if (!u || (u.club !== club && u.committee !== club)) return json({ error: '自分の所属する部活・委員会のみ質問できます' }, 403);
       const encrypted = await aesEncrypt(question, AES_KEY);
       const allQ = await r2Get(env.DATA, 'club_questions.json') || [];
       const entry = {

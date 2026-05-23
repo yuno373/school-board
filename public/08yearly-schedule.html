@@ -63,13 +63,6 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
 .filter-bar input,.filter-bar select{padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;background:#faf8f5;transition:all .2s}
 .filter-bar input:focus,.filter-bar select:focus{outline:none;border-color:var(--primary);background:#fff}
 .filter-bar input{flex:1;min-width:150px}
-.gemini-box{background:#faf8f5;border:1.5px solid var(--border);border-radius:12px;padding:16px;margin-top:16px}
-.gemini-box .chat-area{display:flex;gap:8px;margin-top:12px}
-.gemini-box input{flex:1;padding:10px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:13px;font-family:inherit;background:#fff;transition:all .2s}
-.gemini-box input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(224,122,95,0.1)}
-.gemini-box .answer{padding:12px;background:#fff;border-radius:8px;font-size:13px;line-height:1.6;margin-top:10px;white-space:pre-wrap;display:none}
-.gemini-box .answer.show{display:block}
-.gemini-box .hint{font-size:12px;color:var(--sub);margin-top:8px}
 .collapse-toggle{font-size:12px;font-weight:400;color:var(--sub);margin-left:auto}
 .section-hide .section-body{display:none}
 @media(max-width:600px){
@@ -169,22 +162,6 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
     </div>
   </div>
 
-  <!-- Gemini -->
-  <div class="card">
-    <h2 onclick="this.parentElement.classList.toggle('section-hide')">🤖 Gemini に質問 <span class="collapse-toggle">▼</span></h2>
-    <div class="section-body">
-      <p style="font-size:13px;color:var(--sub);margin-bottom:8px">年間予定表のデータについて質問できます</p>
-      <div class="gemini-box">
-        <div class="chat-area">
-          <input type="text" id="gQuestion" placeholder="例：5月の予定は？" onkeydown="if(event.key==='Enter')askGemini()">
-          <button class="btn btn-accent" id="gAskBtn">質問</button>
-        </div>
-        <div class="answer" id="gAnswer"></div>
-        <div class="hint" id="gHint">「体育祭はいつ？」「夏休み前の行事を教えて」など</div>
-      </div>
-    </div>
-  </div>
-
 </main>
 <script>
 const API_BASE=''
@@ -265,20 +242,6 @@ $('sAddBtn').addEventListener('click',async()=>{
 });
 $('sSearch').addEventListener('input',loadClub);
 $('sMonthFilter').addEventListener('change',loadClub);
-
-// ---- Gemini ----
-async function askGemini(){
-  const q=$('gQuestion').value.trim();
-  if(!q)return;
-  const btn=$('gAskBtn'),ans=$('gAnswer'),hint=$('gHint');
-  btn.disabled=true;btn.textContent='考え中...';ans.className='answer show';ans.textContent='Gemini に質問しています...';hint.style.display='none';
-  try{
-    const r=await a('/api/gemini/ask',{method:'POST',body:JSON.stringify({question:q})});
-    ans.textContent=r.answer;
-  }catch(e){ans.textContent='エラー: '+e.message}
-  btn.disabled=false;btn.textContent='質問';
-}
-$('gAskBtn').addEventListener('click',askGemini);
 
 loadYearly();loadClub();
 </script>

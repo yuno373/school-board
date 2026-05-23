@@ -156,13 +156,6 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
       </div>
       <div id="schBatchResult" style="font-size:12px;margin-top:6px"></div>
     </div>
-    <div class="card">
-      <h3>📸 写真から読み取り（Gemini）</h3>
-      <p style="font-size:13px;color:var(--sub);margin-bottom:8px">時間割の写真をアップロードすると自動で読み取ります</p>
-      <input type="file" id="schPhotoInput" accept="image/*" style="margin-bottom:8px">
-      <button class="btn btn-primary btn-sm" id="schPhotoBtn" disabled>読み取り中...</button>
-      <div id="schPhotoResult" style="font-size:12px;margin-top:6px"></div>
-    </div>
   </div>
 
   <!-- Settings Tab (last) -->
@@ -1128,49 +1121,6 @@ $('schBatchParse').addEventListener('click', () => {
   if (errors.length <= 1 && added > 0) $('schBatchText').value = '';
 });
 $('schBatchClear').addEventListener('click', () => { $('schBatchText').value = ''; $('schBatchResult').textContent = ''; });
-
-// ===== PHOTO OCR =====
-const schPhotoBtn = $('schPhotoBtn');
-$('schPhotoInput').addEventListener('change', () => {
-  const file = $('schPhotoInput').files[0];
-  schPhotoBtn.disabled = !file;
-  schPhotoBtn.textContent = file ? '📸 読み取り開始' : '読み取り中...';
-});
-schPhotoBtn.addEventListener('click', async () => {
-  const file = $('schPhotoInput').files[0];
-  if (!file) return;
-  schPhotoBtn.disabled = true; schPhotoBtn.textContent = '読み取り中...';
-  $('schPhotoResult').textContent = 'Geminiで解析中...';
-  try {
-    const b64 = await new Promise((resolve, reject) => {
-      const r = new FileReader();
-      r.onload = () => resolve(r.result);
-      r.onerror = reject;
-      r.readAsDataURL(file);
-    });
-    const prompt = 'この時間割写真から授業スケジュールを読み取り、以下のJSON形式のみで出力してください（説明不要）。' +
-      '曜日は0=日曜,1=月曜,2=火曜,3=水曜,4=木曜,5=金曜,6=土曜の数字で。時限は1-6の数字で。' +
-      '形式: [{"day_of_week":1,"period":1,"subject":"数学","class_name":"1-1"}]';
-    const r = await a('/api/gemini/ask', { method:'POST', body: JSON.stringify({ question: prompt, image: b64 }) });
-    const jsonMatch = r.answer.match(/\[[\s\S]*\]/);
-    if (!jsonMatch) throw new Error('JSONをパースできませんでした: ' + r.answer);
-    const parsed = JSON.parse(jsonMatch[0]);
-    if (!Array.isArray(parsed)) throw new Error('配列ではありません');
-    let added = 0, errors = [];
-    for (const item of parsed) {
-      if (!item.subject || item.day_of_week === undefined || !item.period) { errors.push(`項目不足: ${JSON.stringify(item)}`); continue; }
-      const dup = scheduleData.some(s => s.day_of_week === item.day_of_week && s.period === item.period);
-      if (dup) { errors.push(`${item.subject}(${['日','月','火','水','木','金','土'][item.day_of_week]||'?'}${item.period}限): 重複`); continue; }
-      scheduleData.push({ day_of_week: item.day_of_week, period: item.period, subject: item.subject, class_name: item.class_name || '' });
-      added++;
-    }
-    renderSchedule();
-    const msg = added > 0 ? `✅ ${added}件追加` : '';
-    const err = errors.length > 0 ? `⚠️ ${errors.length}件エラー（先頭: ${errors[0]}）` : '';
-    $('schPhotoResult').textContent = [msg, err].filter(Boolean).join(' | ');
-  } catch(e) { $('schPhotoResult').textContent = '❌ '+e.message; }
-  schPhotoBtn.disabled = false; schPhotoBtn.textContent = '📸 読み取り開始';
-});
 
 loadUsers();
 </script>

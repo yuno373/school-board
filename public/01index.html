@@ -272,6 +272,7 @@ $('postForm').classList.toggle('hidden',!AUTH.canPost());
 $('bChatLink').style.display=hasRole(curUser.role,['admin','teacher','president','vice-president','chairperson'])?'':'none';
 $('bClubQLink').style.display='';
 $('bUserMgmtLink').style.display=hasRole(curUser.role,['admin','teacher'])?'':'none';
+$('bSettingsLink').style.display=hasRole(curUser.role,['admin','teacher'])?'none':'';
 $('bConsultLink').style.display='';
 $('createBtn').addEventListener('click',create);
 $('bLogout').addEventListener('click',()=>{AUTH.logout();window.location.href='02login.html'});

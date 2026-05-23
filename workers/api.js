@@ -859,6 +859,264 @@ async function handleRequest(request, env, ctx) {
     }
 
     // ============================================================
+    // 5b. DIRECT MESSAGES (teacher/admin → anyone, no student→student)
+    // ============================================================
+    const dmPrefix = '/api/dm';
+    // POST /api/dm/send
+    if (path === dmPrefix + '/send' && method === 'POST') {
+      authErr = requireAuth(user);
+      if (authErr) return authErr;
+      const userRole = (user.role || '');
+      const isStaff = ['admin', 'teacher'].some(r => userRole.includes(r));
+      if (!isStaff) return json({ error: '先生・管理者のみ送信できます' }, 403);
+      const { to, message } = await request.json();
+      if (!to || !message || !message.trim()) return json({ error: '宛先とメッセージは必須です' }, 400);
+      const users = await r2Get(env.DATA, 'users.json') || [];
+      const recipient = users.find(u => u.username === to);
+      if (!recipient) return json({ error: 'ユーザーが見つかりません' }, 404);
+      const msgs = await r2Get(env.DATA, 'dm_messages.json') || [];
+      const dm = {
+        id: uuid(), from: user.username, to,
+        message: sanitize(message.trim()),
+        read: false, created_at: new Date().toISOString()
+      };
+      msgs.push(dm);
+      if (msgs.length > 2000) msgs.splice(0, msgs.length - 2000);
+      await r2Put(env.DATA, 'dm_messages.json', msgs);
+      return json(dm, 201);
+    }
+
+    // GET /api/dm/conversations
+    if (path === dmPrefix + '/conversations' && method === 'GET') {
+      authErr = requireAuth(user);
+      if (authErr) return authErr;
+      const msgs = await r2Get(env.DATA, 'dm_messages.json') || [];
+      const convUsers = new Set();
+      msgs.forEach(m => {
+        if (!m.group_id) {
+          if (m.from === user.username) convUsers.add(m.to);
+          if (m.to === user.username) convUsers.add(m.from);
+        }
+      });
+      const users = await r2Get(env.DATA, 'users.json') || [];
+      const convs = [];
+      convUsers.forEach(u => {
+        const uData = users.find(x => x.username === u);
+        const userMsgs = msgs.filter(m => !m.group_id && ((m.from === user.username && m.to === u) || (m.from === u && m.to === user.username)));
+        userMsgs.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+        const last = userMsgs[userMsgs.length - 1];
+        const unread = userMsgs.filter(m => m.to === user.username && !m.read).length;
+        convs.push({
+          type: 'dm', id: u, username: u, display_name: (uData && uData.display_name) || u,
+          role: (uData && uData.role) || '',
+          last_message: last ? last.message : '',
+          last_time: last ? last.created_at : '',
+          unread
+        });
+      });
+      // Add group conversations
+      const groups = await r2Get(env.DATA, 'dm_groups.json') || [];
+      const myGroups = groups.filter(g => g.members.includes(user.username));
+      myGroups.forEach(g => {
+        const gm = msgs.filter(m => m.group_id === g.id);
+        gm.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+        const last = gm[gm.length - 1];
+        const unread = gm.filter(m => m.from !== user.username && (!m.read_by || !m.read_by.includes(user.username))).length;
+        convs.push({
+          type: 'group', id: g.id, name: g.name, members: g.members,
+          last_message: last ? last.message : '',
+          last_time: last ? last.created_at : '',
+          unread, created_by: g.created_by
+        });
+      });
+      convs.sort((a, b) => new Date(b.last_time || 0) - new Date(a.last_time || 0));
+      return json(convs);
+    }
+
+    // GET /api/dm/messages/:username
+    const dmConv = path.match(/^\/api\/dm\/messages\/(.+)$/);
+    if (dmConv && method === 'GET') {
+      authErr = requireAuth(user);
+      if (authErr) return authErr;
+      const msgs = await r2Get(env.DATA, 'dm_messages.json') || [];
+      const conv = msgs.filter(m =>
+        (m.from === user.username && m.to === decodeURIComponent(dmConv[1])) ||
+        (m.from === decodeURIComponent(dmConv[1]) && m.to === user.username)
+      );
+      conv.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+      return json(conv);
+    }
+
+    // POST /api/dm/read/:username
+    const dmRead = path.match(/^\/api\/dm\/read\/(.+)$/);
+    if (dmRead && method === 'POST') {
+      authErr = requireAuth(user);
+      if (authErr) return authErr;
+      const msgs = await r2Get(env.DATA, 'dm_messages.json') || [];
+      let changed = false;
+      msgs.forEach(m => {
+        if (m.to === user.username && m.from === decodeURIComponent(dmRead[1]) && !m.read) {
+          m.read = true; changed = true;
+        }
+      });
+      if (changed) await r2Put(env.DATA, 'dm_messages.json', msgs);
+      return json({ ok: true });
+    }
+
+    // GET /api/dm/unread-count
+    if (path === dmPrefix + '/unread-count' && method === 'GET') {
+      authErr = requireAuth(user);
+      if (authErr) return authErr;
+      const msgs = await r2Get(env.DATA, 'dm_messages.json') || [];
+      const dms = msgs.filter(m => m.to === user.username && !m.read).length;
+      const groups = await r2Get(env.DATA, 'dm_groups.json') || [];
+      const myGroups = groups.filter(g => g.members.includes(user.username));
+      let groupUnread = 0;
+      myGroups.forEach(g => { groupUnread += msgs.filter(m => m.group_id === g.id && m.from !== user.username && !m.read_by && !m.read_by?.includes(user.username)).length; });
+      return json({ count: dms + groupUnread });
+    }
+
+    // ============================================================
+    // 5c. GROUP DM (teacher/admin creates, students join)
+    // ============================================================
+    // POST /api/dm/groups - Create group
+    if (path === dmPrefix + '/groups' && method === 'POST') {
+      authErr = requireAuth(user);
+      if (authErr) return authErr;
+      const userRole = (user.role || '');
+      const isStaff = ['admin', 'teacher'].some(r => userRole.includes(r));
+      if (!isStaff) return json({ error: '先生・管理者のみグループ作成できます' }, 403);
+      const { name, members } = await request.json();
+      if (!name || !name.trim()) return json({ error: 'グループ名は必須です' }, 400);
+      const mems = Array.isArray(members) ? members : [];
+      if (!mems.includes(user.username)) mems.unshift(user.username);
+      if (mems.length < 2) return json({ error: 'メンバーが足りません' }, 400);
+      const users = await r2Get(env.DATA, 'users.json') || [];
+      const valid = mems.every(m => users.find(u => u.username === m));
+      if (!valid) return json({ error: '存在しないユーザーが含まれています' }, 400);
+      const groups = await r2Get(env.DATA, 'dm_groups.json') || [];
+      const grp = { id: uuid(), name: sanitize(name.trim()), members: mems, created_by: user.username, created_at: new Date().toISOString() };
+      groups.push(grp);
+      await r2Put(env.DATA, 'dm_groups.json', groups);
+      return json(grp, 201);
+    }
+
+    // GET /api/dm/groups - List groups
+    if (path === dmPrefix + '/groups' && method === 'GET') {
+      authErr = requireAuth(user);
+      if (authErr) return authErr;
+      const groups = await r2Get(env.DATA, 'dm_groups.json') || [];
+      const myGroups = groups.filter(g => g.members.includes(user.username));
+      const users = await r2Get(env.DATA, 'users.json') || [];
+      const msgs = await r2Get(env.DATA, 'dm_messages.json') || [];
+      const result = myGroups.map(g => {
+        const gm = msgs.filter(m => m.group_id === g.id);
+        gm.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+        const last = gm[gm.length - 1];
+        const unread = gm.filter(m => m.from !== user.username && (!m.read_by || !m.read_by.includes(user.username))).length;
+        const memberNames = g.members.map(m => { const u = users.find(x => x.username === m); return (u && u.display_name) || m; });
+        return { id: g.id, name: g.name, members: g.members, member_names: memberNames, created_by: g.created_by, last_message: last ? last.message : '', last_time: last ? last.created_at : '', unread };
+      });
+      result.sort((a, b) => new Date(b.last_time || 0) - new Date(a.last_time || 0));
+      return json(result);
+    }
+
+    // GET /api/dm/groups/:id
+    const grpGet = path.match(/^\/api\/dm\/groups\/([^/]+)$/);
+    if (grpGet && method === 'GET') {
+      authErr = requireAuth(user);
+      if (authErr) return authErr;
+      const groups = await r2Get(env.DATA, 'dm_groups.json') || [];
+      const g = groups.find(x => x.id === grpGet[1]);
+      if (!g) return json({ error: '見つかりません' }, 404);
+      if (!g.members.includes(user.username)) return json({ error: 'メンバーではありません' }, 403);
+      return json(g);
+    }
+
+    // POST /api/dm/groups/:id/add - Add members
+    const grpAdd = path.match(/^\/api\/dm\/groups\/([^/]+)\/add$/);
+    if (grpAdd && method === 'POST') {
+      authErr = requireAuth(user);
+      if (authErr) return authErr;
+      const userRole = (user.role || '');
+      const isStaff = ['admin', 'teacher'].some(r => userRole.includes(r));
+      if (!isStaff) return json({ error: '先生・管理者のみ操作できます' }, 403);
+      const groups = await r2Get(env.DATA, 'dm_groups.json') || [];
+      const g = groups.find(x => x.id === grpAdd[1]);
+      if (!g) return json({ error: '見つかりません' }, 404);
+      const { members } = await request.json();
+      if (!Array.isArray(members) || !members.length) return json({ error: '追加するユーザーが必要です' }, 400);
+      const users = await r2Get(env.DATA, 'users.json') || [];
+      members.forEach(m => { if (!g.members.includes(m) && users.find(u => u.username === m)) g.members.push(m); });
+      await r2Put(env.DATA, 'dm_groups.json', groups);
+      return json({ ok: true, members: g.members });
+    }
+
+    // POST /api/dm/groups/:id/remove - Remove members
+    const grpRemove = path.match(/^\/api\/dm\/groups\/([^/]+)\/remove$/);
+    if (grpRemove && method === 'POST') {
+      authErr = requireAuth(user);
+      if (authErr) return authErr;
+      const userRole = (user.role || '');
+      const isStaff = ['admin', 'teacher'].some(r => userRole.includes(r));
+      if (!isStaff) return json({ error: '先生・管理者のみ操作できます' }, 403);
+      const groups = await r2Get(env.DATA, 'dm_groups.json') || [];
+      const g = groups.find(x => x.id === grpRemove[1]);
+      if (!g) return json({ error: '見つかりません' }, 404);
+      const { members } = await request.json();
+      if (!Array.isArray(members) || !members.length) return json({ error: '削除するユーザーが必要です' }, 400);
+      g.members = g.members.filter(m => !members.includes(m));
+      await r2Put(env.DATA, 'dm_groups.json', groups);
+      return json({ ok: true, members: g.members });
+    }
+
+    // POST /api/dm/groups/:id/send - Send message to group
+    const grpSend = path.match(/^\/api\/dm\/groups\/([^/]+)\/send$/);
+    if (grpSend && method === 'POST') {
+      authErr = requireAuth(user);
+      if (authErr) return authErr;
+      const groups = await r2Get(env.DATA, 'dm_groups.json') || [];
+      const g = groups.find(x => x.id === grpSend[1]);
+      if (!g) return json({ error: '見つかりません' }, 404);
+      if (!g.members.includes(user.username)) return json({ error: 'メンバーではありません' }, 403);
+      const { message } = await request.json();
+      if (!message || !message.trim()) return json({ error: 'メッセージは必須です' }, 400);
+      const msgs = await r2Get(env.DATA, 'dm_messages.json') || [];
+      const dm = {
+        id: uuid(), from: user.username, group_id: g.id,
+        message: sanitize(message.trim()),
+        read_by: [user.username], created_at: new Date().toISOString()
+      };
+      msgs.push(dm);
+      if (msgs.length > 5000) msgs.splice(0, msgs.length - 5000);
+      await r2Put(env.DATA, 'dm_messages.json', msgs);
+      return json(dm, 201);
+    }
+
+    // GET /api/dm/groups/:id/messages
+    const grpMsgs = path.match(/^\/api\/dm\/groups\/([^/]+)\/messages$/);
+    if (grpMsgs && method === 'GET') {
+      authErr = requireAuth(user);
+      if (authErr) return authErr;
+      const groups = await r2Get(env.DATA, 'dm_groups.json') || [];
+      const g = groups.find(x => x.id === grpMsgs[1]);
+      if (!g) return json({ error: '見つかりません' }, 404);
+      if (!g.members.includes(user.username)) return json({ error: 'メンバーではありません' }, 403);
+      const msgs = await r2Get(env.DATA, 'dm_messages.json') || [];
+      const conv = msgs.filter(m => m.group_id === g.id);
+      conv.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+      // Mark as read
+      conv.forEach(m => {
+        if (m.from !== user.username) {
+          if (!m.read_by) m.read_by = [];
+          if (!m.read_by.includes(user.username)) m.read_by.push(user.username);
+        }
+      });
+      await r2Put(env.DATA, 'dm_messages.json', msgs);
+      return json(conv);
+    }
+
+    // ============================================================
     // 6. SCHEDULES
     // ============================================================
     if (path === '/api/schedules' && method === 'GET') {

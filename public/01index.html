@@ -129,6 +129,7 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
     <a href="consult.html" class="header-link" id="bConsultLink">相談所</a>
     <a href="club-questions.html" class="header-link" id="bClubQLink" style="display:none">質問</a>
     <a href="chat.html" class="header-link" id="bChatLink" style="display:none">部長チャット<span class="notif-badge" id="chatBadge"></span></a>
+    <a href="dm.html" class="header-link" id="bDmLink" style="display:none">DM</a>
     <a href="user-management.html" class="header-link" id="bUserMgmtLink" style="display:none">ユーザー管理</a>
     <a href="settings.html" class="header-link" id="bSettingsLink">ユーザー設定</a>
     <button class="header-link danger" id="bLogout">ログアウト</button>
@@ -322,6 +323,7 @@ $('bRole').textContent=(curUser.role||'').split(',').map(r=>roleNames[r.trim()]|
 const userRolesArr=(curUser.role||'').split(',').map(r=>r.trim());
 $('postForm').classList.toggle('hidden',!AUTH.canPost());
 $('bChatLink').style.display=hasRole(curUser.role,['admin','teacher','president','vice-president','chairperson'])?'':'none';
+$('bDmLink').style.display=hasRole(curUser.role,['admin','teacher'])?'':'none';
 $('bClubQLink').style.display='';
 $('bUserMgmtLink').style.display=hasRole(curUser.role,['admin','teacher'])?'':'none';
 $('bSettingsLink').style.display=hasRole(curUser.role,['admin','teacher'])?'none':'';

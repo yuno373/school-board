@@ -706,13 +706,15 @@ async function runDiagnosis() {
   // 1. API Ping
   try {
     const t0 = Date.now();
-    const r = await fetch(API_BASE + '/api/me', { headers: { 'Authorization': 'Bearer '+token } });
+    const ac = new AbortController(); const tid = setTimeout(() => ac.abort(), 5000);
+    const r = await fetch(API_BASE + '/api/me', { headers: { 'Authorization': 'Bearer '+token }, signal: ac.signal }); clearTimeout(tid);
     const ms = Date.now() - t0;
     r.ok ? addResult('api-ping', 'pass', `APIサーバー接続OK（応答: ${ms}ms）`) : addResult('api-ping', 'fail', `APIサーバーが HTTP ${r.status}`, `URL: /api/me`);
   } catch(e) { addResult('api-ping', 'fail', 'APIサーバーに接続できません', e.message) }
   // 2. Auth system
   try {
-    const r = await fetch(API_BASE + '/api/me', { headers: { 'Authorization': 'Bearer '+token } });
+    const ac2 = new AbortController(); const tid2 = setTimeout(() => ac2.abort(), 5000);
+    const r = await fetch(API_BASE + '/api/me', { headers: { 'Authorization': 'Bearer '+token }, signal: ac2.signal }); clearTimeout(tid2);
     const d = await r.json();
     if (r.ok && d.username) addResult('auth', 'pass', `JWT認証OK（ユーザー: ${d.username}, 権限: ${d.role}）`);
     else addResult('auth', 'fail', '認証レスポンスが不正');
@@ -722,7 +724,8 @@ async function runDiagnosis() {
   const epOk = [], epNg = [];
   for (const p of getEndpoints) {
     try {
-      const r = await fetch(API_BASE + p, { headers: { 'Authorization': 'Bearer '+token } });
+      const ac = new AbortController(); const tid = setTimeout(() => ac.abort(), 5000);
+      const r = await fetch(API_BASE + p, { headers: { 'Authorization': 'Bearer '+token }, signal: ac.signal }); clearTimeout(tid);
       (r.ok ? epOk : epNg).push(p+'('+r.status+')')
     } catch(e) { epNg.push(p) }
   }
@@ -733,7 +736,7 @@ async function runDiagnosis() {
   // 5. Static files
   const sf = ['01index.html','02login.html','user-management.html','admin.html','consult.html','schedule.html','club-questions.html','chat.html','dm.html','settings.html','teacher-setup.html','install.html','manifest.json','sw.js','icon.svg'];
   const sfOk = [], sfNg = [];
-  for (const f of sf) { try { const r = await fetch(f, { method:'HEAD' }); (r.ok ? sfOk : sfNg).push(f+'('+r.status+')') } catch(e) { sfNg.push(f) } }
+  for (const f of sf) { try { const ac = new AbortController(); const tid = setTimeout(() => ac.abort(), 5000); const r = await fetch(f, { method:'HEAD', signal: ac.signal }); clearTimeout(tid); (r.ok ? sfOk : sfNg).push(f+'('+r.status+')') } catch(e) { sfNg.push(f) } }
   sfNg.length === 0 ? addResult('static', 'pass', `全${sf.length}ファイル正常配信`) : addResult('static', 'warn', `${sfNg.length}ファイルに問題`, sfNg.join(', '));
   // 6. PWA
   try {
@@ -751,12 +754,18 @@ async function runDiagnosis() {
   // 7. Push notification
   try {
     if ('serviceWorker' in navigator && 'PushManager' in window) {
-      const reg = await navigator.serviceWorker.ready;
-      const sub = await reg.pushManager.getSubscription();
-      const vk = await a('/api/push/vapid-key');
-      const pushOk = sub ? '購読済み' : '未購読';
-      const vapidOk = vk && vk.publicKey ? 'VAPID鍵あり' : 'VAPID鍵なし';
-      addResult('push', 'info', `プッシュ通知: ${pushOk}, ${vapidOk}`);
+      const pushResult = await Promise.race([
+        (async()=>{
+          const reg = await navigator.serviceWorker.ready;
+          const sub = await reg.pushManager.getSubscription();
+          const vk = await a('/api/push/vapid-key');
+          const pushOk = sub ? '購読済み' : '未購読';
+          const vapidOk = vk && vk.publicKey ? 'VAPID鍵あり' : 'VAPID鍵なし';
+          return `プッシュ通知: ${pushOk}, ${vapidOk}`;
+        })(),
+        new Promise(r => setTimeout(() => r('タイムアウト'), 5000))
+      ]);
+      addResult('push', 'info', pushResult);
     } else { addResult('push', 'info', 'この環境はプッシュ通知非対応') }
   } catch(e) { addResult('push', 'warn', 'プッシュ通知チェックエラー', e.message) }
   // 8. User data integrity
@@ -931,6 +940,9 @@ async function runDiagnosis() {
   btn.disabled = false;
   progress.style.display = 'none';
 }
+// Safety net: force finish if something hangs
+function safeFinish(){const btn=$('diagRun');if(btn.disabled){btn.disabled=false;$('diagProgress').style.display='none'}}
+setTimeout(safeFinish,60000);
 $('diagRun').addEventListener('click', runDiagnosis);
 
 // === Push Notification Settings ===

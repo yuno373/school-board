@@ -320,7 +320,7 @@ async function create(){
     $('bTitle').value='';$('bContent').value='';$('bFile').value='';$('bFileList').textContent='';
     initExpiresDate();
     loadCounts();load();
-    try{await api('/api/push/notify',{method:'POST',body:JSON.stringify({category:cat,title:t,body:c.slice(0,80),url:'/01index.html?cat='+encodeURIComponent(cat),excludeUser:curUser?.username})})}catch(e){}
+    try{const notifyCat=cat==='上中連絡'?'general':cat==='忘れ物'?'lost':cat;await api('/api/push/notify',{method:'POST',body:JSON.stringify({category:notifyCat,title:t,body:c.slice(0,80),url:'/01index.html?cat='+encodeURIComponent(cat),excludeUser:curUser?.username})})}catch(e){}
   }catch(e){alert('失敗: '+e.message)}
   $('createBtn').disabled=false;$('createBtn').textContent='投稿する';
 }

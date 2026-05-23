@@ -73,7 +73,7 @@ app.post('/api/push/notify', express.json(), async (req, res) => {
     if (!category || !title) return res.status(400).json({ error: 'カテゴリとタイトルは必須です' });
     const user = await verifyToken(req.headers.authorization);
     if (!user) return res.status(401).json({ error: '認証が必要です' });
-    const targets = pushSubs.filter(s => s.topics && (s.topics.includes(category) || s.topics.includes('all')) && s.username !== excludeUser);
+    const targets = pushSubs.filter(s => s.topics && (s.topics.includes(category) || s.topics.includes('club_'+category) || s.topics.includes('committee_'+category) || s.topics.includes('all')) && s.username !== excludeUser);
     const results = { sent: 0, failed: 0 };
     await Promise.all(targets.map(async sub => {
       try {

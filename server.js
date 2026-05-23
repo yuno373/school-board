@@ -15,29 +15,65 @@ if (VAPID_PUBLIC && VAPID_PRIVATE) {
   console.log('Generated temporary VAPID keys. Set env vars VAPID_PUBLIC_KEY and VAPID_PRIVATE_KEY for persistence.');
 }
 
+const WORKER = 'https://school-board-api.dajianweixi.workers.dev';
+let pushSubs = [];
+
+async function verifyToken(token) {
+  if (!token) return null;
+  try {
+    const r = await fetch(WORKER + '/api/me', { headers: { 'Authorization': token } });
+    if (!r.ok) return null;
+    return await r.json();
+  } catch { return null; }
+}
+
 app.get('/api/push/vapid-key', (req, res) => {
   res.json({ publicKey: VAPID_PUBLIC });
+});
+
+app.post('/api/push/subscribe', express.json(), async (req, res) => {
+  try {
+    const user = await verifyToken(req.headers.authorization);
+    if (!user) return res.status(401).json({ error: '認証が必要です' });
+    pushSubs = pushSubs.filter(s => s.username !== user.username);
+    pushSubs.push({ ...req.body, username: user.username, createdAt: new Date().toISOString() });
+    res.json({ ok: true });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.post('/api/push/unsubscribe', express.json(), async (req, res) => {
+  try {
+    const user = await verifyToken(req.headers.authorization);
+    if (!user) return res.status(401).json({ error: '認証が必要です' });
+    pushSubs = pushSubs.filter(s => s.username !== user.username);
+    res.json({ ok: true });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.get('/api/push/subscriptions', async (req, res) => {
+  try {
+    const user = await verifyToken(req.headers.authorization);
+    if (!user || !['admin', 'teacher'].some(r => (user.role || '').split(',').map(x => x.trim()).includes(r)))
+      return res.status(403).json({ error: '権限がありません' });
+    res.json(pushSubs);
+  } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 app.post('/api/push/send', express.json(), async (req, res) => {
   try {
     const { title, body, url } = req.body;
     if (!title) return res.status(400).json({ error: 'タイトルは必須です' });
-    const token = req.headers.authorization;
-    if (!token) return res.status(401).json({ error: '認証が必要です' });
-    const subsResp = await fetch('https://school-board-api.dajianweixi.workers.dev/api/push/subscriptions', {
-      headers: { 'Authorization': token }
-    });
-    if (!subsResp.ok) return res.status(502).json({ error: '購読一覧の取得に失敗しました' });
-    const subs = await subsResp.json();
+    const user = await verifyToken(req.headers.authorization);
+    if (!user || !['admin', 'teacher'].some(r => (user.role || '').split(',').map(x => x.trim()).includes(r)))
+      return res.status(403).json({ error: '権限がありません' });
     const results = { sent: 0, failed: 0 };
-    await Promise.all(subs.map(async sub => {
+    await Promise.all(pushSubs.map(async sub => {
       try {
         await webPush.sendNotification(sub, JSON.stringify({ title, body: body || '', icon: '/icon.svg', data: { url: url || '/' } }));
         results.sent++;
       } catch (e) {
-        if (e.statusCode === 410 || e.statusCode === 404) results.failed++;
-        else results.failed++;
+        results.failed++;
+        if (e.statusCode === 410 || e.statusCode === 404) pushSubs = pushSubs.filter(s => s.endpoint !== sub.endpoint);
       }
     }));
     res.json(results);

@@ -131,7 +131,7 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
     </div>
     <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;align-items:center">
       <input type="text" id="searchInput" placeholder="名前・部活・委員会・クラスで検索" style="flex:1;min-width:140px;padding:8px 12px;border:2px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;background:#faf8f5">
-      <select id="searchRole" style="padding:8px 12px;border:2px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;background:#faf8f5"><option value="">全権限</option><option value="teacher">先生</option><option value="president">部長</option><option value="vice-president">副部長</option><option value="chairperson">委員長</option><option value="student">生徒</option></select>
+      <select id="searchRole" style="padding:8px 12px;border:2px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;background:#faf8f5"><option value="">全権限</option><option value="admin">管理者</option><option value="teacher">先生</option><optgroup label="生徒"><option value="president">部長</option><option value="vice-president">副部長</option><option value="chairperson">委員長</option><option value="student">生徒（一般）</option></optgroup></select>
       <button class="btn btn-primary btn-sm" id="aRefresh">更新</button>
     </div>
     <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;align-items:center;padding:8px 12px;background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);font-size:12px">

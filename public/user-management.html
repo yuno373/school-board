@@ -146,7 +146,7 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
   <div class="tab-content active" id="tab-users">
     <div class="search-bar">
       <input type="text" id="searchInput" placeholder="名前・部活・委員会・クラスで検索">
-      <select id="searchRole"><option value="">全権限</option><option value="teacher">先生</option><option value="president">部長</option><option value="vice-president">副部長</option><option value="chairperson">委員長</option><option value="student">生徒</option></select>
+      <select id="searchRole"><option value="">全権限</option><option value="admin">管理者</option><option value="teacher">先生</option><optgroup label="生徒"><option value="president">部長</option><option value="vice-president">副部長</option><option value="chairperson">委員長</option><option value="student">生徒（一般）</option></optgroup></select>
       <button class="btn btn-primary btn-sm" id="aRefresh">更新</button>
     </div>
     <div class="bulk-bar">

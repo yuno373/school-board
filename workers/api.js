@@ -637,6 +637,32 @@ async function handleRequest(request, env, ctx) {
       const created = [];
       let seq = 1;
 
+      // Teacher batch generation
+      if (body.teachers) {
+        const prefix = body.prefix || 'T';
+        let nextNum = body.startNum || 1;
+        const count = parseInt(body.teachers) || 1;
+        for (let i = 0; i < count; i++) {
+          while (users.find(u => u.username === prefix + String(nextNum).padStart(3, '0'))) nextNum++;
+          const tid = prefix + String(nextNum).padStart(3, '0');
+          const disp = body.displayPrefix ? body.displayPrefix + String(nextNum) : tid;
+          if (users.find(u => u.username === tid)) continue;
+          users.push({
+            id: uuid(), username: tid, password: await hp(password), password_plain: password,
+            role: 'teacher', grade: '', class_num: '', seat_num: '',
+            club: '', committee: '', display_name: disp, icon: '',
+            teacher_grades: '', teacher_subject: '', teacher_homeroom: false,
+            teacher_setup_done: false,
+            created_at: new Date().toISOString()
+          });
+          created.push(tid);
+          nextNum++;
+        }
+        await r2Put(env.DATA, 'users.json', users);
+        await auditLog(env, 'batch_create_teacher', user.username, { count: created.length, body: JSON.stringify(body) });
+        return json({ created: created.length, password, users: created });
+      }
+
       // New format: { years: [{ year, classes: [{ perClass }] }] }
       // Old format: { year, classes, perClass }
       if (body.years) {

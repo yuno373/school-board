@@ -182,6 +182,18 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
       <button class="btn btn-primary" id="bGenerate">生成する</button>
     </div>
     <div class="result-box" id="bResult"></div>
+    <div style="margin-top:20px;border-top:2px dashed var(--border);padding-top:20px">
+      <h3 style="font-size:15px;font-weight:700;margin-bottom:12px;color:var(--text)">🧑‍🏫 先生ID 一括生成</h3>
+      <div class="batch-form">
+        <label>接頭語<input type="text" id="tPrefix" value="T" style="width:60px"></label>
+        <label>開始番号<input type="number" id="tStart" value="1" min="1" style="width:70px"></label>
+        <label>人数<input type="number" id="tCount" value="5" min="1" max="100" style="width:70px"></label>
+        <label>表示名の接頭語<input type="text" id="tDispPrefix" placeholder="先生" style="width:80px"></label>
+        <label>初期パスワード<input type="text" id="tPassword" value="111111" style="width:70px"></label>
+        <button class="btn btn-primary" id="tGenerate">生成する</button>
+      </div>
+      <div class="result-box" id="tResult"></div>
+    </div>
     <div style="margin-top:24px;border-top:2px dashed var(--border);padding-top:20px">
       <h3 style="font-size:15px;font-weight:700;margin-bottom:12px;color:var(--text)">手動でユーザー登録</h3>
       <div class="batch-form">
@@ -483,6 +495,24 @@ $('bGenerate').addEventListener('click',async()=>{
   $('bGenerate').disabled=false;$('bGenerate').textContent='生成する';
 });
 renderBatchYears();
+
+// === Teacher Batch Generation ===
+$('tGenerate').addEventListener('click',async()=>{
+  const prefix=$('tPrefix').value.trim()||'T';
+  const startNum=parseInt($('tStart').value)||1;
+  const count=parseInt($('tCount').value)||1;
+  const dispPrefix=$('tDispPrefix').value.trim()||'';
+  const password=$('tPassword').value||'111111';
+  if(count<1||count>100){alert('人数は1〜100の範囲で指定してください');return}
+  if(!confirm(prefix+'001〜'+prefix+String(startNum+count-1).padStart(3,'0')+' まで '+count+'人の先生を生成しますか？\nパスワード: '+password))return;
+  $('tGenerate').disabled=true;$('tGenerate').textContent='生成中...';
+  try{
+    const r=await a('/api/users/batch',{method:'POST',body:JSON.stringify({teachers:count,prefix,startNum,displayPrefix:dispPrefix,password})});
+    const box=$('tResult');box.className='result-box show';
+    box.innerHTML='<strong>'+r.created+'人</strong> の先生IDを生成しました<br>初期パスワード: <strong>'+esc(r.password)+'</strong><br>生成ID: '+r.users.slice(0,5).join(', ')+(r.users.length>5?' …他'+(r.users.length-5)+'件':'');
+  }catch(e){alert(e.message)}
+  $('tGenerate').disabled=false;$('tGenerate').textContent='生成する';
+});
 
 // === Manual Create ===
 $('mCreate').addEventListener('click', async () => {

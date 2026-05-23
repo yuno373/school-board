@@ -79,7 +79,8 @@ $('loginForm').addEventListener('submit',async e=>{
     }
     sessionStorage.setItem('token',d.token);sessionStorage.setItem('username',d.username);sessionStorage.setItem('role',d.role);
     sessionStorage.setItem('display_name',d.display_name||d.username);
-    window.location.href='01index.html';
+    const isTeacher=(d.role||'').split(',').some(r=>['teacher','admin'].includes(r.trim()));
+    if(isTeacher&&!d.teacher_setup_done){window.location.href='teacher-setup.html'}else{window.location.href='01index.html'}
   }catch(e){$('errorMsg').textContent='サーバーに接続できません';$('errorMsg').className='error show';btn.disabled=false;btn.textContent='ログイン'}
 });
 </script>

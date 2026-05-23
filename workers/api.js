@@ -313,14 +313,16 @@ async function handleRequest(request, env, ctx) {
       const sessionData = {
         id: validUser.id, username: validUser.username, role: validUser.role,
         display_name: validUser.display_name || validUser.username, grade: validUser.grade || '',
-        club: validUser.club || '', committee: validUser.committee || '', exp
+        club: validUser.club || '', committee: validUser.committee || '',
+        teacher_setup_done: validUser.teacher_setup_done || false, exp
       };
       const token = await hmacSign(sessionData, env.COOKIE_SECRET);
       await auditLog(env, 'login', validUser.username);
       return new Response(JSON.stringify({
         token, username: validUser.username, role: validUser.role,
         display_name: validUser.display_name || validUser.username,
-        grade: validUser.grade || '', club: validUser.club || '', committee: validUser.committee || ''
+        grade: validUser.grade || '', club: validUser.club || '', committee: validUser.committee || '',
+        teacher_setup_done: validUser.teacher_setup_done || false
       }), {
         status: 200,
         headers: {
@@ -354,6 +356,8 @@ async function handleRequest(request, env, ctx) {
         display_name: user.display_name || user.username,
         grade: u?.grade || '', class_num: u?.class_num || '', seat_num: u?.seat_num || '',
         club: u?.club || '', committee: u?.committee || '',
+        teacher_grade: u?.teacher_grade || '', teacher_subject: u?.teacher_subject || '', teacher_homeroom: u?.teacher_homeroom || '',
+        teacher_setup_done: u?.teacher_setup_done || false,
         icon: u?.icon || '', created_at: u?.created_at || ''
       });
     }
@@ -362,7 +366,7 @@ async function handleRequest(request, env, ctx) {
     if (path === '/api/me' && method === 'PUT') {
       authErr = requireAuth(user);
       if (authErr) return authErr;
-      const { display_name, icon, club, committee, grade, class_num, seat_num } = await request.json();
+      const { display_name, icon, club, committee, grade, class_num, seat_num, teacher_grade, teacher_subject, teacher_homeroom, teacher_setup_done } = await request.json();
       const users = await r2Get(env.DATA, 'users.json') || [];
       const u = users.find(x => x.id === user.id);
       if (!u) return json({ error: '見つかりません' }, 404);
@@ -373,6 +377,10 @@ async function handleRequest(request, env, ctx) {
       if (grade !== undefined) u.grade = String(grade);
       if (class_num !== undefined) u.class_num = String(class_num);
       if (seat_num !== undefined) u.seat_num = String(seat_num);
+      if (teacher_grade !== undefined) u.teacher_grade = String(teacher_grade);
+      if (teacher_subject !== undefined) u.teacher_subject = sanitize(teacher_subject.trim());
+      if (teacher_homeroom !== undefined) u.teacher_homeroom = String(teacher_homeroom);
+      if (teacher_setup_done !== undefined) u.teacher_setup_done = !!teacher_setup_done;
       await r2Put(env.DATA, 'users.json', users);
       await auditLog(env, 'update_profile', user.username, { fields: Object.keys({ display_name, icon, club, committee }).filter(k => arguments[1][k] !== undefined) });
       return json({ success: true });
@@ -556,6 +564,10 @@ async function handleRequest(request, env, ctx) {
       if (updates.club !== undefined) u.club = updates.club;
       if (updates.committee !== undefined) u.committee = updates.committee;
       if (updates.display_name !== undefined) u.display_name = updates.display_name;
+      if (updates.teacher_grade !== undefined) u.teacher_grade = updates.teacher_grade;
+      if (updates.teacher_subject !== undefined) u.teacher_subject = updates.teacher_subject;
+      if (updates.teacher_homeroom !== undefined) u.teacher_homeroom = updates.teacher_homeroom;
+      if (updates.teacher_setup_done !== undefined) u.teacher_setup_done = !!updates.teacher_setup_done;
       // Auto-add teachers/admin to chat
       if (updates.role && (updates.role.includes('admin') || updates.role.includes('teacher'))) {
         const parts = await r2Get(env.DATA, 'chat_participants.json') || [];

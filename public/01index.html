@@ -147,12 +147,8 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
     <select id="bCat"></select>
     <div class="form-row"><input type="file" id="bFile" multiple accept=".pdf,.jpg,.jpeg,.png,.gif,.txt,.doc,.docx"></div>
     <div id="bFileList" style="font-size:12px;color:#8a8682;margin-bottom:10px"></div>
-    <select id="bExpires">
-      <option value="30" selected>30日後に消える</option>
-      <option value="15">15日後に消える</option>
-      <option value="60">60日後に消える</option>
-      <option value="90">90日後に消える</option>
-    </select>
+    <label style="font-size:11px;color:var(--sub)">自動削除日（最大2ヶ月後）</label>
+    <input type="date" id="bExpires" style="padding:5px 8px;border:2px solid var(--border);border-radius:6px;font-size:12px;font-family:inherit;width:170px;display:block;margin-top:2px">
     <button id="createBtn">投稿する</button>
   </section>
   <section id="bList"><div class="empty-state">読み込み中...</div></section>
@@ -305,8 +301,11 @@ async function create(){
   try{
     const files=[];const fileInput=$('bFile');
     if(fileInput.files.length){for(const f of fileInput.files){const fd=new FormData();fd.append('file',f);const token=sessionStorage.getItem('token');const r=await fetch(API_BASE+'/api/upload',{method:'POST',headers:{'Authorization':'Bearer '+token},body:fd});const d=await r.json();if(r.ok)files.push({url:d.url,name:d.name,type:d.type});else{alert('ファイルアップロード失敗: '+d.error);$('createBtn').disabled=false;$('createBtn').textContent='投稿する';return}}}
-    await api('/api/posts',{method:'POST',body:JSON.stringify({title:t,content:c,category:cat,files,expiresIn:$('bExpires').value})});
+    const expDate=$('bExpires').value;
+    const expiresIn=expDate?Math.round((new Date(expDate+'T23:59:59')-Date.now())/86400000):30;
+    await api('/api/posts',{method:'POST',body:JSON.stringify({title:t,content:c,category:cat,files,expiresIn})});
     $('bTitle').value='';$('bContent').value='';$('bFile').value='';$('bFileList').textContent='';
+    initExpiresDate();
     loadCounts();load();
   }catch(e){alert('失敗: '+e.message)}
   $('createBtn').disabled=false;$('createBtn').textContent='投稿する';
@@ -328,6 +327,8 @@ $('bSettingsLink').style.display=hasRole(curUser.role,['admin','teacher'])?'none
 $('bConsultLink').style.display='';
 $('createBtn').addEventListener('click',create);
 $('bLogout').addEventListener('click',()=>{AUTH.logout();window.location.href='02login.html'});
+function initExpiresDate(){const n=new Date();const d=new Date(n);d.setDate(d.getDate()+30);const m=new Date(n);m.setDate(m.getDate()+60);const inp=$('bExpires');inp.value=d.toISOString().split('T')[0];inp.max=m.toISOString().split('T')[0];inp.min=n.toISOString().split('T')[0]}
+initExpiresDate();
 
 function clock(){function u(){const n=new Date();$('hDate').textContent=(n.getMonth()+1)+'/'+n.getDate()+'('+'日月火水木金土'[n.getDay()]+')'}u();setInterval(u,1000)}
 clock();

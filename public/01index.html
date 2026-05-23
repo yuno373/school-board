@@ -92,17 +92,6 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
 .react-toggle-btn .rt-count{font-weight:700;font-size:10px}
 .react-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:999;align-items:center;justify-content:center}
 .react-overlay.show{display:flex}
-.notif-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:999;align-items:center;justify-content:center}
-.notif-overlay.show{display:flex}
-.notif-modal{background:var(--card);border-radius:14px;padding:20px;max-width:320px;width:90%;max-height:80vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,.15);animation:fadeIn .2s}
-.notif-modal h3{font-size:15px;font-weight:700;margin-bottom:4px;display:flex;align-items:center;justify-content:space-between}
-.notif-modal .nm-desc{font-size:12px;color:var(--sub);margin-bottom:14px}
-.notif-modal .nm-close{background:0 0;border:none;font-size:18px;cursor:pointer;color:var(--sub);padding:2px 6px}
-.notif-topic{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;cursor:pointer}
-.notif-topic:last-child{border-bottom:none}
-.notif-topic input[type=checkbox]{width:16px;height:16px;accent-color:var(--primary);cursor:pointer}
-.notif-topic .nt-label{flex:1}
-.notif-topic .nt-desc{font-size:11px;color:var(--sub);display:block}
 .react-modal{background:var(--card);border-radius:14px;padding:20px;max-width:340px;width:90%;max-height:70vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,.15);animation:fadeIn .2s}
 .react-modal h3{font-size:15px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between}
 .react-modal .rm-close{background:0 0;border:none;font-size:18px;cursor:pointer;color:var(--sub);padding:2px 6px}
@@ -142,7 +131,6 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
     <a href="chat.html" class="header-link" id="bChatLink" style="display:none">部長チャット<span class="notif-badge" id="chatBadge"></span></a>
     <a href="user-management.html" class="header-link" id="bUserMgmtLink" style="display:none">ユーザー管理</a>
     <a href="settings.html" class="header-link" id="bSettingsLink">ユーザー設定</a>
-    <button class="header-link" id="bNotifSettings">🔔</button>
     <button class="header-link danger" id="bLogout">ログアウト</button>
   </div>
 </header>
@@ -166,7 +154,6 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
   <section id="bList"><div class="empty-state">読み込み中...</div></section>
 </main>
 <div class="react-overlay" id="reactOverlay"><div class="react-modal" id="reactModal"><h3>リアクション <button class="rm-close" id="reactClose">✕</button></h3><div id="reactContent"></div></div></div>
-<div class="notif-overlay" id="notifOverlay"><div class="notif-modal"><h3>🔔 通知設定 <button class="nm-close" id="notifModalClose">✕</button></h3><p class="nm-desc">通知を受け取るカテゴリを選択してください</p><div id="notifTopicList"></div></div></div>
 
 <script>
 async function h(p){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(p));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('')}
@@ -418,15 +405,11 @@ async function fetchJMASaitama(){
 }
 loadDisaster();setInterval(loadDisaster,60000);
 </script>
-<script>let myPushTopics=[];if('serviceWorker'in navigator){navigator.serviceWorker.register('sw.js').then(()=>{if(Notification.permission==='granted')subscribePush();else if(Notification.permission!=='denied')document.getElementById('notifBanner').style.display='flex'})}async function getMyTopics(){try{const u=await a('/api/me');const t=['general','lost'];if(u.club)t.push('club_'+u.club);if(u.committee)t.push('committee_'+u.committee);if(hasRole(u.role,['president','vice-president','chairperson','teacher','admin']))t.push('chat');return t}catch(e){return['general','lost']}}
-async function subscribePush(){try{const reg=await navigator.serviceWorker.ready;const vk=await a('/api/push/vapid-key');myPushTopics=await getMyTopics();const sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:urlBase64ToUint8Array(vk.publicKey)});const subJson=JSON.parse(JSON.stringify(sub));subJson.topics=myPushTopics;await a('/api/push/subscribe',{method:'POST',body:JSON.stringify(subJson)})}catch(e){}}
+<script>if('serviceWorker'in navigator){navigator.serviceWorker.register('sw.js').then(()=>{if(Notification.permission==='granted')subscribePush();else if(Notification.permission!=='denied')document.getElementById('notifBanner').style.display='flex'})}async function getMyTopics(){try{const u=await a('/api/me');const t=['general','lost'];if(u.club)t.push('club_'+u.club);if(u.committee)t.push('committee_'+u.committee);if(hasRole(u.role,['president','vice-president','chairperson','teacher','admin']))t.push('chat');return t}catch(e){return['general','lost']}}
+async function subscribePush(){try{const reg=await navigator.serviceWorker.ready;const vk=await a('/api/push/vapid-key');const topics=await getMyTopics();const sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:urlBase64ToUint8Array(vk.publicKey)});const subJson=JSON.parse(JSON.stringify(sub));subJson.topics=topics;await a('/api/push/subscribe',{method:'POST',body:JSON.stringify(subJson)})}catch(e){}}
 function urlBase64ToUint8Array(b){const p=(b+'='.repeat((4-b.length%4)%4)).replace(/-/g,'+').replace(/_/g,'/');const s=atob(p);const r=new Uint8Array(s.length);for(let i=0;i<s.length;i++)r[i]=s.charCodeAt(i);return r}
-function renderNotifTopics(topics){const el=$('notifTopicList');el.innerHTML='';const labels={'general':'📋 上中連絡','lost':'🔍 忘れ物','chat':'💬 部長チャット','club_':'🏟 自分の部活','committee_':'📌 自分の委員会'};topics.forEach(t=>{const div=document.createElement('label');div.className='notif-topic';const cb=document.createElement('input');cb.type='checkbox';cb.checked=myPushTopics.includes(t);const label=document.createElement('span');label.className='nt-label';const lbl=Object.entries(labels).find(([k])=>k==='club_'?t.startsWith('club_'):k==='committee_'?t.startsWith('committee_'):k===t);label.textContent=lbl?lbl[1]:t;div.appendChild(cb);div.appendChild(label);cb.addEventListener('change',async()=>{const checkboxes=el.querySelectorAll('input[type=checkbox]');const checked=[];checkboxes.forEach((c,i)=>{if(c.checked)checked.push(topics[i])});myPushTopics=checked;try{const reg=await navigator.serviceWorker.ready;const sub=await reg.pushManager.getSubscription();if(!sub||!checked.length){if(sub)await sub.unsubscribe();await a('/api/push/unsubscribe',{method:'POST'});return}const subJson=JSON.parse(JSON.stringify(sub));subJson.topics=checked;await a('/api/push/subscribe',{method:'POST',body:JSON.stringify(subJson)})}catch(e){}});el.appendChild(div)})}
 $('notifBtn').addEventListener('click',async()=>{try{const p=await Notification.requestPermission();if(p==='granted'){$('notifBanner').style.display='none';subscribePush()}}catch(e){}});
 $('notifClose').addEventListener('click',()=>{$('notifBanner').style.display='none'});
-$('bNotifSettings').addEventListener('click',async()=>{$('notifOverlay').classList.add('show');const top=await getMyTopics();renderNotifTopics(top)});
-$('notifModalClose').addEventListener('click',()=>$('notifOverlay').classList.remove('show'));
-$('notifOverlay').addEventListener('click',e=>{if(e.target===$('notifOverlay'))$('notifOverlay').classList.remove('show')});
 let installPrompt=null;window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installPrompt=e;const b=document.createElement('button');b.className='header-link';b.textContent='⬇ インストール';b.id='installBtn';document.querySelector('.header-right')?.insertBefore(b,document.querySelector('#bSettingsLink'));b.addEventListener('click',async()=>{if(!installPrompt)return;installPrompt.prompt();const r=await installPrompt.userChoice;installPrompt=null;b.remove()})});window.addEventListener('appinstalled',()=>{document.getElementById('installBtn')?.remove();installPrompt=null});</script>
 </body>
 </html>

@@ -1224,7 +1224,35 @@ async function handleRequest(request, env, ctx) {
     }
 
     // ============================================================
-    // 16. GEMINI
+    // 16. PUSH NOTIFICATIONS
+    // ============================================================
+    if (path === '/api/push/subscribe' && method === 'POST') {
+      authErr = requireAuth(user);
+      if (authErr) return authErr;
+      const sub = await request.json();
+      let subs = await r2Get(env.DATA, 'push_subs.json') || [];
+      subs = subs.filter(s => s.username !== user.username);
+      subs.push({ ...sub, username: user.username, createdAt: new Date().toISOString() });
+      await r2Put(env.DATA, 'push_subs.json', subs);
+      return json({ ok: true });
+    }
+    if (path === '/api/push/unsubscribe' && method === 'POST') {
+      authErr = requireAuth(user);
+      if (authErr) return authErr;
+      let subs = await r2Get(env.DATA, 'push_subs.json') || [];
+      subs = subs.filter(s => s.username !== user.username);
+      await r2Put(env.DATA, 'push_subs.json', subs);
+      return json({ ok: true });
+    }
+    if (path === '/api/push/subscriptions' && method === 'GET') {
+      authErr = requireAuth(user, ['admin', 'teacher']);
+      if (authErr) return authErr;
+      const subs = await r2Get(env.DATA, 'push_subs.json') || [];
+      return json(subs);
+    }
+
+    // ============================================================
+    // 17. GEMINI
     // ============================================================
     if (path === '/api/gemini/ask' && method === 'POST') {
       authErr = requireAuth(user);

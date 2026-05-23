@@ -1,6 +1,51 @@
 const express = require('express');
 const path = require('path');
+const webPush = require('web-push');
 const app = express();
+
+let VAPID_PUBLIC = process.env.VAPID_PUBLIC_KEY;
+const VAPID_PRIVATE = process.env.VAPID_PRIVATE_KEY;
+if (VAPID_PUBLIC && VAPID_PRIVATE) {
+  webPush.setVapidDetails('mailto:admin@school.example.com', VAPID_PUBLIC, VAPID_PRIVATE);
+  console.log('VAPID keys loaded from env');
+} else {
+  const keys = webPush.generateVAPIDKeys();
+  VAPID_PUBLIC = keys.publicKey;
+  webPush.setVapidDetails('mailto:admin@school.example.com', keys.publicKey, keys.privateKey);
+  console.log('Generated temporary VAPID keys. Set env vars VAPID_PUBLIC_KEY and VAPID_PRIVATE_KEY for persistence.');
+}
+
+app.get('/api/push/vapid-key', (req, res) => {
+  res.json({ publicKey: VAPID_PUBLIC });
+});
+
+app.post('/api/push/send', express.json(), async (req, res) => {
+  try {
+    const { title, body, url } = req.body;
+    if (!title) return res.status(400).json({ error: 'タイトルは必須です' });
+    const token = req.headers.authorization;
+    if (!token) return res.status(401).json({ error: '認証が必要です' });
+    const subsResp = await fetch('https://school-board-api.dajianweixi.workers.dev/api/push/subscriptions', {
+      headers: { 'Authorization': token }
+    });
+    if (!subsResp.ok) return res.status(502).json({ error: '購読一覧の取得に失敗しました' });
+    const subs = await subsResp.json();
+    const results = { sent: 0, failed: 0 };
+    await Promise.all(subs.map(async sub => {
+      try {
+        await webPush.sendNotification(sub, JSON.stringify({ title, body: body || '', icon: '/icon.svg', data: { url: url || '/' } }));
+        results.sent++;
+      } catch (e) {
+        if (e.statusCode === 410 || e.statusCode === 404) results.failed++;
+        else results.failed++;
+      }
+    }));
+    res.json(results);
+  } catch (e) {
+    console.error('Push send error:', e.message);
+    res.status(500).json({ error: e.message });
+  }
+});
 
 app.use('/api/gemini/ask', express.json({limit:'10mb'}), async (req, res) => {
   try {

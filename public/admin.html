@@ -298,11 +298,12 @@ function renderUsers(){
     const lockInfo=''; // would need separate lock query
     const roleHtml=ROLES.map(rr=>{
       const checked=userRoles.includes(rr.v);
-      return `<label style="font-size:10px;white-space:nowrap;cursor:pointer;display:flex;align-items:center;gap:2px"><input type="checkbox" ${checked?'checked':''} data-id="${x.id}" data-v="${rr.v}"> ${esc(rr.l)}</label>`;
+      const disabled=isAdmin&&!((u.role||'').includes('admin'))?'disabled':'';
+      return `<label style="font-size:10px;white-space:nowrap;cursor:pointer;display:flex;align-items:center;gap:2px"><input type="checkbox" ${checked?'checked':''} data-id="${x.id}" data-v="${rr.v}" ${disabled}> ${esc(rr.l)}</label>`;
     }).join('');
+    const isOwner=u.role||'';
     const actions=`<div style="display:flex;gap:2px;flex-wrap:nowrap">
       ${sd&&x.id!==u.id?`<button class="btn btn-danger btn-sm" onclick="delUser('${x.id}','${esc(x.username)}')">削</button>`:''}
-      <button class="btn btn-outline btn-sm" onclick="resetPwd('${x.id}','${esc(x.username)}')">PW</button>
       <button class="btn btn-outline btn-sm" onclick="unlockUser('${x.id}')">解除</button>
     </div>`;
     tr.innerHTML=`<td style="width:24px;text-align:center"><input type="checkbox" class="user-select" data-id="${esc(x.id)}"></td><td style="font-size:10px">${esc(x.username)}</td>

@@ -542,7 +542,7 @@ async function handleRequest(request, env, ctx) {
       const users = await r2Get(env.DATA, 'users.json') || [];
       const u = users.find(x => x.id === userUpd[1]);
       if (!u) return json({ error: '見つかりません' }, 404);
-      if (u.role === 'admin' && user.role !== 'admin') return json({ error: '管理者は変更できません' }, 403);
+      if ((u.role || '').includes('admin') && !(user.role || '').includes('admin')) return json({ error: '管理者は変更できません' }, 403);
       if (updates.role) {
         const newRoles = updates.role.split(',').map(r => r.trim());
         if (!newRoles.every(r => VALID_ROLES.includes(r))) return json({ error: '権限が不正です' }, 400);
@@ -569,7 +569,7 @@ async function handleRequest(request, env, ctx) {
     // Reset password
     const pwdReset = path.match(/^\/api\/users\/([^/]+)\/reset-password$/);
     if (pwdReset && method === 'PUT') {
-      authErr = requireAuth(user, ['admin', 'teacher']);
+      authErr = requireAuth(user, ['admin']);
       if (authErr) return authErr;
       const users = await r2Get(env.DATA, 'users.json') || [];
       const u = users.find(x => x.id === pwdReset[1]);
@@ -608,7 +608,7 @@ async function handleRequest(request, env, ctx) {
       const idx = users.findIndex(x => x.id === userUpd[1]);
       if (idx === -1) return json({ error: '見つかりません' }, 404);
       if (users[idx].id === user.id) return json({ error: '自分自身は削除できません' }, 400);
-      if (users[idx].role === 'admin') return json({ error: '管理者は削除できません' }, 403);
+      if ((users[idx].role || '').includes('admin')) return json({ error: '管理者は削除できません' }, 403);
       await auditLog(env, 'delete_user', user.username, { target: users[idx].username });
       users.splice(idx, 1);
       await r2Put(env.DATA, 'users.json', users);

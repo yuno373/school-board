@@ -362,7 +362,7 @@ $('bRole').textContent=(curUser.role||'').split(',').map(r=>roleNames[r.trim()]|
 const userRolesArr=(curUser.role||'').split(',').map(r=>r.trim());
 $('postForm').classList.toggle('hidden',!AUTH.canPost());
 $('bChatLink').style.display=hasRole(curUser.role,['admin','teacher','president','vice-president','chairperson'])?'':'none';
-$('bDmLink').style.display=hasRole(curUser.role,['admin','teacher'])?'':'none';
+$('bDmLink').style.display=hasRole(curUser.role,['admin','teacher','president','vice-president','chairperson','student'])?'':'none';
 $('bClubQLink').style.display='';
 $('bUserMgmtLink').style.display=hasRole(curUser.role,['admin','teacher'])?'':'none';
 $('bSettingsLink').style.display=hasRole(curUser.role,['admin','teacher'])?'none':'';

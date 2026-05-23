@@ -22,9 +22,11 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
 .hw2{background:rgba(230,81,0,.35)}
 .hw3{background:rgba(198,40,40,.35)}
 .hw4{background:rgba(106,27,154,.35)}
-.header-right{display:flex;align-items:center;gap:8px}
+.header-right{display:flex;align-items:center;gap:6px;overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch;flex-shrink:0;max-width:100%}
+.header-right::-webkit-scrollbar{display:none}
+.user-badge{background:rgba(255,255,255,.2);color:#fff;font-size:11px;padding:3px 10px;border-radius:6px;font-weight:700;flex-shrink:0}
 .user-badge{background:rgba(255,255,255,.2);color:#fff;font-size:11px;padding:3px 10px;border-radius:6px;font-weight:700}
-.header-link{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);padding:4px 12px;font-size:12px;cursor:pointer;color:rgba(255,255,255,.85);border-radius:8px;text-decoration:none;transition:all .2s;font-family:inherit;white-space:nowrap}
+.header-link{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);padding:4px 10px;font-size:12px;cursor:pointer;color:rgba(255,255,255,.85);border-radius:8px;text-decoration:none;transition:all .2s;font-family:inherit;white-space:nowrap;flex-shrink:0}
 .header-link:hover{background:rgba(255,255,255,.25);color:#fff}
 .header-link.danger{border-color:rgba(255,255,255,.2)}
 .header-link.danger:hover{border-color:rgba(200,100,100,.6);background:rgba(200,100,100,.2);color:#ffcdcd}
@@ -98,9 +100,9 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
 .reaction-btn .count{font-size:11px;font-weight:700;color:var(--sub)}
 .reaction-btn.active .count{color:inherit}
 .notif-badge{background:var(--accent-pink);color:#fff;font-size:10px;font-weight:700;min-width:18px;height:18px;padding:0 5px;border-radius:9px;margin-left:4px;vertical-align:middle;text-align:center;line-height:18px;display:none}
-@media(max-width:600px){
-  .header{flex-direction:column;align-items:flex-start;gap:8px}
-  .header-right{width:100%;justify-content:space-between;flex-wrap:wrap}
+@media(max-width:800px){
+  .header{flex-direction:column;align-items:stretch;gap:6px}
+  .header-right{width:100%;justify-content:flex-start}
   .main-content{padding:12px 14px}
   .post-card{padding:14px 16px}
 }

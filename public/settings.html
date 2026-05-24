@@ -102,22 +102,23 @@ $('changePwBtn').addEventListener('click',async()=>{
 // Push notification
 function urlBase64ToUint8Array(b){const p=(b+'='.repeat((4-b.length%4)%4)).replace(/-/g,'+').replace(/_/g,'/');const s=atob(p);const r=new Uint8Array(s.length);for(let i=0;i<s.length;i++)r[i]=s.charCodeAt(i);return r}
 function isPwa(){return window.navigator.standalone||window.matchMedia('(display-mode:standalone)').matches}
+function swReady(timeout=3000){return Promise.race([navigator.serviceWorker.ready,new Promise((_,reject)=>setTimeout(()=>reject(new Error('ServiceWorkerタイムアウト')),timeout))])}
 async function loadPushSettings(){
   const st=$('pushStatus'),eb=$('pushEnableBtn'),db=$('pushDisableBtn'),tr=$('pushTestResult');
   try{
-    const reg=await navigator.serviceWorker.ready;
+    const reg=await swReady();
     const sub=await reg.pushManager.getSubscription();
     if(sub){st.innerHTML='✅ プッシュ通知が有効です';eb.style.display='none';db.style.display='';tr.textContent=''}
     else if(Notification.permission==='denied'){st.innerHTML='❌ 通知が拒否されています。ブラウザの設定から許可してください';eb.style.display='none';db.style.display='none'}
     else if(!isPwa()&&/iPad|iPhone|iPod/.test(navigator.userAgent)){st.innerHTML='📱 ホーム画面に追加してから通知を有効にしてください';eb.style.display='none';db.style.display='none'}
     else{st.innerHTML='🔔 通知を有効にするとお知らせが届くようになります';eb.style.display='';db.style.display='none';tr.textContent=''}
-  }catch(e){st.textContent='⚠️ 状態の取得に失敗しました'}
+  }catch(e){st.textContent='⚠️ '+e.message}
 }
 $('pushEnableBtn').addEventListener('click',async()=>{
   try{
     const p=await Notification.requestPermission();
     if(p!=='granted'){alert('通知が許可されませんでした');return}
-    const reg=await navigator.serviceWorker.ready;
+    const reg=await swReady();
     const vk=await a('/api/push/vapid-key');
     const sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:urlBase64ToUint8Array(vk.publicKey)});
     await a('/api/push/subscribe',{method:'POST',body:JSON.stringify(JSON.parse(JSON.stringify(sub)))});
@@ -126,7 +127,7 @@ $('pushEnableBtn').addEventListener('click',async()=>{
 });
 $('pushDisableBtn').addEventListener('click',async()=>{
   try{
-    const reg=await navigator.serviceWorker.ready;
+    const reg=await swReady();
     const sub=await reg.pushManager.getSubscription();
     if(sub)await sub.unsubscribe();
     await a('/api/push/unsubscribe',{method:'POST'});

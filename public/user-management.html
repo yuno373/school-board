@@ -714,8 +714,7 @@ const DIAG_CHECKS = [
   { id: 'posts', label: '投稿データ整合性', section: '🗃️ データ' },
   { id: 'chat', label: '部長チャット', section: '🗃️ データ' },
   { id: 'dm', label: 'DM機能', section: '🗃️ データ' },
-  { id: 'consult', label: '相談所', section: '🗃️ データ' },
-  { id: 'consult-ng', label: '相談所NGフィルター', section: '🗃️ データ' },
+
   { id: 'clubq', label: '部長質問', section: '🗃️ データ' },
   // 機能
   { id: 'schedule', label: '黒板予定', section: '⚙️ 機能' },
@@ -789,7 +788,7 @@ async function runDiagnosis() {
     else addResult('auth', 'fail', '認証レスポンスが不正');
   } catch(e) { addResult('auth', 'fail', '認証確認中にエラー', e.message) }
   // 3. All GET endpoints
-  const getEndpoints = ['/api/me','/api/posts','/api/posts/counts','/api/users','/api/admin/posts','/api/chat/messages','/api/chat/participants','/api/chat/count','/api/notifications','/api/stats','/api/schedules','/api/consult','/api/consult/teachers','/api/dm/conversations','/api/dm/groups','/api/password-reset/requests','/api/push/vapid-key','/api/reactions'];
+  const getEndpoints = ['/api/me','/api/posts','/api/posts/counts','/api/users','/api/admin/posts','/api/chat/messages','/api/chat/participants','/api/chat/count','/api/notifications','/api/stats','/api/schedules','/api/dm/conversations','/api/dm/groups','/api/password-reset/requests','/api/push/vapid-key','/api/reactions'];
   const epOk = [], epNg = [];
   for (const p of getEndpoints) {
     try {
@@ -800,10 +799,10 @@ async function runDiagnosis() {
   }
   epNg.length === 0 ? addResult('endpoints-get', 'pass', `全${getEndpoints.length}GETエンドポイント正常`) : addResult('endpoints-get', 'warn', `${epNg.length}/${getEndpoints.length} で問題`, `異常: ${epNg.join(', ')}`);
   // 4. POST endpoints presence check
-  const postEndpoints = ['/api/login','/api/posts','/api/chat/messages','/api/chat/participants','/api/consult','/api/dm/send','/api/dm/groups','/api/password-reset/request','/api/password-reset/fulfill','/api/reactions','/api/push/subscribe','/api/push/unsubscribe','/api/push/notify','/api/push/send','/api/upload','/api/me/password','/api/me/verify','/api/posts/*/claim','/api/posts/*/verify-password','/api/posts/*/set-password'];
+  const postEndpoints = ['/api/login','/api/posts','/api/chat/messages','/api/chat/participants','/api/dm/send','/api/dm/groups','/api/password-reset/request','/api/password-reset/fulfill','/api/reactions','/api/push/subscribe','/api/push/unsubscribe','/api/push/notify','/api/push/send','/api/upload','/api/me/password','/api/me/verify','/api/posts/*/claim','/api/posts/*/verify-password','/api/posts/*/set-password'];
   addResult('endpoints-post', 'pass', `POSTエンドポイント定義数: ${postEndpoints.length}`, postEndpoints.join(', '));
   // 5. Static files
-  const sf = ['01index.html','02login.html','user-management.html','admin.html','consult.html','club-questions.html','chat.html','dm.html','settings.html','teacher-setup.html','install.html','help.html','manifest.json','sw.js','icon.svg'];
+  const sf = ['01index.html','02login.html','user-management.html','admin.html','club-questions.html','chat.html','dm.html','settings.html','teacher-setup.html','install.html','help.html','manifest.json','sw.js','icon.svg'];
   const sfOk = [], sfNg = [];
   for (const f of sf) { try { const ac = new AbortController(); const tid = setTimeout(() => ac.abort(), 5000); const r = await fetch(f, { method:'HEAD', signal: ac.signal }); clearTimeout(tid); (r.ok ? sfOk : sfNg).push(f+'('+r.status+')') } catch(e) { sfNg.push(f) } }
   sfNg.length === 0 ? addResult('static', 'pass', `全${sf.length}ファイル正常配信`) : addResult('static', 'warn', `${sfNg.length}ファイルに問題`, sfNg.join(', '));
@@ -890,16 +889,7 @@ async function runDiagnosis() {
     addResult('dm', 'pass', `DM会話: ${dmCount}件, グループ: ${grpCount}件`);
   } catch(e) { addResult('dm', 'warn', 'DMチェックエラー', e.message) }
   // 12. Consult
-  try {
-    const teachers = await a('/api/consult/teachers');
-    const consults = await a('/api/consult');
-    addResult('consult', 'pass', `相談可能先生: ${teachers.length}人, 相談件数: ${consults.length}件`);
-  } catch(e) { addResult('consult', 'warn', '相談所チェックエラー', e.message) }
-  // 12b. Consult NG filter
-  try {
-    const check = await a('/api/consult/check-access');
-    addResult('consult-ng', 'pass', `NGフィルター稼働中（違反回数: ${check.count}回, 停止中: ${check.suspended?'✅':'❌'}）`);
-  } catch(e) { addResult('consult-ng', 'warn', 'NGフィルターチェックエラー', e.message) }
+
   // 13. Club questions
   try {
     const r = await fetch(API_BASE + '/api/club-questions', { headers: { 'Authorization': 'Bearer '+token } });

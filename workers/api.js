@@ -2,7 +2,7 @@
 // ============================================================
 // Features: JWT auth, AES-256-GCM, rate-limit, login-lock,
 //           audit-log, reactions, club-questions, notifications,
-//           tab-config, consult encrypt, CSRF protection
+//           tab-config, CSRF protection
 
 // ---- Constants ----
 const VALID_ROLES = ['admin','teacher','president','vice-president','chairperson','student'];
@@ -34,19 +34,6 @@ function checkRate(ip) {
 const enc = s => new TextEncoder().encode(s);
 const dec = b => new TextDecoder().decode(b);
 const uuid = () => crypto.randomUUID();
-
-const NG_WORDS = [
-  'ばか','あほ','くず','ごみ','きもい','うざい','しつこい','低能','無能',
-  'しね','消えろ','殺す','殺すぞ','ぶっころす','ぶん殴る','ぶっ飛ばす',
-  '生きてる価値ない','誰にも必要とされてない','役立たず','迷惑',
-  'てめえ','あいつ','うざい先生','きもい先生'
-];
-
-function checkNGWords(text) {
-  if (!text) return null;
-  const found = NG_WORDS.find(w => text.includes(w));
-  return found || null;
-}
 
 async function hashPwd(pwd, salt) {
   const d = enc(salt + pwd);
@@ -397,7 +384,11 @@ async function handleRequest(request, env, ctx) {
       if (teacher_setup_done !== undefined) u.teacher_setup_done = !!teacher_setup_done;
       await r2Put(env.DATA, 'users.json', users);
       await auditLog(env, 'update_profile', user.username, { fields: Object.keys({ display_name, icon, club, committee }).filter(k => arguments[1][k] !== undefined) });
-      return json({ success: true });
+      // Issue new token with updated data
+      const exp = Date.now() + 3600000;
+      const newSession = { id: u.id, username: u.username, role: u.role, display_name: u.display_name || u.username, grade: u.grade || '', club: u.club || '', committee: u.committee || '', teacher_setup_done: u.teacher_setup_done || false, exp };
+      const newToken = await hmacSign(newSession, env.COOKIE_SECRET);
+      return json({ success: true, token: newToken, display_name: u.display_name || u.username, club: u.club || '', committee: u.committee || '' });
     }
 
     // POST /api/me/password
@@ -1442,164 +1433,9 @@ if (path === '/api/users' && method === 'GET') {
     }
 
     // ============================================================
-    // 8. CONSULT (AES-256-GCM encrypted)
-    // ============================================================
-    const AES_KEY = await deriveAesKey(env.COOKIE_SECRET || 'default-consult-key', 'consult-aes-salt');
-
-    // GET /api/consult/check-access - Check if user is suspended
-    if (path === '/api/consult/check-access' && method === 'GET') {
-      authErr = requireAuth(user);
-      if (authErr) return authErr;
-      const offenses = await r2Get(env.DATA, 'consult_offenses.json') || [];
-      const record = offenses.find(o => o.username === user.username);
-      if (record && record.suspended_until && new Date(record.suspended_until) > new Date()) {
-        return json({ suspended: true, suspended_until: record.suspended_until, count: record.count });
-      }
-      return json({ suspended: false, count: record ? record.count : 0 });
-    }
-
-    if (path === '/api/consult/teachers' && method === 'GET') {
-      const users = await r2Get(env.DATA, 'users.json') || [];
-      const teachers = users.filter(u => ['admin','teacher'].some(r => (u.role || '').includes(r)))
-        .map(u => ({ username: u.username, display_name: u.display_name || u.username, teacher_grade: u.teacher_grade || '', teacher_subject: u.teacher_subject || '', teacher_homeroom: u.teacher_homeroom || '' }));
-      return json(teachers);
-    }
-
-    if (path === '/api/consult' && method === 'GET') {
-      authErr = requireAuth(user);
-      if (authErr) return authErr;
-      let data = await r2Get(env.DATA, 'consult.json') || [];
-      const now = Date.now();
-      const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
-      // Auto-delete: replied & student_read_at > 7 days ago
-      const before = data.length;
-      data = data.filter(m => !(m.teacher_reply && m.student_read_at && (now - new Date(m.student_read_at).getTime() > WEEK_MS)));
-      if (data.length < before) await r2Put(env.DATA, 'consult.json', data);
-      // Sort newest first
-      data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-      const isTeacher = hasOneOf(user.role, ['admin', 'teacher']);
-      if (isTeacher) {
-        if (hasOneOf(user.role, ['teacher'])) data = data.filter(m => m.to === 'all' || m.to === user.username);
-        for (const item of data) {
-          if (item.encrypted) {
-            try { item.message = await aesDecrypt(item.encrypted, AES_KEY); } catch(e) { item.message = '[復号できません]'; }
-          }
-          delete item.encrypted;
-          if (item.anonymous) item.from = '匿名';
-          else item.from = item.username;
-        }
-      } else {
-        // Student: own consults only
-        data = data.filter(m => m.username === user.username);
-        // Mark as read
-        let changed = false;
-        for (const item of data) {
-          if (item.teacher_reply && !item.student_read_at) {
-            item.student_read_at = new Date().toISOString();
-            changed = true;
-          }
-          if (item.encrypted) {
-            try { item.message = await aesDecrypt(item.encrypted, AES_KEY); } catch(e) { item.message = '[復号できません]'; }
-          }
-          delete item.encrypted;
-          item.from = '自分';
-          delete item.username;
-        }
-        if (changed) await r2Put(env.DATA, 'consult.json', data);
-      }
-      return json(data);
-    }
-
-    // POST /api/consult/clear-offenses - Clear/reset a user's consult offenses
-    if (path === '/api/consult/clear-offenses' && method === 'POST') {
-      authErr = requireAuth(user, ['admin', 'teacher']);
-      if (authErr) return authErr;
-      const { username: targetUsername } = await request.json();
-      if (!targetUsername) return json({ error: 'ユーザー名が必要です' }, 400);
-      let offenses = await r2Get(env.DATA, 'consult_offenses.json') || [];
-      offenses = offenses.filter(o => o.username !== targetUsername);
-      await r2Put(env.DATA, 'consult_offenses.json', offenses);
-      await addNotification(env, 'consult_ng', `${user.display_name || user.username}が${targetUsername}さんの相談所制限を解除しました`, '/admin?tab=consult');
-      return json({ ok: true });
-    }
-
-    if (path === '/api/consult' && method === 'POST') {
-      authErr = requireAuth(user);
-      if (authErr) return authErr;
-      const { message, to, anonymous } = await request.json();
-      if (!message || !message.trim()) return json({ error: '内容を入力してください' }, 400);
-
-      // NG word check
-      const ng = checkNGWords(message);
-      if (ng) {
-        let offenses = await r2Get(env.DATA, 'consult_offenses.json') || [];
-        let record = offenses.find(o => o.username === user.username);
-        if (!record) {
-          record = { username: user.username, count: 0, suspended_until: null };
-          offenses.push(record);
-        }
-        record.count++;
-        const displayName = user.display_name || user.username;
-        if (record.count >= 2) {
-          // 2nd+ offense: 1 month suspension + notify teachers/admins
-          record.suspended_until = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
-          await r2Put(env.DATA, 'consult_offenses.json', offenses);
-          await addNotification(env, 'consult_ng', `${displayName}さんが相談所で不適切な言葉を${record.count}回使用したため、1ヶ月利用停止になりました`, '/admin?tab=consult');
-          return json({ error: '不適切な言葉が検出されました。2回目の違反のため、相談所を1ヶ月利用停止とします。', ng: true, suspended: true, count: record.count }, 403);
-        }
-        // 1st offense: warn + notify admins
-        await r2Put(env.DATA, 'consult_offenses.json', offenses);
-        await addNotification(env, 'consult_ng', `${displayName}さんが相談所で不適切な言葉を使用しました（${sanitize(ng)}）【1回目】`, '/admin?tab=consult');
-        return json({ error: '不適切な言葉が検出されました。優しい言葉を使いましょう。次回は1ヶ月利用停止になります。', ng: true, count: record.count }, 403);
-      }
-
-      const encrypted = await aesEncrypt(message, AES_KEY);
-      const entry = {
-        id: uuid(), encrypted, created_at: new Date().toISOString(),
-        to: (to && to !== '') ? to : 'all',
-        anonymous: anonymous !== false,
-        username: user.username
-      };
-      let data = await r2Get(env.DATA, 'consult.json') || [];
-      data.push(entry);
-      if (data.length > 200) data.splice(0, data.length - 200);
-      await r2Put(env.DATA, 'consult.json', data);
-      // Notify teachers
-      await addNotification(env, 'consult', '新しい相談が届きました', '/admin?tab=consult');
-      return json({ status: 'ok', id: entry.id });
-    }
-
-    // POST /api/consult/:id/reply
-    const consultReply = path.match(/^\/api\/consult\/([^/]+)\/reply$/);
-    if (consultReply && method === 'POST') {
-      authErr = requireAuth(user, ['admin', 'teacher']);
-      if (authErr) return authErr;
-      const { reply } = await request.json();
-      if (!reply || !reply.trim()) return json({ error: '返信内容を入力してください' }, 400);
-      let data = await r2Get(env.DATA, 'consult.json') || [];
-      const item = data.find(x => x.id === consultReply[1]);
-      if (!item) return json({ error: '見つかりません' }, 404);
-      if (item.to !== 'all' && item.to !== user.username && !hasOneOf(user.role, ['admin'])) return json({ error: '権限がありません' }, 403);
-      item.teacher_reply = sanitize(reply.trim());
-      item.replied_at = new Date().toISOString();
-      item.replied_by = user.username;
-      await r2Put(env.DATA, 'consult.json', data);
-      return json({ ok: true });
-    }
-
-    const consultDel = path.match(/^\/api\/consult\/([^/]+)$/);
-    if (consultDel && method === 'DELETE') {
-      authErr = requireAuth(user, ['admin', 'teacher']);
-      if (authErr) return authErr;
-      let data = await r2Get(env.DATA, 'consult.json') || [];
-      data = data.filter(e => e.id !== consultDel[1]);
-      await r2Put(env.DATA, 'consult.json', data);
-      return json({ ok: true });
-    }
-
-    // ============================================================
     // 9. CLUB QUESTIONS (AES encrypted, no notification)
     // ============================================================
+    const AES_KEY = await deriveAesKey(env.COOKIE_SECRET || 'default-club-key', 'club-aes-salt');
     if (path === '/api/club-questions' && method === 'GET') {
       authErr = requireAuth(user);
       if (authErr) return authErr;

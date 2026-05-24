@@ -89,7 +89,7 @@ loadProfile();
 $('saveProfile').addEventListener('click',async()=>{
   const dn=$('sDispName').value.trim(),club=$('sClub').value,comm=$('sCommittee').value;
   const grade=$('sGrade').value,cls=$('sClass').value,seat=$('sSeat').value;
-  try{await a('/api/me',{method:'PUT',body:JSON.stringify({display_name:dn,club,committee:comm,grade,class_num:cls,seat_num:seat})});$('profileStatus').textContent='✅ 保存しました';$('profileStatus').className='success'}catch(e){$('profileStatus').textContent='❌ '+e.message;$('profileStatus').className='error'}
+  try{const r=await a('/api/me',{method:'PUT',body:JSON.stringify({display_name:dn,club,committee:comm,grade,class_num:cls,seat_num:seat})});if(r.token){sessionStorage.setItem('token',r.token);if(r.display_name)sessionStorage.setItem('display_name',r.display_name)}$('profileStatus').textContent='✅ 保存しました';$('profileStatus').className='success';loadProfile()}catch(e){$('profileStatus').textContent='❌ '+e.message;$('profileStatus').className='error'}
 });
 $('changePwBtn').addEventListener('click',async()=>{
   const cur=$('sCurPw').value,pw=$('sNewPw').value,pw2=$('sNewPw2').value;

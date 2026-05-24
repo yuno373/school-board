@@ -66,7 +66,6 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
     <p style="font-size:13px;color:var(--sub);margin-bottom:10px" id="pushStatus"></p>
     <button class="btn" id="pushEnableBtn">🔔 通知を有効にする</button>
     <button class="btn btn-outline" id="pushDisableBtn" style="display:none">🔕 通知を解除</button>
-    <button class="btn btn-outline" id="pushTestBtn" style="display:none">📨 テスト通知を送信</button>
     <div id="pushTestResult" style="margin-top:6px;font-size:12px"></div>
   </div>
 </div>
@@ -102,14 +101,16 @@ $('changePwBtn').addEventListener('click',async()=>{
 
 // Push notification
 function urlBase64ToUint8Array(b){const p=(b+'='.repeat((4-b.length%4)%4)).replace(/-/g,'+').replace(/_/g,'/');const s=atob(p);const r=new Uint8Array(s.length);for(let i=0;i<s.length;i++)r[i]=s.charCodeAt(i);return r}
+function isPwa(){return window.navigator.standalone||window.matchMedia('(display-mode:standalone)').matches}
 async function loadPushSettings(){
-  const st=$('pushStatus'),eb=$('pushEnableBtn'),db=$('pushDisableBtn'),tb=$('pushTestBtn'),tr=$('pushTestResult');
+  const st=$('pushStatus'),eb=$('pushEnableBtn'),db=$('pushDisableBtn'),tr=$('pushTestResult');
   try{
     const reg=await navigator.serviceWorker.ready;
     const sub=await reg.pushManager.getSubscription();
-    if(sub){st.innerHTML='✅ プッシュ通知が有効です';eb.style.display='none';db.style.display='';tb.style.display='';tr.textContent=''}
-    else if(Notification.permission==='denied'){st.innerHTML='❌ 通知が拒否されています。ブラウザの設定から許可してください';eb.style.display='none';db.style.display='none';tb.style.display='none'}
-    else{st.innerHTML='🔔 通知を有効にするとお知らせが届くようになります';eb.style.display='';db.style.display='none';tb.style.display='none';tr.textContent=''}
+    if(sub){st.innerHTML='✅ プッシュ通知が有効です';eb.style.display='none';db.style.display='';tr.textContent=''}
+    else if(Notification.permission==='denied'){st.innerHTML='❌ 通知が拒否されています。ブラウザの設定から許可してください';eb.style.display='none';db.style.display='none'}
+    else if(!isPwa()&&/iPad|iPhone|iPod/.test(navigator.userAgent)){st.innerHTML='📱 ホーム画面に追加してから通知を有効にしてください';eb.style.display='none';db.style.display='none'}
+    else{st.innerHTML='🔔 通知を有効にするとお知らせが届くようになります';eb.style.display='';db.style.display='none';tr.textContent=''}
   }catch(e){st.textContent='⚠️ 状態の取得に失敗しました'}
 }
 $('pushEnableBtn').addEventListener('click',async()=>{
@@ -131,14 +132,6 @@ $('pushDisableBtn').addEventListener('click',async()=>{
     await a('/api/push/unsubscribe',{method:'POST'});
     loadPushSettings();
   }catch(e){alert('エラー: '+e.message)}
-});
-$('pushTestBtn').addEventListener('click',async()=>{
-  const tr=$('pushTestResult');tr.textContent='送信中...';
-  try{
-    const r=await a('/api/push/send',{method:'POST',body:JSON.stringify({title:'テスト通知',body:'プッシュ通知は正常に動作しています',url:'/01index.html'})});
-    tr.textContent=`✅ 送信完了（成功: ${r.sent}, 失敗: ${r.failed}）`;
-    tr.className='success';
-  }catch(e){tr.textContent='❌ '+e.message;tr.className='error'}
 });
 setTimeout(loadPushSettings, 500);
 </script>

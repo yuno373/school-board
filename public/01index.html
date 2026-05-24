@@ -154,6 +154,7 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
     <input type="text" id="bTitle" placeholder="タイトル">
     <textarea id="bContent" placeholder="内容を入力してください"></textarea>
     <select id="bCat"></select>
+    <input type="text" id="bLink" placeholder="🔗 リンクURL（任意）" style="width:100%">
     <div class="form-row"><input type="file" id="bFile" multiple accept=".pdf,.jpg,.jpeg,.png,.gif,.txt,.doc,.docx"></div>
     <div id="bFileList" style="font-size:12px;color:#8a8682;margin-bottom:10px"></div>
     <label style="font-size:11px;color:var(--sub)">自動削除日（最大2ヶ月後）</label>
@@ -298,6 +299,7 @@ function render(p,c){
     contentHtml='<div class="post-body">'+esc(p.content)+'</div>';
   }
   const fls=p.files?.map(f=>'<a href="'+esc(f.url)+'" target="_blank" class="attachment"><span>📎</span> '+esc(f.name)+'</a>').join('')||'';
+  const lk=p.link?'<a href="'+esc(p.link)+'" target="_blank" class="attachment"><span>🔗</span> '+esc(p.link)+'</a>':'';
   let exp='',expCls='';
   if(p.expires_at){const r=Math.ceil((new Date(p.expires_at)-Date.now())/86400000);exp='あと'+r+'日';expCls=r>30?'safe':r>10?'warn':''}
   let claimHtml='';
@@ -306,7 +308,7 @@ function render(p,c){
     const claimers=claims.map(c=>esc(c.display_name||c.username)).join(', ');
     claimHtml='<div class="claim-area"><button class="claim-btn '+(myClaim?'claimed':'')+'" data-id="'+p.id+'">'+(myClaim?'取り消す':'私のです🙋')+'</button>'+(claims.length?'<span class="claim-count">'+claims.length+'人</span>':'')+'</div>'+(claimers?'<div style="font-size:12px;color:var(--sub)">🙋 '+claimers+'</div>':'');
   }
-  card.innerHTML='<div class="post-category">'+esc(p.category)+(isPrivate?' 🔒':'')+'</div><div class="post-title">'+esc(p.title)+'</div>'+contentHtml+(fls?'<div>'+fls+'</div>':'')+claimHtml+'<div class="post-footer"><div class="post-meta">'+esc(p.display_name||p.username)+' · '+ds+'</div>'+(exp?'<div class="post-deadline '+expCls+'">'+exp+'</div>':'')+'</div><div class="reaction-bar" id="react-'+p.id+'"></div>';
+  card.innerHTML='<div class="post-category">'+esc(p.category)+(isPrivate?' 🔒':'')+'</div><div class="post-title">'+esc(p.title)+'</div>'+contentHtml+(fls?'<div>'+fls+'</div>':'')+(lk?'<div>'+lk+'</div>':'')+claimHtml+'<div class="post-footer"><div class="post-meta">'+esc(p.display_name||p.username)+' · '+ds+'</div>'+(exp?'<div class="post-deadline '+expCls+'">'+exp+'</div>':'')+'</div><div class="reaction-bar" id="react-'+p.id+'"></div>';
   if(canDel){const db=document.createElement('button');db.className='delete-btn';db.textContent='削除';db.addEventListener('click',()=>delPost(p.id));card.querySelector('.post-footer').appendChild(db)}
   if(canDel&&isPrivate){const sp=document.createElement('button');sp.className='delete-btn';sp.textContent='🔑PW';sp.title='パスワード設定';sp.addEventListener('click',()=>setPostPassword(p.id));card.querySelector('.post-footer').appendChild(sp)}
   if(p.category==='忘れ物'){const btn=card.querySelector('.claim-btn');if(btn)btn.addEventListener('click',async function(){const id=this.dataset.id;try{if(this.classList.contains('claimed')){await api('/api/posts/'+id+'/claim',{method:'DELETE'})}else{await api('/api/posts/'+id+'/claim',{method:'POST'})}load()}catch(e){alert(e.message)}})}
@@ -349,10 +351,11 @@ async function create(){
     if(fileInput.files.length){for(const f of fileInput.files){const fd=new FormData();fd.append('file',f);const token=sessionStorage.getItem('token');const r=await fetch(API_BASE+'/api/upload',{method:'POST',headers:{'Authorization':'Bearer '+token},body:fd});const d=await r.json();if(r.ok)files.push({url:d.url,name:d.name,type:d.type});else{alert('ファイルアップロード失敗: '+d.error);$('createBtn').disabled=false;$('createBtn').textContent='投稿する';return}}}
     const expDate=$('bExpires').value;
     const expiresIn=expDate?Math.round((new Date(expDate+'T23:59:59')-Date.now())/86400000):30;
-    const body={title:t,content:c,category:cat,files,expiresIn};
+    const link=$('bLink').value.trim();
+    const body={title:t,content:c,category:cat,files,expiresIn,link};
     if(isPrivate)body.private_password=privatePwd;
     await api('/api/posts',{method:'POST',body:JSON.stringify(body)});
-    $('bTitle').value='';$('bContent').value='';$('bFile').value='';$('bFileList').textContent='';$('bPrivate').checked=false;$('bPrivatePwd').value='';$('bPrivatePwd').style.display='none';$('bPrivateField').style.display='none';
+    $('bTitle').value='';$('bContent').value='';$('bFile').value='';$('bFileList').textContent='';$('bLink').value='';$('bPrivate').checked=false;$('bPrivatePwd').value='';$('bPrivatePwd').style.display='none';$('bPrivateField').style.display='none';
     initExpiresDate();
     loadCounts();load();
     try{const notifyCat=cat==='上中連絡'?'general':cat==='忘れ物'?'lost':cat;await api('/api/push/notify',{method:'POST',body:JSON.stringify({category:notifyCat,title:t,body:c.slice(0,80),url:'/01index.html?cat='+encodeURIComponent(cat),excludeUser:curUser?.username})})}catch(e){}

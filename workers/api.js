@@ -450,7 +450,7 @@ async function handleRequest(request, env, ctx) {
     if (path === '/api/posts' && method === 'POST') {
       authErr = requireAuth(user, ['admin', 'teacher', 'president', 'vice-president', 'chairperson']);
       if (authErr) return authErr;
-      const { title, content, category, files, expiresIn, private_password } = await request.json();
+      const { title, content, category, files, expiresIn, private_password, link } = await request.json();
       if (!title || !category) return json({ error: 'タイトルとカテゴリは必須です' }, 400);
       const privateCats = ['1学年委員会','2学年委員会','3学年委員会'];
       const isPrivate = privateCats.includes(category) && private_password;
@@ -459,7 +459,8 @@ async function handleRequest(request, env, ctx) {
       const post = {
         id: uuid(), title: sanitize(title.trim()), content: sanitize(content?.trim() || ''), category,
         username: user.username, display_name: user.display_name || user.username,
-        created_at: new Date().toISOString(), expires_at, claims: [], files: files || []
+        created_at: new Date().toISOString(), expires_at, claims: [], files: files || [],
+        link: link?.trim() || ''
       };
       if (isPrivate) {
         post.private_password = await hp(private_password);

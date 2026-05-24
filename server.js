@@ -107,13 +107,14 @@ app.post('/api/push/notify', express.json(), async (req, res) => {
     const prefix = catLabels[category] || ('🏷️ ' + category);
     const prefixedTitle = prefix + ': ' + title;
     const targets = pushSubs.filter(s => s.username !== excludeUser && (!s.topics || s.topics.length === 0 || s.topics.includes(category) || s.topics.includes('club_'+category) || s.topics.includes('committee_'+category) || s.topics.includes('all')));
-    const results = { sent: 0, failed: 0 };
+    const results = { sent: 0, failed: 0, errors: [] };
     await Promise.all(targets.map(async sub => {
       try {
         await webPush.sendNotification(sub, JSON.stringify({ title: prefixedTitle, body: body || '', icon: '/icon.svg', data: { url: url || '/' } }));
         results.sent++;
       } catch (e) {
         results.failed++;
+        results.errors.push({ username: sub.username, code: e.statusCode, message: e.message });
         if (e.statusCode === 410 || e.statusCode === 404) { pushSubs = pushSubs.filter(s => s.endpoint !== sub.endpoint); syncSubsToR2(); }
       }
     }));
@@ -129,13 +130,14 @@ app.post('/api/push/send', express.json(), async (req, res) => {
     const user = await verifyToken(req.headers.authorization);
     if (!user || !['admin', 'teacher'].some(r => (user.role || '').split(',').map(x => x.trim()).includes(r)))
       return res.status(403).json({ error: '権限がありません' });
-    const results = { sent: 0, failed: 0 };
+    const results = { sent: 0, failed: 0, errors: [] };
     await Promise.all(pushSubs.map(async sub => {
       try {
         await webPush.sendNotification(sub, JSON.stringify({ title, body: body || '', icon: '/icon.svg', data: { url: url || '/' } }));
         results.sent++;
       } catch (e) {
         results.failed++;
+        results.errors.push({ username: sub.username, code: e.statusCode, message: e.message });
         if (e.statusCode === 410 || e.statusCode === 404) { pushSubs = pushSubs.filter(s => s.endpoint !== sub.endpoint); syncSubsToR2(); }
       }
     }));

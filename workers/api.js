@@ -1795,6 +1795,47 @@ if (path === '/api/users' && method === 'GET') {
     }
 
     // ============================================================
+    // 12b. WBGT from JMA AMeDAS (埼玉県入間市 → 所沢 43266)
+    // ============================================================
+    if (path === '/api/wbgt' && method === 'GET') {
+      try {
+        const jst = new Date(Date.now() + 9 * 3600000);
+        const y = jst.getUTCFullYear();
+        const m = String(jst.getUTCMonth() + 1).padStart(2, '0');
+        const d = String(jst.getUTCDate()).padStart(2, '0');
+        const h = String(jst.getUTCHours()).padStart(2, '0');
+        const min = String(Math.floor(jst.getUTCMinutes() / 10) * 10).padStart(2, '0');
+        const ts = `${y}${m}${d}${h}${min}00`;
+        const jmaUrl = `https://www.jma.go.jp/bosai/amedas/data/map/${ts}.json`;
+        const jmaResp = await fetch(jmaUrl, { headers: { 'User-Agent': 'SchoolBoard/1.0' } });
+        if (!jmaResp.ok) {
+          return json({ error: 'JMA data unavailable', ts }, 502);
+        }
+        const jmaData = await jmaResp.json();
+        const st = jmaData['43266'];
+        if (!st || !st.temp || !st.humidity) {
+          return json({ error: 'Station data unavailable', ts }, 502);
+        }
+        const temp = st.temp[0];
+        const humidity = st.humidity[0];
+        const e = (humidity / 100) * 6.105 * Math.exp(17.27 * temp / (temp + 237.3));
+        const wbgt = 0.567 * temp + 0.393 * e + 3.94;
+        const rounded = Math.round(wbgt * 10) / 10;
+        const levels = [
+          { max: 21, label: '注意', advice: '適度に水分補給' },
+          { max: 25, label: '警戒', advice: '積極的に水分補給' },
+          { max: 28, label: '厳重警戒', advice: '積極的に休息' },
+          { max: 31, label: '危険', advice: '激しい運動は中止' },
+          { max: 99, label: '極度危険', advice: '運動は原則中止' },
+        ];
+        const lv = levels.find(l => rounded < l.max) || levels[levels.length - 1];
+        return json({ wbgt: rounded, temp, humidity, label: lv.label, advice: lv.advice, ts });
+      } catch (e) {
+        return json({ error: e.message }, 500);
+      }
+    }
+
+    // ============================================================
     // 13. DISASTER
     // ============================================================
     if (path === '/api/disaster-info' && method === 'GET') {

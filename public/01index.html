@@ -405,16 +405,17 @@ if(chatLink.style.display!=='none'){
   chatLink.addEventListener('click',()=>{localStorage.setItem(ls,Date.now());chatBadge.style.display='none'});
 }
 
-// WBGT from Open-Meteo (埼玉県入間市)
+// WBGT from JMA AMeDAS (埼玉県入間市 → 所沢観測所)
 function wbgt(){
-  function upd(t,h){
-    const e=(h/100)*6.105*Math.exp(17.27*t/(t+237.3));const wbgt=0.567*t+0.393*e+3.94;
+  function upd(temp, hum){
+    const e=(hum/100)*6.105*Math.exp(17.27*temp/(temp+237.3));const wbgt=0.567*temp+0.393*e+3.94;
     const bar=$('wbgtBar');    const levels=[{max:21,lbl:'注意',adv:'適度に水分補給',cls:'l0'},{max:25,lbl:'警戒',adv:'積極的に水分補給',cls:'l1'},{max:28,lbl:'厳重警戒',adv:'積極的に休息',cls:'l2'},{max:31,lbl:'危険',adv:'激しい運動は中止',cls:'l3'},{max:99,lbl:'極度危険',adv:'運動は原則中止',cls:'l4'}];
     const lv=levels.find(l=>wbgt<l.max)||levels[levels.length-1];
-    bar.className='wbgt-'+lv.cls;bar.innerHTML='<div class="wbgt-val">'+wbgt.toFixed(1)+'</div><div><div class="wbgt-label">埼玉県入間市 WBGT '+lv.lbl+'</div><div class="wbgt-advice">'+lv.adv+'</div></div><div class="wbgt-detail"><span>'+t+'°C</span><span>'+h+'%</span></div>';
+    bar.className='wbgt-'+lv.cls;bar.innerHTML='<div class="wbgt-val">'+wbgt.toFixed(1)+'</div><div><div class="wbgt-label">埼玉県入間市 WBGT '+lv.lbl+'</div><div class="wbgt-advice">'+lv.adv+'</div></div><div class="wbgt-detail"><span>'+temp+'°C</span><span>'+hum+'%</span></div>';
   }
-  const lat=35.84,lon=139.39; // 埼玉県入間市
-  function w(){fetch('https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&current=temperature_2m,relative_humidity_2m,weather_code&timezone=Asia%2FTokyo').then(r=>r.json()).then(d=>{if(d.current)upd(d.current.temperature_2m,d.current.relative_humidity_2m)}).catch(()=>{})}
+  async function w(){
+    try{const r=await api('/api/wbgt');if(r.wbgt)upd(r.temp,r.humidity)}catch(e){}
+  }
   w();setInterval(w,300000);
 }
 wbgt();
@@ -436,6 +437,7 @@ async function loadDisaster(){
         btn.onclick=async()=>{try{await api('/api/disaster-info/clear',{method:'POST'});loadDisaster()}catch(e){}};
         bar.appendChild(btn);
       }
+      if(d.level==='danger')triggerDisasterAlert(d.message);
       return;
     }
     const jma=await fetchJMASaitama();
@@ -443,11 +445,13 @@ async function loadDisaster(){
       bar.style.display='flex';bar.className='disaster-danger';
       msg.textContent=jma;
       bar.querySelector('.disaster-clear')?.remove();
+      triggerDisasterAlert(jma);
     }else{
       bar.style.display='flex';bar.className='disaster-info';
       const txt='🌤 埼玉県入間市に警報・注意報はありません';
       msg.textContent=txt;
       bar.querySelector('.disaster-clear')?.remove();
+      _prevDisasterAlert='';
     }
   }catch(e){}
 }
@@ -462,7 +466,18 @@ async function fetchJMASaitama(){
     return '⚠️ 埼玉県入間市に'+list.slice(0,4).join('・')+'警報発表';
   }catch(e){return null}
 }
-loadDisaster();setInterval(loadDisaster,60000);
+loadDisaster();setInterval(loadDisaster,30000);
+let _prevDisasterAlert='';
+function triggerDisasterAlert(msg){
+  if(_prevDisasterAlert===msg)return;
+  _prevDisasterAlert=msg;
+  const m=getAlertMode();
+  if(m!=='off'){try{navigator.vibrate?.(600)}catch(e){}}
+  if(m==='sound')playAlert();
+  // Push notification
+  const tok=sessionStorage.getItem('token');
+  if(tok)fetch('/api/push/notify',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+tok},body:JSON.stringify({category:'disaster',title:'警戒レベル4発令',body:msg.replace(/[⚠️🌤]/g,'').trim(),url:'/01index.html'})}).catch(()=>{});
+}
 
 // ===== TEACHER SCHEDULE NOTIFICATION =====
 async function checkNextClass() {

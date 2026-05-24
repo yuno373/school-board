@@ -58,7 +58,7 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
 .batch-year-row input{padding:3px 6px;border:2px solid var(--border);border-radius:4px;font-size:13px;width:56px;font-family:inherit}
 .batch-year-row .class-sizes{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 .class-size-wrap{font-size:11px;display:inline-flex;align-items:center;gap:2px;color:var(--sub);white-space:nowrap}
-.class-size-input{width:44px;text-align:center;-moz-appearance:textfield}
+.class-size-input{width:54px;text-align:center}
 .btn-remove-year{background:var(--danger);color:#fff;border:none;padding:4px 8px;border-radius:4px;cursor:pointer;font-size:11px}
 .result-box{display:none;margin-top:10px;padding:12px;background:#e8f5e9;border-radius:8px;font-size:13px}
 .result-box.show{display:block}
@@ -226,8 +226,8 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
       <h3 style="font-size:15px;font-weight:700;margin-bottom:12px;color:var(--text)">🧑‍🏫 先生ID 一括生成</h3>
       <div class="batch-form">
         <label>接頭語<input type="text" id="tPrefix" value="T" style="width:60px"></label>
-        <label>開始番号<input type="number" id="tStart" value="1" min="1" style="width:70px"></label>
-        <label>人数<input type="number" id="tCount" value="5" min="1" max="100" style="width:70px"></label>
+        <label>開始番号<input type="text" inputmode="numeric" pattern="[0-9]*" id="tStart" value="1" style="width:60px"></label>
+        <label>人数<input type="text" inputmode="numeric" pattern="[0-9]*" id="tCount" value="5" style="width:60px"></label>
         <label>表示名の接頭語<input type="text" id="tDispPrefix" placeholder="先生" style="width:80px"></label>
         <label>初期パスワード<input type="text" id="tPassword" value="111111" style="width:70px"></label>
         <button class="btn btn-primary" id="tGenerate">生成する</button>
@@ -505,8 +505,8 @@ function renderBatchYears(){
 }
 function addBatchYearRow(){
   const div=document.createElement('div');div.className='batch-year-row';
-  div.innerHTML='<label>入学年度<input type="number" class="b-year" value="2026" min="2020" max="2035"></label>'+
-    '<label>クラス数<input type="number" class="b-class-count" value="3" min="1" max="10"></label>'+
+  div.innerHTML='<label>入学年度<input type="text" inputmode="numeric" pattern="[0-9]*" class="b-year" value="2026" maxlength="4"></label>'+
+    '<label>クラス数<input type="text" inputmode="numeric" pattern="[0-9]*" class="b-class-count" value="3" maxlength="2"></label>'+
     '<div class="class-sizes"></div>'+
     '<button class="btn-remove-year" onclick="this.parentElement.remove()">削除</button>';
   $('batchYears').appendChild(div);
@@ -522,7 +522,7 @@ function renderClassSizes(row){
   let html='';
   for(let i=0;i<n;i++){
     const v=vals[i]||30;
-    html+='<label class="class-size-wrap">'+(i+1)+'組<input type="number" class="class-size-input" value="'+v+'" min="1" max="50"></label>';
+    html+='<label class="class-size-wrap">'+(i+1)+'組<input type="text" inputmode="numeric" pattern="[0-9]*" class="class-size-input" value="'+v+'" maxlength="2"></label>';
   }
   container.innerHTML=html;
 }

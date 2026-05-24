@@ -114,6 +114,7 @@ async function sendMsg(){
   try{
     await a('/api/chat',{method:'POST',body:JSON.stringify({message:txt})});
     inp.value='';lastTime=Date.now();await loadMsgs();
+    fetch('/api/push/notify',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+sessionStorage.getItem('token')},body:JSON.stringify({category:'chat',title:'部長チャット',body:txt.slice(0,80),url:'/chat.html',excludeUser:cu})}).catch(()=>{});
   }catch(e){alert(e.message)}
   inp.disabled=false;inp.focus();
 }

@@ -211,6 +211,9 @@ async function sendMsg(){
     if(activeType==='dm')r=await a('/api/dm/send',{method:'POST',body:JSON.stringify({to:activeConv,message:txt})});
     else r=await a('/api/dm/groups/'+activeConv+'/send',{method:'POST',body:JSON.stringify({message:txt})});
     inp.value='';
+    const cat=activeType==='dm'?'dm':'group-dm';
+    const lbl=activeType==='dm'?'DM':'グループDM';
+    fetch('/api/push/notify',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+sessionStorage.getItem('token')},body:JSON.stringify({category:cat,title:lbl,body:txt.slice(0,80),url:'/dm.html',excludeUser:sessionStorage.getItem('username')})}).catch(()=>{});
     const list=$('#dmMsgList');
     renderMsg(r,list,activeType);
     scrollBottom();

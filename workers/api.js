@@ -1967,6 +1967,22 @@ if (path === '/api/users' && method === 'GET') {
     }
 
     // ============================================================
+    // 18. PUSH SUBSCRIPTIONS (R2 persistence for Render)
+    // ============================================================
+    if (path === '/api/push/subs' && method === 'GET') {
+      const subs = await r2Get(env.DATA, 'push_subs.json') || [];
+      return json(subs);
+    }
+
+    if (path === '/api/push/subs' && method === 'POST') {
+      const key = request.headers.get('X-Auth-Key');
+      if (key !== (env.MIGRATE_KEY || 'migrate2026')) return json({ error: 'forbidden' }, 403);
+      const subs = await request.json();
+      await r2Put(env.DATA, 'push_subs.json', subs);
+      return json({ ok: true, count: subs.length });
+    }
+
+    // ============================================================
     // 19. STATIC FILES (serve from R2)
     // ============================================================
     const staticPath = 'static' + (path === '/' ? '/01index.html' : path);

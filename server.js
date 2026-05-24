@@ -11,16 +11,40 @@ if (VAPID_PUBLIC && VAPID_PRIVATE) {
   webPush.setVapidDetails('mailto:admin@school.example.com', VAPID_PUBLIC, VAPID_PRIVATE);
   console.log('VAPID keys loaded from env');
 } else {
-  const keys = webPush.generateVAPIDKeys();
-  VAPID_PUBLIC = keys.publicKey;
-  webPush.setVapidDetails('mailto:admin@school.example.com', keys.publicKey, keys.privateKey);
-  console.log('Generated temporary VAPID keys. Set env vars VAPID_PUBLIC_KEY and VAPID_PRIVATE_KEY for persistence.');
+  // Try loading from local file (generated on first run)
+  const keyFile = path.join(__dirname, 'vapid_keys.json');
+  try {
+    const saved = JSON.parse(fs.readFileSync(keyFile, 'utf-8'));
+    VAPID_PUBLIC = saved.publicKey;
+    webPush.setVapidDetails('mailto:admin@school.example.com', saved.publicKey, saved.privateKey);
+    console.log('VAPID keys loaded from file');
+  } catch(e) {
+    const keys = webPush.generateVAPIDKeys();
+    VAPID_PUBLIC = keys.publicKey;
+    webPush.setVapidDetails('mailto:admin@school.example.com', keys.publicKey, keys.privateKey);
+    try { fs.writeFileSync(keyFile, JSON.stringify(keys)); console.log('Generated and saved VAPID keys to file'); } catch(_) {}
+    console.log('Generated temporary VAPID keys. Set env vars VAPID_PUBLIC_KEY and VAPID_PRIVATE_KEY for persistence across deploys.');
+  }
 }
 
 const WORKER = 'https://school-board-api.dajianweixi.workers.dev';
+const MIGRATE_KEY = process.env.MIGRATE_KEY || 'migrate2026';
 let pushSubs = [];
-try { pushSubs = JSON.parse(fs.readFileSync(DATA_FILE, 'utf-8')); console.log('Loaded ' + pushSubs.length + ' push subscriptions'); } catch(e) {}
-function saveSubs() { try { fs.writeFileSync(DATA_FILE, JSON.stringify(pushSubs)); } catch(e) { console.error('Failed to save subscriptions:', e.message); } }
+async function loadSubsFromR2() {
+  try {
+    const r = await fetch(WORKER + '/api/push/subs');
+    if (r.ok) { pushSubs = await r.json(); console.log('Loaded ' + pushSubs.length + ' push subscriptions from R2'); }
+    else { console.log('R2 push subs not available, using local file'); loadLocalSubs(); }
+  } catch(e) { console.log('R2 push subs fetch failed, using local file:', e.message); loadLocalSubs(); }
+}
+function loadLocalSubs() {
+  try { pushSubs = JSON.parse(fs.readFileSync(DATA_FILE, 'utf-8')); console.log('Loaded ' + pushSubs.length + ' push subscriptions from local file'); } catch(e) { console.log('No local push subs file'); }
+}
+function syncSubsToR2() {
+  try { fs.writeFileSync(DATA_FILE, JSON.stringify(pushSubs)); } catch(e) { console.error('Failed to save local subs:', e.message); }
+  fetch(WORKER + '/api/push/subs', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Auth-Key': MIGRATE_KEY }, body: JSON.stringify(pushSubs) }).then(r => { if (!r.ok) console.error('R2 sync failed:', r.status); }).catch(e => console.error('R2 sync error:', e.message));
+}
+loadSubsFromR2();
 
 async function verifyToken(token) {
   if (!token) return null;
@@ -42,7 +66,7 @@ app.post('/api/push/subscribe', express.json(), async (req, res) => {
     const { topics } = req.body;
     pushSubs = pushSubs.filter(s => s.username !== user.username);
     pushSubs.push({ ...req.body, username: user.username, topics: topics || [], createdAt: new Date().toISOString() });
-    saveSubs();
+    syncSubsToR2();
     res.json({ ok: true, topics: topics || [] });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
@@ -52,7 +76,7 @@ app.post('/api/push/unsubscribe', express.json(), async (req, res) => {
     const user = await verifyToken(req.headers.authorization);
     if (!user) return res.status(401).json({ error: '認証が必要です' });
     pushSubs = pushSubs.filter(s => s.username !== user.username);
-    saveSubs();
+    syncSubsToR2();
     res.json({ ok: true });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
@@ -81,7 +105,7 @@ app.post('/api/push/notify', express.json(), async (req, res) => {
         results.sent++;
       } catch (e) {
         results.failed++;
-        if (e.statusCode === 410 || e.statusCode === 404) { pushSubs = pushSubs.filter(s => s.endpoint !== sub.endpoint); saveSubs(); }
+        if (e.statusCode === 410 || e.statusCode === 404) { pushSubs = pushSubs.filter(s => s.endpoint !== sub.endpoint); syncSubsToR2(); }
       }
     }));
     res.json(results);
@@ -103,7 +127,7 @@ app.post('/api/push/send', express.json(), async (req, res) => {
         results.sent++;
       } catch (e) {
         results.failed++;
-        if (e.statusCode === 410 || e.statusCode === 404) { pushSubs = pushSubs.filter(s => s.endpoint !== sub.endpoint); saveSubs(); }
+        if (e.statusCode === 410 || e.statusCode === 404) { pushSubs = pushSubs.filter(s => s.endpoint !== sub.endpoint); syncSubsToR2(); }
       }
     }));
     res.json(results);

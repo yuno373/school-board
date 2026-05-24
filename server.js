@@ -4,47 +4,53 @@ const fs = require('fs');
 const webPush = require('web-push');
 const app = express();
 const DATA_FILE = path.join(__dirname, 'push_subs.json');
+const WORKER = 'https://school-board-api.dajianweixi.workers.dev';
+const MIGRATE_KEY = process.env.MIGRATE_KEY || 'migrate2026';
 
-let VAPID_PUBLIC = process.env.VAPID_PUBLIC_KEY;
-const VAPID_PRIVATE = process.env.VAPID_PRIVATE_KEY;
-if (VAPID_PUBLIC && VAPID_PRIVATE) {
-  webPush.setVapidDetails('mailto:admin@school.example.com', VAPID_PUBLIC, VAPID_PRIVATE);
-  console.log('VAPID keys loaded from env');
-} else {
-  // Try loading from local file (generated on first run)
+let VAPID_PUBLIC, VAPID_PRIVATE;
+async function initVapid() {
+  VAPID_PUBLIC = process.env.VAPID_PUBLIC_KEY;
+  VAPID_PRIVATE = process.env.VAPID_PRIVATE_KEY;
+  if (VAPID_PUBLIC && VAPID_PRIVATE) {
+    webPush.setVapidDetails('mailto:admin@school.example.com', VAPID_PUBLIC, VAPID_PRIVATE);
+    console.log('VAPID keys loaded from env');
+    return;
+  }
+  // Try R2
+  try {
+    const r = await fetch(WORKER + '/api/vapid-keys');
+    if (r.ok) { const saved = await r.json(); VAPID_PUBLIC = saved.publicKey; VAPID_PRIVATE = saved.privateKey; webPush.setVapidDetails('mailto:admin@school.example.com', VAPID_PUBLIC, VAPID_PRIVATE); console.log('VAPID keys loaded from R2'); return; }
+  } catch(e) {}
+  // Try local file
   const keyFile = path.join(__dirname, 'vapid_keys.json');
   try {
     const saved = JSON.parse(fs.readFileSync(keyFile, 'utf-8'));
-    VAPID_PUBLIC = saved.publicKey;
-    webPush.setVapidDetails('mailto:admin@school.example.com', saved.publicKey, saved.privateKey);
+    VAPID_PUBLIC = saved.publicKey; VAPID_PRIVATE = saved.privateKey;
+    webPush.setVapidDetails('mailto:admin@school.example.com', VAPID_PUBLIC, VAPID_PRIVATE);
     console.log('VAPID keys loaded from file');
-  } catch(e) {
-    const keys = webPush.generateVAPIDKeys();
-    VAPID_PUBLIC = keys.publicKey;
-    webPush.setVapidDetails('mailto:admin@school.example.com', keys.publicKey, keys.privateKey);
-    try { fs.writeFileSync(keyFile, JSON.stringify(keys)); console.log('Generated and saved VAPID keys to file'); } catch(_) {}
-    console.log('Generated temporary VAPID keys. Set env vars VAPID_PUBLIC_KEY and VAPID_PRIVATE_KEY for persistence across deploys.');
-  }
+    return;
+  } catch(e) {}
+  // Generate new
+  const keys = webPush.generateVAPIDKeys();
+  VAPID_PUBLIC = keys.publicKey; VAPID_PRIVATE = keys.privateKey;
+  webPush.setVapidDetails('mailto:admin@school.example.com', VAPID_PUBLIC, VAPID_PRIVATE);
+  try { fs.writeFileSync(keyFile, JSON.stringify(keys)); } catch(_) {}
+  fetch(WORKER + '/api/vapid-keys', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Auth-Key': MIGRATE_KEY }, body: JSON.stringify(keys) }).catch(() => {});
+  console.log('Generated new VAPID keys, saved to R2');
 }
 
-const WORKER = 'https://school-board-api.dajianweixi.workers.dev';
-const MIGRATE_KEY = process.env.MIGRATE_KEY || 'migrate2026';
 let pushSubs = [];
 async function loadSubsFromR2() {
   try {
     const r = await fetch(WORKER + '/api/push/subs');
-    if (r.ok) { pushSubs = await r.json(); console.log('Loaded ' + pushSubs.length + ' push subscriptions from R2'); }
-    else { console.log('R2 push subs not available, using local file'); loadLocalSubs(); }
-  } catch(e) { console.log('R2 push subs fetch failed, using local file:', e.message); loadLocalSubs(); }
-}
-function loadLocalSubs() {
+    if (r.ok) { pushSubs = await r.json(); console.log('Loaded ' + pushSubs.length + ' push subscriptions from R2'); return; }
+  } catch(e) { console.log('R2 push subs fetch failed:', e.message); }
   try { pushSubs = JSON.parse(fs.readFileSync(DATA_FILE, 'utf-8')); console.log('Loaded ' + pushSubs.length + ' push subscriptions from local file'); } catch(e) { console.log('No local push subs file'); }
 }
 function syncSubsToR2() {
-  try { fs.writeFileSync(DATA_FILE, JSON.stringify(pushSubs)); } catch(e) { console.error('Failed to save local subs:', e.message); }
-  fetch(WORKER + '/api/push/subs', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Auth-Key': MIGRATE_KEY }, body: JSON.stringify(pushSubs) }).then(r => { if (!r.ok) console.error('R2 sync failed:', r.status); }).catch(e => console.error('R2 sync error:', e.message));
+  try { fs.writeFileSync(DATA_FILE, JSON.stringify(pushSubs)); } catch(e) {}
+  fetch(WORKER + '/api/push/subs', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Auth-Key': MIGRATE_KEY }, body: JSON.stringify(pushSubs) }).catch(() => {});
 }
-loadSubsFromR2();
 
 async function verifyToken(token) {
   if (!token) return null;
@@ -162,7 +168,7 @@ app.use('/api', async (req, res) => {
 
 app.use(express.static(path.join(__dirname, 'public')));
 const port = process.env.PORT || 10000;
-loadSubsFromR2().then(() => {
+Promise.all([initVapid(), loadSubsFromR2()]).then(() => {
   app.listen(port, () => console.log('Server running on port ' + port));
 }).catch(() => {
   app.listen(port, () => console.log('Server running on port ' + port));

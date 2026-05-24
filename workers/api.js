@@ -1800,18 +1800,19 @@ if (path === '/api/users' && method === 'GET') {
     if (path === '/api/wbgt' && method === 'GET') {
       try {
         const jst = new Date(Date.now() + 9 * 3600000);
-        const y = jst.getUTCFullYear();
-        const m = String(jst.getUTCMonth() + 1).padStart(2, '0');
-        const d = String(jst.getUTCDate()).padStart(2, '0');
-        const h = String(jst.getUTCHours()).padStart(2, '0');
-        const min = String(Math.floor(jst.getUTCMinutes() / 10) * 10).padStart(2, '0');
-        const ts = `${y}${m}${d}${h}${min}00`;
-        const jmaUrl = `https://www.jma.go.jp/bosai/amedas/data/map/${ts}.json`;
-        const jmaResp = await fetch(jmaUrl, { headers: { 'User-Agent': 'SchoolBoard/1.0' } });
-        if (!jmaResp.ok) {
-          return json({ error: 'JMA data unavailable', ts }, 502);
+        let jmaData, ts;
+        for (let fallback = 0; fallback < 12; fallback++) {
+          const t = new Date(jst.getTime() - fallback * 600000);
+          const y = t.getUTCFullYear();
+          const m = String(t.getUTCMonth() + 1).padStart(2, '0');
+          const d = String(t.getUTCDate()).padStart(2, '0');
+          const h = String(t.getUTCHours()).padStart(2, '0');
+          const min = String(Math.floor(t.getUTCMinutes() / 10) * 10).padStart(2, '0');
+          ts = `${y}${m}${d}${h}${min}00`;
+          const resp = await fetch(`https://www.jma.go.jp/bosai/amedas/data/map/${ts}.json`, { headers: { 'User-Agent': 'SchoolBoard/1.0' } });
+          if (resp.ok) { jmaData = await resp.json(); break; }
         }
-        const jmaData = await jmaResp.json();
+        if (!jmaData) return json({ error: 'JMA data unavailable' }, 502);
         const st = jmaData['43266'];
         if (!st || !st.temp || !st.humidity) {
           return json({ error: 'Station data unavailable', ts }, 502);
@@ -2021,6 +2022,21 @@ if (path === '/api/users' && method === 'GET') {
       const subs = await request.json();
       await r2Put(env.DATA, 'push_subs.json', subs);
       return json({ ok: true, count: subs.length });
+    }
+
+    // ============================================================
+    // 18b. VAPID KEYS (persist across Render deploys)
+    // ============================================================
+    if (path === '/api/vapid-keys' && method === 'GET') {
+      const keys = await r2Get(env.DATA, 'vapid_keys.json');
+      return json(keys || { error: 'no keys' });
+    }
+    if (path === '/api/vapid-keys' && method === 'POST') {
+      const key = request.headers.get('X-Auth-Key');
+      if (key !== (env.MIGRATE_KEY || 'migrate2026')) return json({ error: 'forbidden' }, 403);
+      const keys = await request.json();
+      await r2Put(env.DATA, 'vapid_keys.json', keys);
+      return json({ ok: true });
     }
 
     // ============================================================

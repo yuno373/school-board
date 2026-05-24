@@ -394,7 +394,7 @@ function clock(){function u(){const n=new Date();$('hDate').textContent=(n.getMo
 clock();
 $('bSearch').addEventListener('input',function(){searchQuery=this.value;tabs();renderPosts()});
 loadCounts().then(()=>{tabs();sel();load()});
-setInterval(()=>{loadCounts();tabs();load()},5000);
+setInterval(()=>{loadCounts();tabs();load()},10000);
 
 const chatBadge=$('chatBadge'),chatLink=$('bChatLink');
 if(chatLink.style.display!=='none'){

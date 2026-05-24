@@ -419,7 +419,6 @@ function renderUsers(){
     }).join('');
     const actions=`<div style="display:flex;gap:2px;flex-wrap:nowrap">
       ${sd&&x.id!==cu?`<button class="btn btn-danger btn-sm" onclick="delUser('${x.id}','${esc(x.username)}')">削</button>`:''}
-      <button class="btn btn-outline btn-sm" onclick="unlockUser('${x.id}')">解除</button>
     </div>`;
     tr.innerHTML=`<td style="width:24px;text-align:center"><input type="checkbox" class="user-select" data-id="${esc(x.id)}"></td><td style="font-size:10px">${esc(x.username)}</td>
       <td><input type="text" value="${esc(x.display_name||'')}" onchange="updField('${x.id}','display_name',this.value)" style="width:60px"></td>

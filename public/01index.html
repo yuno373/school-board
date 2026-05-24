@@ -257,10 +257,8 @@ let reactTarget=null;
 async function showReactModal(targetType,targetId,data){
   reactTarget={targetType,targetId,data};
   const el=$('reactContent');el.innerHTML='';
-  let hasAny=false;
   Object.entries(REACT_ICONS).forEach(([type,icon])=>{
     const users=data[type]||[];const myU=curUser?.username;const active=users.includes(myU);
-    if(users.length||active)hasAny=true;
     const row=document.createElement('div');row.className='react-group';
     const head=document.createElement('div');head.className='react-group-head';
     const btn=document.createElement('button');btn.className='rg-btn'+(active?' active':'');
@@ -269,6 +267,7 @@ async function showReactModal(targetType,targetId,data){
     head.appendChild(btn);
     const userList=document.createElement('div');userList.className='react-users';
     users.forEach(u=>{const s=document.createElement('span');s.textContent=u;userList.appendChild(s)});
+    if(!users.length)userList.style.display='none';
     row.appendChild(head);row.appendChild(userList);
     btn.addEventListener('click',async()=>{
       try{
@@ -280,7 +279,6 @@ async function showReactModal(targetType,targetId,data){
     });
     el.appendChild(row);
   });
-  if(!hasAny)el.innerHTML='<div style="text-align:center;padding:20px;color:var(--sub);font-size:13px">まだリアクションはありません</div>';
   $('reactOverlay').classList.add('show');
 }
 $('reactClose').addEventListener('click',()=>$('reactOverlay').classList.remove('show'));

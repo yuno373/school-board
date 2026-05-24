@@ -97,11 +97,14 @@ app.post('/api/push/notify', express.json(), async (req, res) => {
     if (!category || !title) return res.status(400).json({ error: 'カテゴリとタイトルは必須です' });
     const user = await verifyToken(req.headers.authorization);
     if (!user) return res.status(401).json({ error: '認証が必要です' });
+    const catLabels = { 'general': '📝 上中連絡', 'lost': '🔍 忘れ物', 'chat': '💬 チャット', 'dm': '✉️ DM', 'schedule': '📅 予定' };
+    const prefix = catLabels[category] || ('🏷️ ' + category);
+    const prefixedTitle = prefix + ': ' + title;
     const targets = pushSubs.filter(s => s.topics && (s.topics.includes(category) || s.topics.includes('club_'+category) || s.topics.includes('committee_'+category) || s.topics.includes('all')) && s.username !== excludeUser);
     const results = { sent: 0, failed: 0 };
     await Promise.all(targets.map(async sub => {
       try {
-        await webPush.sendNotification(sub, JSON.stringify({ title, body: body || '', icon: '/icon.svg', data: { url: url || '/' } }));
+        await webPush.sendNotification(sub, JSON.stringify({ title: prefixedTitle, body: body || '', icon: '/icon.svg', data: { url: url || '/' } }));
         results.sent++;
       } catch (e) {
         results.failed++;

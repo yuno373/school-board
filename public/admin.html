@@ -106,20 +106,39 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
   </div>
 </header>
 <div class="main-content">
-  <div class="tab-bar">
-    <button class="tab-btn active" data-tab="users">生徒管理</button>
-    <button class="tab-btn" data-tab="batch">ID一括生成</button>
-    <button class="tab-btn" data-tab="notifications">通知管理</button>
-    <button class="tab-btn" data-tab="posts">投稿管理</button>
-    <button class="tab-btn" data-tab="stats">統計</button>
-     <button class="tab-btn" data-tab="chat">チャット管理</button>
-     <button class="tab-btn" data-tab="diagnosis">診断</button>
+    <div class="tab-bar">
+     <button class="tab-btn active" data-tab="users">生徒管理</button>
+     <button class="tab-btn" data-tab="batch">ID一括生成</button>
+     <button class="tab-btn" data-tab="notifications">通知管理</button>
+     <button class="tab-btn" data-tab="posts">投稿管理</button>
+     <button class="tab-btn" data-tab="stats">統計</button>
+      <button class="tab-btn" data-tab="chat">チャット管理</button>
+      <button class="tab-btn" data-tab="diagnosis">診断</button>
+      <button class="tab-btn" data-tab="update-notify">アップデート通知</button>
+    </div>
+
+    <!-- Notifications Tab -->
+   <div class="tab-content" id="tab-notifications">
+     <div id="notifList"></div>
    </div>
 
-   <!-- Notifications Tab -->
-  <div class="tab-content" id="tab-notifications">
-    <div id="notifList"></div>
-  </div>
+    <!-- Update Notify Tab -->
+   <div class="tab-content" id="tab-update-notify">
+     <div class="card">
+       <h3>システムアップデート通知</h3>
+       <p>全ユーザーにアップデート通知を送信します。管理者のみ実行可能です。</p>
+       <div style="margin-top:16px;">
+         <label>タイトル<input type="text" id="updateTitle" placeholder="例: バージョンアップのお知らせ" style="width:100%;max-width:300px;padding:8px 12px;border:2px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"></label>
+       </div>
+       <div style="margin-top:12px;">
+         <label>内容<textarea id="updateBody" placeholder="通知の詳細を入力してください" style="width:100%;height:100px;padding:8px 12px;border:2px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;resize:vertical;"></textarea></label>
+       </div>
+       <div style="margin-top:16px;">
+         <button class="btn btn-primary" id="sendUpdateNotify">通知を送信</button>
+         <span id="updateResult" style="margin-left:12px;font-size:13px;"></span>
+       </div>
+     </div>
+   </div>
 
   <!-- Users Tab -->
   <div class="tab-content active" id="tab-users">
@@ -262,6 +281,7 @@ document.querySelectorAll('.tab-btn').forEach(b=>b.addEventListener('click',()=>
   if(b.dataset.tab==='posts')loadPosts();
   if(b.dataset.tab==='stats')loadStats();
   if(b.dataset.tab==='chat')loadChatUsers();
+  if(b.dataset.tab==='update-notify')loadUpdateNotify();
 }));
 $('aLogout').addEventListener('click',()=>{sessionStorage.clear();window.location.href='02login.html'});
 
@@ -538,6 +558,12 @@ function renderChatUsers(){
 }
 $('chatSearchInput').addEventListener('input',renderChatUsers);
 $('chatRoleFilter').addEventListener('change',renderChatUsers);
+
+// === Update Notify ===
+async function loadUpdateNotify(){
+  const el=$('updateResult');
+  el.textContent='';
+}
 
 // === Diagnosis ===
 const DIAG_CHECKS = [

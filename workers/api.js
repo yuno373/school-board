@@ -401,8 +401,10 @@ async function handleRequest(request, env, ctx) {
       const users = await r2Get(env.DATA, 'users.json') || [];
       const u = users.find(x => x.id === user.id);
       if (!u) return json({ error: '見つかりません' }, 404);
-      if (u.password !== (await hp(currentPassword))) return json({ error: '現在のパスワードが違います' }, 403);
-      u.password = await hp(newPassword);
+      const curHash = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', enc(currentPassword)))).map(x => x.toString(16).padStart(2, '0')).join('');
+      if (u.password !== (await hp(curHash))) return json({ error: '現在のパスワードが違います' }, 403);
+      const newHash = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', enc(newPassword)))).map(x => x.toString(16).padStart(2, '0')).join('');
+      u.password = await hp(newHash);
       u.password_plain = newPassword;
       await r2Put(env.DATA, 'users.json', users);
       return json({ success: true });
@@ -416,7 +418,8 @@ async function handleRequest(request, env, ctx) {
       if (!password) return json({ error: '入力してください' }, 400);
       const users = await r2Get(env.DATA, 'users.json') || [];
       const u = users.find(x => x.id === user.id);
-      if (!u || u.password !== (await hp(password))) return json({ error: 'パスワードが違います' }, 403);
+      const pwdHash = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', enc(password)))).map(x => x.toString(16).padStart(2, '0')).join('');
+      if (!u || u.password !== (await hp(pwdHash))) return json({ error: 'パスワードが違います' }, 403);
       return json({ success: true });
     }
 
@@ -657,7 +660,11 @@ if (path === '/api/users' && method === 'GET') {
         if (newRoles.includes('admin') && user.username !== u.username) return json({ error: '管理者権限は付与できません' }, 403);
         u.role = updates.role;
       }
-      if (updates.password) { u.password = await hp(updates.password); u.password_plain = updates.password; }
+      if (updates.password) {
+        const pwdHash = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', enc(updates.password)))).map(x => x.toString(16).padStart(2, '0')).join('');
+        u.password = await hp(pwdHash);
+        u.password_plain = updates.password;
+      }
       if (updates.grade !== undefined) u.grade = updates.grade;
       if (updates.class_num !== undefined) u.class_num = updates.class_num;
       if (updates.seat_num !== undefined) u.seat_num = updates.seat_num;
@@ -687,7 +694,8 @@ if (path === '/api/users' && method === 'GET') {
       const u = users.find(x => x.id === pwdReset[1]);
       if (!u) return json({ error: '見つかりません' }, 404);
       const newPwd = randomPassword();
-      u.password = await hp(newPwd);
+      const newPwdHash = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', enc(newPwd)))).map(x => x.toString(16).padStart(2, '0')).join('');
+      u.password = await hp(newPwdHash);
       u.password_plain = newPwd;
       await r2Put(env.DATA, 'users.json', users);
       await auditLog(env, 'reset_password', user.username, { target: u.username });
@@ -1003,9 +1011,8 @@ if (path === '/api/users' && method === 'GET') {
       const users = await r2Get(env.DATA, 'users.json') || [];
       const u = users.find(x => x.username === req.username);
       if (!u) return json({ error: 'ユーザーが見つかりません' }, 404);
-      const passHash = await hp(password);
       const hashedInput = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', enc(password)))).map(x => x.toString(16).padStart(2, '0')).join('');
-      u.password = passHash;
+      u.password = await hp(hashedInput);
       u.password_plain = password;
       req.fullfilled = true;
       req.new_password_plain = password;
@@ -1859,6 +1866,36 @@ if (path === '/api/users' && method === 'GET') {
       const subs = await request.json();
       await r2Put(env.DATA, 'push_subs.json', subs);
       return json({ ok: true, count: subs.length });
+    }
+
+    // ============================================================
+    // 18c. PUSH NOTIFY (send push notifications to subscribers)
+    // ============================================================
+    if (path === '/api/push/notify' && method === 'POST') {
+      authErr = requireAuth(user);
+      if (authErr) return authErr;
+      const {category, title, body, url, excludeUser} = await request.json();
+      // For now, just log and return ok
+      await auditLog(env, 'push_notify', user.username, {category, title, body, url, excludeUser});
+      return json({ok: true});
+    }
+
+    // ============================================================
+    // 18d. ADMIN UPDATE NOTIFY (send system update notification to all subscribers)
+    // ============================================================
+    if (path === '/api/admin/notify-update' && method === 'POST') {
+      authErr = requireAuth(user, ['admin']);
+      if (authErr) return authErr;
+      const {title, body} = await request.json();
+      if (!title) return json({error: 'タイトルは必須です'}, 400);
+      // Store the notification in R2 for history (optional)
+      const notifications = await r2Get(env.DATA, 'update-notifications.json') || [];
+      notifications.unshift({id: crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2), title, body, sent_at: new Date().toISOString(), sent_by: user.username});
+      if (notifications.length > 50) notifications.length = 50;
+      await r2Put(env.DATA, 'update-notifications.json', notifications);
+      await auditLog(env, 'admin_update_notify', user.username, {title, body});
+      // TODO: Implement actual push notification sending here
+      return json({ok: true});
     }
 
     // ============================================================

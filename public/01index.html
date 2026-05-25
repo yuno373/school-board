@@ -5,18 +5,22 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <link rel="manifest" href="manifest.json">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>上藤沢中学校 部活動黒板</title>
 <style>
 :root{--primary:#1E4D2B;--primary-dark:#153820;--primary-light:#2D6B40;--accent-pink:#f5a0b8;--accent-blue:#a0c4e8;--accent-yellow:#f5e6a0;--accent-green:#a8d8a0;--bg:#f7f5f0;--card:#fff;--text:#2c2c2c;--sub:#8a8682;--border:#e0dcd4;--danger:#c96565;--radius:12px;--shadow:0 2px 12px rgba(30,77,43,0.06)}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sans',Meiryo,sans-serif;background:var(--bg);color:var(--text)}
-.header{background:var(--primary);padding:12px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100}
+.header{background:var(--primary);padding:12px 20px;display:flex;justify-content:space-between;align-items:stretch;position:sticky;top:0;z-index:100;min-height:80px;border:2px solid red;}
 .header-title{font-size:16px;font-weight:700;color:#fff;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.header-center{flex:1;display:flex;align-items:center;justify-content:flex-start;padding:0 10px;min-width:0}
 .header-title .hd{display:inline-flex;align-items:center;gap:6px}
 .header-title .hdate{font-size:12px;font-weight:400;opacity:.8;white-space:nowrap}
 .header-right{display:flex;align-items:center;gap:6px;overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch;flex-shrink:0;max-width:100%}
 .header-right::-webkit-scrollbar{display:none}
+.header-left{flex:0 0 auto;}
+.header-right{flex:0 0 auto;}
 .user-badge{background:rgba(255,255,255,.2);color:#fff;font-size:11px;padding:3px 10px;border-radius:6px;font-weight:700;flex-shrink:0}
 .user-badge{background:rgba(255,255,255,.2);color:#fff;font-size:11px;padding:3px 10px;border-radius:6px;font-weight:700}
 .header-link{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);padding:4px 10px;font-size:12px;cursor:pointer;color:rgba(255,255,255,.85);border-radius:8px;text-decoration:none;transition:all .2s;font-family:inherit;white-space:nowrap;flex-shrink:0}
@@ -126,22 +130,22 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
 </head>
 <body>
 <header class="header">
-  <div class="header-title"><span class="hd">📋 上藤沢中学校</span><span class="hdate" id="hDate"></span></div>
-  <div class="header-right">
-    <span id="bUser" style="font-size:12px;color:rgba(255,255,255,.75)"></span>
-    <span class="user-badge" id="bRole"></span>
-    <a href="https://miraiseed2.benesse.ne.jp/seed/start/FpgtwCRY" target="_blank" rel="noopener" class="header-link" id="bMiraiseedLink">📚 ミライシード</a>
-    <a href="https://ed-cl.com" target="_blank" rel="noopener" class="header-link" id="bMekubittoLink">📖 メクビット</a>
-    
-    <a href="club-questions.html" class="header-link" id="bClubQLink" style="display:none">質問</a>
-    <a href="chat.html" class="header-link" id="bChatLink" style="display:none">部長チャット<span class="notif-badge" id="chatBadge"></span></a>
-    <a href="dm.html" class="header-link" id="bDmLink" style="display:none">DM</a>
-    <a href="user-management.html" class="header-link" id="bUserMgmtLink" style="display:none">ユーザー管理</a>
-    <a href="settings.html" class="header-link" id="bSettingsLink">ユーザー設定</a>
-    <a href="help.html" class="header-link">📖 使い方</a>
-    <button class="header-link danger" id="bLogout">ログアウト</button>
-  </div>
-</header>
+   <div class="header-left">
+     <div class="header-school">上藤沢中学校部活動黒板</div>
+     <div class="header-links">
+       <a href="https://miraiseed2.benesse.ne.jp/seed/start/FpgtwCRY" target="_blank" rel="noopener" class="header-link">📚 ミライシード</a>
+       <a href="https://ed-cl.com" target="_blank" rel="noopener" class="header-link">📖 メクビット</a>
+     </div>
+   </div>
+   <div class="header-center">
+     <div class="header-user-info">
+       <div id="header-user-detail"></div>
+     </div>
+   </div>
+   <div class="header-right">
+     <div class="header-tabs" id="header-tabs"></div>
+   </div>
+ </header>
 <div id="disasterBar"><span class="disaster-icon">⚠️</span><span class="disaster-msg" id="disasterMsg"></span></div>
 <div id="wbgtBar"><div class="wbgt-val">--.-</div><div><div class="wbgt-label">WBGT</div><div class="wbgt-advice">取得中...</div></div><div class="wbgt-detail"><span>--°C</span><span>--%</span></div></div>
 <div class="notif-banner" id="notifBanner"><span class="nb-text">🔔 お知らせを受け取るには通知をオンにしてください</span><button class="nb-btn" id="notifBtn">通知をオンにする</button><button class="nb-close" id="notifClose">✕</button></div>
@@ -231,7 +235,76 @@ async function load(){
   try{
     const p=await api('/api/posts?category='+encodeURIComponent(curCat));
     allPosts=p||[];renderPosts();
+    updateHeaderUserInfo();
   }catch(e){if(e.message.includes('認証')){sessionStorage.clear();window.location.href='02login.html'}c.innerHTML='<div class="empty-state">エラー</div>'}
+}
+
+function updateHeaderUserInfo(){
+  if(!curUser)return;
+  
+  // Update user detail info
+  const detail = $('header-user-detail');
+  if(detail){
+    const grade = curUser.grade || '';
+    const classNum = curUser.class_num || '';
+    const seatNum = curUser.seat_num || '';
+    const username = curUser.username || '';
+    const displayName = curUser.display_name || '';
+    const club = curUser.club || '';
+    const committee = curUser.committee || '';
+    
+    let info = '';
+    if(grade) info += `学年:${grade} `;
+    if(classNum) info += `クラス:${classNum} `;
+    if(seatNum) info += `番号:${seatNum} `;
+    if(displayName || username) info += `名前:${displayName || username} `;
+    if(club) info += `部活:${club} `;
+    if(committee) info += `委員会:${committee}`;
+    
+    detail.textContent = info.trim();
+  }
+  
+  // Update tabs to show only user's committees and clubs
+  const tabsContainer = $('header-tabs');
+  if(tabsContainer){
+    tabsContainer.innerHTML = '';
+    
+    // Add user's committee tab if they have one
+    if(curUser.committee){
+      const tab = document.createElement('button');
+      tab.className = 'tab';
+      tab.textContent = curUser.committee;
+      tab.addEventListener('click', () => {
+        curCat = curUser.committee;
+        tabs(); sel(); load();
+      });
+      tabsContainer.appendChild(tab);
+    }
+    
+    // Add user's club tab if they have one
+    if(curUser.club){
+      const tab = document.createElement('button');
+      tab.className = 'tab';
+      tab.textContent = curUser.club;
+      tab.addEventListener('click', () => {
+        curCat = curUser.club;
+        tabs(); sel(); load();
+      });
+      tabsContainer.appendChild(tab);
+    }
+    
+    // If user has neither committee nor club, show a default tab or message
+    if(!curUser.committee && !curUser.club){
+      const tab = document.createElement('button');
+      tab.className = 'tab';
+      tab.textContent = 'マイページ';
+      tab.addEventListener('click', () => {
+        curCat = '上中連絡'; // fallback to general
+        tabs(); sel(); load();
+      });
+      tabsContainer.appendChild(tab);
+    }
+  }
 }
 function renderPosts(){
   const c=$('bList');const q=searchQuery.trim().toLowerCase();
@@ -296,8 +369,8 @@ function render(p,c){
   }else{
     contentHtml='<div class="post-body">'+esc(p.content)+'</div>';
   }
-  const fls=p.files?.map(f=>'<a href="'+esc(f.url)+'" target="_blank" class="attachment"><span>📎</span> '+esc(f.name)+'</a>').join('')||'';
-  const lk=p.link?'<a href="'+esc(p.link)+'" target="_blank" class="attachment"><span>🔗</span> '+esc(p.link)+'</a>':'';
+   const fls=p.files?.map(f=>'<a href="'+esc(f.url)+'" target="_blank" class="attachment"><span>📎</span> '+esc(f.name)+'</a>').join('')||'';
+   const lk=p.link && p.link.trim()?'<a href="'+esc(p.link.trim())+'" target="_blank" class="attachment"><span>🔗</span> '+esc(p.link.trim())+'</a>':'';
   let exp='',expCls='';
   if(p.expires_at){const r=Math.ceil((new Date(p.expires_at)-Date.now())/86400000);exp='あと'+r+'日';expCls=r>30?'safe':r>10?'warn':''}
   let claimHtml='';
@@ -394,8 +467,8 @@ initExpiresDate();
 function clock(){function u(){const n=new Date();$('hDate').textContent=(n.getMonth()+1)+'/'+n.getDate()+'('+'日月火水木金土'[n.getDay()]+')'}u();setInterval(u,1000)}
 clock();
 $('bSearch').addEventListener('input',function(){searchQuery=this.value;tabs();renderPosts()});
-loadCounts().then(()=>{tabs();sel();load()});
-setInterval(()=>{loadCounts();tabs();load()},10000);
+loadCounts().then(()=>{tabs();sel();load();updateHeaderUserInfo();});
+setInterval(()=>{loadCounts();tabs();load();updateHeaderUserInfo()},10000);
 
 const chatBadge=$('chatBadge'),chatLink=$('bChatLink');
 if(chatLink.style.display!=='none'){

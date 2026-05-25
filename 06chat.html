@@ -1,0 +1,230 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+<title>部長チャット - 上藤沢中学校部活動黒板</title>
+<style>
+:root{--primary:#3a6b5c;--primary-dark:#2d5548;--primary-light:#5a8a7a;--accent:#e07a5f;--bg:#f7f4f0;--card:#fff;--text:#2c2c2c;--sub:#8a8682;--border:#e8e2d8;--danger:#c96565;--radius:12px;--shadow:0 2px 12px rgba(58,107,92,0.07)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sans',Meiryo,sans-serif;background:var(--bg);color:var(--text);height:100vh;height:100dvh;overflow:hidden}
+.chat-layout{display:flex;height:100vh;height:100dvh}
+.chat-side{width:240px;background:var(--card);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0}
+.chat-side h2{padding:16px;font-size:14px;font-weight:700;color:var(--sub);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.chat-side .part-list{flex:1;overflow-y:auto;padding:8px 0}
+.chat-side .part-item{display:flex;align-items:center;gap:8px;padding:8px 16px;font-size:13px;transition:background .15s}
+.chat-side .part-item:hover{background:#f7f4f0}
+.chat-side .part-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.chat-side .part-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chat-side .part-role{font-size:10px;color:var(--sub);flex-shrink:0;padding:2px 6px;background:#f0ede8;border-radius:4px}
+.chat-side .part-del{background:0 0;border:none;color:#ccc;cursor:pointer;font-size:14px;padding:2px;flex-shrink:0;border-radius:4px}
+.chat-side .part-del:hover{color:var(--danger);background:#fce8e8}
+.chat-main{flex:1;display:flex;flex-direction:column;min-width:0}
+.chat-header{background:linear-gradient(135deg,var(--primary),var(--primary-light));padding:12px 20px;display:flex;align-items:center;gap:12px;flex-shrink:0}
+.chat-header h1{font-size:16px;font-weight:700;color:#fff;flex:1;display:flex;align-items:center;gap:8px}
+.chat-header .h-count{font-size:12px;font-weight:400;opacity:.8;color:#fff}
+.chat-header .back-btn{color:rgba(255,255,255,.8);text-decoration:none;font-size:13px;border:1px solid rgba(255,255,255,.3);padding:4px 14px;border-radius:8px;transition:all .2s}
+.chat-header .back-btn:hover{color:#fff;border-color:#fff;background:rgba(255,255,255,.1)}
+#chatMsgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:6px;background:#faf8f5}
+.chat-date{text-align:center;font-size:11px;color:#b5b0a8;padding:6px 0;font-weight:600}
+.chat-msg{max-width:80%;padding:10px 14px;border-radius:14px;font-size:14px;line-height:1.5;word-break:break-word;position:relative}
+.chat-msg.own{background:var(--primary);color:#fff;align-self:flex-end;border-bottom-right-radius:4px}
+.chat-msg.other{background:var(--card);color:var(--text);align-self:flex-start;border-bottom-left-radius:4px;box-shadow:var(--shadow)}
+.chat-msg .msg-author{font-size:11px;font-weight:700;margin-bottom:2px}
+.chat-msg.own .msg-author{color:rgba(255,255,255,.7)}
+.chat-msg.other .msg-author{color:var(--primary)}
+.chat-msg .msg-text{white-space:pre-wrap}
+.chat-msg .msg-text a{color:inherit;text-decoration:underline}
+.chat-msg.own .msg-text a{color:rgba(255,255,255,.85)}
+.chat-msg.other .msg-text a{color:#4a6b8a}
+.chat-msg .msg-file{display:flex;align-items:center;gap:6px;margin-top:6px;padding:6px 10px;background:rgba(0,0,0,.06);border-radius:8px;font-size:12px;text-decoration:none;color:inherit}
+.chat-msg.own .msg-file{background:rgba(255,255,255,.12)}
+.chat-msg .msg-file:hover{opacity:.8}
+.chat-msg .msg-time{font-size:10px;color:rgba(0,0,0,.35);text-align:right;margin-top:4px}
+.chat-msg.own .msg-time{color:rgba(255,255,255,.45)}
+.chat-msg .del-btn{position:absolute;top:2px;right:2px;width:20px;height:20px;border:none;background:rgba(0,0,0,.12);color:inherit;border-radius:50%;font-size:10px;line-height:20px;text-align:center;cursor:pointer;opacity:0;transition:opacity .15s}
+.chat-msg:hover .del-btn{opacity:1}
+.chat-msg .del-btn:hover{background:rgba(200,0,0,.5);color:#fff}
+.chat-empty{text-align:center;padding:60px 20px;color:#c5c0b8;font-size:14px}
+.chat-input-area{background:var(--card);border-top:1px solid var(--border);padding:10px 16px;display:flex;gap:8px;align-items:flex-end;flex-shrink:0}
+.chat-input-area textarea{flex:1;border:1.5px solid var(--border);border-radius:22px;padding:10px 16px;font-size:14px;font-family:inherit;resize:none;outline:none;min-height:42px;max-height:120px;background:#faf8f5;transition:all .2s}
+.chat-input-area textarea:focus{border-color:var(--primary);background:var(--card)}
+.chat-input-area .btn-icon{background:0 0;border:1.5px solid var(--border);border-radius:50%;width:40px;height:40px;cursor:pointer;font-size:16px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--sub);transition:all .15s}
+.chat-input-area .btn-icon:hover{border-color:var(--primary);color:var(--primary);background:#f7f4f0}
+.chat-input-area .btn-icon:disabled{opacity:.4;cursor:not-allowed}
+.chat-input-area #cSend{background:var(--primary);color:#fff;border:none;border-radius:50%;width:42px;height:42px;cursor:pointer;font-size:18px;flex-shrink:0;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(58,107,92,0.25)}
+.chat-input-area #cSend:hover{background:var(--primary-dark)}
+.chat-input-area #cSend:disabled{opacity:.4;cursor:not-allowed}
+.file-preview{display:flex;gap:6px;padding:4px 16px 0;background:var(--card);flex-wrap:wrap;flex-shrink:0}
+.file-preview .fp-item{display:flex;align-items:center;gap:4px;padding:4px 10px;background:#f5f2ec;border-radius:6px;font-size:11px;color:var(--sub)}
+.file-preview .fp-item .fp-del{background:0 0;border:none;cursor:pointer;color:#c5c0b8;font-size:14px;padding:0 2px;border-radius:4px}
+.file-preview .fp-item .fp-del:hover{color:var(--danger);background:#fce8e8}
+.tab-bar{display:flex;gap:0;margin-bottom:12px}
+.tab-bar .tab-btn{padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;border:none;background:0 0;color:var(--sub);border-bottom:2px solid transparent;font-family:inherit}
+.tab-bar .tab-btn.active{color:var(--primary);border-bottom-color:var(--primary)}
+@media(max-width:768px){
+  .chat-side{display:none}
+  .chat-side.open{display:flex;position:fixed;top:0;left:0;width:100%;height:100%;z-index:200;background:var(--card)}
+  .chat-side.open .part-list{flex:1}
+  .chat-side .close-btn{display:block;background:0 0;border:none;font-size:20px;cursor:pointer;padding:4px;color:var(--sub)}
+  .chat-msg{max-width:90%}
+}
+@media(min-width:769px){
+  .chat-side .close-btn{display:none}
+}
+.side-toggle-btn{background:0 0;border:none;font-size:20px;cursor:pointer;color:rgba(255,255,255,.8);padding:0 4px;border-radius:6px;transition:all .2s}
+.side-toggle-btn:hover{color:#fff;background:rgba(255,255,255,.1)}
+</style>
+</head>
+<body>
+<div class="chat-layout">
+  <div class="chat-side" id="chatSide">
+    <h2><span>参加者</span><span><button class="close-btn" id="sideClose">✕</button></span></h2>
+    <div class="part-list" id="partList"></div>
+  </div>
+  <div class="chat-main">
+    <div class="chat-header">
+      <button class="side-toggle-btn" id="sideToggle">☰</button>
+      <h1>部長チャット <span class="h-count" id="partCount"></span></h1>
+      <a href="/" class="back-btn">← 戻る</a>
+    </div>
+    <div id="chatMsgs"></div>
+    <div class="file-preview" id="filePreview"></div>
+    <div class="chat-input-area">
+      <button class="btn-icon" id="cFileBtn" title="ファイル添付">📎</button>
+      <input type="file" id="cFileInput" multiple accept=".pdf,.jpg,.jpeg,.png,.gif,.txt,.doc,.docx" style="display:none">
+      <textarea id="cInput" placeholder="メッセージを入力..." rows="1"></textarea>
+      <button id="cSend">→</button>
+    </div>
+  </div>
+</div>
+<script>
+async function h(p){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(p));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('')}
+const API_BASE=''
+async function a(p,o={}){const t=sessionStorage.getItem('token'),h={'Content-Type':'application/json',...o.headers};if(t)h['Authorization']='Bearer '+t;const r=await fetch(API_BASE+p,{...o,headers:h}),d=await r.json();if(!r.ok)throw new Error(d.error||'エラー');return d}
+const A={async login(u,p){const k=await h(p),d=await a('/api/login',{method:'POST',body:JSON.stringify({username:u,password:k})});sessionStorage.setItem('token',d.token);sessionStorage.setItem('username',d.username);sessionStorage.setItem('role',d.role);return d},logout(){sessionStorage.clear()},getUser(){const u=sessionStorage.getItem('username'),r=sessionStorage.getItem('role');return u&&r?{username:u,role:r}:null},requireAuth(){const u=this.getUser();if(!u){window.location.href='02login.html';return null}return u},isAdmin(){const u=this.getUser();return u&&u.role==='admin'},canManageUsers(){const u=this.getUser();return u&&['admin','subadmin'].includes(u.role)},async api(p,o){return a(p,o)},hashPassword(p){return h(p)}};window.AUTH=A
+const API=A.api.bind(A);
+const user = AUTH.requireAuth(); if (!user) window.location.href='02login.html';
+const $=id=>document.getElementById(id);
+const esc=s=>{const d=document.createElement('div');d.textContent=s;return d.innerHTML};
+const canManage = ['admin','subadmin'].includes(user.role);
+
+$('sideToggle').onclick=()=>$('chatSide').classList.toggle('open');
+$('sideClose').onclick=()=>$('chatSide').classList.remove('open');
+
+(async function checkAccess(){
+  try{await API('/api/chat/participants')}
+  catch(e){alert('チャットに参加していません。管理者に連絡してください。');window.location.href='01index.html'}
+})();
+
+let sentFiles = [];
+const msgsEl=$('chatMsgs'),input=$('cInput'),sendBtn=$('cSend'),fileBtn=$('cFileBtn'),fileInput=$('cFileInput'),filePrev=$('filePreview');
+let lastTime = 0;
+const COLORS=['#e07a5f','#3a6b5c','#6b8a7a','#c97b5a','#8a7a6b','#5a8a8a','#b56a5a','#7a8a6b'];
+
+function fmtTime(iso){const d=new Date(iso);return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')}
+function fmtDate(iso){const d=new Date(iso);return (d.getMonth()+1)+'/'+d.getDate()}
+function linkify(t){return esc(t).replace(/(https?:\/\/[^\s<]+)/g,'<a href="$1" target="_blank" rel="noopener">$1</a>')}
+
+function renderMsgs(msgs){
+  for(const m of msgs){
+    const own=m.username===user.username;
+    const d=document.createElement('div');d.className='chat-msg '+(own?'own':'other');
+    let html='<div class="msg-author">'+(!own?esc(m.username):'')+'</div><div class="msg-text">'+linkify(m.message)+'</div>';
+    if(m.files&&m.files.length){
+      html+=m.files.map(f=>'<a href="'+esc(f.url)+'" target="_blank" class="msg-file" rel="noopener"><span>📎</span> '+esc(f.name)+'</a>').join('');
+    }
+    html+='<div class="msg-time">'+fmtTime(m.created_at)+'</div>';
+    d.innerHTML=html+(canManage?'<button class="del-btn" data-id="'+m.id+'">×</button>':'');
+    msgsEl.appendChild(d);
+  }
+  msgsEl.scrollTop=msgsEl.scrollHeight;
+}
+
+async function loadMsgs(){
+  msgsEl.querySelector('.chat-empty')?.remove();
+  try{
+    const msgs=await API('/api/chat?since='+lastTime);
+    if(msgs.length){
+      const g={};
+      for(const m of msgs){const k=fmtDate(m.created_at);if(!g[k])g[k]=[];g[k].push(m)}
+      for(const[date,group]of Object.entries(g)){
+        const d=document.createElement('div');d.className='chat-date';d.textContent=date;msgsEl.appendChild(d);
+        renderMsgs(group);
+      }
+      lastTime=msgs.reduce((max,m)=>Math.max(max,new Date(m.created_at).getTime()),lastTime);
+    }
+    if(!msgsEl.children.length)msgsEl.innerHTML='<div class="chat-empty">メッセージはありません</div>';
+  }catch(e){
+    if(e.message.includes('認証')){sessionStorage.clear();window.location.href='02login.html';return}
+    msgsEl.innerHTML='<div class="chat-empty">読み込みエラー</div>';
+  }
+}
+
+async function sendMsg(){
+  const msg=input.value.trim();
+  if(!msg&&!sentFiles.length)return;
+  sendBtn.disabled=true;
+  try{
+    const files=[];
+    for(const f of sentFiles){
+      const fd=new FormData();fd.append('file',f);
+      const token=sessionStorage.getItem('token');
+      const r=await fetch(API_BASE+'/api/upload',{method:'POST',headers:{'Authorization':'Bearer '+token},body:fd});
+      const d=await r.json();
+      if(r.ok)files.push({url:d.url,name:d.name,type:d.type});
+    }
+    await API('/api/chat',{method:'POST',body:JSON.stringify({message:msg,files})});
+    input.value='';input.style.height='auto';sentFiles=[];updateFilePreview();
+    await loadMsgs();
+  }catch(e){alert('送信失敗: '+e.message)}
+  sendBtn.disabled=false;input.focus();
+}
+
+function updateFilePreview(){
+  filePrev.innerHTML=sentFiles.map((f,i)=>'<span class="fp-item"><span>📎</span> '+esc(f.name)+' <button class="fp-del" data-idx="'+i+'">✕</button></span>').join('');
+  filePrev.querySelectorAll('.fp-del').forEach(b=>b.onclick=()=>{sentFiles.splice(parseInt(b.dataset.idx),1);updateFilePreview()});
+}
+
+fileBtn.onclick=()=>fileInput.click();
+fileInput.onchange=()=>{
+  for(const f of fileInput.files)sentFiles.push(f);
+  updateFilePreview();fileInput.value='';
+};
+
+async function loadParts(){
+  try{
+    const parts=await API('/api/chat/participants');
+    const el=$('partList');$('partCount').textContent='('+parts.length+'人)';
+    const rl={'admin':'管理者','subadmin':'先生','manager':'','student':'','student-council':'生徒会'};
+    const subLbl={'club':'部長','committee':'委員長'};
+    el.innerHTML=parts.map((p,i)=>{
+      const dotColor=COLORS[i%COLORS.length];
+      const roleLabel=p.role==='manager'?(subLbl[p.role_subtype]||''):(rl[p.role]||'');
+      const canDel=canManage&&p.role!=='admin'&&p.role!=='subadmin';
+      return '<div class="part-item"><span class="part-dot" style="background:'+dotColor+'"></span><span class="part-name">'+esc(p.display_name||p.username)+'</span><span class="part-role">'+roleLabel+'</span>'+(canDel?'<button class="part-del" data-u="'+esc(p.username)+'">✕</button>':'')+'</div>';
+    }).join('');
+    el.querySelectorAll('.part-del').forEach(b=>b.onclick=async()=>{
+      if(!confirm('「'+b.dataset.u+'」をチャットから削除しますか？'))return;
+      try{await API('/api/chat/participants/'+encodeURIComponent(b.dataset.u),{method:'DELETE'});loadParts()}catch(e){alert(e.message)}
+    });
+  }catch(e){}
+}
+
+msgsEl.onclick=async e=>{
+  const btn=e.target.closest('.del-btn');
+  if(!btn)return;
+  if(!confirm('削除しますか？'))return;
+  try{await API('/api/chat/'+btn.dataset.id,{method:'DELETE'});btn.closest('.chat-msg').remove()}catch(e){alert(e.message)}
+};
+
+sendBtn.onclick=sendMsg;
+input.onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg()}};
+input.oninput=()=>{input.style.height='auto';input.style.height=Math.min(input.scrollHeight,120)+'px'};
+
+msgsEl.innerHTML='<div class="chat-empty">読み込み中...</div>';
+loadMsgs();loadParts();
+setInterval(loadMsgs,3000);
+</script>
+</body>
+</html>

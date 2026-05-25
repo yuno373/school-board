@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>使い方 - 上藤沢中学校</title>
+<style>
+:root{--primary:#1E4D2B;--primary-dark:#153820;--primary-light:#2D6B40;--accent-pink:#f5a0b8;--accent-blue:#a0c4e8;--accent-yellow:#f5e6a0;--accent-green:#a8d8a0;--bg:#f7f5f0;--card:#fff;--text:#2c2c2c;--sub:#8a8682;--border:#e0dcd4;--danger:#c96565;--radius:12px;--shadow:0 2px 12px rgba(30,77,43,0.06)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sans',Meiryo,sans-serif;background:var(--bg);color:var(--text)}
+.header{background:var(--primary);padding:12px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100}
+.header-title{font-size:16px;font-weight:700;color:#fff;display:flex;align-items:center;gap:8px}
+.header-right{display:flex;align-items:center;gap:10px}
+.header-link{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);padding:4px 12px;font-size:12px;cursor:pointer;color:rgba(255,255,255,.85);border-radius:8px;text-decoration:none;transition:all .2s;font-family:inherit}
+.header-link:hover{background:rgba(255,255,255,.25);color:#fff}
+.main{max-width:860px;margin:0 auto;padding:20px}
+.tab-bar{display:flex;gap:0;margin-bottom:20px;background:var(--card);border-radius:var(--radius);padding:4px;box-shadow:var(--shadow);overflow-x:auto}
+.tab-btn{padding:10px 16px;font-size:13px;font-weight:700;cursor:pointer;border:none;background:0 0;color:var(--sub);border-radius:8px;transition:all .2s;font-family:inherit;white-space:nowrap}
+.tab-btn:hover{color:var(--text);background:#f0ede8}
+.tab-btn.active{color:#fff;background:var(--primary)}
+.tab-content{display:none}
+.tab-content.active{display:block}
+.section{margin-bottom:24px}
+.section h2{font-size:17px;font-weight:700;color:var(--text);margin-bottom:10px;padding-bottom:6px;border-bottom:3px solid var(--primary);display:flex;align-items:center;gap:8px}
+.section h3{font-size:14px;font-weight:700;color:var(--text);margin:14px 0 6px;display:flex;align-items:center;gap:6px}
+.section p,.section li{font-size:13px;line-height:1.8;color:var(--text)}
+.step{background:var(--card);border-radius:var(--radius);padding:12px 14px;margin-bottom:8px;box-shadow:var(--shadow);border-left:3px solid var(--primary)}
+.step-title{font-weight:700;font-size:13px;margin-bottom:2px;display:flex;align-items:center;gap:6px}
+.step-desc{font-size:12px;color:var(--sub);line-height:1.7;padding-left:22px}
+ul{list-style:none;padding:0}
+ul li{padding:3px 0;padding-left:18px;position:relative;font-size:13px;line-height:1.7}
+ul li::before{content:"•";position:absolute;left:2px;color:var(--primary);font-weight:700}
+.warn-box{background:#faf0e0;border-left:3px solid #c97b4a;padding:8px 12px;border-radius:0 8px 8px 0;margin:8px 0;font-size:12px;line-height:1.6}
+.info-box{background:#eaf3e8;border-left:3px solid var(--primary);padding:8px 12px;border-radius:0 8px 8px 0;margin:8px 0;font-size:12px;line-height:1.6}
+.danger-box{background:#fce8e8;border-left:3px solid var(--danger);padding:8px 12px;border-radius:0 8px 8px 0;margin:8px 0;font-size:12px;line-height:1.6}
+.footer{text-align:center;padding:30px 20px;color:var(--sub);font-size:12px}
+.tag{display:inline-flex;align-items:center;gap:3px;padding:1px 7px;border-radius:4px;font-size:10px;font-weight:700;white-space:nowrap}
+.tag-student{background:#eaf3e8;color:var(--primary);border:1px solid var(--primary)}
+.tag-president{background:#faf0e0;color:#c97b4a;border:1px solid #c97b4a}
+.tag-chair{background:#f0e6f5;color:#7a3a8a;border:1px solid #7a3a8a}
+.tag-teacher{background:#dce8f5;color:#2a5a8a;border:1px solid #2a5a8a}
+.tag-admin{background:#fce8e8;color:var(--danger);border:1px solid var(--danger)}
+.tag-all{background:var(--bg);color:var(--sub);border:1px solid var(--border)}
+.matrix{width:100%;border-collapse:collapse;font-size:11px;margin:10px 0;border-radius:8px;overflow:hidden}
+.matrix th{background:var(--primary);color:#fff;padding:6px 8px;text-align:center;font-weight:700;white-space:nowrap}
+.matrix td{padding:5px 8px;border-bottom:1px solid var(--border);text-align:center;vertical-align:middle}
+.matrix tr:nth-child(even) td{background:#faf8f5}
+.matrix tr:hover td{background:#f0ede8}
+.matrix .feat-name{text-align:left;font-weight:600;white-space:nowrap}
+.matrix .feat-cat{text-align:left;font-size:10px;color:var(--sub);font-weight:700}
+.matrix .yes{color:var(--primary);font-weight:700;font-size:13px}
+.matrix .no{color:#ddd;font-size:11px}
+.matrix .partial{color:#c97b4a;font-size:11px}
+.sub-tabs{display:flex;gap:4px;margin-bottom:12px;overflow-x:auto}
+.sub-tab{padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;border:1.5px solid var(--border);background:var(--card);color:var(--sub);border-radius:6px;transition:all .2s;font-family:inherit;white-space:nowrap}
+.sub-tab:hover{border-color:var(--primary);color:var(--primary)}
+.sub-tab.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+@media(max-width:600px){.main{padding:12px}.matrix{font-size:10px}.matrix td{padding:3px 4px}.tab-btn{font-size:12px;padding:8px 10px}}
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="header-title">📖 機能一覧・使い方</div>
+  <div class="header-right">
+    <a href="01index.html" class="header-link">黒板に戻る</a>
+  </div>
+</header>
+<div class="main">
+  <div class="tab-bar">
+    <button class="tab-btn active" data-tab="student">📝 生徒用</button>
+    <button class="tab-btn" data-tab="president">👑 部長・委員長用</button>
+    <button class="tab-btn" data-tab="teacher">👨‍🏫 先生用</button>
+    <button class="tab-btn" data-tab="admin">⚙️ 管理者用</button>
+    <button class="tab-btn" data-tab="all">📊 全機能一覧</button>
+  </div>
+
+  <!-- ===== ALL FEATURES MATRIX ===== -->
+  <div class="tab-content" id="tab-all">
+    <div class="section">
+      <h2>📊 権限別 機能マトリックス</h2>
+      <p style="font-size:12px;color:var(--sub);margin-bottom:10px">〇 = 使用可  △ = 制限あり  − = 不可</p>
+      <div style="overflow-x:auto">
+      <table class="matrix">
+        <thead><tr><th>機能</th><th>生徒</th><th>部長/副部長</th><th>委員長</th><th>先生</th><th>管理者</th></tr></thead>
+        <tbody id="matrixBody"></tbody>
+      </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== STUDENT TAB ===== -->
+  <div class="tab-content active" id="tab-student">
+    <div class="section">
+      <h2>📋 黒板（トップページ）</h2>
+      <div class="step"><div class="step-title">カテゴリ閲覧</div><div class="step-desc">上部タブから「上中連絡」「部活動」「委員会」「忘れ物」を切り替えて投稿を読める</div></div>
+      <div class="step"><div class="step-title">投稿を読む</div><div class="step-desc">各投稿のタイトル・内容・添付ファイルを閲覧</div></div>
+      <div class="step"><div class="step-title">検索</div><div class="step-desc">キーワードで部活・委員会・カテゴリを検索</div></div>
+    </div>
+    <div class="section">
+      <h2>📝 投稿</h2>
+      <div class="step"><div class="step-title">新規投稿</div><div class="step-desc">タイトル・内容・カテゴリを選んで投稿（テキストのみ）</div></div>
+      <div class="step"><div class="step-title">自動削除日</div><div class="step-desc">投稿に期限を設定できる（最大2ヶ月後）</div></div>
+    </div>
+    <div class="section">
+      <h2>💬 リアクション</h2>
+      <div class="step-desc">投稿に 👍 👍 ❤️ ✅ ❓ 🙏 のリアクションができる。リアクション一覧で誰が押したか見られる</div>
+    </div>
+    <div class="section">
+      <h2>📦 忘れ物</h2>
+      <div class="step-desc">忘れ物投稿に「確保」ボタンを押せる（押すと先生に通知）</div>
+    </div>
+    <div class="section">
+      <h2>❓ 部長・委員長への質問</h2>
+      <div class="step-desc">自分の所属部活の部長、または自分の所属委員会の委員長に匿名質問を送信できる。回答は黒板に表示</div>
+    </div>
+    <div class="section">
+
+    </div>
+    <div class="section">
+      <h2>👤 ユーザー設定</h2>
+      <ul>
+        <li>学年・クラス・番号の変更</li>
+        <li>表示名の変更</li>
+        <li>部活動・委員会の変更</li>
+        <li>パスワード変更</li>
+      </ul>
+    </div>
+    <div class="section">
+      <h2>🔔 プッシュ通知</h2>
+      <ul>
+        <li>ブラウザ通知を許可すると自動で購読</li>
+        <li>通知されるカテゴリ: 上中連絡・忘れ物・自分の部活・自分の委員会</li>
+        <li>PWAインストールでより安定して受信</li>
+      </ul>
+    </div>
+    <div class="section">
+      <h2>📲 PWA（ホーム画面に追加）</h2>
+      <ul>
+        <li><strong>iPad (Safari):</strong> 共有ボタン → 「ホーム画面に追加」</li>
+        <li><strong>Chrome/Edge:</strong> アドレスバーのインストールアイコン または 「📲 インストール」ボタン</li>
+      </ul>
+    </div>
+    <div class="section">
+      <h2>⛔ できないこと</h2>
+      <div class="danger-box">生徒同士のDMは絶対禁止（送信ボタンが表示されない）</div>
+      <div class="warn-box">ファイル添付はできません（先生のみ可能）</div>
+      <div class="warn-box">プライベート投稿の作成はできません（閲覧のみ・パスワード入力で開く）</div>
+      <div class="warn-box">投稿の削除はできません（自分の投稿も不可）</div>
+      <div class="warn-box">部長チャットへの参加はできません（役職者のみ）</div>
+    </div>
+  </div>
+
+  <!-- ===== PRESIDENT/CHAIR TAB ===== -->
+  <div class="tab-content" id="tab-president">
+    <div class="section">
+      <h2>👑 部長・副部長・委員長 限定機能</h2>
+      <p style="font-size:13px;color:var(--sub);margin-bottom:10px">生徒の基本機能に加えて、以下の機能が使えます</p>
+    </div>
+    <div class="section">
+      <h2>💬 部長チャット</h2>
+      <div class="step"><div class="step-title">参加</div><div class="step-desc">部長・副部長・委員長のみ参加できるチャットルーム。先生・管理者も参加</div></div>
+      <div class="step"><div class="step-title">メッセージ送信</div><div class="step-desc">テキスト＋画像添付でメッセージを送信。未読バッジ表示</div></div>
+      <div class="step"><div class="step-title">通知</div><div class="step-desc">新着メッセージは自動でプッシュ通知。初回アクセス時に通知許可確認バナー表示</div></div>
+      <div class="step"><div class="step-title">参加者確認</div><div class="step-desc">サイドバーで参加者一覧を表示。管理者は「管理者」と表示</div></div>
+    </div>
+    <div class="section">
+      <h2>❓ 質問への回答</h2>
+      <div class="step-desc">
+        <strong>部長・副部長:</strong> 自分の部活あての質問に回答できる<br>
+        <strong>委員長:</strong> 自分の委員会あての質問に回答できる
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TEACHER TAB ===== -->
+  <div class="tab-content" id="tab-teacher">
+    <div class="section">
+      <h2>📋 黒板（生徒と同じ機能＋α）</h2>
+      <div class="step"><div class="step-title">全カテゴリ閲覧</div><div class="step-desc">全てのカテゴリの投稿を読める</div></div>
+      <div class="step"><div class="step-title">画像付き投稿</div><div class="step-desc">PDF・画像ファイルを添付して投稿できる（生徒は不可）</div></div>
+      <div class="step"><div class="step-title">投稿削除</div><div class="step-desc">自分の投稿を削除できる</div></div>
+      <div class="step"><div class="step-title">🔒 プライベート投稿</div><div class="step-desc">1・2・3学年委員会カテゴリで、パスワード付き投稿を作成/解除できる</div></div>
+    </div>
+    <div class="section">
+      <h2>⏰ 時間割（先生専用）</h2>
+      <div class="step"><div class="step-title">スケジュール設定</div><div class="step-desc">ユーザー管理 → ⏰ 時間割タブで、曜日・時限・教科・クラスを登録</div></div>
+      <div class="step"><div class="step-title">一括登録</div><div class="step-desc">タブ区切りテキストを貼り付けて一括登録（折りたたみメニュー内）</div></div>
+      <div class="step"><div class="step-title">授業お知らせ</div><div class="step-desc">黒板トップに次の授業が表示。10分前になると🔊キーンと鳴る（🔊/📳/🔇切替可）</div></div>
+    </div>
+    <div class="section">
+      <h2>💬 部長チャット</h2>
+      <div class="step-desc">先生・管理者は部長チャットに参加・発言可能。役職者と連絡が取れる</div>
+    </div>
+    <div class="section">
+      <h2>✉️ DM</h2>
+      <div class="step"><div class="step-title">DM作成・送信</div><div class="step-desc">個人DM・グループDMを生徒に送信できる</div></div>
+      <div class="step"><div class="step-title">DM返信</div><div class="step-desc">生徒からの返信を読んでさらに返信できる</div></div>
+      <div class="step"><div class="step-title">グループDM管理</div><div class="step-desc">複数生徒を選んでグループDMを作成</div></div>
+    </div>
+    <div class="section">
+      <h2>👥 ユーザー管理</h2>
+      <div class="step"><div class="step-title">📋 生徒管理</div><div class="step-desc">全ユーザー一覧・検索・権限変更・削除・役割チェックボックス</div></div>
+      <div class="step"><div class="step-title">📋 ID一括生成</div><div class="step-desc">年度＋クラス別に生徒IDを一括生成。先生IDも接頭語＋番号で生成</div></div>
+      <div class="step"><div class="step-title">📝 先生手動登録</div><div class="step-desc">担当教科・担当学年・担任有無を指定して先生を個別登録</div></div>
+      <div class="step"><div class="step-title">🔔 通知管理</div><div class="step-desc">全購読者にプッシュ通知を一斉送信（タイトル・本文・URL）</div></div>
+      <div class="step"><div class="step-title">📲 通知設定</div><div class="step-desc">プッシュ通知購読者一覧</div></div>
+      <div class="step"><div class="step-title">📝 投稿管理</div><div class="step-desc">全投稿の一覧表示</div></div>
+      <div class="step"><div class="step-title">📊 統計</div><div class="step-desc">投稿数・ユーザー数・カテゴリ別投稿数のグラフ</div></div>
+      <div class="step"><div class="step-title">💬 チャット管理</div><div class="step-desc">部長チャットの参加者と全メッセージ履歴</div></div>
+      <div class="step"><div class="step-title">🔍 診断</div><div class="step-desc">システム全25項目を診断（異常時は管理者通知）</div></div>
+      <div class="step"><div class="step-title">⏰ 時間割</div><div class="step-desc">自分の授業スケジュール設定</div></div>
+      <div class="step"><div class="step-title">⚙️ ユーザー設定</div><div class="step-desc">自分のプロフィール・パスワード変更</div></div>
+    </div>
+    <div class="section">
+      <h2>👨‍🏫 先生初回セットアップ</h2>
+      <div class="step-desc">初回ログイン時、3ステップ（担当学年→教科→担任有無）を設定。以降はスキップ</div>
+    </div>
+    <div class="section">
+      <h2>🔄 パスワード再設定（先生対応）</h2>
+      <div class="step"><div class="step-title">依頼受付</div><div class="step-desc">ログイン画面の「パスワード忘れた」から依頼が届く</div></div>
+      <div class="step"><div class="step-title">再設定</div><div class="step-desc">ユーザー管理の該当画面で新しいパスワードを設定</div></div>
+    </div>
+    <div class="section">
+      <h2>🔐 ログイン失敗通知</h2>
+      <div class="step-desc">5回ログイン失敗 or プライベート投稿パスワード5回間違い → 担任に通知</div>
+    </div>
+  </div>
+
+  <!-- ===== ADMIN TAB ===== -->
+  <div class="tab-content" id="tab-admin">
+    <div class="section">
+      <h2>⚙️ 管理者限定機能</h2>
+      <p style="font-size:13px;color:var(--sub);margin-bottom:10px">先生の全機能に加えて、以下の管理者専用機能があります</p>
+    </div>
+    <div class="section">
+      <h2>🛡️ 管理者保護</h2>
+      <div class="step-desc">管理者は削除・権限変更から保護されている（誤操作防止）</div>
+    </div>
+    <div class="section">
+      <h2>👥 ユーザー管理（全操作可能）</h2>
+      <ul>
+        <li>全ユーザーの権限変更（管理者/先生/生徒/部長/副部長/委員長）</li>
+        <li>全ユーザーの削除（管理者保護あり）</li>
+        <li>学年・クラス一括削除</li>
+        <li>ID一括生成（生徒・先生両方）</li>
+        <li>先生手動登録</li>
+      </ul>
+    </div>
+    <div class="section">
+      <h2>🔍 診断機能</h2>
+      <ul>
+        <li>全25項目のシステム診断を実行</li>
+        <li>各エンドポイント・データ整合性・Worker接続をチェック</li>
+        <li>異常検出時に管理者通知</li>
+        <li>5秒タイムアウト＋60秒安全網</li>
+      </ul>
+    </div>
+    <div class="section">
+      <h2>🔔 通知管理</h2>
+      <ul>
+        <li>一斉プッシュ通知の送信</li>
+        <li>全購読者一覧の確認</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer">上藤沢中学校 部活動黒板システム</div>
+</div>
+
+<script>
+// Feature matrix data
+const features = [
+  { cat:'📋 黒板', name:'投稿の閲覧', s:'〇', p:'〇', c:'〇', t:'〇', a:'〇' },
+  { cat:'📋 黒板', name:'カテゴリ切替', s:'〇', p:'〇', c:'〇', t:'〇', a:'〇' },
+  { cat:'📋 黒板', name:'投稿検索', s:'〇', p:'〇', c:'〇', t:'〇', a:'〇' },
+  { cat:'📋 黒板', name:'リアクション（👍❤️✅❓🙏）', s:'〇', p:'〇', c:'〇', t:'〇', a:'〇' },
+  { cat:'📋 黒板', name:'忘れ物「確保」申告', s:'〇', p:'〇', c:'〇', t:'〇', a:'〇' },
+  { cat:'📝 投稿作成', name:'テキスト投稿', s:'〇', p:'〇', c:'〇', t:'〇', a:'〇' },
+  { cat:'📝 投稿作成', name:'画像/ファイル添付投稿', s:'−', p:'−', c:'−', t:'〇', a:'〇' },
+  { cat:'📝 投稿作成', name:'自動削除日設定', s:'〇', p:'〇', c:'〇', t:'〇', a:'〇' },
+  { cat:'📝 投稿作成', name:'🔒 プライベート投稿作成', s:'−', p:'−', c:'−', t:'〇', a:'〇' },
+  { cat:'📝 投稿作成', name:'🔒 プライベート投稿閲覧', s:'△', p:'△', c:'△', t:'〇', a:'〇' },
+  { cat:'📝 投稿作成', name:'🔒 パスワード設定/解除', s:'−', p:'−', c:'−', t:'〇', a:'〇' },
+  { cat:'📝 投稿作成', name:'自分の投稿を削除', s:'−', p:'−', c:'−', t:'〇', a:'〇' },
+  { cat:'❓ 質問', name:'部長/委員長に質問送信', s:'〇', p:'−', c:'−', t:'−', a:'−' },
+  { cat:'❓ 質問', name:'質問に回答（自分の部活/委員会のみ）', s:'−', p:'〇', c:'〇', t:'−', a:'−' },
+  { cat:'💬 部長チャット', name:'参加・発言', s:'−', p:'〇', c:'〇', t:'〇', a:'〇' },
+  { cat:'💬 部長チャット', name:'画像添付メッセージ', s:'−', p:'〇', c:'〇', t:'〇', a:'〇' },
+  { cat:'💬 部長チャット', name:'参加者一覧', s:'−', p:'〇', c:'〇', t:'〇', a:'〇' },
+  { cat:'💬 部長チャット', name:'プッシュ通知', s:'−', p:'〇', c:'〇', t:'〇', a:'〇' },
+  { cat:'✉️ DM', name:'DM作成・送信（個人）', s:'−', p:'−', c:'−', t:'〇', a:'〇' },
+  { cat:'✉️ DM', name:'DM作成・送信（グループ）', s:'−', p:'−', c:'−', t:'〇', a:'〇' },
+  { cat:'✉️ DM', name:'DM受信・返信', s:'〇', p:'〇', c:'〇', t:'〇', a:'〇' },
+  { cat:'✉️ DM', name:'生徒→生徒DM', s:'−', p:'−', c:'−', t:'−', a:'−' },
+
+  { cat:'⏰ 時間割', name:'授業スケジュール設定', s:'−', p:'−', c:'−', t:'〇', a:'〇' },
+  { cat:'⏰ 時間割', name:'テキスト一括登録', s:'−', p:'−', c:'−', t:'〇', a:'〇' },
+  { cat:'⏰ 時間割', name:'授業お知らせ表示', s:'−', p:'−', c:'−', t:'〇', a:'〇' },
+  { cat:'⏰ 時間割', name:'アラート音切替（🔊/📳/🔇）', s:'−', p:'−', c:'−', t:'〇', a:'〇' },
+  { cat:'👤 ユーザー設定', name:'学年・クラス・番号変更', s:'〇', p:'〇', c:'〇', t:'〇', a:'〇' },
+  { cat:'👤 ユーザー設定', name:'表示名変更', s:'〇', p:'〇', c:'〇', t:'〇', a:'〇' },
+  { cat:'👤 ユーザー設定', name:'部活動・委員会変更', s:'〇', p:'〇', c:'〇', t:'〇', a:'〇' },
+  { cat:'👤 ユーザー設定', name:'パスワード変更', s:'〇', p:'〇', c:'〇', t:'〇', a:'〇' },
+  { cat:'👥 ユーザー管理', name:'ユーザー一覧・検索', s:'−', p:'−', c:'−', t:'〇', a:'〇' },
+  { cat:'👥 ユーザー管理', name:'権限変更', s:'−', p:'−', c:'−', t:'△', a:'〇' },
+  { cat:'👥 ユーザー管理', name:'ユーザー削除', s:'−', p:'−', c:'−', t:'△', a:'〇' },
+  { cat:'👥 ユーザー管理', name:'ID一括生成（生徒）', s:'−', p:'−', c:'−', t:'〇', a:'〇' },
+  { cat:'👥 ユーザー管理', name:'ID一括生成（先生）', s:'−', p:'−', c:'−', t:'〇', a:'〇' },
+  { cat:'👥 ユーザー管理', name:'先生手動登録', s:'−', p:'−', c:'−', t:'〇', a:'〇' },
+  { cat:'👥 ユーザー管理', name:'学年・クラス一括削除', s:'−', p:'−', c:'−', t:'−', a:'〇' },
+  { cat:'👥 ユーザー管理', name:'管理者保護', s:'−', p:'−', c:'−', t:'−', a:'〇' },
+  { cat:'👨‍🏫 先生管理', name:'先生初回セットアップ', s:'−', p:'−', c:'−', t:'〇', a:'〇' },
+  { cat:'👨‍🏫 先生管理', name:'先生情報表示（教科/学年/担任）', s:'〇', p:'〇', c:'〇', t:'〇', a:'〇' },
+  { cat:'🔄 パスワード再設定', name:'再設定依頼', s:'〇', p:'〇', c:'〇', t:'−', a:'−' },
+  { cat:'🔄 パスワード再設定', name:'再設定対応', s:'−', p:'−', c:'−', t:'〇', a:'〇' },
+  { cat:'🔐 セキュリティ', name:'5回失敗で先生通知', s:'−', p:'−', c:'−', t:'−', a:'〇' },
+  { cat:'🔐 セキュリティ', name:'レート制限（300回/分/IP）', s:'−', p:'−', c:'−', t:'−', a:'−' },
+  { cat:'🔍 診断', name:'システム診断実行', s:'−', p:'−', c:'−', t:'〇', a:'〇' },
+  { cat:'🔍 診断', name:'異常時通知', s:'−', p:'−', c:'−', t:'−', a:'〇' },
+  { cat:'📲 通知', name:'プッシュ通知受信', s:'〇', p:'〇', c:'〇', t:'〇', a:'〇' },
+  { cat:'📲 通知', name:'一斉プッシュ送信', s:'−', p:'−', c:'−', t:'〇', a:'〇' },
+  { cat:'📲 PWA', name:'ホーム画面に追加', s:'〇', p:'〇', c:'〇', t:'〇', a:'〇' },
+];
+
+// Build matrix table
+const tbody = document.getElementById('matrixBody');
+let currentCat = '';
+features.forEach(f => {
+  const tr = document.createElement('tr');
+  if (f.cat !== currentCat) {
+    currentCat = f.cat;
+    tr.innerHTML = `<td class="feat-cat" colspan="6">${currentCat}</td>`;
+    tbody.appendChild(tr);
+  }
+  const tr2 = document.createElement('tr');
+  tr2.innerHTML = `<td class="feat-name">${f.name}</td><td>${f.s}</td><td>${f.p}</td><td>${f.c}</td><td>${f.t}</td><td>${f.a}</td>`;
+  tr2.querySelectorAll('td:not(.feat-name)').forEach(td => {
+    if (td.textContent === '〇') td.className = 'yes';
+    else if (td.textContent === '−') td.className = 'no';
+    else if (td.textContent === '△') td.className = 'partial';
+  });
+  tbody.appendChild(tr2);
+});
+
+// Tab switching with role filtering
+const cu = sessionStorage.getItem('username');
+const role = sessionStorage.getItem('role') || '';
+const roles = role.split(',').map(r => r.trim());
+function hasRole(r) { return roles.some(x => r.includes(x)); }
+const isStudent = !hasRole(['admin','teacher','president','vice-president','chairperson']);
+const isPresident = hasRole(['president','vice-president']);
+const isChair = hasRole(['chairperson']);
+const isTeacher = hasRole(['teacher','admin']);
+const isAdmin = hasRole(['admin']);
+
+// Show/hide tabs based on role
+document.querySelectorAll('.tab-btn').forEach(b => {
+  const tab = b.dataset.tab;
+  if (tab === 'student' && isStudent) { /* show */ }
+  else if (tab === 'student') { b.style.display = 'none'; }
+  if (tab === 'president' && !isPresident && !isChair && !isTeacher) { b.style.display = 'none'; }
+  if (tab === 'teacher' && !isTeacher) { b.style.display = 'none'; }
+  if (tab === 'admin' && !isAdmin) { b.style.display = 'none'; }
+});
+
+// Auto-switch to first visible tab
+const firstVisible = Array.from(document.querySelectorAll('.tab-btn')).find(b => b.style.display !== 'none');
+if (firstVisible) {
+  document.querySelectorAll('.tab-btn').forEach(x => x.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(x => x.classList.remove('active'));
+  firstVisible.classList.add('active');
+  document.getElementById('tab-' + firstVisible.dataset.tab).classList.add('active');
+}
+
+document.querySelectorAll('.tab-btn').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.tab-btn').forEach(x => x.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(x => x.classList.remove('active'));
+  b.classList.add('active');
+  document.getElementById('tab-' + b.dataset.tab).classList.add('active');
+}));
+</script>
+</body>
+</html>

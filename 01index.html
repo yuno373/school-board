@@ -5,19 +5,22 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <link rel="manifest" href="manifest.json">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>上藤沢中学校 部活動黒板</title>
 <style>
 :root{--primary:#1E4D2B;--primary-dark:#153820;--primary-light:#2D6B40;--accent-pink:#f5a0b8;--accent-blue:#a0c4e8;--accent-yellow:#f5e6a0;--accent-green:#a8d8a0;--bg:#f7f5f0;--card:#fff;--text:#2c2c2c;--sub:#8a8682;--border:#e0dcd4;--danger:#c96565;--radius:12px;--shadow:0 2px 12px rgba(30,77,43,0.06)}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sans',Meiryo,sans-serif;background:var(--bg);color:var(--text)}
-.header{background:var(--primary);padding:12px 20px;display:flex;justify-content:space-between;align-items:stretch;position:sticky;top:0;z-index:100;min-height:80px}
+.header{background:var(--primary);padding:12px 20px;display:flex;justify-content:space-between;align-items:stretch;position:sticky;top:0;z-index:100;min-height:80px;border:2px solid red;}
 .header-title{font-size:16px;font-weight:700;color:#fff;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .header-center{flex:1;display:flex;align-items:center;justify-content:flex-start;padding:0 10px;min-width:0}
 .header-title .hd{display:inline-flex;align-items:center;gap:6px}
 .header-title .hdate{font-size:12px;font-weight:400;opacity:.8;white-space:nowrap}
 .header-right{display:flex;align-items:center;gap:6px;overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch;flex-shrink:0;max-width:100%}
 .header-right::-webkit-scrollbar{display:none}
+.header-left{flex:0 0 auto;}
+.header-right{flex:0 0 auto;}
 .user-badge{background:rgba(255,255,255,.2);color:#fff;font-size:11px;padding:3px 10px;border-radius:6px;font-weight:700;flex-shrink:0}
 .user-badge{background:rgba(255,255,255,.2);color:#fff;font-size:11px;padding:3px 10px;border-radius:6px;font-weight:700}
 .header-link{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);padding:4px 10px;font-size:12px;cursor:pointer;color:rgba(255,255,255,.85);border-radius:8px;text-decoration:none;transition:all .2s;font-family:inherit;white-space:nowrap;flex-shrink:0}

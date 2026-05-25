@@ -2,7 +2,7 @@
 // ============================================================
 // Features: JWT auth, AES-256-GCM, rate-limit, login-lock,
 //           audit-log, reactions, club-questions, notifications,
-//           tab-config, consult encrypt, CSRF protection
+//           tab-config, CSRF protection
 
 // ---- Constants ----
 const VALID_ROLES = ['admin','teacher','president','vice-president','chairperson','student'];
@@ -161,9 +161,9 @@ function hasAbuse(text) {
 }
 
 // ---- Audit log ----
-async function auditLog(env, action, username, details = {}) {
+async function auditLog(env, action, username, details = {}, ip = 'unknown') {
   const log = await r2Get(env.DATA, 'audit.json') || [];
-  log.unshift({ id: uuid(), action, username, details, ip: 'unknown', timestamp: new Date().toISOString() });
+  log.unshift({ id: uuid(), action, username, details, ip, timestamp: new Date().toISOString() });
   if (log.length > 1000) log.length = 1000;
   await r2Put(env.DATA, 'audit.json', log);
 }
@@ -301,6 +301,7 @@ async function handleRequest(request, env, ctx) {
 
       if (!validUser) {
         const fail = await recordFailedAttempt(env, username);
+        await notifyHomeroomOnFail(env, username);
         return json({ error: 'ユーザー名またはパスワードが違います', attempts: fail.attempts || 0 }, 401);
       }
 
@@ -313,14 +314,16 @@ async function handleRequest(request, env, ctx) {
       const sessionData = {
         id: validUser.id, username: validUser.username, role: validUser.role,
         display_name: validUser.display_name || validUser.username, grade: validUser.grade || '',
-        club: validUser.club || '', committee: validUser.committee || '', exp
+        club: validUser.club || '', committee: validUser.committee || '',
+        teacher_setup_done: validUser.teacher_setup_done || false, exp
       };
       const token = await hmacSign(sessionData, env.COOKIE_SECRET);
-      await auditLog(env, 'login', validUser.username);
+      await auditLog(env, 'login', validUser.username, {}, ip);
       return new Response(JSON.stringify({
         token, username: validUser.username, role: validUser.role,
         display_name: validUser.display_name || validUser.username,
-        grade: validUser.grade || '', club: validUser.club || '', committee: validUser.committee || ''
+        grade: validUser.grade || '', club: validUser.club || '', committee: validUser.committee || '',
+        teacher_setup_done: validUser.teacher_setup_done || false
       }), {
         status: 200,
         headers: {
@@ -354,6 +357,8 @@ async function handleRequest(request, env, ctx) {
         display_name: user.display_name || user.username,
         grade: u?.grade || '', class_num: u?.class_num || '', seat_num: u?.seat_num || '',
         club: u?.club || '', committee: u?.committee || '',
+        teacher_grade: u?.teacher_grade || '', teacher_subject: u?.teacher_subject || '', teacher_homeroom: u?.teacher_homeroom || '',
+        teacher_setup_done: u?.teacher_setup_done || false,
         icon: u?.icon || '', created_at: u?.created_at || ''
       });
     }
@@ -362,7 +367,7 @@ async function handleRequest(request, env, ctx) {
     if (path === '/api/me' && method === 'PUT') {
       authErr = requireAuth(user);
       if (authErr) return authErr;
-      const { display_name, icon, club, committee, grade, class_num, seat_num } = await request.json();
+      const { display_name, icon, club, committee, grade, class_num, seat_num, teacher_grade, teacher_subject, teacher_homeroom, teacher_setup_done } = await request.json();
       const users = await r2Get(env.DATA, 'users.json') || [];
       const u = users.find(x => x.id === user.id);
       if (!u) return json({ error: '見つかりません' }, 404);
@@ -373,9 +378,17 @@ async function handleRequest(request, env, ctx) {
       if (grade !== undefined) u.grade = String(grade);
       if (class_num !== undefined) u.class_num = String(class_num);
       if (seat_num !== undefined) u.seat_num = String(seat_num);
+      if (teacher_grade !== undefined) u.teacher_grade = String(teacher_grade);
+      if (teacher_subject !== undefined) u.teacher_subject = sanitize(teacher_subject.trim());
+      if (teacher_homeroom !== undefined) u.teacher_homeroom = String(teacher_homeroom);
+      if (teacher_setup_done !== undefined) u.teacher_setup_done = !!teacher_setup_done;
       await r2Put(env.DATA, 'users.json', users);
       await auditLog(env, 'update_profile', user.username, { fields: Object.keys({ display_name, icon, club, committee }).filter(k => arguments[1][k] !== undefined) });
-      return json({ success: true });
+      // Issue new token with updated data
+      const exp = Date.now() + 3600000;
+      const newSession = { id: u.id, username: u.username, role: u.role, display_name: u.display_name || u.username, grade: u.grade || '', club: u.club || '', committee: u.committee || '', teacher_setup_done: u.teacher_setup_done || false, exp };
+      const newToken = await hmacSign(newSession, env.COOKIE_SECRET);
+      return json({ success: true, token: newToken, display_name: u.display_name || u.username, club: u.club || '', committee: u.committee || '' });
     }
 
     // POST /api/me/password
@@ -388,8 +401,10 @@ async function handleRequest(request, env, ctx) {
       const users = await r2Get(env.DATA, 'users.json') || [];
       const u = users.find(x => x.id === user.id);
       if (!u) return json({ error: '見つかりません' }, 404);
-      if (u.password !== (await hp(currentPassword))) return json({ error: '現在のパスワードが違います' }, 403);
-      u.password = await hp(newPassword);
+      const curHash = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', enc(currentPassword)))).map(x => x.toString(16).padStart(2, '0')).join('');
+      if (u.password !== (await hp(curHash))) return json({ error: '現在のパスワードが違います' }, 403);
+      const newHash = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', enc(newPassword)))).map(x => x.toString(16).padStart(2, '0')).join('');
+      u.password = await hp(newHash);
       u.password_plain = newPassword;
       await r2Put(env.DATA, 'users.json', users);
       return json({ success: true });
@@ -403,7 +418,8 @@ async function handleRequest(request, env, ctx) {
       if (!password) return json({ error: '入力してください' }, 400);
       const users = await r2Get(env.DATA, 'users.json') || [];
       const u = users.find(x => x.id === user.id);
-      if (!u || u.password !== (await hp(password))) return json({ error: 'パスワードが違います' }, 403);
+      const pwdHash = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', enc(password)))).map(x => x.toString(16).padStart(2, '0')).join('');
+      if (!u || u.password !== (await hp(pwdHash))) return json({ error: 'パスワードが違います' }, 403);
       return json({ success: true });
     }
 
@@ -422,25 +438,97 @@ async function handleRequest(request, env, ctx) {
       let posts = await r2Get(env.DATA, 'posts.json') || [];
       if (category) posts = posts.filter(p => p.category === category);
       posts.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      // Strip private content for non-authors
+      posts = posts.map(p => {
+        if (!p.private_password) return p;
+        const isAuthor = user && user.username === p.username;
+        const resp = { ...p };
+        if (!isAuthor) { resp.has_private = true; delete resp.content; }
+        delete resp.private_password; delete resp.private_wrong; delete resp.private_notified;
+        return resp;
+      });
       return json(posts);
     }
 
     if (path === '/api/posts' && method === 'POST') {
       authErr = requireAuth(user, ['admin', 'teacher', 'president', 'vice-president', 'chairperson']);
       if (authErr) return authErr;
-      const { title, content, category, files, expiresIn } = await request.json();
+      const { title, content, category, files, expiresIn, private_password, link } = await request.json();
       if (!title || !category) return json({ error: 'タイトルとカテゴリは必須です' }, 400);
+      const privateCats = ['1学年委員会','2学年委員会','3学年委員会'];
+      const isPrivate = privateCats.includes(category) && private_password;
       const posts = await r2Get(env.DATA, 'posts.json') || [];
       const expires_at = expiresIn ? new Date(Date.now() + parseInt(expiresIn) * 86400000).toISOString() : null;
       const post = {
         id: uuid(), title: sanitize(title.trim()), content: sanitize(content?.trim() || ''), category,
         username: user.username, display_name: user.display_name || user.username,
-        created_at: new Date().toISOString(), expires_at, claims: [], files: files || []
+        created_at: new Date().toISOString(), expires_at, claims: [], files: files || [],
+        link: link?.trim() || ''
       };
+      if (isPrivate) {
+        post.private_password = await hp(private_password);
+        post.private_wrong = {};
+        post.private_notified = {};
+      }
       posts.push(post);
       if (posts.length > 200) posts.splice(0, posts.length - 200);
       await r2Put(env.DATA, 'posts.json', posts);
-      return json(post, 201);
+      // Strip private content from response
+      const resp = { ...post };
+      if (resp.private_password) { resp.has_private = true; delete resp.content; delete resp.private_password; delete resp.private_wrong; delete resp.private_notified; }
+      return json(resp, 201);
+    }
+
+    // POST /api/posts/:id/verify-password
+    const verifyPwd = path.match(/^\/api\/posts\/([^/]+)\/verify-password$/);
+    if (verifyPwd && method === 'POST') {
+      authErr = requireAuth(user);
+      if (authErr) return authErr;
+      const { password } = await request.json();
+      if (!password) return json({ error: 'パスワードが必要です' }, 400);
+      const posts = await r2Get(env.DATA, 'posts.json') || [];
+      const p = posts.find(x => x.id === verifyPwd[1]);
+      if (!p) return json({ error: '見つかりません' }, 404);
+      if (!p.private_password) return json(p);
+      const inputHash = await hp(password);
+      if (p.private_password !== inputHash) {
+        if (!p.private_wrong) p.private_wrong = {};
+        if (!p.private_notified) p.private_notified = {};
+        p.private_wrong[user.username] = (p.private_wrong[user.username] || 0) + 1;
+        if (p.private_wrong[user.username] >= 5 && !p.private_notified[user.username]) {
+          p.private_notified[user.username] = true;
+          await addNotification(env, 'private_password_fail', `${user.display_name||user.username}さんが「${p.title}」のパスワードを5回間違えました`, `/01index.html?cat=${encodeURIComponent(p.category)}`);
+          await auditLog(env, 'private_password_fail', user.username, { postId: p.id, title: p.title });
+        }
+        await r2Put(env.DATA, 'posts.json', posts);
+        return json({ error: 'パスワードが違います', attempts: p.private_wrong[user.username] }, 403);
+      }
+      // Reset attempts on success
+      if (p.private_wrong) delete p.private_wrong[user.username];
+      await r2Put(env.DATA, 'posts.json', posts);
+      const resp = { ...p };
+      delete resp.private_password; delete resp.private_wrong; delete resp.private_notified;
+      return json(resp);
+    }
+
+    // POST /api/posts/:id/set-password
+    const setPwd = path.match(/^\/api\/posts\/([^/]+)\/set-password$/);
+    if (setPwd && method === 'POST') {
+      authErr = requireAuth(user, ['admin', 'teacher']);
+      if (authErr) return authErr;
+      const { password } = await request.json();
+      const posts = await r2Get(env.DATA, 'posts.json') || [];
+      const p = posts.find(x => x.id === setPwd[1]);
+      if (!p) return json({ error: '見つかりません' }, 404);
+      if (password) {
+        p.private_password = await hp(password);
+        if (!p.private_wrong) p.private_wrong = {};
+        if (!p.private_notified) p.private_notified = {};
+      } else {
+        delete p.private_password; delete p.private_wrong; delete p.private_notified;
+      }
+      await r2Put(env.DATA, 'posts.json', posts);
+      return json({ ok: true });
     }
 
     const postDel = path.match(/^\/api\/posts\/([^/]+)$/);
@@ -494,10 +582,27 @@ async function handleRequest(request, env, ctx) {
       return json(posts);
     }
 
+    // GET /api/admin/login-locks
+    if (path === '/api/admin/login-locks' && method === 'GET') {
+      authErr = requireAuth(user, ['admin']);
+      if (authErr) return authErr;
+      const locks = await r2Get(env.DATA, 'login_locks.json') || {};
+      return json(Object.entries(locks).map(([username, data]) => ({ username, ...data })));
+    }
+
     // ============================================================
     // 3. USERS
     // ============================================================
-    if (path === '/api/users' && method === 'GET') {
+    // GET /api/users/public (no auth, just teacher names for password reset)
+if (path === '/api/users/public' && method === 'GET') {
+  const users = await r2Get(env.DATA, 'users.json') || [];
+  return json(users.map(u => ({
+    username: u.username, display_name: u.display_name || u.username,
+    role: u.role
+  })));
+}
+
+if (path === '/api/users' && method === 'GET') {
       authErr = requireAuth(user, ['admin', 'teacher']);
       if (authErr) return authErr;
       const users = await r2Get(env.DATA, 'users.json') || [];
@@ -513,7 +618,7 @@ async function handleRequest(request, env, ctx) {
     if (path === '/api/users' && method === 'POST') {
       authErr = requireAuth(user, ['admin', 'teacher']);
       if (authErr) return authErr;
-      const { username, password, role, grade, class_num, seat_num, club, committee, display_name } = await request.json();
+      const { username, password, role, grade, class_num, seat_num, club, committee, display_name, teacher_grades, teacher_subject, teacher_homeroom } = await request.json();
       if (!username || !password || !role) return json({ error: '必須項目不足' }, 400);
       if (password.length < 6) return json({ error: '6文字以上' }, 400);
       const newRoles = role.split(',').map(r => r.trim());
@@ -528,6 +633,12 @@ async function handleRequest(request, env, ctx) {
         club: club || '', committee: committee || '', display_name: display_name || username,
         icon: '', created_at: new Date().toISOString()
       };
+      if (newRoles.includes('teacher')) {
+        newUser.teacher_grades = teacher_grades || '';
+        newUser.teacher_subject = teacher_subject || '';
+        newUser.teacher_homeroom = !!teacher_homeroom;
+        newUser.teacher_setup_done = false;
+      }
       users.push(newUser);
       await r2Put(env.DATA, 'users.json', users);
       await auditLog(env, 'create_user', user.username, { target: username, role });
@@ -549,13 +660,21 @@ async function handleRequest(request, env, ctx) {
         if (newRoles.includes('admin') && user.username !== u.username) return json({ error: '管理者権限は付与できません' }, 403);
         u.role = updates.role;
       }
-      if (updates.password) { u.password = await hp(updates.password); u.password_plain = updates.password; }
+      if (updates.password) {
+        const pwdHash = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', enc(updates.password)))).map(x => x.toString(16).padStart(2, '0')).join('');
+        u.password = await hp(pwdHash);
+        u.password_plain = updates.password;
+      }
       if (updates.grade !== undefined) u.grade = updates.grade;
       if (updates.class_num !== undefined) u.class_num = updates.class_num;
       if (updates.seat_num !== undefined) u.seat_num = updates.seat_num;
       if (updates.club !== undefined) u.club = updates.club;
       if (updates.committee !== undefined) u.committee = updates.committee;
       if (updates.display_name !== undefined) u.display_name = updates.display_name;
+      if (updates.teacher_grade !== undefined) u.teacher_grade = updates.teacher_grade;
+      if (updates.teacher_subject !== undefined) u.teacher_subject = updates.teacher_subject;
+      if (updates.teacher_homeroom !== undefined) u.teacher_homeroom = updates.teacher_homeroom;
+      if (updates.teacher_setup_done !== undefined) u.teacher_setup_done = !!updates.teacher_setup_done;
       // Auto-add teachers/admin to chat
       if (updates.role && (updates.role.includes('admin') || updates.role.includes('teacher'))) {
         const parts = await r2Get(env.DATA, 'chat_participants.json') || [];
@@ -575,7 +694,8 @@ async function handleRequest(request, env, ctx) {
       const u = users.find(x => x.id === pwdReset[1]);
       if (!u) return json({ error: '見つかりません' }, 404);
       const newPwd = randomPassword();
-      u.password = await hp(newPwd);
+      const newPwdHash = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', enc(newPwd)))).map(x => x.toString(16).padStart(2, '0')).join('');
+      u.password = await hp(newPwdHash);
       u.password_plain = newPwd;
       await r2Put(env.DATA, 'users.json', users);
       await auditLog(env, 'reset_password', user.username, { target: u.username });
@@ -620,10 +740,37 @@ async function handleRequest(request, env, ctx) {
       authErr = requireAuth(user, ['admin', 'teacher']);
       if (authErr) return authErr;
       const body = await request.json();
-      const password = body.password || '111111';
+      const rawPassword = body.password || '111111';
+      const password = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', enc(rawPassword)))).map(x => x.toString(16).padStart(2, '0')).join('');
       const users = await r2Get(env.DATA, 'users.json') || [];
       const created = [];
       let seq = 1;
+
+      // Teacher batch generation
+      if (body.teachers) {
+        const prefix = body.prefix || 'T';
+        let nextNum = body.startNum || 1;
+        const count = parseInt(body.teachers) || 1;
+        for (let i = 0; i < count; i++) {
+          while (users.find(u => u.username === prefix + String(nextNum).padStart(3, '0'))) nextNum++;
+          const tid = prefix + String(nextNum).padStart(3, '0');
+          const disp = body.displayPrefix ? body.displayPrefix + String(nextNum) : tid;
+          if (users.find(u => u.username === tid)) continue;
+          users.push({
+            id: uuid(), username: tid, password: await hp(password), password_plain: rawPassword,
+            role: 'teacher', grade: '', class_num: '', seat_num: '',
+            club: '', committee: '', display_name: disp, icon: '',
+            teacher_grades: '', teacher_subject: '', teacher_homeroom: false,
+            teacher_setup_done: false,
+            created_at: new Date().toISOString()
+          });
+          created.push(tid);
+          nextNum++;
+        }
+        await r2Put(env.DATA, 'users.json', users);
+        await auditLog(env, 'batch_create_teacher', user.username, { count: created.length, body: JSON.stringify(body) });
+        return json({ created: created.length, password: rawPassword, users: created });
+      }
 
       // New format: { years: [{ year, classes: [{ perClass }] }] }
       // Old format: { year, classes, perClass }
@@ -642,7 +789,7 @@ async function handleRequest(request, env, ctx) {
               seq++;
               if (users.find(u => u.username === studentId)) continue;
               users.push({
-                id: uuid(), username: studentId, password: await hp(password), password_plain: password,
+                id: uuid(), username: studentId, password: await hp(password), password_plain: rawPassword,
                 role: 'student', grade: String(y), class_num: String(cl.num), seat_num: String(seat),
                 club: '', committee: '', display_name: studentId, icon: '', created_at: new Date().toISOString()
               });
@@ -660,7 +807,7 @@ async function handleRequest(request, env, ctx) {
             seq++;
             if (users.find(u => u.username === studentId)) continue;
             users.push({
-              id: uuid(), username: studentId, password: await hp(password), password_plain: password,
+              id: uuid(), username: studentId, password: await hp(password), password_plain: rawPassword,
               role: 'student', grade: String(y), class_num: String(cl), seat_num: String(seat),
               club: '', committee: '', display_name: studentId, icon: '', created_at: new Date().toISOString()
             });
@@ -670,7 +817,7 @@ async function handleRequest(request, env, ctx) {
       }
       await r2Put(env.DATA, 'users.json', users);
       await auditLog(env, 'batch_create', user.username, { count: created.length, body: JSON.stringify(body) });
-      return json({ created: created.length, password, students: created });
+      return json({ created: created.length, password: rawPassword, students: created });
     }
 
     // POST /api/users/batch-delete
@@ -739,7 +886,7 @@ async function handleRequest(request, env, ctx) {
       const users = await r2Get(env.DATA, 'users.json') || [];
       return json(parts.map(u => {
         const pu = users.find(x => x.username === u);
-        return { username: u, display_name: (pu && pu.display_name) || u, role: (pu && pu.role) || '' };
+        return { username: u, display_name: (pu && pu.display_name) || u, role: (pu && pu.role) || '', teacher_subject: (pu && pu.teacher_subject) || '' };
       }));
     }
 
@@ -815,6 +962,366 @@ async function handleRequest(request, env, ctx) {
     }
 
     // ============================================================
+    // 5b. PASSWORD RESET
+    // ============================================================
+    // POST /api/password-reset/request (no auth required)
+    if (path === '/api/password-reset/request' && method === 'POST') {
+      const { username, teacher } = await request.json();
+      if (!username || !teacher) return json({ error: 'ユーザー名と先生を選択してください' }, 400);
+      const users = await r2Get(env.DATA, 'users.json') || [];
+      const u = users.find(x => x.username === username || x.display_name === username);
+      if (!u) return json({ error: 'ユーザーが見つかりません' }, 404);
+      const t = users.find(x => x.username === teacher);
+      if (!t) return json({ error: '先生が見つかりません' }, 404);
+      const reqs = await r2Get(env.DATA, 'password_resets.json') || [];
+      const req = {
+        id: uuid(), username: u.username, display_name: u.display_name || u.username,
+        teacher, teacher_name: t.display_name || t.username,
+        status: 'pending', created_at: new Date().toISOString()
+      };
+      reqs.push(req);
+      if (reqs.length > 200) reqs.splice(0, reqs.length - 200);
+      await r2Put(env.DATA, 'password_resets.json', reqs);
+      await addNotification(env, 'password_reset', `${u.display_name||u.username}さんがパスワード再設定をリクエストしています`, `/user-management.html?tab=password-reset`);
+      return json({ id: req.id, status: 'pending' }, 201);
+    }
+
+    // GET /api/password-reset/requests (teacher/admin)
+    if (path === '/api/password-reset/requests' && method === 'GET') {
+      authErr = requireAuth(user, ['admin', 'teacher']);
+      if (authErr) return authErr;
+      const reqs = await r2Get(env.DATA, 'password_resets.json') || [];
+      const myReqs = reqs.filter(r => r.teacher === user.username || user.role.includes('admin'));
+      myReqs.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      return json(myReqs.map(r => ({ ...r, fullfilled: r.fullfilled || false })));
+    }
+
+    // POST /api/password-reset/fulfill/:id
+    const fulfillReq = path.match(/^\/api\/password-reset\/fulfill\/(.+)$/);
+    if (fulfillReq && method === 'POST') {
+      authErr = requireAuth(user, ['admin', 'teacher']);
+      if (authErr) return authErr;
+      const { password } = await request.json();
+      if (!password || password.length < 6) return json({ error: 'パスワードは6文字以上必要です' }, 400);
+      const reqs = await r2Get(env.DATA, 'password_resets.json') || [];
+      const req = reqs.find(r => r.id === fulfillReq[1]);
+      if (!req) return json({ error: '見つかりません' }, 404);
+      if (req.teacher !== user.username && !user.role.includes('admin')) return json({ error: '権限がありません' }, 403);
+      if (req.fullfilled) return json({ error: '既に処理済みです' }, 400);
+      const users = await r2Get(env.DATA, 'users.json') || [];
+      const u = users.find(x => x.username === req.username);
+      if (!u) return json({ error: 'ユーザーが見つかりません' }, 404);
+      const hashedInput = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', enc(password)))).map(x => x.toString(16).padStart(2, '0')).join('');
+      u.password = await hp(hashedInput);
+      u.password_plain = password;
+      req.fullfilled = true;
+      req.new_password_plain = password;
+      req.fullfilled_at = new Date().toISOString();
+      req.fullfilled_by = user.username;
+      await r2Put(env.DATA, 'users.json', users);
+      await r2Put(env.DATA, 'password_resets.json', reqs);
+      await auditLog(env, 'password_reset_fulfill', user.username, { target: req.username });
+      return json({ ok: true, username: req.username });
+    }
+
+    // GET /api/password-reset/check/:id (no auth - uses request id as token)
+    const checkReq = path.match(/^\/api\/password-reset\/check\/(.+)$/);
+    if (checkReq && method === 'GET') {
+      const reqs = await r2Get(env.DATA, 'password_resets.json') || [];
+      const req = reqs.find(r => r.id === checkReq[1]);
+      if (!req) return json({ error: '見つかりません' }, 404);
+      return json({
+        status: req.fullfilled ? 'done' : 'pending',
+        new_password: req.fullfilled ? req.new_password_plain : null,
+        username: req.username
+      });
+    }
+
+    // Notify homeroom teacher on 5 failed login attempts
+    async function notifyHomeroomOnFail(env, username) {
+      const locks = await r2Get(env.DATA, 'login_locks.json') || {};
+      const lock = locks[username];
+      if (lock && lock.count >= 5 && lock.count % 5 === 0) {
+        const users = await r2Get(env.DATA, 'users.json') || [];
+        const u = users.find(x => x.username === username);
+        if (!u || !u.grade || !u.class_num) return;
+        const homeroomTeacher = users.find(t =>
+          t.role && t.role.includes('teacher') && t.teacher_homeroom && t.teacher_grades && t.teacher_grades.includes(u.grade)
+        );
+        if (homeroomTeacher) {
+          await addNotification(env, 'login_fail', `${u.display_name||u.username}さんがログインに${lock.count}回失敗しました`, `/user-management.html`);
+        }
+      }
+    }
+
+    // ============================================================
+    // 5c. DIRECT MESSAGES (teacher/admin → anyone, no student→student)
+    // ============================================================
+    const dmPrefix = '/api/dm';
+    // POST /api/dm/send
+    if (path === dmPrefix + '/send' && method === 'POST') {
+      authErr = requireAuth(user);
+      if (authErr) return authErr;
+      const userRole = (user.role || '');
+      const isStaff = ['admin', 'teacher'].some(r => userRole.includes(r));
+      const { to, message } = await request.json();
+      if (!to || !message || !message.trim()) return json({ error: '宛先とメッセージは必須です' }, 400);
+      if (to === user.username) return json({ error: '自分には送信できません' }, 400);
+      const users = await r2Get(env.DATA, 'users.json') || [];
+      const recipient = users.find(u => u.username === to);
+      if (!recipient) return json({ error: 'ユーザーが見つかりません' }, 404);
+      const recipIsStaff = ['admin', 'teacher'].some(r => (recipient.role || '').includes(r));
+      // Strict rule: students can NEVER DM students
+      if (!isStaff && !recipIsStaff) return json({ error: '生徒同士のメッセージは禁止されています' }, 403);
+      if (!isStaff) {
+        // Students can only reply to teachers who have DMed them first
+        const msgs = await r2Get(env.DATA, 'dm_messages.json') || [];
+        const hasExisting = msgs.some(m => (m.from === to && m.to === user.username) || (m.from === user.username && m.to === to));
+        if (!hasExisting) return json({ error: 'この先生との会話はありません' }, 403);
+      }
+      const msgs = await r2Get(env.DATA, 'dm_messages.json') || [];
+      const dm = {
+        id: uuid(), from: user.username, to,
+        message: sanitize(message.trim()),
+        read: false, created_at: new Date().toISOString()
+      };
+      msgs.push(dm);
+      if (msgs.length > 2000) msgs.splice(0, msgs.length - 2000);
+      await r2Put(env.DATA, 'dm_messages.json', msgs);
+      return json(dm, 201);
+    }
+
+    // GET /api/dm/conversations
+    if (path === dmPrefix + '/conversations' && method === 'GET') {
+      authErr = requireAuth(user);
+      if (authErr) return authErr;
+      const msgs = await r2Get(env.DATA, 'dm_messages.json') || [];
+      const convUsers = new Set();
+      msgs.forEach(m => {
+        if (!m.group_id) {
+          if (m.from === user.username) convUsers.add(m.to);
+          if (m.to === user.username) convUsers.add(m.from);
+        }
+      });
+      const users = await r2Get(env.DATA, 'users.json') || [];
+      const convs = [];
+      convUsers.forEach(u => {
+        const uData = users.find(x => x.username === u);
+        const userMsgs = msgs.filter(m => !m.group_id && ((m.from === user.username && m.to === u) || (m.from === u && m.to === user.username)));
+        userMsgs.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+        const last = userMsgs[userMsgs.length - 1];
+        const unread = userMsgs.filter(m => m.to === user.username && !m.read).length;
+        convs.push({
+          type: 'dm', id: u, username: u, display_name: (uData && uData.display_name) || u,
+          role: (uData && uData.role) || '',
+          last_message: last ? last.message : '',
+          last_time: last ? last.created_at : '',
+          unread
+        });
+      });
+      // Add group conversations
+      const groups = await r2Get(env.DATA, 'dm_groups.json') || [];
+      const myGroups = groups.filter(g => g.members.includes(user.username));
+      myGroups.forEach(g => {
+        const gm = msgs.filter(m => m.group_id === g.id);
+        gm.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+        const last = gm[gm.length - 1];
+        const unread = gm.filter(m => m.from !== user.username && (!m.read_by || !m.read_by.includes(user.username))).length;
+        convs.push({
+          type: 'group', id: g.id, name: g.name, members: g.members,
+          last_message: last ? last.message : '',
+          last_time: last ? last.created_at : '',
+          unread, created_by: g.created_by
+        });
+      });
+      convs.sort((a, b) => new Date(b.last_time || 0) - new Date(a.last_time || 0));
+      return json(convs);
+    }
+
+    // GET /api/dm/messages/:username
+    const dmConv = path.match(/^\/api\/dm\/messages\/(.+)$/);
+    if (dmConv && method === 'GET') {
+      authErr = requireAuth(user);
+      if (authErr) return authErr;
+      const msgs = await r2Get(env.DATA, 'dm_messages.json') || [];
+      const conv = msgs.filter(m =>
+        (m.from === user.username && m.to === decodeURIComponent(dmConv[1])) ||
+        (m.from === decodeURIComponent(dmConv[1]) && m.to === user.username)
+      );
+      conv.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+      return json(conv);
+    }
+
+    // POST /api/dm/read/:username
+    const dmRead = path.match(/^\/api\/dm\/read\/(.+)$/);
+    if (dmRead && method === 'POST') {
+      authErr = requireAuth(user);
+      if (authErr) return authErr;
+      const msgs = await r2Get(env.DATA, 'dm_messages.json') || [];
+      let changed = false;
+      msgs.forEach(m => {
+        if (m.to === user.username && m.from === decodeURIComponent(dmRead[1]) && !m.read) {
+          m.read = true; changed = true;
+        }
+      });
+      if (changed) await r2Put(env.DATA, 'dm_messages.json', msgs);
+      return json({ ok: true });
+    }
+
+    // GET /api/dm/unread-count
+    if (path === dmPrefix + '/unread-count' && method === 'GET') {
+      authErr = requireAuth(user);
+      if (authErr) return authErr;
+      const msgs = await r2Get(env.DATA, 'dm_messages.json') || [];
+      const dms = msgs.filter(m => m.to === user.username && !m.read).length;
+      const groups = await r2Get(env.DATA, 'dm_groups.json') || [];
+      const myGroups = groups.filter(g => g.members.includes(user.username));
+      let groupUnread = 0;
+      myGroups.forEach(g => { groupUnread += msgs.filter(m => m.group_id === g.id && m.from !== user.username && !m.read_by && !m.read_by?.includes(user.username)).length; });
+      return json({ count: dms + groupUnread });
+    }
+
+    // ============================================================
+    // 5c. GROUP DM (teacher/admin creates, students join)
+    // ============================================================
+    // POST /api/dm/groups - Create group
+    if (path === dmPrefix + '/groups' && method === 'POST') {
+      authErr = requireAuth(user);
+      if (authErr) return authErr;
+      const userRole = (user.role || '');
+      const isStaff = ['admin', 'teacher'].some(r => userRole.includes(r));
+      if (!isStaff) return json({ error: '先生・管理者のみグループ作成できます' }, 403);
+      const { name, members } = await request.json();
+      if (!name || !name.trim()) return json({ error: 'グループ名は必須です' }, 400);
+      const mems = Array.isArray(members) ? members : [];
+      if (!mems.includes(user.username)) mems.unshift(user.username);
+      if (mems.length < 2) return json({ error: 'メンバーが足りません' }, 400);
+      const users = await r2Get(env.DATA, 'users.json') || [];
+      const valid = mems.every(m => users.find(u => u.username === m));
+      if (!valid) return json({ error: '存在しないユーザーが含まれています' }, 400);
+      const groups = await r2Get(env.DATA, 'dm_groups.json') || [];
+      const grp = { id: uuid(), name: sanitize(name.trim()), members: mems, created_by: user.username, created_at: new Date().toISOString() };
+      groups.push(grp);
+      await r2Put(env.DATA, 'dm_groups.json', groups);
+      return json(grp, 201);
+    }
+
+    // GET /api/dm/groups - List groups
+    if (path === dmPrefix + '/groups' && method === 'GET') {
+      authErr = requireAuth(user);
+      if (authErr) return authErr;
+      const groups = await r2Get(env.DATA, 'dm_groups.json') || [];
+      const myGroups = groups.filter(g => g.members.includes(user.username));
+      const users = await r2Get(env.DATA, 'users.json') || [];
+      const msgs = await r2Get(env.DATA, 'dm_messages.json') || [];
+      const result = myGroups.map(g => {
+        const gm = msgs.filter(m => m.group_id === g.id);
+        gm.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+        const last = gm[gm.length - 1];
+        const unread = gm.filter(m => m.from !== user.username && (!m.read_by || !m.read_by.includes(user.username))).length;
+        const memberNames = g.members.map(m => { const u = users.find(x => x.username === m); return (u && u.display_name) || m; });
+        return { id: g.id, name: g.name, members: g.members, member_names: memberNames, created_by: g.created_by, last_message: last ? last.message : '', last_time: last ? last.created_at : '', unread };
+      });
+      result.sort((a, b) => new Date(b.last_time || 0) - new Date(a.last_time || 0));
+      return json(result);
+    }
+
+    // GET /api/dm/groups/:id
+    const grpGet = path.match(/^\/api\/dm\/groups\/([^/]+)$/);
+    if (grpGet && method === 'GET') {
+      authErr = requireAuth(user);
+      if (authErr) return authErr;
+      const groups = await r2Get(env.DATA, 'dm_groups.json') || [];
+      const g = groups.find(x => x.id === grpGet[1]);
+      if (!g) return json({ error: '見つかりません' }, 404);
+      if (!g.members.includes(user.username)) return json({ error: 'メンバーではありません' }, 403);
+      return json(g);
+    }
+
+    // POST /api/dm/groups/:id/add - Add members
+    const grpAdd = path.match(/^\/api\/dm\/groups\/([^/]+)\/add$/);
+    if (grpAdd && method === 'POST') {
+      authErr = requireAuth(user);
+      if (authErr) return authErr;
+      const userRole = (user.role || '');
+      const isStaff = ['admin', 'teacher'].some(r => userRole.includes(r));
+      if (!isStaff) return json({ error: '先生・管理者のみ操作できます' }, 403);
+      const groups = await r2Get(env.DATA, 'dm_groups.json') || [];
+      const g = groups.find(x => x.id === grpAdd[1]);
+      if (!g) return json({ error: '見つかりません' }, 404);
+      const { members } = await request.json();
+      if (!Array.isArray(members) || !members.length) return json({ error: '追加するユーザーが必要です' }, 400);
+      const users = await r2Get(env.DATA, 'users.json') || [];
+      members.forEach(m => { if (!g.members.includes(m) && users.find(u => u.username === m)) g.members.push(m); });
+      await r2Put(env.DATA, 'dm_groups.json', groups);
+      return json({ ok: true, members: g.members });
+    }
+
+    // POST /api/dm/groups/:id/remove - Remove members
+    const grpRemove = path.match(/^\/api\/dm\/groups\/([^/]+)\/remove$/);
+    if (grpRemove && method === 'POST') {
+      authErr = requireAuth(user);
+      if (authErr) return authErr;
+      const userRole = (user.role || '');
+      const isStaff = ['admin', 'teacher'].some(r => userRole.includes(r));
+      if (!isStaff) return json({ error: '先生・管理者のみ操作できます' }, 403);
+      const groups = await r2Get(env.DATA, 'dm_groups.json') || [];
+      const g = groups.find(x => x.id === grpRemove[1]);
+      if (!g) return json({ error: '見つかりません' }, 404);
+      const { members } = await request.json();
+      if (!Array.isArray(members) || !members.length) return json({ error: '削除するユーザーが必要です' }, 400);
+      g.members = g.members.filter(m => !members.includes(m));
+      await r2Put(env.DATA, 'dm_groups.json', groups);
+      return json({ ok: true, members: g.members });
+    }
+
+    // POST /api/dm/groups/:id/send - Send message to group
+    const grpSend = path.match(/^\/api\/dm\/groups\/([^/]+)\/send$/);
+    if (grpSend && method === 'POST') {
+      authErr = requireAuth(user);
+      if (authErr) return authErr;
+      const groups = await r2Get(env.DATA, 'dm_groups.json') || [];
+      const g = groups.find(x => x.id === grpSend[1]);
+      if (!g) return json({ error: '見つかりません' }, 404);
+      if (!g.members.includes(user.username)) return json({ error: 'メンバーではありません' }, 403);
+      const { message } = await request.json();
+      if (!message || !message.trim()) return json({ error: 'メッセージは必須です' }, 400);
+      const msgs = await r2Get(env.DATA, 'dm_messages.json') || [];
+      const dm = {
+        id: uuid(), from: user.username, group_id: g.id,
+        message: sanitize(message.trim()),
+        read_by: [user.username], created_at: new Date().toISOString()
+      };
+      msgs.push(dm);
+      if (msgs.length > 5000) msgs.splice(0, msgs.length - 5000);
+      await r2Put(env.DATA, 'dm_messages.json', msgs);
+      return json(dm, 201);
+    }
+
+    // GET /api/dm/groups/:id/messages
+    const grpMsgs = path.match(/^\/api\/dm\/groups\/([^/]+)\/messages$/);
+    if (grpMsgs && method === 'GET') {
+      authErr = requireAuth(user);
+      if (authErr) return authErr;
+      const groups = await r2Get(env.DATA, 'dm_groups.json') || [];
+      const g = groups.find(x => x.id === grpMsgs[1]);
+      if (!g) return json({ error: '見つかりません' }, 404);
+      if (!g.members.includes(user.username)) return json({ error: 'メンバーではありません' }, 403);
+      const msgs = await r2Get(env.DATA, 'dm_messages.json') || [];
+      const conv = msgs.filter(m => m.group_id === g.id);
+      conv.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+      // Mark as read
+      conv.forEach(m => {
+        if (m.from !== user.username) {
+          if (!m.read_by) m.read_by = [];
+          if (!m.read_by.includes(user.username)) m.read_by.push(user.username);
+        }
+      });
+      await r2Put(env.DATA, 'dm_messages.json', msgs);
+      return json(conv);
+    }
+
+    // ============================================================
     // 6. SCHEDULES
     // ============================================================
     if (path === '/api/schedules' && method === 'GET') {
@@ -845,7 +1352,66 @@ async function handleRequest(request, env, ctx) {
     }
 
     // ============================================================
-    // 7. YEARLY SCHEDULE
+    // 6b. TEACHER SCHEDULE (period-based weekly timetable)
+    // ============================================================
+    const PERIOD_TIMES = [
+      { period: 1, start: 500, end: 570 },   // 8:40-9:30 (minutes from midnight)
+      { period: 2, start: 580, end: 650 },   // 9:40-10:30
+      { period: 3, start: 660, end: 730 },   // 10:40-11:30
+      { period: 4, start: 740, end: 810 },   // 11:40-12:30
+      { period: 5, start: 850, end: 920 },   // 13:30-14:20 (after lunch: 12:30-13:30)
+      { period: 6, start: 930, end: 1000 }   // 14:30-15:20
+    ];
+
+    // POST /api/teacher-schedule - Save teacher's weekly schedule
+    if (path === '/api/teacher-schedule' && method === 'POST') {
+      authErr = requireAuth(user, ['admin', 'teacher']);
+      if (authErr) return authErr;
+      const { schedule } = await request.json();
+      if (!Array.isArray(schedule)) return json({ error: 'スケジュールが必要です' }, 400);
+      const valid = schedule.every(s => s.day_of_week >= 0 && s.day_of_week <= 6 && s.period >= 1 && s.period <= 7 && s.subject);
+      if (!valid) return json({ error: '不正なデータです' }, 400);
+      const schedules = await r2Get(env.DATA, 'teacher_schedules.json') || [];
+      const existing = schedules.find(s => s.teacher_username === user.username);
+      if (existing) { existing.schedule = schedule; }
+      else { schedules.push({ id: uuid(), teacher_username: user.username, schedule }); }
+      await r2Put(env.DATA, 'teacher_schedules.json', schedules);
+      return json({ ok: true });
+    }
+
+    // GET /api/teacher-schedule - Get my schedule
+    if (path === '/api/teacher-schedule' && method === 'GET') {
+      authErr = requireAuth(user, ['admin', 'teacher']);
+      if (authErr) return authErr;
+      const schedules = await r2Get(env.DATA, 'teacher_schedules.json') || [];
+      const s = schedules.find(x => x.teacher_username === user.username);
+      return json(s ? s.schedule : []);
+    }
+
+    // GET /api/teacher-schedule/next - Get next class info
+    if (path === '/api/teacher-schedule/next' && method === 'GET') {
+      authErr = requireAuth(user, ['admin', 'teacher']);
+      if (authErr) return authErr;
+      const schedules = await r2Get(env.DATA, 'teacher_schedules.json') || [];
+      const s = schedules.find(x => x.teacher_username === user.username);
+      if (!s || !s.schedule.length) return json({ next: null, message: 'スケジュールが設定されていません' });
+      const now = new Date();
+      const jst = new Date(now.getTime() + 9 * 3600000);
+      const day = jst.getUTCDay();
+      const mins = jst.getUTCHours() * 60 + jst.getUTCMinutes();
+      const todayClasses = s.schedule.filter(e => e.day_of_week === day).sort((a, b) => a.period - b.period);
+      if (!todayClasses.length) return json({ next: null, message: '今日は授業がありません' });
+      // Find next class
+      for (const cls of todayClasses) {
+        const pt = PERIOD_TIMES.find(p => p.period === cls.period);
+        if (!pt) continue;
+        if (mins < pt.start) {
+          const diff = pt.start - mins;
+          return json({ next: { period: cls.period, subject: cls.subject, class_name: cls.class_name || '', startsIn: diff, startsInMin: Math.floor(diff) }, message: `${cls.subject}${cls.class_name?'('+cls.class_name+')':''}が${Math.floor(diff)}分後にあります` });
+        }
+      }
+      return json({ next: null, message: '今日の授業は全て終了しました' });
+    }
     // ============================================================
     if (path === '/api/yearly-schedule' && method === 'GET') {
       const data = await r2Get(env.DATA, 'yearly_schedule.json') || [];
@@ -875,114 +1441,9 @@ async function handleRequest(request, env, ctx) {
     }
 
     // ============================================================
-    // 8. CONSULT (AES-256-GCM encrypted)
-    // ============================================================
-    const AES_KEY = await deriveAesKey(env.COOKIE_SECRET || 'default-consult-key', 'consult-aes-salt');
-
-    if (path === '/api/consult/teachers' && method === 'GET') {
-      const users = await r2Get(env.DATA, 'users.json') || [];
-      const teachers = users.filter(u => ['admin','teacher'].some(r => (u.role || '').includes(r)))
-        .map(u => ({ username: u.username, display_name: u.display_name || u.username }));
-      return json(teachers);
-    }
-
-    if (path === '/api/consult' && method === 'GET') {
-      authErr = requireAuth(user);
-      if (authErr) return authErr;
-      let data = await r2Get(env.DATA, 'consult.json') || [];
-      const now = Date.now();
-      const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
-      // Auto-delete: replied & student_read_at > 7 days ago
-      const before = data.length;
-      data = data.filter(m => !(m.teacher_reply && m.student_read_at && (now - new Date(m.student_read_at).getTime() > WEEK_MS)));
-      if (data.length < before) await r2Put(env.DATA, 'consult.json', data);
-      // Sort newest first
-      data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-      const isTeacher = hasOneOf(user.role, ['admin', 'teacher']);
-      if (isTeacher) {
-        if (hasOneOf(user.role, ['teacher'])) data = data.filter(m => m.to === 'all' || m.to === user.username);
-        for (const item of data) {
-          if (item.encrypted) {
-            try { item.message = await aesDecrypt(item.encrypted, AES_KEY); } catch(e) { item.message = '[復号できません]'; }
-          }
-          delete item.encrypted;
-          if (item.anonymous) item.from = '匿名';
-          else item.from = item.username;
-        }
-      } else {
-        // Student: own consults only
-        data = data.filter(m => m.username === user.username);
-        // Mark as read
-        let changed = false;
-        for (const item of data) {
-          if (item.teacher_reply && !item.student_read_at) {
-            item.student_read_at = new Date().toISOString();
-            changed = true;
-          }
-          if (item.encrypted) {
-            try { item.message = await aesDecrypt(item.encrypted, AES_KEY); } catch(e) { item.message = '[復号できません]'; }
-          }
-          delete item.encrypted;
-          item.from = '自分';
-          delete item.username;
-        }
-        if (changed) await r2Put(env.DATA, 'consult.json', data);
-      }
-      return json(data);
-    }
-
-    if (path === '/api/consult' && method === 'POST') {
-      authErr = requireAuth(user);
-      if (authErr) return authErr;
-      const { message, to, anonymous } = await request.json();
-      if (!message || !message.trim()) return json({ error: '内容を入力してください' }, 400);
-      const encrypted = await aesEncrypt(message, AES_KEY);
-      const entry = {
-        id: uuid(), encrypted, created_at: new Date().toISOString(),
-        to: (to && to !== '') ? to : 'all',
-        anonymous: anonymous !== false,
-        username: user.username
-      };
-      let data = await r2Get(env.DATA, 'consult.json') || [];
-      data.push(entry);
-      if (data.length > 200) data.splice(0, data.length - 200);
-      await r2Put(env.DATA, 'consult.json', data);
-      // Notify teachers
-      await addNotification(env, 'consult', '新しい相談が届きました', '/admin?tab=consult');
-      return json({ status: 'ok', id: entry.id });
-    }
-
-    // POST /api/consult/:id/reply
-    const consultReply = path.match(/^\/api\/consult\/([^/]+)\/reply$/);
-    if (consultReply && method === 'POST') {
-      authErr = requireAuth(user, ['admin', 'teacher']);
-      if (authErr) return authErr;
-      const { reply } = await request.json();
-      if (!reply || !reply.trim()) return json({ error: '返信内容を入力してください' }, 400);
-      let data = await r2Get(env.DATA, 'consult.json') || [];
-      const item = data.find(x => x.id === consultReply[1]);
-      if (!item) return json({ error: '見つかりません' }, 404);
-      if (item.to !== 'all' && item.to !== user.username && !hasOneOf(user.role, ['admin'])) return json({ error: '権限がありません' }, 403);
-      item.teacher_reply = sanitize(reply.trim());
-      item.replied_at = new Date().toISOString();
-      item.replied_by = user.username;
-      await r2Put(env.DATA, 'consult.json', data);
-      return json({ ok: true });
-    }
-
-    const consultDel = path.match(/^\/api\/consult\/([^/]+)$/);
-    if (consultDel && method === 'DELETE') {
-      authErr = requireAuth(user, ['admin', 'teacher']);
-      if (authErr) return authErr;
-      let data = await r2Get(env.DATA, 'consult.json') || [];
-      data = data.filter(e => e.id !== consultDel[1]);
-      await r2Put(env.DATA, 'consult.json', data);
-      return json({ ok: true });
-    }
-
-    // ============================================================
     // 9. CLUB QUESTIONS (AES encrypted, no notification)
     // ============================================================
+    const AES_KEY = await deriveAesKey(env.COOKIE_SECRET || 'default-club-key', 'club-aes-salt');
     if (path === '/api/club-questions' && method === 'GET') {
       authErr = requireAuth(user);
       if (authErr) return authErr;
@@ -1086,6 +1547,12 @@ async function handleRequest(request, env, ctx) {
     // 10. REACTIONS
     // ============================================================
     const reactionsMatch = path.match(/^\/api\/reactions\/([^/]+)\/([^/]+)$/);
+    if (path === '/api/reactions' && method === 'GET') {
+      authErr = requireAuth(user);
+      if (authErr) return authErr;
+      return json({ ok: true, message: 'リアクションAPI稼働中' });
+    }
+
     if (path === '/api/reactions' && method === 'POST') {
       authErr = requireAuth(user);
       if (authErr) return authErr;
@@ -1115,6 +1582,16 @@ async function handleRequest(request, env, ctx) {
     // ============================================================
     // 11. NOTIFICATIONS
     // ============================================================
+    // POST /api/notifications (admin only - for diagnostics alerts)
+    if (path === '/api/notifications' && method === 'POST') {
+      authErr = requireAuth(user, ['admin']);
+      if (authErr) return authErr;
+      const { type, message, link } = await request.json();
+      if (!message) return json({ error: 'メッセージ必須' }, 400);
+      await addNotification(env, type || 'diagnostics', sanitize(message.trim()), link || '');
+      return json({ ok: true });
+    }
+
     if (path === '/api/notifications' && method === 'GET') {
       authErr = requireAuth(user, ['admin', 'teacher']);
       if (authErr) return authErr;
@@ -1159,6 +1636,48 @@ async function handleRequest(request, env, ctx) {
       await r2Put(env.DATA, 'tab_config.json', tabs);
       await auditLog(env, 'update_tabs', user.username, { count: tabs.length });
       return json({ ok: true });
+    }
+
+    // ============================================================
+    // 12b. WBGT from JMA AMeDAS (埼玉県入間市 → 所沢 43266)
+    // ============================================================
+    if (path === '/api/wbgt' && method === 'GET') {
+      try {
+        const jst = new Date(Date.now() + 9 * 3600000);
+        let jmaData, ts;
+        for (let fallback = 0; fallback < 12; fallback++) {
+          const t = new Date(jst.getTime() - fallback * 600000);
+          const y = t.getUTCFullYear();
+          const m = String(t.getUTCMonth() + 1).padStart(2, '0');
+          const d = String(t.getUTCDate()).padStart(2, '0');
+          const h = String(t.getUTCHours()).padStart(2, '0');
+          const min = String(Math.floor(t.getUTCMinutes() / 10) * 10).padStart(2, '0');
+          ts = `${y}${m}${d}${h}${min}00`;
+          const resp = await fetch(`https://www.jma.go.jp/bosai/amedas/data/map/${ts}.json`, { headers: { 'User-Agent': 'SchoolBoard/1.0' } });
+          if (resp.ok) { jmaData = await resp.json(); break; }
+        }
+        if (!jmaData) return json({ error: 'JMA data unavailable' }, 502);
+        const st = jmaData['43266'];
+        if (!st || !st.temp || !st.humidity) {
+          return json({ error: 'Station data unavailable', ts }, 502);
+        }
+        const temp = st.temp[0];
+        const humidity = st.humidity[0];
+        const e = (humidity / 100) * 6.105 * Math.exp(17.27 * temp / (temp + 237.3));
+        const wbgt = 0.567 * temp + 0.393 * e + 3.94;
+        const rounded = Math.round(wbgt * 10) / 10;
+        const levels = [
+          { max: 21, label: '注意', advice: '適度に水分補給' },
+          { max: 25, label: '警戒', advice: '積極的に水分補給' },
+          { max: 28, label: '厳重警戒', advice: '積極的に休息' },
+          { max: 31, label: '危険', advice: '激しい運動は中止' },
+          { max: 99, label: '極度危険', advice: '運動は原則中止' },
+        ];
+        const lv = levels.find(l => rounded < l.max) || levels[levels.length - 1];
+        return json({ wbgt: rounded, temp, humidity, label: lv.label, advice: lv.advice, ts });
+      } catch (e) {
+        return json({ error: e.message }, 500);
+      }
     }
 
     // ============================================================
@@ -1224,7 +1743,35 @@ async function handleRequest(request, env, ctx) {
     }
 
     // ============================================================
-    // 16. GEMINI
+    // 16. PUSH NOTIFICATIONS
+    // ============================================================
+    if (path === '/api/push/subscribe' && method === 'POST') {
+      authErr = requireAuth(user);
+      if (authErr) return authErr;
+      const sub = await request.json();
+      let subs = await r2Get(env.DATA, 'push_subs.json') || [];
+      subs = subs.filter(s => s.username !== user.username);
+      subs.push({ ...sub, username: user.username, createdAt: new Date().toISOString() });
+      await r2Put(env.DATA, 'push_subs.json', subs);
+      return json({ ok: true });
+    }
+    if (path === '/api/push/unsubscribe' && method === 'POST') {
+      authErr = requireAuth(user);
+      if (authErr) return authErr;
+      let subs = await r2Get(env.DATA, 'push_subs.json') || [];
+      subs = subs.filter(s => s.username !== user.username);
+      await r2Put(env.DATA, 'push_subs.json', subs);
+      return json({ ok: true });
+    }
+    if (path === '/api/push/subscriptions' && method === 'GET') {
+      authErr = requireAuth(user, ['admin', 'teacher']);
+      if (authErr) return authErr;
+      const subs = await r2Get(env.DATA, 'push_subs.json') || [];
+      return json(subs);
+    }
+
+    // ============================================================
+    // 17. GEMINI
     // ============================================================
     if (path === '/api/gemini/ask' && method === 'POST') {
       authErr = requireAuth(user);
@@ -1303,6 +1850,37 @@ async function handleRequest(request, env, ctx) {
       await env.DATA.put('static/' + filename, decodedBytes, { httpMetadata: { contentType } });
       await auditLog(env, 'static_upload', user.username, { filename });
       return json({ ok: true, filename });
+    }
+
+    // ============================================================
+    // 18. PUSH SUBSCRIPTIONS (R2 persistence for Render)
+    // ============================================================
+    if (path === '/api/push/subs' && method === 'GET') {
+      const subs = await r2Get(env.DATA, 'push_subs.json') || [];
+      return json(subs);
+    }
+
+    if (path === '/api/push/subs' && method === 'POST') {
+      const key = request.headers.get('X-Auth-Key');
+      if (key !== (env.MIGRATE_KEY || 'migrate2026')) return json({ error: 'forbidden' }, 403);
+      const subs = await request.json();
+      await r2Put(env.DATA, 'push_subs.json', subs);
+      return json({ ok: true, count: subs.length });
+    }
+
+    // ============================================================
+    // 18b. VAPID KEYS (persist across Render deploys)
+    // ============================================================
+    if (path === '/api/vapid-keys' && method === 'GET') {
+      const keys = await r2Get(env.DATA, 'vapid_keys.json');
+      return json(keys || { error: 'no keys' });
+    }
+    if (path === '/api/vapid-keys' && method === 'POST') {
+      const key = request.headers.get('X-Auth-Key');
+      if (key !== (env.MIGRATE_KEY || 'migrate2026')) return json({ error: 'forbidden' }, 403);
+      const keys = await request.json();
+      await r2Put(env.DATA, 'vapid_keys.json', keys);
+      return json({ ok: true });
     }
 
     // ============================================================

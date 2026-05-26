@@ -1,0 +1,164 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>部長チャット - 上藤沢中学校 部活動黒板</title>
+<style>
+:root{--primary:#1E4D2B;--primary-dark:#153820;--primary-light:#2D6B40;--accent-pink:#f5a0b8;--accent-blue:#a0c4e8;--accent-yellow:#f5e6a0;--accent-green:#a8d8a0;--bg:#f7f5f0;--card:#fff;--text:#2c2c2c;--sub:#8a8682;--border:#e0dcd4;--radius:12px;--shadow:0 2px 12px rgba(30,77,43,0.06)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sans',Meiryo,sans-serif;background:var(--bg);color:var(--text);height:100vh;height:100dvh;display:flex;flex-direction:column}
+.header{background:var(--primary);padding:12px 20px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+.header-title{font-size:16px;font-weight:700;color:#fff}
+.header-right{display:flex;align-items:center;gap:8px}
+.header-link{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);padding:4px 12px;font-size:12px;cursor:pointer;color:rgba(255,255,255,.85);border-radius:8px;text-decoration:none;transition:all .2s;font-family:inherit}
+.header-link:hover{background:rgba(255,255,255,.25);color:#fff}
+.chat-body{flex:1;display:flex;max-width:1000px;width:100%;overflow:hidden}
+.chat-sidebar{width:22%;min-width:170px;background:var(--card);border-right:1px solid var(--border);padding:12px;overflow-y:auto;flex-shrink:0}
+.chat-sidebar h3{font-size:11px;font-weight:700;color:var(--sub);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
+.chat-part{font-size:12px;padding:6px 8px;border-radius:6px;margin-bottom:2px;display:flex;align-items:center;gap:6px}
+.chat-part .part-role{font-size:9px;color:var(--sub);background:var(--bg);padding:1px 5px;border-radius:3px}
+.chat-part .part-online{width:6px;height:6px;border-radius:50%;background:#4caf50;flex-shrink:0}
+.chat-main{flex:1;display:flex;flex-direction:column;padding:0 16px;min-width:0}
+.chat-messages{flex:1;overflow-y:auto;padding:16px 0;display:flex;flex-direction:column;gap:8px;justify-content:flex-end}
+.msg{background:var(--card);padding:12px 16px;border-radius:var(--radius);box-shadow:var(--shadow);max-width:85%;animation:fadeIn .2s}
+.msg.mine{align-self:flex-end;background:var(--accent-blue);border-bottom-right-radius:4px}
+.msg.other{align-self:flex-start;border-bottom-left-radius:4px}
+.msg .author{font-size:11px;font-weight:700;color:var(--primary);margin-bottom:4px}
+.msg.mine .author{color:var(--primary-dark)}
+.msg .text{font-size:14px;line-height:1.5;word-break:break-word}
+.msg .time{font-size:10px;color:var(--sub);margin-top:4px;text-align:right}
+.msg .del-btn{font-size:10px;color:var(--danger);cursor:pointer;background:0 0;border:none;float:right;margin-left:8px;opacity:.5}
+.msg .del-btn:hover{opacity:1}
+.chat-input{display:flex;gap:8px;padding:12px 0;flex-shrink:0}
+.chat-input input{flex:1;padding:12px 16px;border:2px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit;background:var(--card);transition:all .2s}
+.chat-input input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(30,77,43,0.08)}
+.chat-input button{padding:12px 24px;background:var(--primary);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;font-family:inherit}
+.chat-input button:hover{background:var(--primary-dark);box-shadow:0 4px 12px rgba(30,77,43,0.2)}
+.empty-chat{text-align:center;padding:40px;color:var(--sub);font-size:14px}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:600px){.chat-sidebar{display:none}}
+.chat-notif-banner{background:#e8f0e8;border:1px solid #c0d6c0;border-radius:8px;padding:10px 14px;margin:0 16px 8px;display:none;align-items:center;gap:10px;font-size:13px;flex-shrink:0}
+.chat-notif-banner .cnb-text{flex:1}
+.chat-notif-banner .cnb-btn{background:var(--primary);color:#fff;border:none;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap}
+.chat-notif-banner .cnb-btn:hover{background:var(--primary-dark)}
+.chat-notif-banner .cnb-skip{background:0 0;border:1px solid var(--border);padding:6px 14px;border-radius:6px;font-size:12px;cursor:pointer;color:var(--sub);font-family:inherit}
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="header-title">💬 部長チャット</div>
+  <div class="header-right">
+    <a href="01index.html" class="header-link">黒板に戻る</a>
+  </div>
+</header>
+<div class="chat-notif-banner" id="chatNotifBanner"><span class="cnb-text">💬 新しいメッセージがあったら通知でお知らせしますか？</span><button class="cnb-btn" id="chatNotifYes">はい</button><button class="cnb-skip" id="chatNotifNo">いいえ</button></div>
+<div class="chat-body">
+  <div class="chat-sidebar" id="partSidebar">
+    <h3>👥 参加者</h3>
+    <div id="partList">読み込み中...</div>
+  </div>
+  <div class="chat-main">
+    <div class="chat-messages" id="msgList"><div class="empty-chat">読み込み中...</div></div>
+    <div class="chat-input">
+      <input type="text" id="msgInput" placeholder="メッセージを入力..." maxlength="1000" autofocus>
+      <button id="sendBtn">送信</button>
+    </div>
+  </div>
+</div>
+<script>
+const API_BASE=''
+async function a(p,o={}){const t=sessionStorage.getItem('token'),h={'Content-Type':'application/json',...o.headers};if(t)h['Authorization']='Bearer '+t;const r=await fetch(API_BASE+p,{...o,headers:h}),d=await r.json();if(!r.ok)throw new Error(d.error||'エラー');return d}
+const $=id=>document.getElementById(id);const esc=s=>{const d=document.createElement('div');d.textContent=s;return d.innerHTML};
+const cu=sessionStorage.getItem('username');
+if(!cu||!sessionStorage.getItem('token'))window.location.href='02login.html';
+
+function scrollBottom(){requestAnimationFrame(()=>{$('msgList').scrollTop=$('msgList').scrollHeight})}
+
+const roleNames={'admin':'管理者','teacher':'先生','president':'部長','vice-president':'副部長','chairperson':'委員長','student':'生徒'};
+async function loadParticipants(){
+  try{
+    const parts=await a('/api/chat/participants');
+    $('partList').innerHTML=parts.map(p=>'<div class="chat-part"><span class="part-online"></span><span>'+esc(p.display_name||p.username)+'</span><span class="part-role">'+(p.role&&p.role.includes('admin')?'管理者':p.teacher_subject?esc(p.teacher_subject):p.role.split(',').map(r=>roleNames[r.trim()]||r.trim()).filter(Boolean).join('·'))+'</span></div>').join('');
+  }catch(e){$('partList').textContent='取得できませんでした'}
+}
+
+let lastTime=Date.now();let loadedOnce=false;
+async function loadMsgs(){
+  try{
+    const msgs=await a('/api/chat?since='+lastTime);
+    const list=$('msgList');
+    if(!loadedOnce){loadedOnce=true;list.innerHTML='<div class="empty-chat">メッセージはまだありません</div>';scrollBottom()}
+    if(msgs.length){
+      if(list.querySelector('.empty-chat'))list.innerHTML='';
+      msgs.forEach(m=>{lastTime=Math.max(lastTime,new Date(m.created_at).getTime()+1);renderMsg(m,list)});
+      scrollBottom();
+    }
+  }catch(e){}
+}
+function renderMsg(m,l){
+  const d=document.createElement('div');d.className='msg '+(m.username===cu?'mine':'other');
+  const time=new Date(m.created_at);const ts=String(time.getHours()).padStart(2,'0')+':'+String(time.getMinutes()).padStart(2,'0');
+  const canDel=m.username===cu||(sessionStorage.getItem('role')||'').includes('admin')||(sessionStorage.getItem('role')||'').includes('teacher');
+  const delBtn=canDel?`<button class="del-btn" onclick="delMsg('${m.id}')">✕</button>`:'';
+  d.innerHTML=delBtn+'<div class="author">'+esc(m.display_name||m.username)+'</div><div class="text">'+esc(m.message||m.text||'')+'</div><div class="time">'+ts+'</div>';
+  l.appendChild(d);
+}
+async function sendMsg(){
+  const inp=$('msgInput'),txt=inp.value.trim();
+  if(!txt)return;
+  inp.disabled=true;
+  try{
+    await a('/api/chat',{method:'POST',body:JSON.stringify({message:txt})});
+    inp.value='';lastTime=Date.now();await loadMsgs();
+    fetch('/api/push/notify',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+sessionStorage.getItem('token')},body:JSON.stringify({category:'chat',title:'部長チャット',body:txt.slice(0,80),url:'/chat.html',excludeUser:cu})}).catch(()=>{});
+  }catch(e){alert(e.message)}
+  inp.disabled=false;inp.focus();
+}
+async function delMsg(id){try{await a('/api/chat/'+id,{method:'DELETE'});$('msgList').querySelectorAll('.msg').forEach(el=>el.remove());lastTime=0;await loadMsgs()}catch(e){}}
+
+$('sendBtn').addEventListener('click',sendMsg);
+$('msgInput').addEventListener('keydown',e=>{if(e.key==='Enter')sendMsg()});
+loadParticipants();loadMsgs();setInterval(loadMsgs,3000);
+
+// Chat notification prompt
+const role=sessionStorage.getItem('role')||'';
+const chatRoles=role.split(',').map(r=>r.trim()).some(r=>['president','vice-president','chairperson','teacher','admin'].includes(r));
+if(chatRoles&&'serviceWorker'in navigator&&'PushManager'in window){
+  (async()=>{
+    try{
+      const ck=localStorage.getItem('chatNotifAsked_'+cu);
+      if(!ck){$('chatNotifBanner').style.display='flex'}
+    }catch(e){}
+  })();
+}
+async function enableChatNotif(){
+  try{
+    const reg=await navigator.serviceWorker.ready;
+    let sub=await reg.pushManager.getSubscription();
+    if(!sub){
+      const vk=await a('/api/push/vapid-key');
+      sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:urlBase64ToUint8Array(vk.publicKey)});
+    }
+    const subJson=JSON.parse(JSON.stringify(sub));
+    const my=await a('/api/me');
+    const topics=['general','lost'];
+    if(my.club)topics.push('club_'+my.club);
+    if(my.committee)topics.push('committee_'+my.committee);
+    if(chatRoles)topics.push('chat');
+    subJson.topics=topics;
+    await a('/api/push/subscribe',{method:'POST',body:JSON.stringify(subJson)});
+    localStorage.setItem('chatNotifAsked_'+cu,'yes');
+    $('chatNotifBanner').style.display='none';
+  }catch(e){}
+}
+function urlBase64ToUint8Array(b){const p=(b+'='.repeat((4-b.length%4)%4)).replace(/-/g,'+').replace(/_/g,'/');const s=atob(p);const r=new Uint8Array(s.length);for(let i=0;i<s.length;i++)r[i]=s.charCodeAt(i);return r}
+$('chatNotifYes').addEventListener('click',enableChatNotif);
+$('chatNotifNo').addEventListener('click',()=>{localStorage.setItem('chatNotifAsked_'+cu,'no');$('chatNotifBanner').style.display='none'});
+</script>
+<script>if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js')</script>
+</body>
+</html>

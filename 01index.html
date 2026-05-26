@@ -9,605 +9,606 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>上藤沢中学校 部活動黒板</title>
 <style>
-:root{--primary:#1E4D2B;--primary-dark:#153820;--primary-light:#2D6B40;--accent-pink:#f5a0b8;--accent-blue:#a0c4e8;--accent-yellow:#f5e6a0;--accent-green:#a8d8a0;--bg:#f7f5f0;--card:#fff;--text:#2c2c2c;--sub:#8a8682;--border:#e0dcd4;--danger:#c96565;--radius:12px;--shadow:0 2px 12px rgba(30,77,43,0.06)}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sans',Meiryo,sans-serif;background:var(--bg);color:var(--text)}
-.header{background:var(--primary);padding:12px 20px;display:flex;justify-content:space-between;align-items:stretch;position:sticky;top:0;z-index:100;min-height:80px;border:2px solid red;}
-.header-title{font-size:16px;font-weight:700;color:#fff;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.header-center{flex:1;display:flex;align-items:center;justify-content:flex-start;padding:0 10px;min-width:0}
-.header-title .hd{display:inline-flex;align-items:center;gap:6px}
-.header-title .hdate{font-size:12px;font-weight:400;opacity:.8;white-space:nowrap}
-.header-right{display:flex;align-items:center;gap:6px;overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch;flex-shrink:0;max-width:100%}
-.header-right::-webkit-scrollbar{display:none}
-.header-left{flex:0 0 auto;}
-.header-right{flex:0 0 auto;}
-.user-badge{background:rgba(255,255,255,.2);color:#fff;font-size:11px;padding:3px 10px;border-radius:6px;font-weight:700;flex-shrink:0}
-.user-badge{background:rgba(255,255,255,.2);color:#fff;font-size:11px;padding:3px 10px;border-radius:6px;font-weight:700}
-.header-link{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);padding:4px 10px;font-size:12px;cursor:pointer;color:rgba(255,255,255,.85);border-radius:8px;text-decoration:none;transition:all .2s;font-family:inherit;white-space:nowrap;flex-shrink:0}
-.header-link:hover{background:rgba(255,255,255,.25);color:#fff}
-.header-link.danger{border-color:rgba(255,255,255,.2)}
-.header-link.danger:hover{border-color:rgba(200,100,100,.6);background:rgba(200,100,100,.2);color:#ffcdcd}
-.nav-container{background:var(--card);border-bottom:1px solid var(--border);overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch}
-.nav-container::-webkit-scrollbar{display:none}
-.nav-tabs{display:flex;padding:0 10px}
-.tab{padding:10px 16px;color:var(--sub);text-decoration:none;font-size:13px;font-weight:700;border-bottom:3px solid transparent;transition:all .2s;cursor:pointer;background:0 0;border-top:none;border-left:none;border-right:none;font-family:inherit}
-.tab.active{color:#fff;background:var(--primary);border-radius:8px 8px 0 0;border-bottom-color:var(--primary)}
-.tab:hover:not(.active){background:#f0ede8;color:var(--text);border-radius:8px 8px 0 0}
-.tab.separator{color:#b5b0a8;padding:10px 6px;font-size:11px;font-weight:600;cursor:pointer}
-.tab-dot{display:inline-flex;align-items:center;justify-content:center;background:var(--accent-pink);color:#fff;font-size:10px;font-weight:700;min-width:18px;height:18px;padding:0 5px;margin-left:5px;vertical-align:middle;border-radius:9px}
-.search-bar{padding:8px 14px;display:flex;gap:8px;justify-content:center;position:sticky;top:0;z-index:89;background:var(--bg)}
-.search-bar input{width:100%;max-width:400px;padding:8px 14px;border:2px solid var(--border);border-radius:20px;font-size:13px;font-family:inherit;background:var(--card);transition:all .2s;box-shadow:var(--shadow)}
-.search-bar input:focus{outline:none;border-color:var(--primary);background:#fff;box-shadow:0 0 0 3px rgba(30,77,43,0.08)}
-.main-content{max-width:800px;margin:0 auto;padding:16px 20px}
-.post-card{background:var(--card);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);margin-bottom:14px;transition:transform .15s;border-left:3px solid var(--primary-light)}
-.post-card:hover{transform:translateY(-1px)}
-.post-category{font-size:11px;color:var(--sub);margin-bottom:4px;font-weight:600}
-.post-title{font-size:16px;font-weight:700;margin-bottom:8px;color:var(--text)}
-.post-body{font-size:14px;line-height:1.7;margin-bottom:12px;white-space:pre-wrap;word-break:break-word}
-.attachment{display:inline-flex;align-items:center;background:#f5f2ec;border:1px solid var(--border);padding:5px 10px;border-radius:6px;font-size:13px;color:var(--text);margin-bottom:12px;text-decoration:none;transition:all .2s}
-.attachment:hover{border-color:var(--primary);background:#eaf3e8}
-.post-footer{display:flex;justify-content:space-between;align-items:center;font-size:12px;border-top:1px solid var(--border);padding-top:10px}
-.post-meta{color:var(--sub)}
-.post-deadline{color:var(--danger);font-weight:700;background:#fce8e8;padding:3px 10px;border-radius:6px;font-size:11px}
-.post-deadline.safe{color:var(--primary);background:#eaf3e8}
-.post-deadline.warn{color:#c97b4a;background:#faf0e0}
-#postForm{background:var(--card);padding:18px 20px;margin-bottom:18px;border-radius:var(--radius);box-shadow:var(--shadow)}
-#postForm.hidden{display:none}
-#postForm h2{font-size:15px;font-weight:700;margin-bottom:12px;color:var(--text)}
-#postForm input,#postForm textarea,#postForm select{width:100%;padding:10px 12px;border:2px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit;background:#faf8f5;transition:all .25s}
-#postForm input:focus,#postForm textarea:focus,#postForm select:focus{outline:none;border-color:var(--primary);background:#fff;box-shadow:0 0 0 3px rgba(30,77,43,0.08)}
-#postForm input{margin-bottom:10px}
-#postForm textarea{min-height:90px;resize:vertical;margin-bottom:10px}
-#postForm select{margin-bottom:10px;cursor:pointer}
-#postForm .form-row{display:flex;gap:10px;margin-bottom:10px}
-#postForm .form-row input{flex:1;margin-bottom:0}
-#createBtn{background:var(--primary);color:#fff;border:none;padding:10px 24px;font-size:14px;font-weight:700;cursor:pointer;border-radius:8px;transition:all .25s;font-family:inherit}
-#createBtn:hover{background:var(--primary-dark);box-shadow:0 4px 12px rgba(30,77,43,0.2)}
-#createBtn:disabled{opacity:.5;cursor:not-allowed}
-.delete-btn{background:0 0;border:1px solid var(--border);color:var(--sub);padding:4px 10px;font-size:11px;cursor:pointer;border-radius:6px;transition:all .2s;font-family:inherit}
-.delete-btn:hover{border-color:var(--danger);color:var(--danger);background:#fce8e8}
-.empty-state{text-align:center;padding:50px 20px;color:#c5c0b8;font-size:14px}
-#wbgtBar{display:flex;align-items:center;gap:10px;padding:8px 20px;font-size:13px;font-weight:700;transition:background .5s,color .5s;overflow-x:auto}
-.wbgt-val{font-size:18px;min-width:45px;text-align:center;font-weight:800}
-.wbgt-label{font-size:13px;font-weight:700}
-.wbgt-advice{font-size:12px;font-weight:400;opacity:.9}
-.wbgt-detail{display:flex;gap:8px;font-weight:400;font-size:11px;opacity:.8}
-.wbgt-l0{background:#eaf3e8;color:#2d6b4a}
-.wbgt-l1{background:#faf5e0;color:#b57a20}
-.wbgt-l2{background:#faf0e0;color:#c97b4a}
-.wbgt-l3{background:#fce8e8;color:#b54a4a}
-.wbgt-l4{background:#f3eaf5;color:#7a3a8a}
-#disasterBar{display:none;align-items:center;gap:8px;padding:6px 20px;font-size:12px;font-weight:700;transition:all .3s;overflow-x:auto;border-bottom:1px solid rgba(200,0,0,.15)}
-.disaster-icon{font-size:14px;flex-shrink:0}
-.disaster-msg{flex:1;font-size:12px}
-.disaster-danger{background:#fce8e8;color:#b54a4a}
-.disaster-warning{background:#faf5e0;color:#b57a20}
-.disaster-info{background:#eaf3e8;color:#2d6b4a}
-.disaster-clear{background:rgba(255,255,255,.15);border:none;color:inherit;font-size:10px;opacity:.7;cursor:pointer;padding:2px 8px;border-radius:4px;font-weight:700}
-.disaster-clear:hover{opacity:1;background:rgba(0,0,0,.1)}
-.claim-area{display:flex;align-items:center;gap:8px;margin-bottom:10px}
-.claim-btn{padding:6px 14px;font-size:12px;font-weight:700;border:2px solid var(--accent-pink);background:0 0;color:var(--accent-pink);border-radius:8px;cursor:pointer;transition:all .2s;font-family:inherit}
-.claim-btn:hover{background:var(--accent-pink);color:#fff}
-.claim-btn.claimed{background:var(--accent-pink);color:#fff}
-.claim-count{font-size:12px;color:var(--sub);font-weight:700}
-.reaction-bar{display:flex;gap:4px;margin-top:8px;align-items:center}
-.react-toggle-btn{font-size:11px;padding:2px 8px;border:1.5px solid var(--border);border-radius:12px;background:var(--card);cursor:pointer;transition:all .2s;font-family:inherit;color:var(--sub);display:flex;align-items:center;gap:3px}
-.react-toggle-btn:hover{border-color:var(--accent-blue);color:var(--primary);background:#f0f6fc}
-.react-toggle-btn .rt-count{font-weight:700;font-size:10px}
-.react-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:999;align-items:center;justify-content:center}
-.react-overlay.show{display:flex}
-.react-modal{background:var(--card);border-radius:14px;padding:20px;max-width:340px;width:90%;max-height:70vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,.15);animation:fadeIn .2s}
-.react-modal h3{font-size:15px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between}
-.react-modal .rm-close{background:0 0;border:none;font-size:18px;cursor:pointer;color:var(--sub);padding:2px 6px}
-.react-group{margin-bottom:12px}
-.react-group-head{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700;margin-bottom:4px;cursor:pointer;padding:4px 0}
-.react-group-head .rg-count{font-weight:400;color:var(--sub);font-size:12px}
-.react-group-head .rg-btn{background:0 0;border:1.5px solid var(--border);border-radius:14px;padding:2px 10px;font-size:11px;cursor:pointer;font-family:inherit;margin-left:auto;transition:all .2s}
-.react-group-head .rg-btn.active{background:var(--accent-blue);border-color:var(--accent-blue);color:#1a4a6a}
-.react-group-head .rg-btn:hover{border-color:var(--accent-blue)}
-.react-users{display:flex;flex-wrap:wrap;gap:4px;padding-left:24px;font-size:12px;color:var(--sub)}
-.react-users span{background:var(--bg);padding:2px 8px;border-radius:4px}
-.notif-badge{background:var(--accent-pink);color:#fff;font-size:10px;font-weight:700;min-width:18px;height:18px;padding:0 5px;border-radius:9px;margin-left:4px;vertical-align:middle;text-align:center;line-height:18px;display:none}
-@media(max-width:800px){
-  .header{flex-direction:column;align-items:stretch;gap:6px}
-  .header-right{width:100%;justify-content:flex-start}
-  .main-content{padding:12px 14px}
-  .post-card{padding:14px 16px}
+:root{
+  --primary:#1E4D2B;
+  --primary-dark:#153820;
+  --primary-light:#2D6B40;
+  --accent-pink:#f5a0b8;
+  --accent-blue:#a0c4e8;
+  --accent-yellow:#f5e6a0;
+  --accent-green:#a8d8a0;
+  --bg:#f7f5f0;
+  --card:#fff;
+  --text:#2c2c2c;
+  --sub:#8a8682;
+  --border:#e0dcd4;
+  --danger:#c96565;
+  --radius:12px;
+  --shadow:0 2px 12px rgba(30,77,43,0.06);
 }
-.notif-banner{background:#e8f0e8;border:1px solid #c0d6c0;border-radius:8px;padding:10px 14px;margin:8px 12px;display:none;align-items:center;justify-content:space-between;font-size:13px}
-.notif-banner .nb-text{flex:1}
-.notif-banner .nb-btn{background:var(--primary);color:#fff;border:none;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0;margin-left:10px}
-.notif-banner .nb-btn:hover{background:var(--primary-dark)}
-.notif-banner .nb-close{background:0 0;border:none;font-size:14px;cursor:pointer;color:#8a8682;margin-left:8px;padding:2px}
-.schedule-bar{display:none;align-items:center;gap:10px;padding:8px 20px;font-size:14px;font-weight:700;background:#eaf3e8;color:var(--primary);border-bottom:1px solid #c0d6c0}
-.schedule-bar .sb-icon{font-size:16px;flex-shrink:0}
-.schedule-bar .sb-text{flex:1}
-.schedule-bar .sb-warn{background:var(--primary);color:#fff;padding:2px 10px;border-radius:6px;font-size:12px}
-.schedule-bar.sb-urgent{background:#fce8e8;color:#b54a4a;border-bottom-color:#e0bebe}
-.schedule-bar .sb-mute{margin-left:auto;background:0 0;border:1px solid rgba(0,0,0,.15);border-radius:6px;padding:2px 8px;font-size:11px;cursor:pointer;font-family:inherit;color:inherit;opacity:.6;flex-shrink:0}
-.schedule-bar .sb-mute:hover{opacity:1}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sans',Meiryo,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  display:flex;
+  min-height:100vh;
+}
+.dashboard{
+  display:flex;
+  width:100%;
+  overflow:hidden;
+}
+/* Sidebar */
+.sidebar{
+  width:240px;
+  background:var(--card);
+  border-right:1px solid var(--border);
+  display:flex;
+  flex-direction:column;
+  overflow-y:auto;
+}
+.sidebar-header{
+  padding:16px;
+  border-bottom:1px solid var(--border);
+}
+.school-name{
+  font-size:18px;
+  font-weight:700;
+  color:var(--primary);
+  margin-bottom:8px;
+}
+.date-info{
+  font-size:14px;
+  color:var(--sub);
+}
+.sidebar-nav{
+  flex:1;
+  padding:8px 0;
+}
+.nav-button{
+  width:100%;
+  padding:12px 16px;
+  margin:4px 8px;
+  text-align:left;
+  background:none;
+  border:none;
+  border-left:3px solid transparent;
+  color:var(--sub);
+  font-size:13px;
+  font-weight:600;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  transition:all .2s;
+}
+.nav-button:hover{
+  background:#f0ede8;
+  color:var(--text);
+  border-left-color:var(--primary);
+}
+.nav-button.active{
+  background:var(--primary);
+  color:#fff;
+  border-left-color:var(--primary);
+}
+.nav-button.disabled{
+  opacity:0.5;
+  cursor:not-allowed;
+}
+.sidebar-footer{
+  padding:16px;
+  border-top:1px solid var(--border);
+}
+.app-links{
+  display:flex;
+  gap:12px;
+}
+.app-link{
+  flex:1;
+  padding:12px;
+  background:rgba(255,255,255,.1);
+  border:1px solid rgba(255,255,255,.2);
+  border-radius:8px;
+  text-align:center;
+  font-size:12px;
+  color:var(--text);
+  text-decoration:none;
+  transition:all .2s;
+}
+.app-link:hover{
+  background:rgba(255,255,255,.2);
+  border-color:var(--primary);
+}
+.app-link-icon{
+  font-size:18px;
+  margin-bottom:4px;
+  display:block;
+}
+/* Main content */
+.main-content{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+}
+.header-bar{
+  height:60px;
+  background:var(--card);
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  padding:0 20px;
+}
+.user-info{
+  font-size:16px;
+  font-weight:600;
+  color:var(--text);
+}
+.content-area{
+  flex:1;
+  overflow-y:auto;
+  padding:20px;
+}
+.loading{
+  text-align:center;
+  padding:40px;
+  color:var(--sub);
+}
+.empty-state{
+  text-align:center;
+  padding:40px;
+  color:var(--sub);
+}
+/* Responsive */
+@media(max-width:768px){
+  .dashboard{
+    flex-direction:column;
+  }
+  .sidebar{
+    width:100%;
+    height:60px;
+    flex-direction:row;
+  }
+  .sidebar-header{
+    display:none;
+  }
+  .sidebar-nav{
+    display:flex;
+    overflow-x:auto;
+    padding:8px;
+  }
+  .nav-button{
+    padding:12px 8px;
+    white-space:nowrap;
+  }
+  .sidebar-footer{
+    display:none;
+  }
+  .header-bar{
+    height:50px;
+    padding:0 16px;
+  }
+}
 </style>
 </head>
 <body>
-<header class="header">
-   <div class="header-left">
-     <div class="header-school">上藤沢中学校部活動黒板</div>
-     <div class="header-links">
-       <a href="https://miraiseed2.benesse.ne.jp/seed/start/FpgtwCRY" target="_blank" rel="noopener" class="header-link">📚 ミライシード</a>
-       <a href="https://ed-cl.com" target="_blank" rel="noopener" class="header-link">📖 メクビット</a>
-     </div>
-   </div>
-   <div class="header-center">
-     <div class="header-user-info">
-       <div id="header-user-detail"></div>
-     </div>
-   </div>
-   <div class="header-right">
-     <div class="header-tabs" id="header-tabs"></div>
-   </div>
- </header>
-<div id="disasterBar"><span class="disaster-icon">⚠️</span><span class="disaster-msg" id="disasterMsg"></span></div>
-<div id="wbgtBar"><div class="wbgt-val">--.-</div><div><div class="wbgt-label">WBGT</div><div class="wbgt-advice">取得中...</div></div><div class="wbgt-detail"><span>--°C</span><span>--%</span></div></div>
-<div class="notif-banner" id="notifBanner"><span class="nb-text">🔔 お知らせを受け取るには通知をオンにしてください</span><button class="nb-btn" id="notifBtn">通知をオンにする</button><button class="nb-close" id="notifClose">✕</button></div>
-<div class="schedule-bar" id="scheduleBar"><span class="sb-icon">📚</span><span class="sb-text" id="scheduleText"></span><button class="sb-mute" id="scheduleMuteBtn">🔊</button></div>
-<div class="nav-container"><nav class="nav-tabs" id="bTabs"></nav></div>
-<div class="search-bar"><input type="text" id="bSearch" placeholder="🔍 部活・委員会・カテゴリを検索"></div>
-<main class="main-content">
-  <section id="postForm">
-    <h2>新規投稿</h2>
-    <input type="text" id="bTitle" placeholder="タイトル">
-    <textarea id="bContent" placeholder="内容を入力してください"></textarea>
-    <select id="bCat"></select>
-    <input type="text" id="bLink" placeholder="🔗 リンクURL（任意）" style="width:100%">
-    <div class="form-row"><input type="file" id="bFile" multiple accept=".pdf,.jpg,.jpeg,.png,.gif,.txt,.doc,.docx"></div>
-    <div id="bFileList" style="font-size:12px;color:#8a8682;margin-bottom:10px"></div>
-    <label style="font-size:11px;color:var(--sub)">自動削除日（最大2ヶ月後）</label>
-    <input type="date" id="bExpires" style="padding:5px 8px;border:2px solid var(--border);border-radius:6px;font-size:12px;font-family:inherit;width:170px;display:block;margin-top:2px">
-    <div id="bPrivateField" style="display:none;margin-top:8px"><label style="font-size:12px;font-weight:700;color:var(--sub);display:flex;align-items:center;gap:6px"><input type="checkbox" id="bPrivate"> 🔒 プライベート投稿（パスワード必須）</label><input type="text" id="bPrivatePwd" placeholder="パスワードを入力" style="padding:5px 8px;border:2px solid var(--border);border-radius:6px;font-size:12px;font-family:inherit;width:170px;display:none;margin-top:4px"></div>
-    <button id="createBtn">投稿する</button>
-  </section>
-  <section id="bList"><div class="empty-state">読み込み中...</div></section>
-</main>
-<div class="react-overlay" id="reactOverlay"><div class="react-modal" id="reactModal"><h3>リアクション <button class="rm-close" id="reactClose">✕</button></h3><div id="reactContent"></div></div></div>
+<div class="dashboard">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="school-name">上藤沢中学校部活動黒板</div>
+      <div class="date-info" id="date-info">--月--日(--)</div>
+    </div>
+    <nav class="sidebar-nav">
+      <!-- Buttons will be inserted here by JavaScript -->
+    </nav>
+    <div class="sidebar-footer">
+      <div class="app-links">
+        <a href="https://miraiseed2.benesse.ne.jp/seed/start/FpgtwCRY" target="_blank" rel="noopener" class="app-link">
+          <div class="app-link-icon">📚</div>
+          ミライシード
+        </a>
+        <a href="https://ed-cl.com" target="_blank" rel="noopener" class="app-link">
+          <div class="app-link-icon">📖</div>
+          メクビット
+        </a>
+      </div>
+    </div>
+  </aside>
+  
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="header-bar">
+      <div class="user-info" id="user-info">読み込み中...</div>
+    </div>
+    <div class="content-area" id="content-area">
+      <div class="loading">読み込み中...</div>
+    </div>
+  </main>
+</div>
 
 <script>
-async function h(p){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(p));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('')}
-const API_BASE=''
-async function a(p,o={}){const t=sessionStorage.getItem('token'),h={'Content-Type':'application/json',...o.headers};if(t)h['Authorization']='Bearer '+t;const r=await fetch(API_BASE+p,{...o,headers:h}),d=await r.json();if(!r.ok)throw new Error(d.error||'エラー');return d}
-function hasRole(r,t){return (r||'').split(',').map(s=>s.trim()).some(s=>t.includes(s))}
-const A={async login(u,p){const k=await h(p),d=await a('/api/login',{method:'POST',body:JSON.stringify({username:u,password:k})});sessionStorage.setItem('token',d.token);sessionStorage.setItem('username',d.username);sessionStorage.setItem('role',d.role);return d},logout(){sessionStorage.clear()},getUser(){const u=sessionStorage.getItem('username'),r=sessionStorage.getItem('role');return u&&r?{username:u,role:r}:null},requireAuth(){const u=this.getUser();if(!u){window.location.href='02login.html';return null}return u},canManageUsers(){const u=this.getUser();return u&&hasRole(u.role,['admin','teacher'])},canPost(){const u=this.getUser();return u&&hasRole(u.role,['admin','teacher','president','vice-president','chairperson'])},async api(p,o){return a(p,o)},hashPassword(p){return h(p)}};window.AUTH=A;window.api=a
+// API base (proxy to Worker)
+const API_BASE = '';
 
-const CATS=[
-{l:'上中連絡',n:'上中連絡'},
-{l:'忘れ物',n:'忘れ物'},
-{l:'生徒会',n:'生徒会'},
-{l:'3学年委員会',n:'3学年委員会'},{l:'2学年委員会',n:'2学年委員会'},{l:'1学年委員会',n:'1学年委員会'},
-{l:'中央委員会',n:'中央委員会',roles:['admin','teacher','president','vice-president','chairperson']},
-{l:'部活動委員会',n:'部活動委員会',roles:['admin','teacher','president','vice-president','chairperson']},
-{l:'— 部活動 —',g:true},
-{l:'吹奏楽部',n:'吹奏楽部'},{l:'茶道部',n:'茶道部'},{l:'美術部',n:'美術部'},{l:'卓球部',n:'卓球部'},
-{l:'テニス部女子',n:'テニス部女子'},{l:'テニス部男子',n:'テニス部男子'},{l:'サッカー部',n:'サッカー部'},
-{l:'野球部',n:'野球部'},{l:'陸上部',n:'陸上部'},{l:'バスケ部女子',n:'バスケ部女子'},{l:'バスケ部男子',n:'バスケ部男子'},{l:'バレー部',n:'バレー部'},
-{l:'— 委員会 —',g:true},
-{l:'整備委員会',n:'整備委員会'},{l:'生活委員会',n:'生活委員会'},{l:'選挙管理委員会',n:'選挙管理委員会'},{l:'図書委員会',n:'図書委員会'},
-{l:'給食委員会',n:'給食委員会'},{l:'合唱委員会',n:'合唱委員会'},{l:'体育委員会',n:'体育委員会'},
-{l:'保健委員会',n:'保健委員会'},{l:'放送委員会',n:'放送委員会'}
-];
-const ALL_NAMES=CATS.filter(c=>!c.g).map(c=>c.n);
-function visibleCats(){return CATS.filter(c=>!c.g&&(!c.roles||(curUser&&c.roles.some(r=>userRolesArr.includes(r))))).map(c=>c.n)}
-let curCat='上中連絡',curUser=null,allPosts=[],searchQuery='';
-const $=id=>document.getElementById(id);
-function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
-const REACT_ICONS={like:'👍',heart:'❤️',ok:'✅',question:'❓',thanks:'🙏'};
-
-let counts={},collapsedGroups={'部活動':true,'委員会':true};
-function tabs(){
-  const c=$('bTabs');c.innerHTML='';const q=searchQuery.trim().toLowerCase();let inGroup=false,groupCollapsed=false,groupName='';
-  CATS.forEach(t=>{
-    if(t.roles&&(!curUser||!t.roles.some(r=>userRolesArr.includes(r))))return;
-    if(q&&!t.g&&!t.n.toLowerCase().includes(q))return;
-    const b=document.createElement('button');b.className='tab';
-    if(t.g){
-      inGroup=true;const gName=t.l.replace(/^—\s*|\s*—$/g,'');groupName=gName;groupCollapsed=collapsedGroups[gName];
-      b.classList.add('separator');b.style.cursor='pointer';
-      b.textContent=(groupCollapsed?'▶ ':'▼ ')+t.l;
-      b.addEventListener('click',()=>{collapsedGroups[gName]=!collapsedGroups[gName];tabs()});
-    }else{
-      if(!q&&inGroup&&groupCollapsed){b.style.display='none'}
-      if(t.n===curCat)b.classList.add('active');
-      b.addEventListener('click',()=>{curCat=t.n;tabs();sel();load()});
-      if(counts[t.n]){const dot=document.createElement('span');dot.className='tab-dot';dot.textContent=counts[t.n];b.appendChild(dot)}
+// Authentication helper (simplified)
+const AUTH = {
+  getUser() {
+    const u = sessionStorage.getItem('username');
+    const r = sessionStorage.getItem('role');
+    return u && r ? {username: u, role: r} : null;
+  },
+  requireAuth() {
+    const u = this.getUser();
+    if (!u) {
+      window.location.href = '02login.html';
+      return null;
     }
-    if(!t.g)b.textContent=t.l;c.appendChild(b);
-  });
-}
+    return u;
+  },
+  canPost() {
+    const u = this.getUser();
+    return u && ['admin','teacher','president','vice-president','chairperson'].some(r => 
+      (u.role || '').split(',').map(s => s.trim()).includes(r)
+    );
+  },
+  async api(path, options = {}) {
+    const token = sessionStorage.getItem('token');
+    const headers = {
+      'Content-Type': 'application/json',
+      ...options.headers
+    };
+    if (token) {
+      headers['Authorization'] = 'Bearer ' + token;
+    }
+    const response = await fetch(API_BASE + path, {
+      ...options,
+      headers
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.error || 'エラー');
+    }
+    return data;
+  }
+};
 
-async function loadCounts(){try{counts=await api('/api/posts/counts')}catch(e){}}
-
-function sel(){
-  const s=$('bCat');if(!s)return;s.innerHTML='';
-  const cats=visibleCats();
-  cats.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;if(c===curCat)o.selected=true;s.appendChild(o)})
-}
-
-async function load(){
-  const c=$('bList');c.innerHTML='<div class="empty-state">読み込み中...</div>';
-  try{
-    const p=await api('/api/posts?category='+encodeURIComponent(curCat));
-    allPosts=p||[];renderPosts();
-    updateHeaderUserInfo();
-  }catch(e){if(e.message.includes('認証')){sessionStorage.clear();window.location.href='02login.html'}c.innerHTML='<div class="empty-state">エラー</div>'}
-}
-
-function updateHeaderUserInfo(){
-  if(!curUser)return;
+// Date formatting
+function updateDateInfo() {
+  const dateInfo = document.getElementById('date-info');
+  if (!dateInfo) return;
   
-  // Update user detail info
-  const detail = $('header-user-detail');
-  if(detail){
-    const grade = curUser.grade || '';
-    const classNum = curUser.class_num || '';
-    const seatNum = curUser.seat_num || '';
-    const username = curUser.username || '';
-    const displayName = curUser.display_name || '';
-    const club = curUser.club || '';
-    const committee = curUser.committee || '';
-    
-    let info = '';
-    if(grade) info += `学年:${grade} `;
-    if(classNum) info += `クラス:${classNum} `;
-    if(seatNum) info += `番号:${seatNum} `;
-    if(displayName || username) info += `名前:${displayName || username} `;
-    if(club) info += `部活:${club} `;
-    if(committee) info += `委員会:${committee}`;
-    
-    detail.textContent = info.trim();
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth() + 1;
+  const day = now.getDate();
+  const weekDay = ['日','月','火','水','木','金','土'][now.getDay()];
+  
+  dateInfo.textContent = `${month}月${day}日(${weekDay})`;
+}
+
+// User info display
+function updateUserInfo() {
+  const userInfo = document.getElementById('user-info');
+  if (!userInfo) return;
+  
+  const user = AUTH.getUser();
+  if (!user) {
+    userInfo.textContent = 'ユーザー情報取得中...';
+    return;
   }
   
-  // Update tabs to show only user's committees and clubs
-  const tabsContainer = $('header-tabs');
-  if(tabsContainer){
-    tabsContainer.innerHTML = '';
+  const grade = user.grade || '';
+  const classNum = user.class_num || '';
+  const seatNum = user.seat_num || '';
+  const username = user.username || '';
+  const displayName = user.display_name || user.username || '';
+  const club = user.club || '';
+  const committee = user.committee || '';
+  
+  let info = '';
+  if (grade) info += `学年:${grade} `;
+  if (classNum) info += `クラス:${classNum} `;
+  if (seatNum) info += `番号:${seatNum} `;
+  if (displayName || username) info += `名前:${displayName || username} `;
+  if (club) info += `部活:${club} `;
+  if (committee) info += `委員会:${committee}`;
+  
+  userInfo.textContent = info.trim() || '情報なし';
+}
+
+// Navigation button creation
+function createNavButtons() {
+  const nav = document.querySelector('.sidebar-nav');
+  if (!nav) return;
+  
+  const user = AUTH.getUser();
+  if (!user) return;
+  
+  // Clear existing buttons
+  nav.innerHTML = '';
+  
+  // Get user roles and permissions
+  const roles = (user.role || '').split(',').map(r => r.trim()).filter(Boolean);
+  const isAdmin = roles.includes('admin');
+  const isTeacher = roles.includes('teacher');
+  const isPresident = roles.includes('president');
+  const isVicePresident = roles.includes('vice-president');
+  const isChairperson = roles.includes('chairperson');
+  
+  // Define navigation items with their visibility conditions
+  const navItems = [
+    { id: 'general', label: '上中連絡', icon: '📝', visible: true },
+    { id: 'club_' + user.club, label: user.club || '部活', icon: '🏃‍♂️', visible: !!user.club },
+    { id: 'committee_' + user.committee, label: user.committee || '委員会', icon: '👥', visible: !!user.committee },
+    { id: 'central', label: '中央委員会', icon: '🏛️', visible: isAdmin || isTeacher || isPresident || isVicePresident || isChairperson },
+    { id: 'club-committee', label: '部活動委員会', icon: '🏆', visible: isAdmin || isTeacher || isPresident || isVicePresident },
+    { id: 'questions', label: '質問', icon: '❓', visible: true },
+    { id: 'chat', label: 'メッセージ', icon: '💬', visible: true },
+    { id: 'user-management', label: 'ユーザー管理', icon: '⚙️', visible: isAdmin || isTeacher }
+  ];
+  
+  // Create buttons
+  navItems.forEach(item => {
+    if (!item.visible) return;
     
-    // Add user's committee tab if they have one
-    if(curUser.committee){
-      const tab = document.createElement('button');
-      tab.className = 'tab';
-      tab.textContent = curUser.committee;
-      tab.addEventListener('click', () => {
-        curCat = curUser.committee;
-        tabs(); sel(); load();
-      });
-      tabsContainer.appendChild(tab);
+    const button = document.createElement('button');
+    button.className = 'nav-button';
+    button.dataset.id = item.id;
+    button.innerHTML = `<span class="nav-icon">${item.icon}</span><span class="nav-label">${item.label}</span>`;
+    
+    // Disable button if no specific content (for empty categories)
+    if (!user.club && item.id.startsWith('club_')) {
+      button.classList.add('disabled');
+    }
+    if (!user.committee && item.id.startsWith('committee_')) {
+      button.classList.add('disabled');
     }
     
-    // Add user's club tab if they have one
-    if(curUser.club){
-      const tab = document.createElement('button');
-      tab.className = 'tab';
-      tab.textContent = curUser.club;
-      tab.addEventListener('click', () => {
-        curCat = curUser.club;
-        tabs(); sel(); load();
-      });
-      tabsContainer.appendChild(tab);
-    }
-    
-    // If user has neither committee nor club, show a default tab or message
-    if(!curUser.committee && !curUser.club){
-      const tab = document.createElement('button');
-      tab.className = 'tab';
-      tab.textContent = 'マイページ';
-      tab.addEventListener('click', () => {
-        curCat = '上中連絡'; // fallback to general
-        tabs(); sel(); load();
-      });
-      tabsContainer.appendChild(tab);
-    }
-  }
-}
-function renderPosts(){
-  const c=$('bList');const q=searchQuery.trim().toLowerCase();
-  const p=q?allPosts.filter(x=>x.title.toLowerCase().includes(q)||x.content.toLowerCase().includes(q)||x.category.toLowerCase().includes(q)):allPosts;
-  if(!p.length){c.innerHTML='<div class="empty-state">'+(q?'「'+esc(searchQuery.trim())+'」に一致する投稿はありません':'投稿はまだありません')+'</div>';return}
-  c.innerHTML='';p.forEach(x=>render(x,c));
-}
-async function loadReactions(el,targetType,targetId){
-  const toggle=document.createElement('button');toggle.className='react-toggle-btn';toggle.innerHTML='💬 リアクション';
-  const countSpan=document.createElement('span');countSpan.className='rt-count';
-  try{
-    const r=await api('/api/reactions/'+targetType+'/'+targetId);
-    const data=r||{};renderToggleCount(toggle,data);
-    toggle.addEventListener('click',()=>showReactModal(targetType,targetId,data));
-  }catch(e){}
-  el.innerHTML='';el.appendChild(toggle);
-}
-function renderToggleCount(toggle,data){
-  const total=Object.values(data).reduce((a,b)=>a+(b?.length||0),0);
-  toggle.innerHTML='💬 リアクション'+(total?' <span class="rt-count">'+total+'</span>':'');
-}
-let reactTarget=null;
-async function showReactModal(targetType,targetId,data){
-  reactTarget={targetType,targetId,data};
-  const el=$('reactContent');el.innerHTML='';
-  Object.entries(REACT_ICONS).forEach(([type,icon])=>{
-    const users=data[type]||[];const myU=curUser?.username;const active=users.includes(myU);
-    const row=document.createElement('div');row.className='react-group';
-    const head=document.createElement('div');head.className='react-group-head';
-    const btn=document.createElement('button');btn.className='rg-btn'+(active?' active':'');
-    btn.textContent=active?'取り消す':icon;
-    head.innerHTML=icon+' <span class="rg-label">'+type+'</span><span class="rg-count">'+(users.length||'')+'</span>';
-    head.appendChild(btn);
-    const userList=document.createElement('div');userList.className='react-users';
-    users.forEach(u=>{const s=document.createElement('span');s.textContent=u;userList.appendChild(s)});
-    if(!users.length)userList.style.display='none';
-    row.appendChild(head);row.appendChild(userList);
-    btn.addEventListener('click',async()=>{
-      try{
-        const r=await api('/api/reactions',{method:'POST',body:JSON.stringify({targetType,targetId,reaction:type})});
-        reactTarget.data=r.reactions||{};
-        showReactModal(targetType,targetId,reactTarget.data);
-        const re=$('react-'+targetId);if(re){const t=re.querySelector('.react-toggle-btn');if(t)renderToggleCount(t,reactTarget.data)}
-      }catch(e){}
-    });
-    el.appendChild(row);
+    nav.appendChild(button);
   });
-  $('reactOverlay').classList.add('show');
-}
-$('reactClose').addEventListener('click',()=>$('reactOverlay').classList.remove('show'));
-$('reactOverlay').addEventListener('click',e=>{if(e.target===$('reactOverlay'))$('reactOverlay').classList.remove('show')});
-function render(p,c){
-  const card=document.createElement('div');card.className='post-card';
-  const canDel=curUser&&(hasRole(curUser.role,['admin','teacher'])||curUser.username===p.username);
-  const d=new Date(p.created_at);const ds=(d.getMonth()+1)+'/'+d.getDate()+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
-  const isPrivate=p.has_private;
-  let contentHtml='';
-  if(isPrivate){
-    const isAuthor=curUser&&curUser.username===p.username;
-    if(isAuthor)contentHtml='<div class="post-body">'+esc(p.content)+'</div>';
-    else contentHtml='<div class="post-body private-lock">🔒 プライベート投稿です <button class="claim-btn" onclick="unlockPost(\''+p.id+'\',this)">パスワードを入力</button></div><div id="unlock-'+p.id+'" style="display:none;margin:4px 0"><input type="password" id="pwd-'+p.id+'" placeholder="パスワード" style="padding:4px 8px;border:2px solid var(--border);border-radius:4px;font-size:12px;width:120px"><button class="claim-btn" onclick="verifyPwd(\''+p.id+'\')">開く</button><span id="pwdErr-'+p.id+'" style="font-size:11px;color:var(--danger);margin-left:6px"></span></div>';
-  }else{
-    contentHtml='<div class="post-body">'+esc(p.content)+'</div>';
-  }
-   const fls=p.files?.map(f=>'<a href="'+esc(f.url)+'" target="_blank" class="attachment"><span>📎</span> '+esc(f.name)+'</a>').join('')||'';
-   const lk=p.link && p.link.trim()?'<a href="'+esc(p.link.trim())+'" target="_blank" class="attachment"><span>🔗</span> '+esc(p.link.trim())+'</a>':'';
-  let exp='',expCls='';
-  if(p.expires_at){const r=Math.ceil((new Date(p.expires_at)-Date.now())/86400000);exp='あと'+r+'日';expCls=r>30?'safe':r>10?'warn':''}
-  let claimHtml='';
-  if(p.category==='忘れ物'){
-    const claims=p.claims||[];const myClaim=claims.some(c=>c.username===curUser?.username);
-    const claimers=claims.map(c=>esc(c.display_name||c.username)).join(', ');
-    claimHtml='<div class="claim-area"><button class="claim-btn '+(myClaim?'claimed':'')+'" data-id="'+p.id+'">'+(myClaim?'取り消す':'私のです🙋')+'</button>'+(claims.length?'<span class="claim-count">'+claims.length+'人</span>':'')+'</div>'+(claimers?'<div style="font-size:12px;color:var(--sub)">🙋 '+claimers+'</div>':'');
-  }
-  card.innerHTML='<div class="post-category">'+esc(p.category)+(isPrivate?' 🔒':'')+'</div><div class="post-title">'+esc(p.title)+'</div>'+contentHtml+(fls?'<div>'+fls+'</div>':'')+(lk?'<div>'+lk+'</div>':'')+claimHtml+'<div class="post-footer"><div class="post-meta">'+esc(p.display_name||p.username)+' · '+ds+'</div>'+(exp?'<div class="post-deadline '+expCls+'">'+exp+'</div>':'')+'</div><div class="reaction-bar" id="react-'+p.id+'"></div>';
-  if(canDel){const db=document.createElement('button');db.className='delete-btn';db.textContent='削除';db.addEventListener('click',()=>delPost(p.id));card.querySelector('.post-footer').appendChild(db)}
-  if(canDel&&isPrivate){const sp=document.createElement('button');sp.className='delete-btn';sp.textContent='🔑PW';sp.title='パスワード設定';sp.addEventListener('click',()=>setPostPassword(p.id));card.querySelector('.post-footer').appendChild(sp)}
-  if(p.category==='忘れ物'){const btn=card.querySelector('.claim-btn');if(btn)btn.addEventListener('click',async function(){const id=this.dataset.id;try{if(this.classList.contains('claimed')){await api('/api/posts/'+id+'/claim',{method:'DELETE'})}else{await api('/api/posts/'+id+'/claim',{method:'POST'})}load()}catch(e){alert(e.message)}})}
-  c.appendChild(card);
-  loadReactions(card.querySelector('#react-'+p.id),'post',p.id);
-}
-function unlockPost(id,btn){
-  const el=$('unlock-'+id);
-  el.style.display=el.style.display==='none'?'block':'none';
-}
-async function verifyPwd(id){
-  const pwd=$('pwd-'+id).value;
-  if(!pwd){$('pwdErr-'+id).textContent='パスワードを入力してください';return}
-  try{
-    const r=await api('/api/posts/'+id+'/verify-password',{method:'POST',body:JSON.stringify({password:pwd})});
-    if(r.error){$('pwdErr-'+id).textContent=r.error;return}
-    load();
-  }catch(e){$('pwdErr-'+id).textContent=e.message||'エラー'}
-}
-async function setPostPassword(id){
-  const pwd=prompt('新しいパスワードを入力（空欄で解除）');
-  if(pwd===null)return;
-  try{
-    await api('/api/posts/'+id+'/set-password',{method:'POST',body:JSON.stringify({password:pwd||''})});
-    alert(pwd?'パスワードを設定しました':'プライベートを解除しました');
-    load();
-  }catch(e){alert(e.message)}
-}
-
-async function create(){
-  const t=$('bTitle').value.trim(),c=$('bContent').value.trim(),cat=$('bCat').value;
-  if(!t||!c){alert('入力してください');return}
-  const privateCats=['1学年委員会','2学年委員会','3学年委員会'];
-  const isPrivate=$('bPrivate').checked&&privateCats.includes(cat);
-  const privatePwd=isPrivate?$('bPrivatePwd').value.trim():'';
-  if(isPrivate&&!privatePwd){alert('プライベート投稿のパスワードを入力してください');return}
-  $('createBtn').disabled=true;$('createBtn').textContent='投稿中...';
-  try{
-    const files=[];const fileInput=$('bFile');
-    if(fileInput.files.length){for(const f of fileInput.files){const fd=new FormData();fd.append('file',f);const token=sessionStorage.getItem('token');const r=await fetch(API_BASE+'/api/upload',{method:'POST',headers:{'Authorization':'Bearer '+token},body:fd});const d=await r.json();if(r.ok)files.push({url:d.url,name:d.name,type:d.type});else{alert('ファイルアップロード失敗: '+d.error);$('createBtn').disabled=false;$('createBtn').textContent='投稿する';return}}}
-    const expDate=$('bExpires').value;
-    const expiresIn=expDate?Math.round((new Date(expDate+'T23:59:59')-Date.now())/86400000):30;
-    const link=$('bLink').value.trim();
-    const body={title:t,content:c,category:cat,files,expiresIn,link};
-    if(isPrivate)body.private_password=privatePwd;
-    await api('/api/posts',{method:'POST',body:JSON.stringify(body)});
-    $('bTitle').value='';$('bContent').value='';$('bFile').value='';$('bFileList').textContent='';$('bLink').value='';$('bPrivate').checked=false;$('bPrivatePwd').value='';$('bPrivatePwd').style.display='none';$('bPrivateField').style.display='none';
-    initExpiresDate();
-    loadCounts();load();
-    try{const notifyCat=cat==='上中連絡'?'general':cat==='忘れ物'?'lost':cat;await api('/api/push/notify',{method:'POST',body:JSON.stringify({category:notifyCat,title:t,body:c.slice(0,80),url:'/01index.html?cat='+encodeURIComponent(cat),excludeUser:curUser?.username})})}catch(e){}
-  }catch(e){alert('失敗: '+e.message)}
-  $('createBtn').disabled=false;$('createBtn').textContent='投稿する';
-}
-
-$('bFile').addEventListener('change',()=>{const fs=$('bFile').files;$('bFileList').textContent=fs.length?'選択: '+Array.from(fs).map(f=>f.name).join(', '):''});
-async function delPost(id){if(!confirm('削除しますか？'))return;try{await api('/api/posts/'+id,{method:'DELETE'});loadCounts();load()}catch(e){alert('失敗')}}
-
-curUser=AUTH.requireAuth();if(!curUser)window.location.href='02login.html';
-$('bUser').textContent=curUser.username;
-const roleNames={'admin':'管理者','teacher':'先生','president':'部長','vice-president':'副部長','chairperson':'委員長','student':'生徒'};
-$('bRole').textContent=(curUser.role||'').split(',').map(r=>roleNames[r.trim()]||r.trim()).filter(Boolean).join('·');
-const userRolesArr=(curUser.role||'').split(',').map(r=>r.trim());
-$('postForm').classList.toggle('hidden',!AUTH.canPost());
-$('bChatLink').style.display=hasRole(curUser.role,['admin','teacher','president','vice-president','chairperson'])?'':'none';
-$('bDmLink').style.display=hasRole(curUser.role,['admin','teacher','president','vice-president','chairperson','student'])?'':'none';
-$('bClubQLink').style.display='';
-$('bUserMgmtLink').style.display=hasRole(curUser.role,['admin','teacher'])?'':'none';
-$('bSettingsLink').style.display=hasRole(curUser.role,['admin','teacher'])?'none':'';
-// consult link removed
-$('createBtn').addEventListener('click',create);
-$('bCat').addEventListener('change',function(){
-  const privateCats=['1学年委員会','2学年委員会','3学年委員会'];
-  const show=privateCats.includes(this.value)&&AUTH.canPost();
-  $('bPrivateField').style.display=show?'block':'none';
-  if(!show){$('bPrivate').checked=false;$('bPrivatePwd').value='';$('bPrivatePwd').style.display='none'}
-});
-$('bPrivate').addEventListener('change',function(){
-  $('bPrivatePwd').style.display=this.checked?'block':'none';
-  if(!this.checked)$('bPrivatePwd').value='';
-});
-$('bLogout').addEventListener('click',()=>{AUTH.logout();window.location.href='02login.html'});
-function initExpiresDate(){const n=new Date();const d=new Date(n);d.setDate(d.getDate()+30);const m=new Date(n);m.setDate(m.getDate()+60);const inp=$('bExpires');inp.value=d.toISOString().split('T')[0];inp.max=m.toISOString().split('T')[0];inp.min=n.toISOString().split('T')[0]}
-initExpiresDate();
-
-function clock(){function u(){const n=new Date();$('hDate').textContent=(n.getMonth()+1)+'/'+n.getDate()+'('+'日月火水木金土'[n.getDay()]+')'}u();setInterval(u,1000)}
-clock();
-$('bSearch').addEventListener('input',function(){searchQuery=this.value;tabs();renderPosts()});
-loadCounts().then(()=>{tabs();sel();load();updateHeaderUserInfo();});
-setInterval(()=>{loadCounts();tabs();load();updateHeaderUserInfo()},10000);
-
-const chatBadge=$('chatBadge'),chatLink=$('bChatLink');
-if(chatLink.style.display!=='none'){
-  const ls='chatLastSeen_'+curUser.username;
-  if(!localStorage.getItem(ls))localStorage.setItem(ls,Date.now());
-  async function checkChat(){try{const r=await api('/api/chat/count?since='+localStorage.getItem(ls));if(r.count>0){chatBadge.style.display='inline-flex';chatBadge.textContent=r.count>99?'99+':r.count}else{chatBadge.style.display='none'}}catch(e){}}
-  checkChat();setInterval(checkChat,10000);
-  chatLink.addEventListener('click',()=>{localStorage.setItem(ls,Date.now());chatBadge.style.display='none'});
-}
-
-// WBGT from JMA AMeDAS (埼玉県入間市 → 所沢観測所)
-function wbgt(){
-  function upd(temp, hum){
-    const e=(hum/100)*6.105*Math.exp(17.27*temp/(temp+237.3));const wbgt=0.567*temp+0.393*e+3.94;
-    const bar=$('wbgtBar');    const levels=[{max:21,lbl:'注意',adv:'適度に水分補給',cls:'l0'},{max:25,lbl:'警戒',adv:'積極的に水分補給',cls:'l1'},{max:28,lbl:'厳重警戒',adv:'積極的に休息',cls:'l2'},{max:31,lbl:'危険',adv:'激しい運動は中止',cls:'l3'},{max:99,lbl:'極度危険',adv:'運動は原則中止',cls:'l4'}];
-    const lv=levels.find(l=>wbgt<l.max)||levels[levels.length-1];
-    bar.className='wbgt-'+lv.cls;bar.innerHTML='<div class="wbgt-val">'+wbgt.toFixed(1)+'</div><div><div class="wbgt-label">埼玉県入間市 WBGT '+lv.lbl+'</div><div class="wbgt-advice">'+lv.adv+'</div></div><div class="wbgt-detail"><span>'+temp+'°C</span><span>'+hum+'%</span></div>';
-  }
-  async function w(){
-    try{const r=await api('/api/wbgt');if(r.wbgt)upd(r.temp,r.humidity)}catch(e){}
-  }
-  w();setInterval(w,300000);
-}
-wbgt();
-
-// Disaster info (JMA + manual)
-const JMA_CODES={'北海道':10000,'青森県':20000,'岩手県':30000,'宮城県':40000,'秋田県':50000,'山形県':60000,'福島県':70000,'茨城県':80000,'栃木県':90000,'群馬県':100000,'埼玉県':110000,'千葉県':120000,'東京都':130000,'神奈川県':140000,'新潟県':150000,'富山県':160000,'石川県':170000,'福井県':180000,'山梨県':190000,'長野県':200000,'岐阜県':210000,'静岡県':220000,'愛知県':230000,'三重県':240000,'滋賀県':250000,'京都府':260000,'大阪府':270000,'兵庫県':280000,'奈良県':290000,'和歌山県':300000,'鳥取県':310000,'島根県':320000,'岡山県':330000,'広島県':340000,'山口県':350000,'徳島県':360000,'香川県':370000,'愛媛県':380000,'高知県':390000,'福岡県':400000,'佐賀県':410000,'長崎県':420000,'熊本県':430000,'大分県':440000,'宮崎県':450000,'鹿児島県':460000,'沖縄県':471000};
-const WARN_JP={'02':'大雨','03':'洪水','04':'暴風','05':'暴風雪','06':'大雪','07':'波浪','08':'高潮','10':'大雨注意報','12':'大雪注意報','14':'暴風雪注意報','15':'波浪注意報','16':'高潮注意報','18':'洪水注意報','20':'雷注意報','21':'融雪注意報','22':'濃霧注意報','23':'乾燥注意報','24':'なだれ注意報','25':'低温注意報','26':'霜注意報','27':'着氷注意報','28':'着雪注意報','29':'高温注意報'};
-let disasterLoc='埼玉県入間市';
-async function loadDisaster(){
-  try{
-    const d=await api('/api/disaster-info');
-    const bar=$('disasterBar'),msg=$('disasterMsg');
-    if(d.active&&d.message){
-      bar.style.display='flex';bar.className='disaster-'+d.level;
-      msg.textContent=d.message;
-      const isTeacher=curUser&&hasRole(curUser.role,['admin','teacher']);
-      if(isTeacher&&!bar.querySelector('.disaster-clear')){
-        const btn=document.createElement('button');btn.className='disaster-clear';btn.textContent='解除';
-        btn.onclick=async()=>{try{await api('/api/disaster-info/clear',{method:'POST'});loadDisaster()}catch(e){}};
-        bar.appendChild(btn);
-      }
-      if(d.level==='danger')triggerDisasterAlert(d.message);
-      return;
-    }
-    const jma=await fetchJMASaitama();
-    if(jma){
-      bar.style.display='flex';bar.className='disaster-danger';
-      msg.textContent=jma;
-      bar.querySelector('.disaster-clear')?.remove();
-      triggerDisasterAlert(jma);
-    }else{
-      bar.style.display='flex';bar.className='disaster-info';
-      const txt='🌤 埼玉県入間市に警報・注意報はありません';
-      msg.textContent=txt;
-      bar.querySelector('.disaster-clear')?.remove();
-      _prevDisasterAlert='';
-    }
-  }catch(e){}
-}
-async function fetchJMASaitama(){
-  try{
-    const warn=await fetch('https://www.jma.go.jp/bosai/warning/data/warning/110000.json').then(r=>r.json());
-    if(!warn?.timeSeries?.length){return null}
-    const list=[];
-    (warn.timeSeries[0]?.areas||[]).forEach(a=>{(a.warnings||[]).forEach(w=>{const wl=WARN_JP[w.code]||w.code;if(!list.includes(wl)&&w.status==='発表')list.push(wl)})});
-    (warn.timeSeries[0]?.areas||[]).forEach(a=>{(a.forecasts||[]).forEach(f=>{(f.warnings||[]).forEach(w=>{const wl=WARN_JP[w.code]||w.code;if(!list.includes(wl))list.push(wl)})})});
-    if(!list.length){return null}
-    return '⚠️ 埼玉県入間市に'+list.slice(0,4).join('・')+'警報発表';
-  }catch(e){return null}
-}
-loadDisaster();setInterval(loadDisaster,30000);
-let _prevDisasterAlert='';
-function triggerDisasterAlert(msg){
-  if(_prevDisasterAlert===msg)return;
-  _prevDisasterAlert=msg;
-  const m=getAlertMode();
-  if(m!=='off'){try{navigator.vibrate?.(600)}catch(e){}}
-  if(m==='sound')playAlert();
-  // Push notification
-  const tok=sessionStorage.getItem('token');
-  if(tok)fetch('/api/push/notify',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+tok},body:JSON.stringify({category:'disaster',title:'警戒レベル4発令',body:msg.replace(/[⚠️🌤]/g,'').trim(),url:'/01index.html'})}).catch(()=>{});
-}
-
-// ===== TEACHER SCHEDULE NOTIFICATION =====
-async function checkNextClass() {
-  const bar = $('scheduleBar');
-  const text = $('scheduleText');
-  const role = sessionStorage.getItem('role') || '';
-  if (!['teacher','admin'].some(r => role.includes(r))) { bar.style.display = 'none'; return; }
-  try {
-    const r = await a('/api/teacher-schedule/next');
-    if (r.next) {
-      const mins = r.next.startsInMin;
-      const wasHidden = bar.style.display === 'none' || !bar.style.display;
-      text.textContent = r.message;
-      bar.className = 'schedule-bar' + (mins <= 10 ? ' sb-urgent' : '');
-      bar.style.display = 'flex';
-      if (mins <= 10 && wasHidden) playAlert();
-    } else {
-      bar.style.display = 'none';
-    }
-  } catch(e) { bar.style.display = 'none'; }
-}
-function getAlertMode() { return localStorage.getItem('scheduleAlertMode') || 'sound'; }
-function setAlertMode(m) { localStorage.setItem('scheduleAlertMode', m); updateMuteBtn(); }
-function updateMuteBtn() {
-  const m = getAlertMode();
-  $('scheduleMuteBtn').textContent = m === 'sound' ? '🔊' : m === 'vibrate' ? '📳' : '🔇';
-}
-function playAlert() {
-  const m = getAlertMode();
-  if (m === 'vibrate') { try { navigator.vibrate?.(300); } catch(e) {} return; }
-  if (m !== 'sound') return;
-  try {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    [1200, 2400].forEach((freq, i) => {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = 'sine'; osc.frequency.value = freq;
-      gain.gain.setValueAtTime(0.2 - i*0.08, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 2);
-      osc.connect(gain); gain.connect(ctx.destination);
-      osc.start(); osc.stop(ctx.currentTime + 2);
+  
+  // Add click handlers
+  const buttons = nav.querySelectorAll('.nav-button:not(.disabled)');
+  buttons.forEach(button => {
+    button.addEventListener('click', () => {
+      // Update active state
+      buttons.forEach(b => b.classList.remove('active'));
+      button.classList.add('active');
+      
+      // Load content for this section
+      loadContent(button.dataset.id);
     });
-  } catch(e) {}
+  });
+  
+  // Set default active button (first enabled one)
+  const firstEnabled = nav.querySelector('.nav-button:not(.disabled)');
+  if (firstEnabled) {
+    firstEnabled.classList.add('active');
+    loadContent(firstEnabled.dataset.id);
+  }
 }
-$('scheduleMuteBtn').addEventListener('click', () => {
-  const m = getAlertMode();
-  setAlertMode(m === 'sound' ? 'vibrate' : m === 'vibrate' ? 'off' : 'sound');
-});
-updateMuteBtn();
-checkNextClass(); setInterval(checkNextClass, 30000);
+
+// Content loading
+async function loadContent(sectionId) {
+  const contentArea = document.getElementById('content-area');
+  if (!contentArea) return;
+  
+  contentArea.innerHTML = '<div class="loading">読み込み中...</div>';
+  
+  try {
+    let content = '';
+    
+    switch (sectionId) {
+      case 'general':
+        content = await loadBulletinBoard('上中連絡');
+        break;
+      default:
+        if (sectionId.startsWith('club_')) {
+          const clubName = sectionId.substring(5); // Remove 'club_' prefix
+          content = await loadBulletinBoard(clubName);
+        } else if (sectionId.startsWith('committee_')) {
+          const committeeName = sectionId.substring(10); // Remove 'committee_' prefix
+          content = await loadBulletinBoard(committeeName);
+        } else {
+          // Handle special sections
+          content = await loadSpecialSection(sectionId);
+        }
+        break;
+    }
+    
+    contentArea.innerHTML = content;
+    
+    // If content is empty, show empty state
+    if (!content || content.trim() === '') {
+      contentArea.innerHTML = '<div class="empty-state">コンテンツがありません</div>';
+    }
+  } catch (error) {
+    console.error('Error loading content:', error);
+    contentArea.innerHTML = `<div class="empty-state">エラーが発生しました: ${error.message}</div>`;
+  }
+}
+
+// Bulletin board content loader
+async function loadBulletinBoard(category) {
+  try {
+    const posts = await AUTH.api(`/api/posts?category=${encodeURIComponent(category)}`);
+    
+    if (!posts || posts.length === 0) {
+      return '<div class="empty-state">投稿がありません</div>';
+    }
+    
+    let html = '';
+    posts.forEach(post => {
+      const date = new Date(post.created_at);
+      const dateStr = `${date.getMonth() + 1}/${date.getDate()} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+      
+      html += `
+        <div class="post-card">
+          <div class="post-category">${escapeHtml(post.category)}</div>
+          <div class="post-title">${escapeHtml(post.title)}</div>
+          <div class="post-body">${escapeHtml(post.content)}</div>
+          ${post.link && post.link.trim() ? `
+            <div class="post-attachment">
+              <a href="${escapeHtml(post.link)}" target="_blank" class="attachment">
+                <span>🔗</span> ${escapeHtml(post.link)}
+              </a>
+            </div>
+          ` : ''}
+          <div class="post-footer">
+            <div class="post-meta">
+              ${escapeHtml(post.display_name || post.username)} • ${dateStr}
+            </div>
+          </div>
+        </div>
+      `;
+    });
+    
+    return html;
+  } catch (error) {
+    throw new Error(`掲示板の読み込みに失敗しました: ${error.message}`);
+  }
+}
+
+// Special section loader
+async function loadSpecialSection(sectionId) {
+  switch (sectionId) {
+    case 'questions':
+      return await loadQuestionsSection();
+    case 'chat':
+      return await loadChatSection();
+    case 'user-management':
+      return await loadUserManagementSection();
+    default:
+      return '<div class="empty-state">このセクションは実装中です</div>';
+  }
+}
+
+// Questions section (simplified placeholder)
+async function loadQuestionsSection() {
+  return `
+    <div class="section-header">
+      <h2>質問・相談</h2>
+      <p>部長・委員長への質問を送信できます。</p>
+    </div>
+    <div class="questions-form">
+      <div class="form-group">
+        <label for="question-title">タイトル</label>
+        <input type="text" id="question-title" placeholder="質問のタイトルを入力">
+      </div>
+      <div class="form-group">
+        <label for="question-content">内容</label>
+        <textarea id="question-content" rows="4" placeholder="質問の内容を入力"></textarea>
+      </div>
+      <button id="submit-question" class="btn-primary">質問を送信</button>
+    </div>
+  `;
+}
+
+// Chat section (simplified placeholder)
+async function loadChatSection() {
+  return `
+    <div class="section-header">
+      <h2>メッセージ</h2>
+      <p>部活・委員会のメンバーとチャットできます。</p>
+    </div>
+    <div id="chat-messages" class="chat-messages">
+      <div class="empty-state">メッセージを読み込み中...</div>
+    </div>
+    <div class="chat-input">
+      <input type="text" id="chat-message" placeholder="メッセージを入力...">
+      <button id="send-chat" class="btn-primary">送信</button>
+    </div>
+  `;
+}
+
+// User management section (admin/teacher only)
+async function loadUserManagementSection() {
+  const user = AUTH.getUser();
+  if (!user || !(user.role || '').includes('admin') && !(user.role || '').includes('teacher')) {
+    return '<div class="empty-state">このページにアクセスする権限がありません</div>';
+  }
+  
+  return `
+    <div class="section-header">
+      <h2>ユーザー管理</h2>
+      <p>ユーザーの追加・編集・削除ができます。</p>
+    </div>
+    <div id="user-list" class="user-list">
+      <div class="empty-state">ユーザー一覧を読み込み中...</div>
+    </div>
+    <div class="add-user-form">
+      <h3>新規ユーザー追加</h3>
+      <div class="form-group">
+        <label for="new-username">ユーザーID</label>
+        <input type="text" id="new-username" placeholder="例: 101005">
+      </div>
+      <div class="form-group">
+        <label for="new-display-name">表示名</label>
+        <input type="text" id="new-display-name" placeholder="氏名">
+      </div>
+      <div class="form-group">
+        <label for="new-password">パスワード</label>
+        <input type="password" id="new-password" placeholder="パスワード">
+      </div>
+      <div class="form-group">
+        <label for="new-role">役割</label>
+        <select id="new-role">
+          <option value="student">生徒</option>
+          <option value="teacher">先生</option>
+          <option value="president">部長</option>
+          <option value="vice-president">副部長</option>
+          <option value="chairperson">委員長</option>
+          <option value="admin">管理者</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="new-grade">学年</label>
+        <select id="new-grade">
+          <option value="">選択してください</option>
+          <option value="1">1年</option>
+          <option value="2">2年</option>
+          <option value="3">3年</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="new-class">クラス</label>
+        <input type="number" id="new-class" min="1" max="10" placeholder="クラス番号">
+      </div>
+      <div class="form-group">
+        <label for="new-seat">席番号</label>
+        <input type="number" id="new-seat" min="1" max="50" placeholder="席番号">
+      </div>
+      <button id="add-user" class="btn-primary">ユーザーを追加</button>
+    </div>
+  `;
+}
+
+// Utility functions
+function escapeHtml(text) {
+  if (!text) return '';
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+// Initialize dashboard
+async function initDashboard() {
+  // Update date and user info
+  updateDateInfo();
+  updateUserInfo();
+  
+  // Create navigation buttons
+  createNavButtons();
+  
+  // Set up interval updates
+  setInterval(updateDateInfo, 60000); // Update date every minute
+  setInterval(updateUserInfo, 30000); // Update user info every 30 seconds
+}
+
+// Start initialization
+document.addEventListener('DOMContentLoaded', initDashboard);
 </script>
-<script>if('serviceWorker'in navigator){navigator.serviceWorker.register('sw.js').then(()=>{if(Notification.permission==='granted')subscribePush();else if(Notification.permission!=='denied')document.getElementById('notifBanner').style.display='flex'})}async function getMyTopics(){try{const u=await a('/api/me');const t=['general','lost'];if(u.club)t.push('club_'+u.club);if(u.committee)t.push('committee_'+u.committee);if(hasRole(u.role,['president','vice-president','chairperson','teacher','admin']))t.push('chat');return t}catch(e){return['general','lost']}}
-async function subscribePush(){try{const reg=await navigator.serviceWorker.ready;const vk=await a('/api/push/vapid-key');const topics=await getMyTopics();const sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:urlBase64ToUint8Array(vk.publicKey)});const subJson=JSON.parse(JSON.stringify(sub));subJson.topics=topics;await a('/api/push/subscribe',{method:'POST',body:JSON.stringify(subJson)})}catch(e){}}
-function urlBase64ToUint8Array(b){const p=(b+'='.repeat((4-b.length%4)%4)).replace(/-/g,'+').replace(/_/g,'/');const s=atob(p);const r=new Uint8Array(s.length);for(let i=0;i<s.length;i++)r[i]=s.charCodeAt(i);return r}
-$('notifBtn').addEventListener('click',async()=>{try{const p=await Notification.requestPermission();if(p==='granted'){$('notifBanner').style.display='none';subscribePush()}}catch(e){}});
-$('notifClose').addEventListener('click',()=>{$('notifBanner').style.display='none'});
-let installPrompt=null;window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installPrompt=e;const b=document.createElement('button');b.className='header-link';b.textContent='⬇ インストール';b.id='installBtn';document.querySelector('.header-right')?.insertBefore(b,document.querySelector('#bSettingsLink'));b.addEventListener('click',async()=>{if(!installPrompt)return;installPrompt.prompt();const r=await installPrompt.userChoice;installPrompt=null;b.remove()})});window.addEventListener('appinstalled',()=>{document.getElementById('installBtn')?.remove();installPrompt=null});</script>
 </body>
 </html>

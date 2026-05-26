@@ -1,12 +1,12 @@
-ï»¿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <link rel="manifest" href="manifest.json">
-<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>éƒ¨é•·ãƒãƒ£ãƒƒãƒˆ - ä¸Šè—¤æ²¢ä¸­å­¦æ ¡ éƒ¨æ´»å‹•é»’æ¿</title>
+<title>•”’·ƒ`ƒƒƒbƒg - ã“¡‘ò’†ŠwZ •”Šˆ“®•”Â</title>
 <style>
 :root{--primary:#1E4D2B;--primary-dark:#153820;--primary-light:#2D6B40;--accent-pink:#f5a0b8;--accent-blue:#a0c4e8;--accent-yellow:#f5e6a0;--accent-green:#a8d8a0;--bg:#f7f5f0;--card:#fff;--text:#2c2c2c;--sub:#8a8682;--border:#e0dcd4;--radius:12px;--shadow:0 2px 12px rgba(30,77,43,0.06)}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -50,40 +50,40 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
 </head>
 <body>
 <header class="header">
-  <div class="header-title">ğŸ’¬ éƒ¨é•·ãƒãƒ£ãƒƒãƒˆ</div>
+  <div class="header-title">?? •”’·ƒ`ƒƒƒbƒg</div>
   <div class="header-right">
-    <a href="01index.html" class="header-link">é»’æ¿ã«æˆ»ã‚‹</a>
+    <a href="01index.html" class="header-link">•”Â‚É–ß‚é</a>
   </div>
 </header>
-<div class="chat-notif-banner" id="chatNotifBanner"><span class="cnb-text">ğŸ’¬ æ–°ã—ã„ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãŒã‚ã£ãŸã‚‰é€šçŸ¥ã§ãŠçŸ¥ã‚‰ã›ã—ã¾ã™ã‹ï¼Ÿ</span><button class="cnb-btn" id="chatNotifYes">ã¯ã„</button><button class="cnb-skip" id="chatNotifNo">ã„ã„ãˆ</button></div>
+<div class="chat-notif-banner" id="chatNotifBanner"><span class="cnb-text">?? V‚µ‚¢ƒƒbƒZ[ƒW‚ª‚ ‚Á‚½‚ç’Ê’m‚Å‚¨’m‚ç‚¹‚µ‚Ü‚·‚©H</span><button class="cnb-btn" id="chatNotifYes">‚Í‚¢</button><button class="cnb-skip" id="chatNotifNo">‚¢‚¢‚¦</button></div>
 <div class="chat-body">
   <div class="chat-sidebar" id="partSidebar">
-    <h3>ğŸ‘¥ å‚åŠ è€…</h3>
-    <div id="partList">èª­ã¿è¾¼ã¿ä¸­...</div>
+    <h3>?? Q‰ÁÒ</h3>
+    <div id="partList">“Ç‚İ‚İ’†...</div>
   </div>
   <div class="chat-main">
-    <div class="chat-messages" id="msgList"><div class="empty-chat">èª­ã¿è¾¼ã¿ä¸­...</div></div>
+    <div class="chat-messages" id="msgList"><div class="empty-chat">“Ç‚İ‚İ’†...</div></div>
     <div class="chat-input">
-      <input type="text" id="msgInput" placeholder="ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’å…¥åŠ›..." maxlength="1000" autofocus>
-      <button id="sendBtn">é€ä¿¡</button>
+      <input type="text" id="msgInput" placeholder="ƒƒbƒZ[ƒW‚ğ“ü—Í..." maxlength="1000" autofocus>
+      <button id="sendBtn">‘—M</button>
     </div>
   </div>
 </div>
 <script>
 const API_BASE=''
-async function a(p,o={}){const t=sessionStorage.getItem('token'),h={'Content-Type':'application/json',...o.headers};if(t)h['Authorization']='Bearer '+t;const r=await fetch(API_BASE+p,{...o,headers:h}),d=await r.json();if(!r.ok)throw new Error(d.error||'ã‚¨ãƒ©ãƒ¼');return d}
+async function a(p,o={}){const t=sessionStorage.getItem('token'),h={'Content-Type':'application/json',...o.headers};if(t)h['Authorization']='Bearer '+t;const r=await fetch(API_BASE+p,{...o,headers:h}),d=await r.json();if(!r.ok)throw new Error(d.error||'ƒGƒ‰[');return d}
 const $=id=>document.getElementById(id);const esc=s=>{const d=document.createElement('div');d.textContent=s;return d.innerHTML};
 const cu=sessionStorage.getItem('username');
 if(!cu||!sessionStorage.getItem('token'))window.location.href='02login.html';
 
 function scrollBottom(){requestAnimationFrame(()=>{$('msgList').scrollTop=$('msgList').scrollHeight})}
 
-const roleNames={'admin':'ç®¡ç†è€…','teacher':'å…ˆç”Ÿ','president':'éƒ¨é•·','vice-president':'å‰¯éƒ¨é•·','chairperson':'å§”å“¡é•·','student':'ç”Ÿå¾’'};
+const roleNames={'admin':'ŠÇ—Ò','teacher':'æ¶','president':'•”’·','vice-president':'•›•”’·','chairperson':'ˆÏˆõ’·','student':'¶“k'};
 async function loadParticipants(){
   try{
     const parts=await a('/api/chat/participants');
-    $('partList').innerHTML=parts.map(p=>'<div class="chat-part"><span class="part-online"></span><span>'+esc(p.display_name||p.username)+'</span><span class="part-role">'+(p.role&&p.role.includes('admin')?'ç®¡ç†è€…':p.teacher_subject?esc(p.teacher_subject):p.role.split(',').map(r=>roleNames[r.trim()]||r.trim()).filter(Boolean).join('Â·'))+'</span></div>').join('');
-  }catch(e){$('partList').textContent='å–å¾—ã§ãã¾ã›ã‚“ã§ã—ãŸ'}
+    $('partList').innerHTML=parts.map(p=>'<div class="chat-part"><span class="part-online"></span><span>'+esc(p.display_name||p.username)+'</span><span class="part-role">'+(p.role&&p.role.includes('admin')?'ŠÇ—Ò':p.teacher_subject?esc(p.teacher_subject):p.role.split(',').map(r=>roleNames[r.trim()]||r.trim()).filter(Boolean).join('E'))+'</span></div>').join('');
+  }catch(e){$('partList').textContent='æ“¾‚Å‚«‚Ü‚¹‚ñ‚Å‚µ‚½'}
 }
 
 let lastTime=Date.now();let loadedOnce=false;
@@ -91,7 +91,7 @@ async function loadMsgs(){
   try{
     const msgs=await a('/api/chat?since='+lastTime);
     const list=$('msgList');
-    if(!loadedOnce){loadedOnce=true;list.innerHTML='<div class="empty-chat">ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã¯ã¾ã ã‚ã‚Šã¾ã›ã‚“</div>';scrollBottom()}
+    if(!loadedOnce){loadedOnce=true;list.innerHTML='<div class="empty-chat">ƒƒbƒZ[ƒW‚Í‚Ü‚¾‚ ‚è‚Ü‚¹‚ñ</div>';scrollBottom()}
     if(msgs.length){
       if(list.querySelector('.empty-chat'))list.innerHTML='';
       msgs.forEach(m=>{lastTime=Math.max(lastTime,new Date(m.created_at).getTime()+1);renderMsg(m,list)});
@@ -103,7 +103,7 @@ function renderMsg(m,l){
   const d=document.createElement('div');d.className='msg '+(m.username===cu?'mine':'other');
   const time=new Date(m.created_at);const ts=String(time.getHours()).padStart(2,'0')+':'+String(time.getMinutes()).padStart(2,'0');
   const canDel=m.username===cu||(sessionStorage.getItem('role')||'').includes('admin')||(sessionStorage.getItem('role')||'').includes('teacher');
-  const delBtn=canDel?`<button class="del-btn" onclick="delMsg('${m.id}')">âœ•</button>`:'';
+  const delBtn=canDel?`<button class="del-btn" onclick="delMsg('${m.id}')">?</button>`:'';
   d.innerHTML=delBtn+'<div class="author">'+esc(m.display_name||m.username)+'</div><div class="text">'+esc(m.message||m.text||'')+'</div><div class="time">'+ts+'</div>';
   l.appendChild(d);
 }
@@ -114,7 +114,7 @@ async function sendMsg(){
   try{
     await a('/api/chat',{method:'POST',body:JSON.stringify({message:txt})});
     inp.value='';lastTime=Date.now();await loadMsgs();
-    fetch('/api/push/notify',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+sessionStorage.getItem('token')},body:JSON.stringify({category:'chat',title:'éƒ¨é•·ãƒãƒ£ãƒƒãƒˆ',body:txt.slice(0,80),url:'/chat.html',excludeUser:cu})}).catch(()=>{});
+    fetch('/api/push/notify',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+sessionStorage.getItem('token')},body:JSON.stringify({category:'chat',title:'•”’·ƒ`ƒƒƒbƒg',body:txt.slice(0,80),url:'/chat.html',excludeUser:cu})}).catch(()=>{});
   }catch(e){alert(e.message)}
   inp.disabled=false;inp.focus();
 }

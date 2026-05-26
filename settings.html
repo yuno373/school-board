@@ -1,12 +1,12 @@
-ï»¿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <link rel="manifest" href="manifest.json">
-<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>ãƒ¦ãƒ¼ã‚¶ãƒ¼è¨­å®š - ä¸Šè—¤æ²¢ä¸­å­¦æ ¡</title>
+<title>ƒ†[ƒU[İ’è - ã“¡‘ò’†ŠwZ</title>
 <style>
 :root{--primary:#1E4D2B;--primary-dark:#153820;--primary-light:#2D6B40;--bg:#f7f5f0;--card:#fff;--text:#2c2c2c;--sub:#8a8682;--border:#e0dcd4;--radius:12px;--shadow:0 2px 12px rgba(30,77,43,0.06)}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -34,51 +34,51 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
 </head>
 <body>
 <header class="header">
-  <div class="header-title">âš™ï¸ ãƒ¦ãƒ¼ã‚¶ãƒ¼è¨­å®š</div>
+  <div class="header-title">?? ƒ†[ƒU[İ’è</div>
   <div class="header-right">
-    <a href="01index.html" class="header-link">é»’æ¿ã«æˆ»ã‚‹</a>
+    <a href="01index.html" class="header-link">•”Â‚É–ß‚é</a>
   </div>
 </header>
 <div class="main">
   <div class="card">
-    <h2>ãƒ—ãƒ­ãƒ•ã‚£ãƒ¼ãƒ«</h2>
+    <h2>ƒvƒƒtƒB[ƒ‹</h2>
     <div style="display:flex;gap:10px;flex-wrap:wrap">
-      <div class="form-group" style="flex:1;min-width:70px"><label>å­¦å¹´</label><input type="number" id="sGrade" min="1" max="3" style="width:100%"></div>
-      <div class="form-group" style="flex:1;min-width:70px"><label>ã‚¯ãƒ©ã‚¹</label><input type="number" id="sClass" min="1" max="10" style="width:100%"></div>
-      <div class="form-group" style="flex:1;min-width:70px"><label>ç•ªå·</label><input type="number" id="sSeat" min="1" max="50" style="width:100%"></div>
+      <div class="form-group" style="flex:1;min-width:70px"><label>Šw”N</label><input type="number" id="sGrade" min="1" max="3" style="width:100%"></div>
+      <div class="form-group" style="flex:1;min-width:70px"><label>ƒNƒ‰ƒX</label><input type="number" id="sClass" min="1" max="10" style="width:100%"></div>
+      <div class="form-group" style="flex:1;min-width:70px"><label>”Ô†</label><input type="number" id="sSeat" min="1" max="50" style="width:100%"></div>
     </div>
-    <div class="form-group"><label>è¡¨ç¤ºå</label><input type="text" id="sDispName" placeholder="è¡¨ç¤ºå"></div>
-    <div class="form-group"><label>éƒ¨æ´»å‹•</label><select id="sClub"><option value="">â€”</option></select></div>
-    <div class="form-group"><label>å§”å“¡ä¼š</label><select id="sCommittee"><option value="">â€”</option></select></div>
-    <button class="btn" id="saveProfile">ä¿å­˜</button>
+    <div class="form-group"><label>•\¦–¼</label><input type="text" id="sDispName" placeholder="•\¦–¼"></div>
+    <div class="form-group"><label>•”Šˆ“®</label><select id="sClub"><option value="">?</option></select></div>
+    <div class="form-group"><label>ˆÏˆõ‰ï</label><select id="sCommittee"><option value="">?</option></select></div>
+    <button class="btn" id="saveProfile">•Û‘¶</button>
     <div id="profileStatus"></div>
   </div>
   <div class="card">
-    <h2>ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰å¤‰æ›´</h2>
-    <div class="form-group"><label>ç¾åœ¨ã®ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰</label><input type="password" id="sCurPw"></div>
-    <div class="form-group"><label>æ–°ã—ã„ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰</label><input type="password" id="sNewPw"></div>
-    <div class="form-group"><label>æ–°ã—ã„ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ï¼ˆç¢ºèªï¼‰</label><input type="password" id="sNewPw2"></div>
-    <button class="btn" id="changePwBtn">å¤‰æ›´</button>
+    <h2>ƒpƒXƒ[ƒh•ÏX</h2>
+    <div class="form-group"><label>Œ»İ‚ÌƒpƒXƒ[ƒh</label><input type="password" id="sCurPw"></div>
+    <div class="form-group"><label>V‚µ‚¢ƒpƒXƒ[ƒh</label><input type="password" id="sNewPw"></div>
+    <div class="form-group"><label>V‚µ‚¢ƒpƒXƒ[ƒhiŠm”Fj</label><input type="password" id="sNewPw2"></div>
+    <button class="btn" id="changePwBtn">•ÏX</button>
     <div id="pwStatus"></div>
   </div>
   <div class="card">
-    <h2>ğŸ”” ãƒ—ãƒƒã‚·ãƒ¥é€šçŸ¥</h2>
+    <h2>?? ƒvƒbƒVƒ…’Ê’m</h2>
     <p style="font-size:13px;color:var(--sub);margin-bottom:10px" id="pushStatus"></p>
-    <button class="btn" id="pushEnableBtn">ğŸ”” é€šçŸ¥ã‚’æœ‰åŠ¹ã«ã™ã‚‹</button>
-    <button class="btn btn-outline" id="pushDisableBtn" style="display:none">ğŸ”• é€šçŸ¥ã‚’è§£é™¤</button>
+    <button class="btn" id="pushEnableBtn">?? ’Ê’m‚ğ—LŒø‚É‚·‚é</button>
+    <button class="btn btn-outline" id="pushDisableBtn" style="display:none">?? ’Ê’m‚ğ‰ğœ</button>
     <div id="pushTestResult" style="margin-top:6px;font-size:12px"></div>
   </div>
 </div>
 <script>
 const API_BASE=''
-async function a(p,o={}){const t=sessionStorage.getItem('token'),h={'Content-Type':'application/json',...o.headers};if(t)h['Authorization']='Bearer '+t;const r=await fetch(API_BASE+p,{...o,headers:h}),d=await r.json();if(!r.ok)throw new Error(d.error||'ã‚¨ãƒ©ãƒ¼');return d}
+async function a(p,o={}){const t=sessionStorage.getItem('token'),h={'Content-Type':'application/json',...o.headers};if(t)h['Authorization']='Bearer '+t;const r=await fetch(API_BASE+p,{...o,headers:h}),d=await r.json();if(!r.ok)throw new Error(d.error||'ƒGƒ‰[');return d}
 const $=id=>document.getElementById(id);
 if(!sessionStorage.getItem('token'))window.location.href='02login.html';
-const CLUBS=['å¹å¥æ¥½éƒ¨','èŒ¶é“éƒ¨','ç¾è¡“éƒ¨','å“çƒéƒ¨','ãƒ†ãƒ‹ã‚¹éƒ¨å¥³å­','ãƒ†ãƒ‹ã‚¹éƒ¨ç”·å­','ã‚µãƒƒã‚«ãƒ¼éƒ¨','é‡çƒéƒ¨','é™¸ä¸Šéƒ¨','ãƒã‚¹ã‚±éƒ¨å¥³å­','ãƒã‚¹ã‚±éƒ¨ç”·å­','ãƒãƒ¬ãƒ¼éƒ¨'];
+const CLUBS=['‘tŠy•”','’ƒ“¹•”','”üp•”','‘ì‹…•”','ƒeƒjƒX•”—q','ƒeƒjƒX•”’jq','ƒTƒbƒJ[•”','–ì‹…•”','—¤ã•”','ƒoƒXƒP•”—q','ƒoƒXƒP•”’jq','ƒoƒŒ[•”'];
 CLUBS.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;$('sClub').appendChild(o)});
 function populateCommitteeSelect(sel){
-  sel.innerHTML='<option value="">â€”</option>';
-  const groups={'å­¦ç´šå§”å“¡ä¼š':['1å­¦å¹´å§”å“¡ä¼š','2å­¦å¹´å§”å“¡ä¼š','3å­¦å¹´å§”å“¡ä¼š'],'å°‚é–€å§”å“¡ä¼š':['æ•´å‚™å§”å“¡ä¼š','ç”Ÿæ´»å§”å“¡ä¼š','é¸æŒ™ç®¡ç†å§”å“¡ä¼š','å›³æ›¸å§”å“¡ä¼š','çµ¦é£Ÿå§”å“¡ä¼š','åˆå”±å§”å“¡ä¼š','ä½“è‚²å§”å“¡ä¼š','ä¿å¥å§”å“¡ä¼š','æ”¾é€å§”å“¡ä¼š'],'ç‰¹åˆ¥å§”å“¡ä¼š':['ä¸­å¤®å§”å“¡ä¼š','éƒ¨æ´»å‹•å§”å“¡ä¼š']};
+  sel.innerHTML='<option value="">?</option>';
+  const groups={'Šw‹‰ˆÏˆõ‰ï':['1Šw”NˆÏˆõ‰ï','2Šw”NˆÏˆõ‰ï','3Šw”NˆÏˆõ‰ï'],'ê–åˆÏˆõ‰ï':['®”õˆÏˆõ‰ï','¶ŠˆˆÏˆõ‰ï','‘I‹“ŠÇ—ˆÏˆõ‰ï','}‘ˆÏˆõ‰ï','‹‹HˆÏˆõ‰ï','‡¥ˆÏˆõ‰ï','‘ÌˆçˆÏˆõ‰ï','•ÛŒ’ˆÏˆõ‰ï','•ú‘—ˆÏˆõ‰ï'],'“Á•ÊˆÏˆõ‰ï':['’†‰›ˆÏˆõ‰ï','•”Šˆ“®ˆÏˆõ‰ï']};
   for(const[g,items]of Object.entries(groups)){const og=document.createElement('optgroup');og.label=g;items.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;og.appendChild(o)});sel.appendChild(og)}
 }
 populateCommitteeSelect($('sCommittee'));
@@ -89,41 +89,41 @@ loadProfile();
 $('saveProfile').addEventListener('click',async()=>{
   const dn=$('sDispName').value.trim(),club=$('sClub').value,comm=$('sCommittee').value;
   const grade=$('sGrade').value,cls=$('sClass').value,seat=$('sSeat').value;
-  try{const r=await a('/api/me',{method:'PUT',body:JSON.stringify({display_name:dn,club,committee:comm,grade,class_num:cls,seat_num:seat})});if(r.token){sessionStorage.setItem('token',r.token);if(r.display_name)sessionStorage.setItem('display_name',r.display_name)}$('profileStatus').textContent='âœ… ä¿å­˜ã—ã¾ã—ãŸ';$('profileStatus').className='success';loadProfile()}catch(e){$('profileStatus').textContent='âŒ '+e.message;$('profileStatus').className='error'}
+  try{const r=await a('/api/me',{method:'PUT',body:JSON.stringify({display_name:dn,club,committee:comm,grade,class_num:cls,seat_num:seat})});if(r.token){sessionStorage.setItem('token',r.token);if(r.display_name)sessionStorage.setItem('display_name',r.display_name)}$('profileStatus').textContent='? •Û‘¶‚µ‚Ü‚µ‚½';$('profileStatus').className='success';loadProfile()}catch(e){$('profileStatus').textContent='? '+e.message;$('profileStatus').className='error'}
 });
 $('changePwBtn').addEventListener('click',async()=>{
   const cur=$('sCurPw').value,pw=$('sNewPw').value,pw2=$('sNewPw2').value;
-  if(!cur||!pw){$('pwStatus').textContent='å…¥åŠ›ã—ã¦ãã ã•ã„';$('pwStatus').className='error';return}
-  if(pw.length<6){$('pwStatus').textContent='6æ–‡å­—ä»¥ä¸Šå¿…è¦ã§ã™';$('pwStatus').className='error';return}
-  if(pw!==pw2){$('pwStatus').textContent='ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ãŒä¸€è‡´ã—ã¾ã›ã‚“';$('pwStatus').className='error';return}
-  try{await a('/api/me/password',{method:'POST',body:JSON.stringify({currentPassword:cur,newPassword:pw})});$('pwStatus').textContent='âœ… å¤‰æ›´ã—ã¾ã—ãŸ';$('pwStatus').className='success';$('sCurPw').value='';$('sNewPw').value='';$('sNewPw2').value=''}catch(e){$('pwStatus').textContent='âŒ '+e.message;$('pwStatus').className='error'}
+  if(!cur||!pw){$('pwStatus').textContent='“ü—Í‚µ‚Ä‚­‚¾‚³‚¢';$('pwStatus').className='error';return}
+  if(pw.length<6){$('pwStatus').textContent='6•¶šˆÈã•K—v‚Å‚·';$('pwStatus').className='error';return}
+  if(pw!==pw2){$('pwStatus').textContent='ƒpƒXƒ[ƒh‚ªˆê’v‚µ‚Ü‚¹‚ñ';$('pwStatus').className='error';return}
+  try{await a('/api/me/password',{method:'POST',body:JSON.stringify({currentPassword:cur,newPassword:pw})});$('pwStatus').textContent='? •ÏX‚µ‚Ü‚µ‚½';$('pwStatus').className='success';$('sCurPw').value='';$('sNewPw').value='';$('sNewPw2').value=''}catch(e){$('pwStatus').textContent='? '+e.message;$('pwStatus').className='error'}
 });
 
 // Push notification
 function urlBase64ToUint8Array(b){const p=(b+'='.repeat((4-b.length%4)%4)).replace(/-/g,'+').replace(/_/g,'/');const s=atob(p);const r=new Uint8Array(s.length);for(let i=0;i<s.length;i++)r[i]=s.charCodeAt(i);return r}
 function isPwa(){return window.navigator.standalone||window.matchMedia('(display-mode:standalone)').matches}
-function swReady(timeout=3000){return Promise.race([navigator.serviceWorker.ready,new Promise((_,reject)=>setTimeout(()=>reject(new Error('ServiceWorkerã‚¿ã‚¤ãƒ ã‚¢ã‚¦ãƒˆ')),timeout))])}
+function swReady(timeout=3000){return Promise.race([navigator.serviceWorker.ready,new Promise((_,reject)=>setTimeout(()=>reject(new Error('ServiceWorkerƒ^ƒCƒ€ƒAƒEƒg')),timeout))])}
 async function loadPushSettings(){
   const st=$('pushStatus'),eb=$('pushEnableBtn'),db=$('pushDisableBtn'),tr=$('pushTestResult');
   try{
     const reg=await swReady();
     const sub=await reg.pushManager.getSubscription();
-    if(sub){st.innerHTML='âœ… ãƒ—ãƒƒã‚·ãƒ¥é€šçŸ¥ãŒæœ‰åŠ¹ã§ã™';eb.style.display='none';db.style.display='';tr.textContent=''}
-    else if(Notification.permission==='denied'){st.innerHTML='âŒ é€šçŸ¥ãŒæ‹’å¦ã•ã‚Œã¦ã„ã¾ã™ã€‚ãƒ–ãƒ©ã‚¦ã‚¶ã®è¨­å®šã‹ã‚‰è¨±å¯ã—ã¦ãã ã•ã„';eb.style.display='none';db.style.display='none'}
-    else if(!isPwa()&&/iPad|iPhone|iPod/.test(navigator.userAgent)){st.innerHTML='ğŸ“± ãƒ›ãƒ¼ãƒ ç”»é¢ã«è¿½åŠ ã—ã¦ã‹ã‚‰é€šçŸ¥ã‚’æœ‰åŠ¹ã«ã—ã¦ãã ã•ã„';eb.style.display='none';db.style.display='none'}
-    else{st.innerHTML='ğŸ”” é€šçŸ¥ã‚’æœ‰åŠ¹ã«ã™ã‚‹ã¨ãŠçŸ¥ã‚‰ã›ãŒå±Šãã‚ˆã†ã«ãªã‚Šã¾ã™';eb.style.display='';db.style.display='none';tr.textContent=''}
-  }catch(e){st.textContent='âš ï¸ '+e.message}
+    if(sub){st.innerHTML='? ƒvƒbƒVƒ…’Ê’m‚ª—LŒø‚Å‚·';eb.style.display='none';db.style.display='';tr.textContent=''}
+    else if(Notification.permission==='denied'){st.innerHTML='? ’Ê’m‚ª‹‘”Û‚³‚ê‚Ä‚¢‚Ü‚·Bƒuƒ‰ƒEƒU‚Ìİ’è‚©‚ç‹–‰Â‚µ‚Ä‚­‚¾‚³‚¢';eb.style.display='none';db.style.display='none'}
+    else if(!isPwa()&&/iPad|iPhone|iPod/.test(navigator.userAgent)){st.innerHTML='?? ƒz[ƒ€‰æ–Ê‚É’Ç‰Á‚µ‚Ä‚©‚ç’Ê’m‚ğ—LŒø‚É‚µ‚Ä‚­‚¾‚³‚¢';eb.style.display='none';db.style.display='none'}
+    else{st.innerHTML='?? ’Ê’m‚ğ—LŒø‚É‚·‚é‚Æ‚¨’m‚ç‚¹‚ª“Í‚­‚æ‚¤‚É‚È‚è‚Ü‚·';eb.style.display='';db.style.display='none';tr.textContent=''}
+  }catch(e){st.textContent='?? '+e.message}
 }
 $('pushEnableBtn').addEventListener('click',async()=>{
   try{
     const p=await Notification.requestPermission();
-    if(p!=='granted'){alert('é€šçŸ¥ãŒè¨±å¯ã•ã‚Œã¾ã›ã‚“ã§ã—ãŸ');return}
+    if(p!=='granted'){alert('’Ê’m‚ª‹–‰Â‚³‚ê‚Ü‚¹‚ñ‚Å‚µ‚½');return}
     const reg=await swReady();
     const vk=await a('/api/push/vapid-key');
     const sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:urlBase64ToUint8Array(vk.publicKey)});
     await a('/api/push/subscribe',{method:'POST',body:JSON.stringify(JSON.parse(JSON.stringify(sub)))});
     loadPushSettings();
-  }catch(e){alert('ã‚¨ãƒ©ãƒ¼: '+e.message)}
+  }catch(e){alert('ƒGƒ‰[: '+e.message)}
 });
 $('pushDisableBtn').addEventListener('click',async()=>{
   try{
@@ -132,7 +132,7 @@ $('pushDisableBtn').addEventListener('click',async()=>{
     if(sub)await sub.unsubscribe();
     await a('/api/push/unsubscribe',{method:'POST'});
     loadPushSettings();
-  }catch(e){alert('ã‚¨ãƒ©ãƒ¼: '+e.message)}
+  }catch(e){alert('ƒGƒ‰[: '+e.message)}
 });
 setTimeout(loadPushSettings, 500);
 </script>

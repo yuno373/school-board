@@ -1,12 +1,12 @@
-ï»¿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <link rel="manifest" href="manifest.json">
-<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>ç®¡ç†ç”»é¢ - ä¸Šè—¤æ²¢ä¸­å­¦æ ¡ éƒ¨æ´»å‹•é»’æ¿</title>
+<title>ŠÇ—‰æ–Ê - ã“¡‘ò’†ŠwZ •”Šˆ“®•”Â</title>
 <style>
 :root{--primary:#1E4D2B;--primary-dark:#153820;--primary-light:#2D6B40;--accent-pink:#f5a0b8;--accent-blue:#a0c4e8;--accent-yellow:#f5e6a0;--accent-green:#a8d8a0;--bg:#f7f5f0;--card:#fff;--text:#2c2c2c;--sub:#8a8682;--border:#e0dcd4;--danger:#c96565;--radius:12px;--shadow:0 2px 12px rgba(30,77,43,0.06)}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -98,22 +98,22 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
 </head>
 <body>
 <header class="header">
-  <div class="header-title">ğŸ“‹ ç®¡ç†ç”»é¢</div>
+  <div class="header-title">?? ŠÇ—‰æ–Ê</div>
   <div class="header-right">
     <span id="aUser" style="font-size:12px;color:rgba(255,255,255,.75)"></span>
-    <a href="01index.html" class="header-link">é»’æ¿ã«æˆ»ã‚‹</a>
-    <button class="header-link danger" id="aLogout">ãƒ­ã‚°ã‚¢ã‚¦ãƒˆ</button>
+    <a href="01index.html" class="header-link">•”Â‚É–ß‚é</a>
+    <button class="header-link danger" id="aLogout">ƒƒOƒAƒEƒg</button>
   </div>
 </header>
 <div class="main-content">
   <div class="tab-bar">
-    <button class="tab-btn active" data-tab="users">ç”Ÿå¾’ç®¡ç†</button>
-    <button class="tab-btn" data-tab="batch">IDä¸€æ‹¬ç”Ÿæˆ</button>
-    <button class="tab-btn" data-tab="notifications">é€šçŸ¥ç®¡ç†</button>
-    <button class="tab-btn" data-tab="posts">æŠ•ç¨¿ç®¡ç†</button>
-    <button class="tab-btn" data-tab="stats">çµ±è¨ˆ</button>
-     <button class="tab-btn" data-tab="chat">ãƒãƒ£ãƒƒãƒˆç®¡ç†</button>
-     <button class="tab-btn" data-tab="diagnosis">è¨ºæ–­</button>
+    <button class="tab-btn active" data-tab="users">¶“kŠÇ—</button>
+    <button class="tab-btn" data-tab="batch">IDˆêŠ‡¶¬</button>
+    <button class="tab-btn" data-tab="notifications">’Ê’mŠÇ—</button>
+    <button class="tab-btn" data-tab="posts">“ŠeŠÇ—</button>
+    <button class="tab-btn" data-tab="stats">“Œv</button>
+     <button class="tab-btn" data-tab="chat">ƒ`ƒƒƒbƒgŠÇ—</button>
+     <button class="tab-btn" data-tab="diagnosis">f’f</button>
    </div>
 
    <!-- Notifications Tab -->
@@ -124,28 +124,28 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
   <!-- Users Tab -->
   <div class="tab-content active" id="tab-users">
     <div class="id-rule">
-      <strong>IDç”Ÿæˆãƒ«ãƒ¼ãƒ«ï¼ˆä¸€æ‹¬ç”Ÿæˆæ™‚ï¼‰</strong><br>
-      å…¥å­¦å¹´åº¦ä¸‹2æ¡ + é€šã—ç•ªå·3æ¡<br>
-      ä¾‹: 2026å¹´å…¥å­¦ 1çµ„1ç•ª â†’ <strong>26001</strong>ã€2çµ„1ç•ª â†’ <strong>26031</strong>ï¼ˆ30äººå­¦ç´šã®å ´åˆï¼‰<br>
-      <span style="font-size:11px">â€» æ‰‹å‹•ç™»éŒ²ã¯ä»»æ„ã®æ•°å­—IDã‚’ä½¿ç”¨ã§ãã¾ã™</span>
+      <strong>ID¶¬ƒ‹[ƒ‹iˆêŠ‡¶¬j</strong><br>
+      “üŠw”N“x‰º2Œ… + ’Ê‚µ”Ô†3Œ…<br>
+      —á: 2026”N“üŠw 1‘g1”Ô ¨ <strong>26001</strong>A2‘g1”Ô ¨ <strong>26031</strong>i30lŠw‹‰‚Ìê‡j<br>
+      <span style="font-size:11px">¦ è“®“o˜^‚Í”CˆÓ‚Ì”šID‚ğg—p‚Å‚«‚Ü‚·</span>
     </div>
     <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;align-items:center">
-      <input type="text" id="searchInput" placeholder="åå‰ãƒ»éƒ¨æ´»ãƒ»å§”å“¡ä¼šãƒ»ã‚¯ãƒ©ã‚¹ã§æ¤œç´¢" style="flex:1;min-width:140px;padding:8px 12px;border:2px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;background:#faf8f5">
-      <select id="searchRole" style="padding:8px 12px;border:2px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;background:#faf8f5"><option value="">å…¨æ¨©é™</option><option value="admin">ç®¡ç†è€…</option><option value="teacher">å…ˆç”Ÿ</option><optgroup label="ç”Ÿå¾’"><option value="president">éƒ¨é•·</option><option value="vice-president">å‰¯éƒ¨é•·</option><option value="chairperson">å§”å“¡é•·</option><option value="student">ç”Ÿå¾’ï¼ˆä¸€èˆ¬ï¼‰</option></optgroup></select>
-      <button class="btn btn-primary btn-sm" id="aRefresh">æ›´æ–°</button>
+      <input type="text" id="searchInput" placeholder="–¼‘OE•”ŠˆEˆÏˆõ‰ïEƒNƒ‰ƒX‚ÅŒŸõ" style="flex:1;min-width:140px;padding:8px 12px;border:2px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;background:#faf8f5">
+      <select id="searchRole" style="padding:8px 12px;border:2px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;background:#faf8f5"><option value="">‘SŒ ŒÀ</option><option value="admin">ŠÇ—Ò</option><option value="teacher">æ¶</option><optgroup label="¶“k"><option value="president">•”’·</option><option value="vice-president">•›•”’·</option><option value="chairperson">ˆÏˆõ’·</option><option value="student">¶“kiˆê”Êj</option></optgroup></select>
+      <button class="btn btn-primary btn-sm" id="aRefresh">XV</button>
     </div>
     <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;align-items:center;padding:8px 12px;background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);font-size:12px">
-      <label><input type="checkbox" id="selectAll"> ã™ã¹ã¦é¸æŠ</label>
-      <button class="btn btn-danger btn-sm" id="bulkDeleteBtn">é¸æŠã‚’å‰Šé™¤</button>
+      <label><input type="checkbox" id="selectAll"> ‚·‚×‚Ä‘I‘ğ</label>
+      <button class="btn btn-danger btn-sm" id="bulkDeleteBtn">‘I‘ğ‚ğíœ</button>
       <span style="color:var(--sub);margin:0 4px">|</span>
-      <select id="bulkGrade" style="padding:4px 8px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:inherit"><option value="">å­¦å¹´ã‚’é¸æŠ</option></select>
-      <select id="bulkClass" style="padding:4px 8px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:inherit"><option value="">å…¨ã‚¯ãƒ©ã‚¹</option></select>
-      <button class="btn btn-danger btn-sm" id="bulkGradeDeleteBtn">å­¦å¹´ãƒ»ã‚¯ãƒ©ã‚¹ã§å‰Šé™¤</button>
-      <span id="bulkSelectedCount" style="color:var(--sub);font-size:11px">0äººé¸æŠä¸­</span>
+      <select id="bulkGrade" style="padding:4px 8px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:inherit"><option value="">Šw”N‚ğ‘I‘ğ</option></select>
+      <select id="bulkClass" style="padding:4px 8px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:inherit"><option value="">‘SƒNƒ‰ƒX</option></select>
+      <button class="btn btn-danger btn-sm" id="bulkGradeDeleteBtn">Šw”NEƒNƒ‰ƒX‚Åíœ</button>
+      <span id="bulkSelectedCount" style="color:var(--sub);font-size:11px">0l‘I‘ğ’†</span>
     </div>
     <div style="overflow-x:auto">
       <table class="user-table">
-        <thead><tr><th style="width:24px"><input type="checkbox" id="selectAllH"></th><th>ãƒ­ã‚°ã‚¤ãƒ³ID</th><th>è¡¨ç¤ºå</th><th>ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰</th><th>æ¨©é™</th><th>çŠ¶æ…‹</th><th>å­¦å¹´</th><th>ã‚¯ãƒ©ã‚¹</th><th>ç•ªå·</th><th>éƒ¨æ´»</th><th>å§”å“¡ä¼š</th><th>æ‹…å½“å­¦å¹´</th><th>æ‹…å½“æ•™ç§‘</th><th>æ‹…ä»»</th><th>ç™»éŒ²æ—¥</th><th></th></tr></thead>
+        <thead><tr><th style="width:24px"><input type="checkbox" id="selectAllH"></th><th>ƒƒOƒCƒ“ID</th><th>•\¦–¼</th><th>ƒpƒXƒ[ƒh</th><th>Œ ŒÀ</th><th>ó‘Ô</th><th>Šw”N</th><th>ƒNƒ‰ƒX</th><th>”Ô†</th><th>•”Šˆ</th><th>ˆÏˆõ‰ï</th><th>’S“–Šw”N</th><th>’S“–‹³‰È</th><th>’S”C</th><th>“o˜^“ú</th><th></th></tr></thead>
         <tbody id="userList"></tbody>
       </table>
     </div>
@@ -154,33 +154,33 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
   <!-- Batch Tab -->
   <div class="tab-content" id="tab-batch">
     <div class="id-rule">
-      <strong>ç”Ÿå¾’ID è‡ªå‹•ç”Ÿæˆ</strong><br>
-      å¹´åº¦ã”ã¨ã«ã‚¯ãƒ©ã‚¹æ•°ã¨å„ã‚¯ãƒ©ã‚¹ã®äººæ•°ã‚’æŒ‡å®šã§ãã¾ã™ã€‚<br>
-      ã€Œã‚¯ãƒ©ã‚¹æ•°ã€ã‚’å¤‰ãˆã‚‹ã¨å„ã‚¯ãƒ©ã‚¹ã®å…¥åŠ›æ¬„ãŒè‡ªå‹•ã§å¢—æ¸›ã—ã¾ã™ã€‚<br>
-      IDå½¢å¼: <strong>{å…¥å­¦å¹´åº¦ä¸‹2æ¡ + é€šã—ç•ªå·3æ¡}</strong>ï¼ˆå¹´åº¦ã¾ãŸãã§é€£ç•ªï¼‰
+      <strong>¶“kID ©“®¶¬</strong><br>
+      ”N“x‚²‚Æ‚ÉƒNƒ‰ƒX”‚ÆŠeƒNƒ‰ƒX‚Ìl”‚ğw’è‚Å‚«‚Ü‚·B<br>
+      uƒNƒ‰ƒX”v‚ğ•Ï‚¦‚é‚ÆŠeƒNƒ‰ƒX‚Ì“ü—Í—“‚ª©“®‚Å‘Œ¸‚µ‚Ü‚·B<br>
+      IDŒ`®: <strong>{“üŠw”N“x‰º2Œ… + ’Ê‚µ”Ô†3Œ…}</strong>i”N“x‚Ü‚½‚¬‚Å˜A”Ôj
     </div>
     <div id="batchYears"></div>
     <div style="margin:12px 0;display:flex;gap:8px;flex-wrap:wrap">
-      <button class="btn btn-outline" id="addBatchYear">+ å¹´åº¦ã‚’è¿½åŠ </button>
+      <button class="btn btn-outline" id="addBatchYear">+ ”N“x‚ğ’Ç‰Á</button>
     </div>
     <div class="batch-form" style="flex-wrap:wrap">
-      <label>åˆæœŸãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰<input type="text" id="bPassword" value="111111"></label>
-      <button class="btn btn-primary" id="bGenerate">ç”Ÿæˆã™ã‚‹</button>
+      <label>‰ŠúƒpƒXƒ[ƒh<input type="text" id="bPassword" value="111111"></label>
+      <button class="btn btn-primary" id="bGenerate">¶¬‚·‚é</button>
     </div>
     <div class="result-box" id="bResult"></div>
     <div style="margin-top:24px;border-top:2px dashed var(--border);padding-top:20px">
-      <h3 style="font-size:15px;font-weight:700;margin-bottom:12px;color:var(--text)">æ‰‹å‹•ã§ãƒ¦ãƒ¼ã‚¶ãƒ¼ç™»éŒ²</h3>
+      <h3 style="font-size:15px;font-weight:700;margin-bottom:12px;color:var(--text)">è“®‚Åƒ†[ƒU[“o˜^</h3>
       <div class="batch-form" style="flex-wrap:wrap">
-        <label>ãƒ­ã‚°ã‚¤ãƒ³ID<input type="text" id="mUser" placeholder="ä¾‹: 101005" style="width:90px"></label>
-        <label>è¡¨ç¤ºå<input type="text" id="mDisp" placeholder="æ°å" style="width:90px"></label>
-        <label>ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰<input type="text" id="mPass" value="111111" style="width:70px"></label>
-        <label>æ¨©é™<select id="mRole"><option value="student">ç”Ÿå¾’</option><option value="teacher">å…ˆç”Ÿ</option><option value="president">éƒ¨é•·</option><option value="vice-president">å‰¯éƒ¨é•·</option><option value="chairperson">å§”å“¡é•·</option><option value="admin">ç®¡ç†è€…</option></select></label>
-        <label>å­¦å¹´<input type="number" id="mGrade" min="1" max="3" style="width:50px"></label>
-        <label>ã‚¯ãƒ©ã‚¹<input type="number" id="mClass" min="1" max="10" style="width:50px"></label>
-        <label>ç•ªå·<input type="number" id="mSeat" min="1" max="50" style="width:60px"></label>
-        <label>éƒ¨æ´»<select id="mClub"><option value="">---</option><option>å¹å¥æ¥½éƒ¨</option><option>èŒ¶é“éƒ¨</option><option>ç¾è¡“éƒ¨</option><option>å“çƒéƒ¨</option><option>ãƒ†ãƒ‹ã‚¹éƒ¨å¥³å­</option><option>ãƒ†ãƒ‹ã‚¹éƒ¨ç”·å­</option><option>ã‚µãƒƒã‚«ãƒ¼éƒ¨</option><option>é‡çƒéƒ¨</option><option>é™¸ä¸Šéƒ¨</option><option>ãƒã‚¹ã‚±éƒ¨å¥³å­</option><option>ãƒã‚¹ã‚±éƒ¨ç”·å­</option><option>ãƒãƒ¬ãƒ¼éƒ¨</option></select></label>
-        <label>å§”å“¡ä¼š<select id="mComm"><option value="">---</option><option>æ•´å‚™å§”å“¡ä¼š</option><option>ç”Ÿæ´»å§”å“¡ä¼š</option><option>é¸æŒ™ç®¡ç†å§”å“¡ä¼š</option><option>å›³æ›¸å§”å“¡ä¼š</option><option>çµ¦é£Ÿå§”å“¡ä¼š</option><option>åˆå”±å§”å“¡ä¼š</option><option>ä½“è‚²å§”å“¡ä¼š</option><option>ä¿å¥å§”å“¡ä¼š</option><option>æ”¾é€å§”å“¡ä¼š</option></select></label>
-        <button class="btn btn-primary" id="mCreate">ç™»éŒ²</button>
+        <label>ƒƒOƒCƒ“ID<input type="text" id="mUser" placeholder="—á: 101005" style="width:90px"></label>
+        <label>•\¦–¼<input type="text" id="mDisp" placeholder="–¼" style="width:90px"></label>
+        <label>ƒpƒXƒ[ƒh<input type="text" id="mPass" value="111111" style="width:70px"></label>
+        <label>Œ ŒÀ<select id="mRole"><option value="student">¶“k</option><option value="teacher">æ¶</option><option value="president">•”’·</option><option value="vice-president">•›•”’·</option><option value="chairperson">ˆÏˆõ’·</option><option value="admin">ŠÇ—Ò</option></select></label>
+        <label>Šw”N<input type="number" id="mGrade" min="1" max="3" style="width:50px"></label>
+        <label>ƒNƒ‰ƒX<input type="number" id="mClass" min="1" max="10" style="width:50px"></label>
+        <label>”Ô†<input type="number" id="mSeat" min="1" max="50" style="width:60px"></label>
+        <label>•”Šˆ<select id="mClub"><option value="">---</option><option>‘tŠy•”</option><option>’ƒ“¹•”</option><option>”üp•”</option><option>‘ì‹…•”</option><option>ƒeƒjƒX•”—q</option><option>ƒeƒjƒX•”’jq</option><option>ƒTƒbƒJ[•”</option><option>–ì‹…•”</option><option>—¤ã•”</option><option>ƒoƒXƒP•”—q</option><option>ƒoƒXƒP•”’jq</option><option>ƒoƒŒ[•”</option></select></label>
+        <label>ˆÏˆõ‰ï<select id="mComm"><option value="">---</option><option>®”õˆÏˆõ‰ï</option><option>¶ŠˆˆÏˆõ‰ï</option><option>‘I‹“ŠÇ—ˆÏˆõ‰ï</option><option>}‘ˆÏˆõ‰ï</option><option>‹‹HˆÏˆõ‰ï</option><option>‡¥ˆÏˆõ‰ï</option><option>‘ÌˆçˆÏˆõ‰ï</option><option>•ÛŒ’ˆÏˆõ‰ï</option><option>•ú‘—ˆÏˆõ‰ï</option></select></label>
+        <button class="btn btn-primary" id="mCreate">“o˜^</button>
       </div>
       <div id="mResult" style="margin-top:8px;font-size:13px"></div>
     </div>
@@ -190,7 +190,7 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
   <div class="tab-content" id="tab-posts">
     <div style="overflow-x:auto">
       <table class="user-table">
-        <thead><tr><th>ã‚«ãƒ†ã‚´ãƒª</th><th>ã‚¿ã‚¤ãƒˆãƒ«</th><th>æŠ•ç¨¿è€…</th><th>æ—¥ä»˜</th><th></th></tr></thead>
+        <thead><tr><th>ƒJƒeƒSƒŠ</th><th>ƒ^ƒCƒgƒ‹</th><th>“ŠeÒ</th><th>“ú•t</th><th></th></tr></thead>
         <tbody id="postList"></tbody>
       </table>
     </div>
@@ -199,18 +199,18 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
   <!-- Stats Tab -->
   <div class="tab-content" id="tab-stats">
     <div class="stat-grid" id="statGrid"></div>
-    <div class="card"><h3>æ¨©é™åˆ¥ãƒ¦ãƒ¼ã‚¶ãƒ¼æ•°</h3><div class="bar-chart" id="roleChart"></div></div>
-    <div class="card"><h3>éƒ¨æ´»åˆ¥ãƒ¦ãƒ¼ã‚¶ãƒ¼æ•°</h3><div class="bar-chart" id="clubChart"></div></div>
-    <div class="card"><h3>å§”å“¡ä¼šåˆ¥ãƒ¦ãƒ¼ã‚¶ãƒ¼æ•°</h3><div class="bar-chart" id="committeeChart"></div></div>
+    <div class="card"><h3>Œ ŒÀ•Êƒ†[ƒU[”</h3><div class="bar-chart" id="roleChart"></div></div>
+    <div class="card"><h3>•”Šˆ•Êƒ†[ƒU[”</h3><div class="bar-chart" id="clubChart"></div></div>
+    <div class="card"><h3>ˆÏˆõ‰ï•Êƒ†[ƒU[”</h3><div class="bar-chart" id="committeeChart"></div></div>
   </div>
 
   <!-- Diagnosis Tab -->
   <div class="tab-content" id="tab-diagnosis">
     <div class="card">
-      <h3>ã‚·ã‚¹ãƒ†ãƒ è¨ºæ–­</h3>
-      <p style="font-size:13px;color:var(--sub);margin-bottom:12px">å„APIã‚¨ãƒ³ãƒ‰ãƒã‚¤ãƒ³ãƒˆãƒ»é™çš„ãƒ•ã‚¡ã‚¤ãƒ«ãƒ»ãƒ‡ãƒ¼ã‚¿æ•´åˆæ€§ã‚’ãƒã‚§ãƒƒã‚¯ã—ã€å•é¡Œã‚’å ±å‘Šã—ã¾ã™ã€‚</p>
-      <button class="btn btn-primary" id="diagRun">è¨ºæ–­ã‚’å®Ÿè¡Œ</button>
-      <div id="diagProgress" style="margin-top:10px;font-size:13px;color:var(--sub);display:none">è¨ºæ–­ä¸­...</div>
+      <h3>ƒVƒXƒeƒ€f’f</h3>
+      <p style="font-size:13px;color:var(--sub);margin-bottom:12px">ŠeAPIƒGƒ“ƒhƒ|ƒCƒ“ƒgEÃ“Iƒtƒ@ƒCƒ‹Eƒf[ƒ^®‡«‚ğƒ`ƒFƒbƒN‚µA–â‘è‚ğ•ñ‚µ‚Ü‚·B</p>
+      <button class="btn btn-primary" id="diagRun">f’f‚ğÀs</button>
+      <div id="diagProgress" style="margin-top:10px;font-size:13px;color:var(--sub);display:none">f’f’†...</div>
     </div>
     <div id="diagResults"></div>
   </div>
@@ -218,13 +218,13 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
   <!-- Chat Tab -->
   <div class="tab-content" id="tab-chat">
     <div class="search-bar">
-      <input type="text" id="chatSearchInput" placeholder="ãƒ¦ãƒ¼ã‚¶ãƒ¼åã§æ¤œç´¢" style="max-width:200px">
-      <select id="chatRoleFilter"><option value="">å…¨æ¨©é™</option><option value="teacher">å…ˆç”Ÿ</option><option value="admin">ç®¡ç†è€…</option><option value="student">ç”Ÿå¾’</option><option value="president">éƒ¨é•·</option><option value="vice-president">å‰¯éƒ¨é•·</option><option value="chairperson">å§”å“¡é•·</option></select>
-      <span style="font-size:13px;color:var(--sub);display:flex;align-items:center;gap:4px">å‚åŠ è€…: <strong id="chatPartCount" style="color:var(--primary)">0</strong></span>
+      <input type="text" id="chatSearchInput" placeholder="ƒ†[ƒU[–¼‚ÅŒŸõ" style="max-width:200px">
+      <select id="chatRoleFilter"><option value="">‘SŒ ŒÀ</option><option value="teacher">æ¶</option><option value="admin">ŠÇ—Ò</option><option value="student">¶“k</option><option value="president">•”’·</option><option value="vice-president">•›•”’·</option><option value="chairperson">ˆÏˆõ’·</option></select>
+      <span style="font-size:13px;color:var(--sub);display:flex;align-items:center;gap:4px">Q‰ÁÒ: <strong id="chatPartCount" style="color:var(--primary)">0</strong></span>
     </div>
     <div style="overflow-x:auto">
       <table class="user-table">
-        <thead><tr><th>ãƒ¦ãƒ¼ã‚¶ãƒ¼å</th><th>æ¨©é™</th><th>è¡¨ç¤ºå</th><th>å‚åŠ </th></tr></thead>
+        <thead><tr><th>ƒ†[ƒU[–¼</th><th>Œ ŒÀ</th><th>•\¦–¼</th><th>Q‰Á</th></tr></thead>
         <tbody id="chatUserList"></tbody>
       </table>
     </div>
@@ -234,16 +234,16 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
 <script>
 async function h(p){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(p));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('')}
 const API_BASE=''
-async function a(p,o={}){const t=sessionStorage.getItem('token'),h={'Content-Type':'application/json',...o.headers};if(t)h['Authorization']='Bearer '+t;const r=await fetch(API_BASE+p,{...o,headers:h}),d=await r.json();if(!r.ok)throw new Error(d.error||'ã‚¨ãƒ©ãƒ¼');return d}
+async function a(p,o={}){const t=sessionStorage.getItem('token'),h={'Content-Type':'application/json',...o.headers};if(t)h['Authorization']='Bearer '+t;const r=await fetch(API_BASE+p,{...o,headers:h}),d=await r.json();if(!r.ok)throw new Error(d.error||'ƒGƒ‰[');return d}
 const $=id=>document.getElementById(id),$$=s=>Array.from(document.querySelectorAll(s)),esc=s=>{const d=document.createElement('div');d.textContent=s;return d.innerHTML};
 const u=sessionStorage.getItem('username'),r=sessionStorage.getItem('role'),token=sessionStorage.getItem('token');
 if(!u||!r||!token){window.location.href='02login.html'}
-if(!(r||'').split(',').map(s=>s.trim()).some(s=>['admin','teacher'].includes(s))){alert('æ¨©é™ãŒã‚ã‚Šã¾ã›ã‚“');window.location.href='01index.html'}
-$('aUser').textContent=u+'ï¼ˆç®¡ç†è€…/å…ˆç”Ÿï¼‰';
-const RL={'admin':'ç®¡ç†è€…','teacher':'å…ˆç”Ÿ','president':'éƒ¨é•·','vice-president':'å‰¯éƒ¨é•·','chairperson':'å§”å“¡é•·','student':'ç”Ÿå¾’'};
-const ROLES=[{v:'teacher',l:'å…ˆç”Ÿ'},{v:'president',l:'éƒ¨é•·'},{v:'vice-president',l:'å‰¯éƒ¨é•·'},{v:'chairperson',l:'å§”å“¡é•·'},{v:'student',l:'ç”Ÿå¾’'}];
-const CLUBS=['å¹å¥æ¥½éƒ¨','èŒ¶é“éƒ¨','ç¾è¡“éƒ¨','å“çƒéƒ¨','ãƒ†ãƒ‹ã‚¹éƒ¨å¥³å­','ãƒ†ãƒ‹ã‚¹éƒ¨ç”·å­','ã‚µãƒƒã‚«ãƒ¼éƒ¨','é‡çƒéƒ¨','é™¸ä¸Šéƒ¨','ãƒã‚¹ã‚±éƒ¨å¥³å­','ãƒã‚¹ã‚±éƒ¨ç”·å­','ãƒãƒ¬ãƒ¼éƒ¨'];
-const COMM_GROUPS={'å­¦ç´šå§”å“¡ä¼š':['1å­¦å¹´å§”å“¡ä¼š','2å­¦å¹´å§”å“¡ä¼š','3å­¦å¹´å§”å“¡ä¼š'],'å°‚é–€å§”å“¡ä¼š':['æ•´å‚™å§”å“¡ä¼š','ç”Ÿæ´»å§”å“¡ä¼š','é¸æŒ™ç®¡ç†å§”å“¡ä¼š','å›³æ›¸å§”å“¡ä¼š','çµ¦é£Ÿå§”å“¡ä¼š','åˆå”±å§”å“¡ä¼š','ä½“è‚²å§”å“¡ä¼š','ä¿å¥å§”å“¡ä¼š','æ”¾é€å§”å“¡ä¼š'],'ç‰¹åˆ¥å§”å“¡ä¼š':['ä¸­å¤®å§”å“¡ä¼š','éƒ¨æ´»å‹•å§”å“¡ä¼š']};
+if(!(r||'').split(',').map(s=>s.trim()).some(s=>['admin','teacher'].includes(s))){alert('Œ ŒÀ‚ª‚ ‚è‚Ü‚¹‚ñ');window.location.href='01index.html'}
+$('aUser').textContent=u+'iŠÇ—Ò/æ¶j';
+const RL={'admin':'ŠÇ—Ò','teacher':'æ¶','president':'•”’·','vice-president':'•›•”’·','chairperson':'ˆÏˆõ’·','student':'¶“k'};
+const ROLES=[{v:'teacher',l:'æ¶'},{v:'president',l:'•”’·'},{v:'vice-president',l:'•›•”’·'},{v:'chairperson',l:'ˆÏˆõ’·'},{v:'student',l:'¶“k'}];
+const CLUBS=['‘tŠy•”','’ƒ“¹•”','”üp•”','‘ì‹…•”','ƒeƒjƒX•”—q','ƒeƒjƒX•”’jq','ƒTƒbƒJ[•”','–ì‹…•”','—¤ã•”','ƒoƒXƒP•”—q','ƒoƒXƒP•”’jq','ƒoƒŒ[•”'];
+const COMM_GROUPS={'Šw‹‰ˆÏˆõ‰ï':['1Šw”NˆÏˆõ‰ï','2Šw”NˆÏˆõ‰ï','3Šw”NˆÏˆõ‰ï'],'ê–åˆÏˆõ‰ï':['®”õˆÏˆõ‰ï','¶ŠˆˆÏˆõ‰ï','‘I‹“ŠÇ—ˆÏˆõ‰ï','}‘ˆÏˆõ‰ï','‹‹HˆÏˆõ‰ï','‡¥ˆÏˆõ‰ï','‘ÌˆçˆÏˆõ‰ï','•ÛŒ’ˆÏˆõ‰ï','•ú‘—ˆÏˆõ‰ï'],'“Á•ÊˆÏˆõ‰ï':['’†‰›ˆÏˆõ‰ï','•”Šˆ“®ˆÏˆõ‰ï']};
 const ALL_COMMS=Object.values(COMM_GROUPS).flat();
 function populateCommitteeSelect(sel){
   sel.innerHTML='<option value="">---</option>';
@@ -270,28 +270,28 @@ async function loadNotifications(){
   const el=$('notifList');
   try{
     const notifs=await a('/api/notifications');
-    if(!notifs.length){el.innerHTML='<div class="card" style="text-align:center;color:var(--sub);padding:30px">é€šçŸ¥ã¯ã‚ã‚Šã¾ã›ã‚“</div>';return}
-    el.innerHTML=notifs.map(n=>`<div class="notif-card"><div style="display:flex;justify-content:space-between;align-items:start"><div class="notif-msg">${esc(n.message)}</div></div><div style="display:flex;justify-content:space-between;align-items:center"><span class="notif-time">${new Date(n.created_at).toLocaleString('ja-JP')}</span><button class="btn btn-sm btn-outline" onclick="dismissNotif('${n.id}')">è§£é™¤</button></div></div>`).join('');
-  }catch(e){el.innerHTML='<div class="card" style="text-align:center;color:var(--sub)">èª­ã¿è¾¼ã¿ã‚¨ãƒ©ãƒ¼</div>'}
+    if(!notifs.length){el.innerHTML='<div class="card" style="text-align:center;color:var(--sub);padding:30px">’Ê’m‚Í‚ ‚è‚Ü‚¹‚ñ</div>';return}
+    el.innerHTML=notifs.map(n=>`<div class="notif-card"><div style="display:flex;justify-content:space-between;align-items:start"><div class="notif-msg">${esc(n.message)}</div></div><div style="display:flex;justify-content:space-between;align-items:center"><span class="notif-time">${new Date(n.created_at).toLocaleString('ja-JP')}</span><button class="btn btn-sm btn-outline" onclick="dismissNotif('${n.id}')">‰ğœ</button></div></div>`).join('');
+  }catch(e){el.innerHTML='<div class="card" style="text-align:center;color:var(--sub)">“Ç‚İ‚İƒGƒ‰[</div>'}
 }
 async function dismissNotif(id){try{await a('/api/notifications/'+id+'/dismiss',{method:'POST'});loadNotifications()}catch(e){}}
 
 // === Users ===
 let usersData=[];
 async function loadUsers(){
-  try{usersData=await a('/api/users');populateBulkFilters();renderUsers()}catch(e){if(e.message.includes('èªè¨¼')){sessionStorage.clear();window.location.href='02login.html'}}
+  try{usersData=await a('/api/users');populateBulkFilters();renderUsers()}catch(e){if(e.message.includes('”FØ')){sessionStorage.clear();window.location.href='02login.html'}}
 }
 function populateBulkFilters(){
   const grades = [...new Set(usersData.map(x => x.grade).filter(Boolean))].sort();
   const gEl = $('bulkGrade');
-  gEl.innerHTML = '<option value="">å­¦å¹´ã‚’é¸æŠ</option>' + grades.map(g => `<option value="${esc(g)}">${esc(g)}</option>`).join('');
+  gEl.innerHTML = '<option value="">Šw”N‚ğ‘I‘ğ</option>' + grades.map(g => `<option value="${esc(g)}">${esc(g)}</option>`).join('');
   updateBulkClasses();
 }
 function updateBulkClasses(){
   const grade = $('bulkGrade').value;
   const classes = [...new Set(usersData.filter(x => !grade || x.grade === grade).map(x => x.class_num).filter(Boolean))].sort();
   const cEl = $('bulkClass');
-  cEl.innerHTML = '<option value="">å…¨ã‚¯ãƒ©ã‚¹</option>' + classes.map(c => `<option value="${esc(c)}">${esc(c)}çµ„</option>`).join('');
+  cEl.innerHTML = '<option value="">‘SƒNƒ‰ƒX</option>' + classes.map(c => `<option value="${esc(c)}">${esc(c)}‘g</option>`).join('');
 }
 function renderUsers(){
   const q=$('searchInput').value.trim().toLowerCase(),roleFilter=$('searchRole').value;
@@ -302,8 +302,8 @@ function renderUsers(){
     const userRoles=(x.role||'').split(',').map(s=>s.trim());
     const isAdmin=userRoles.includes('admin');
     const sd=!isAdmin||(u.role||'').includes('admin');
-    const pwShow=x.password_plain?'<span class="pwd-show" onclick="this.textContent=this.textContent===\'******\'?\'"+esc(x.password_plain)+"\' :\'******\'">******</span>':'â€”';
-    const dt=x.created_at?new Date(x.created_at).toLocaleDateString('ja-JP',{month:'numeric',day:'numeric',year:'numeric'}):'â€”';
+    const pwShow=x.password_plain?'<span class="pwd-show" onclick="this.textContent=this.textContent===\'******\'?\'"+esc(x.password_plain)+"\' :\'******\'">******</span>':'?';
+    const dt=x.created_at?new Date(x.created_at).toLocaleDateString('ja-JP',{month:'numeric',day:'numeric',year:'numeric'}):'?';
     const lockInfo=''; // would need separate lock query
     const roleHtml=ROLES.map(rr=>{
       const checked=userRoles.includes(rr.v);
@@ -312,26 +312,26 @@ function renderUsers(){
     }).join('');
     const isOwner=u.role||'';
     const actions=`<div style="display:flex;gap:2px;flex-wrap:nowrap">
-      ${sd&&x.id!==u.id?`<button class="btn btn-danger btn-sm" onclick="delUser('${x.id}','${esc(x.username)}')">å‰Š</button>`:''}
+      ${sd&&x.id!==u.id?`<button class="btn btn-danger btn-sm" onclick="delUser('${x.id}','${esc(x.username)}')">í</button>`:''}
     </div>`;
     tr.innerHTML=`<td style="width:24px;text-align:center"><input type="checkbox" class="user-select" data-id="${esc(x.id)}"></td><td style="font-size:10px">${esc(x.username)}</td>
       <td><input type="text" value="${esc(x.display_name||'')}" onchange="updField('${x.id}','display_name',this.value)" style="width:60px"></td>
-      <td style="white-space:normal">${sd?pwShow+'<br><input type="text" placeholder="æ–°PW" onchange="setPwd(\'${x.id}\',this)" style="width:50px;font-size:10px;margin-top:2px">':'â€”'}</td>
+      <td style="white-space:normal">${sd?pwShow+'<br><input type="text" placeholder="VPW" onchange="setPwd(\'${x.id}\',this)" style="width:50px;font-size:10px;margin-top:2px">':'?'}</td>
       <td><div class="role-group">${roleHtml}</div></td>
-      <td>${isAdmin?'<span class="lock-badge">ç®¡ç†è€…</span>':''}</td>
+      <td>${isAdmin?'<span class="lock-badge">ŠÇ—Ò</span>':''}</td>
       <td><input type="text" value="${esc(x.grade||'')}" onchange="updField('${x.id}','grade',this.value)" style="width:40px"></td>
       <td><input type="text" value="${esc(x.class_num||'')}" onchange="updField('${x.id}','class_num',this.value)" style="width:35px"></td>
       <td><input type="text" value="${esc(x.seat_num||'')}" onchange="updField('${x.id}','seat_num',this.value)" style="width:35px"></td>
-      <td><select onchange="updField('${x.id}','club',this.value)"><option value="">â€”</option>${CLUBS.map(c=>'<option value="'+c+'"'+(x.club===c?' selected':'')+'>'+c+'</option>').join('')}</select></td>
-      <td><select onchange="updField('${x.id}','committee',this.value)"><option value="">â€”</option>${Object.entries(COMM_GROUPS).map(([g,items])=>'<optgroup label="'+g+'">'+items.map(c=>'<option value="'+c+'"'+(x.committee===c?' selected':'')+'>'+c+'</option>').join('')+'</optgroup>').join('')}</select></td>
-      <td>${isAdmin||userRoles.includes('teacher')?`<select onchange="updField('${x.id}','teacher_grade',this.value)"><option value="">â€”</option><option value="1"${x.teacher_grade==='1'?' selected':''}>1å¹´</option><option value="2"${x.teacher_grade==='2'?' selected':''}>2å¹´</option><option value="3"${x.teacher_grade==='3'?' selected':''}>3å¹´</option><option value="other"${x.teacher_grade==='other'?' selected':''}>ãã®ä»–</option></select>`:'â€”'}</td>
-      <td>${isAdmin||userRoles.includes('teacher')?`<input type="text" value="${esc(x.teacher_subject||'')}" onchange="updField('${x.id}','teacher_subject',this.value)" style="width:50px">`:'â€”'}</td>
-      <td>${isAdmin||userRoles.includes('teacher')?`<select onchange="updField('${x.id}','teacher_homeroom',this.value)"><option value="">â€”</option>${[1,2,3,4,5,6,7,8,9,10].map(n=>'<option value="'+n+'"'+(x.teacher_homeroom==String(n)?' selected':'')+'>'+n+'çµ„</option>').join('')}</select>`:'â€”'}</td>
+      <td><select onchange="updField('${x.id}','club',this.value)"><option value="">?</option>${CLUBS.map(c=>'<option value="'+c+'"'+(x.club===c?' selected':'')+'>'+c+'</option>').join('')}</select></td>
+      <td><select onchange="updField('${x.id}','committee',this.value)"><option value="">?</option>${Object.entries(COMM_GROUPS).map(([g,items])=>'<optgroup label="'+g+'">'+items.map(c=>'<option value="'+c+'"'+(x.committee===c?' selected':'')+'>'+c+'</option>').join('')+'</optgroup>').join('')}</select></td>
+      <td>${isAdmin||userRoles.includes('teacher')?`<select onchange="updField('${x.id}','teacher_grade',this.value)"><option value="">?</option><option value="1"${x.teacher_grade==='1'?' selected':''}>1”N</option><option value="2"${x.teacher_grade==='2'?' selected':''}>2”N</option><option value="3"${x.teacher_grade==='3'?' selected':''}>3”N</option><option value="other"${x.teacher_grade==='other'?' selected':''}>‚»‚Ì‘¼</option></select>`:'?'}</td>
+      <td>${isAdmin||userRoles.includes('teacher')?`<input type="text" value="${esc(x.teacher_subject||'')}" onchange="updField('${x.id}','teacher_subject',this.value)" style="width:50px">`:'?'}</td>
+      <td>${isAdmin||userRoles.includes('teacher')?`<select onchange="updField('${x.id}','teacher_homeroom',this.value)"><option value="">?</option>${[1,2,3,4,5,6,7,8,9,10].map(n=>'<option value="'+n+'"'+(x.teacher_homeroom==String(n)?' selected':'')+'>'+n+'‘g</option>').join('')}</select>`:'?'}</td>
       <td>${dt}</td><td>${actions}</td>`;
     tr.querySelectorAll('input[type=checkbox][data-v]').forEach(cb=>{cb.onchange=function(){updRole(this.dataset.id,this.dataset.v,this.checked)}});
     t.appendChild(tr);
   }
-  if(!flt.length)t.innerHTML='<tr><td colspan="16" style="text-align:center;padding:20px;color:var(--sub)">è©²å½“ã™ã‚‹ãƒ¦ãƒ¼ã‚¶ãƒ¼ãŒã„ã¾ã›ã‚“</td></tr>';
+  if(!flt.length)t.innerHTML='<tr><td colspan="16" style="text-align:center;padding:20px;color:var(--sub)">ŠY“–‚·‚éƒ†[ƒU[‚ª‚¢‚Ü‚¹‚ñ</td></tr>';
   updateBulkCount();
 }
 async function updRole(id,val,add){
@@ -344,10 +344,10 @@ async function updRole(id,val,add){
   }catch(e){alert(e.message);loadUsers()}
 }
 async function updField(id,field,val){try{await a('/api/users/'+id,{method:'PUT',body:JSON.stringify({[field]:val})})}catch(e){alert(e.message)}}
-async function delUser(id,un){if(!confirm('ã€Œ'+un+'ã€ã‚’å‰Šé™¤ã—ã¾ã™ã‹ï¼Ÿ'))return;try{await a('/api/users/'+id,{method:'DELETE'});loadUsers()}catch(e){alert(e.message)}}
-async function resetPwd(id,un){if(!confirm('ã€Œ'+un+'ã€ã®ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ã‚’å†ç™ºè¡Œã—ã¾ã™ã‹ï¼Ÿ'))return;try{const r=await a('/api/users/'+id+'/reset-password',{method:'PUT'});alert('æ–°ã—ã„ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰: '+r.newPassword);loadUsers()}catch(e){alert(e.message)}}
-async function setPwd(id,inp){const pw=inp.value.trim();if(!pw||pw.length<6){alert('6æ–‡å­—ä»¥ä¸Šå…¥åŠ›ã—ã¦ãã ã•ã„');inp.value='';return}if(!confirm('ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ã‚’ã€Œ'+pw+'ã€ã«å¤‰æ›´ã—ã¾ã™ã‹ï¼Ÿ')){inp.value='';return}try{await a('/api/users/'+id,{method:'PUT',body:JSON.stringify({password:pw})});alert('å¤‰æ›´ã—ã¾ã—ãŸ');inp.value='';loadUsers()}catch(e){alert(e.message);inp.value=''}}
-async function unlockUser(id){try{await a('/api/users/'+id+'/unlock',{method:'POST'});alert('ãƒ­ãƒƒã‚¯ã‚’è§£é™¤ã—ã¾ã—ãŸ');loadUsers()}catch(e){alert(e.message)}}
+async function delUser(id,un){if(!confirm('u'+un+'v‚ğíœ‚µ‚Ü‚·‚©H'))return;try{await a('/api/users/'+id,{method:'DELETE'});loadUsers()}catch(e){alert(e.message)}}
+async function resetPwd(id,un){if(!confirm('u'+un+'v‚ÌƒpƒXƒ[ƒh‚ğÄ”­s‚µ‚Ü‚·‚©H'))return;try{const r=await a('/api/users/'+id+'/reset-password',{method:'PUT'});alert('V‚µ‚¢ƒpƒXƒ[ƒh: '+r.newPassword);loadUsers()}catch(e){alert(e.message)}}
+async function setPwd(id,inp){const pw=inp.value.trim();if(!pw||pw.length<6){alert('6•¶šˆÈã“ü—Í‚µ‚Ä‚­‚¾‚³‚¢');inp.value='';return}if(!confirm('ƒpƒXƒ[ƒh‚ğu'+pw+'v‚É•ÏX‚µ‚Ü‚·‚©H')){inp.value='';return}try{await a('/api/users/'+id,{method:'PUT',body:JSON.stringify({password:pw})});alert('•ÏX‚µ‚Ü‚µ‚½');inp.value='';loadUsers()}catch(e){alert(e.message);inp.value=''}}
+async function unlockUser(id){try{await a('/api/users/'+id+'/unlock',{method:'POST'});alert('ƒƒbƒN‚ğ‰ğœ‚µ‚Ü‚µ‚½');loadUsers()}catch(e){alert(e.message)}}
 $('searchInput').addEventListener('input',renderUsers);
 $('searchRole').addEventListener('change',renderUsers);
 $('aRefresh').addEventListener('click',loadUsers);
@@ -355,7 +355,7 @@ $('aRefresh').addEventListener('click',loadUsers);
 // === Bulk actions ===
 function updateBulkCount() {
   const checked = document.querySelectorAll('.user-select:checked').length;
-  $('bulkSelectedCount').textContent = checked + 'äººé¸æŠä¸­';
+  $('bulkSelectedCount').textContent = checked + 'l‘I‘ğ’†';
 }
 document.addEventListener('change', e => {
   if (e.target.classList.contains('user-select')) updateBulkCount();
@@ -370,11 +370,11 @@ $('selectAllH').addEventListener('change', function() {
 });
 $('bulkDeleteBtn').addEventListener('click', async () => {
   const ids = [...document.querySelectorAll('.user-select:checked')].map(cb => cb.dataset.id);
-  if (!ids.length) { alert('å‰Šé™¤ã™ã‚‹ãƒ¦ãƒ¼ã‚¶ãƒ¼ã‚’é¸æŠã—ã¦ãã ã•ã„'); return }
-  if (!confirm(ids.length + 'äººã®ãƒ¦ãƒ¼ã‚¶ãƒ¼ã‚’å‰Šé™¤ã—ã¾ã™ã‹ï¼Ÿ')) return;
+  if (!ids.length) { alert('íœ‚·‚éƒ†[ƒU[‚ğ‘I‘ğ‚µ‚Ä‚­‚¾‚³‚¢'); return }
+  if (!confirm(ids.length + 'l‚Ìƒ†[ƒU[‚ğíœ‚µ‚Ü‚·‚©H')) return;
   try {
     await a('/api/users/batch-delete', { method: 'POST', body: JSON.stringify({ ids }) });
-    alert(ids.length + 'äººã‚’å‰Šé™¤ã—ã¾ã—ãŸ');
+    alert(ids.length + 'l‚ğíœ‚µ‚Ü‚µ‚½');
     loadUsers();
   } catch(e) { alert(e.message) }
 });
@@ -382,12 +382,12 @@ $('bulkGrade').addEventListener('change', updateBulkClasses);
 $('bulkGradeDeleteBtn').addEventListener('click', async () => {
   const grade = $('bulkGrade').value;
   const cls = $('bulkClass').value;
-  if (!grade) { alert('å­¦å¹´ã‚’é¸æŠã—ã¦ãã ã•ã„'); return }
-  const label = (cls ? grade + 'å¹´ ' + cls + 'çµ„' : grade + 'å¹´');
-  if (!confirm(label + 'ã®ãƒ¦ãƒ¼ã‚¶ãƒ¼ã‚’å…¨å“¡å‰Šé™¤ã—ã¾ã™ã‹ï¼Ÿï¼ˆç®¡ç†è€…ãƒ»è‡ªåˆ†è‡ªèº«ã‚’é™¤ãï¼‰')) return;
+  if (!grade) { alert('Šw”N‚ğ‘I‘ğ‚µ‚Ä‚­‚¾‚³‚¢'); return }
+  const label = (cls ? grade + '”N ' + cls + '‘g' : grade + '”N');
+  if (!confirm(label + '‚Ìƒ†[ƒU[‚ğ‘Sˆõíœ‚µ‚Ü‚·‚©HiŠÇ—ÒE©•ª©g‚ğœ‚­j')) return;
   try {
     const r = await a('/api/users/batch-delete', { method: 'POST', body: JSON.stringify({ grade, class_num: cls || undefined }) });
-    alert(r.deleted + 'äººã‚’å‰Šé™¤ã—ã¾ã—ãŸ');
+    alert(r.deleted + 'l‚ğíœ‚µ‚Ü‚µ‚½');
     loadUsers();
   } catch(e) { alert(e.message) }
 });
@@ -409,40 +409,40 @@ function renderClassSizes(row){
   let html='';
   for(let i=0;i<n;i++){
     const v=vals[i]||30;
-    html+='<label class="class-size-wrap">'+(i+1)+'çµ„<input type="number" class="class-size-input" value="'+v+'" min="1" max="50"></label>';
+    html+='<label class="class-size-wrap">'+(i+1)+'‘g<input type="number" class="class-size-input" value="'+v+'" min="1" max="50"></label>';
   }
   container.innerHTML=html;
 }
 function addBatchYearRow(){
   const div=document.createElement('div');div.className='batch-year-row';
-  div.innerHTML='<label>å…¥å­¦å¹´åº¦<input type="number" class="b-year" value="2026" min="2020" max="2035"></label>'+
-    '<label>ã‚¯ãƒ©ã‚¹æ•°<input type="number" class="b-class-count" value="3" min="1" max="10"></label>'+
+  div.innerHTML='<label>“üŠw”N“x<input type="number" class="b-year" value="2026" min="2020" max="2035"></label>'+
+    '<label>ƒNƒ‰ƒX”<input type="number" class="b-class-count" value="3" min="1" max="10"></label>'+
     '<div class="class-sizes"></div>'+
-    '<button class="btn-remove-year" onclick="this.parentElement.remove()">å‰Šé™¤</button>';
+    '<button class="btn-remove-year" onclick="this.parentElement.remove()">íœ</button>';
   $('batchYears').appendChild(div);
   initBatchRow(div);
 }
 $('addBatchYear').addEventListener('click',addBatchYearRow);
 $('bGenerate').addEventListener('click',async()=>{
   const rows=$$('.batch-year-row');
-  if(rows.length===0){alert('å¹´åº¦ã‚’è¿½åŠ ã—ã¦ãã ã•ã„');return}
+  if(rows.length===0){alert('”N“x‚ğ’Ç‰Á‚µ‚Ä‚­‚¾‚³‚¢');return}
   const years=[];
   for(const r of rows){
     const year=r.querySelector('.b-year').value;
     const sizes=Array.from(r.querySelectorAll('.class-size-input')).map(x=>parseInt(x.value));
-    if(!sizes.every(s=>s>0)){alert(year+'å¹´åº¦: ã‚¯ãƒ©ã‚¹äººæ•°ãŒä¸æ­£ã§ã™');return}
+    if(!sizes.every(s=>s>0)){alert(year+'”N“x: ƒNƒ‰ƒXl”‚ª•s³‚Å‚·');return}
     years.push({year,classes:sizes});
   }
   const password=$('bPassword').value;
-  const label=years.map(y=>y.year+'å¹´åº¦ '+y.classes.map((s,i)=>(i+1)+'çµ„'+s+'äºº').join(' ')).join('ã€');
-  if(!confirm('ä»¥ä¸‹ã®å†…å®¹ã§ç”Ÿæˆã—ã¾ã™ã‹ï¼Ÿ\n'+label+'\nãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰: '+password))return;
-  $('bGenerate').disabled=true;$('bGenerate').textContent='ç”Ÿæˆä¸­...';
+  const label=years.map(y=>y.year+'”N“x '+y.classes.map((s,i)=>(i+1)+'‘g'+s+'l').join(' ')).join('A');
+  if(!confirm('ˆÈ‰º‚Ì“à—e‚Å¶¬‚µ‚Ü‚·‚©H\n'+label+'\nƒpƒXƒ[ƒh: '+password))return;
+  $('bGenerate').disabled=true;$('bGenerate').textContent='¶¬’†...';
   try{
     const r=await a('/api/users/batch',{method:'POST',body:JSON.stringify({years,password})});
     const box=$('bResult');box.className='result-box show';
-    box.innerHTML='<strong>'+r.created+'äºº</strong> ã®ç”Ÿå¾’IDã‚’ç”Ÿæˆã—ã¾ã—ãŸ<br>åˆæœŸãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰: <strong>'+esc(r.password)+'</strong><br>ç”ŸæˆID: '+r.students.slice(0,5).join(', ')+(r.students.length>5?' â€¦ä»–'+(r.students.length-5)+'ä»¶':'');
+    box.innerHTML='<strong>'+r.created+'l</strong> ‚Ì¶“kID‚ğ¶¬‚µ‚Ü‚µ‚½<br>‰ŠúƒpƒXƒ[ƒh: <strong>'+esc(r.password)+'</strong><br>¶¬ID: '+r.students.slice(0,5).join(', ')+(r.students.length>5?' c‘¼'+(r.students.length-5)+'Œ':'');
   }catch(e){alert(e.message)}
-  $('bGenerate').disabled=false;$('bGenerate').textContent='ç”Ÿæˆã™ã‚‹';
+  $('bGenerate').disabled=false;$('bGenerate').textContent='¶¬‚·‚é';
 });
 renderBatchYears();
 
@@ -452,9 +452,9 @@ $('mCreate').addEventListener('click', async () => {
   const disp = $('mDisp').value.trim() || user, role = $('mRole').value;
   const grade = $('mGrade').value, cls = $('mClass').value, seat = $('mSeat').value;
   const club = $('mClub').value, comm = $('mComm').value;
-  if (!user || !pass) { $('mResult').textContent = 'IDã¨ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ã¯å¿…é ˆã§ã™'; return }
-  if (!user.match(/^\d+$/)) { $('mResult').textContent = 'IDã¯æ•°å­—ã®ã¿ã§ã™'; return }
-  $('mCreate').disabled = true; $('mCreate').textContent = 'ç™»éŒ²ä¸­...';
+  if (!user || !pass) { $('mResult').textContent = 'ID‚ÆƒpƒXƒ[ƒh‚Í•K{‚Å‚·'; return }
+  if (!user.match(/^\d+$/)) { $('mResult').textContent = 'ID‚Í”š‚Ì‚İ‚Å‚·'; return }
+  $('mCreate').disabled = true; $('mCreate').textContent = '“o˜^’†...';
   try {
     const passHash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pass));
     const hx = Array.from(new Uint8Array(passHash)).map(x => x.toString(16).padStart(2, '0')).join('');
@@ -464,30 +464,30 @@ $('mCreate').addEventListener('click', async () => {
       club, committee: comm, display_name: disp
     })});
     $('mResult').style.color = 'var(--primary)';
-    $('mResult').textContent = 'ç™»éŒ²ã—ã¾ã—ãŸ: ' + r.username;
+    $('mResult').textContent = '“o˜^‚µ‚Ü‚µ‚½: ' + r.username;
     $('mUser').value = ''; $('mDisp').value = '';
     if ($('mGrade').value) { const n = parseInt($('mGrade').value) + 1; if (n <= 3) $('mGrade').value = n }
     loadUsers();
-  } catch(e) { $('mResult').style.color = 'var(--danger)'; $('mResult').textContent = 'ã‚¨ãƒ©ãƒ¼: ' + e.message }
-  $('mCreate').disabled = false; $('mCreate').textContent = 'ç™»éŒ²';
+  } catch(e) { $('mResult').style.color = 'var(--danger)'; $('mResult').textContent = 'ƒGƒ‰[: ' + e.message }
+  $('mCreate').disabled = false; $('mCreate').textContent = '“o˜^';
 });
 
 // === Posts ===
 async function loadPosts(){
-  const t=$('postList');t.innerHTML='<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--sub)">èª­ã¿è¾¼ã¿ä¸­...</td></tr>';
+  const t=$('postList');t.innerHTML='<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--sub)">“Ç‚İ‚İ’†...</td></tr>';
   try{
     const ps=await a('/api/admin/posts');
-    if(!ps.length){t.innerHTML='<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--sub)">æŠ•ç¨¿ãŒã‚ã‚Šã¾ã›ã‚“</td></tr>';return}
+    if(!ps.length){t.innerHTML='<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--sub)">“Še‚ª‚ ‚è‚Ü‚¹‚ñ</td></tr>';return}
     t.innerHTML='';
     ps.forEach(p=>{
       const d=new Date(p.created_at);const ds=(d.getMonth()+1)+'/'+d.getDate()+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
       const tr=document.createElement('tr');
-      tr.innerHTML='<td>'+esc(p.category)+'</td><td>'+esc(p.title)+'</td><td>'+esc(p.display_name||p.username)+'</td><td>'+ds+'</td><td><button class="btn btn-danger btn-sm" onclick="delPost(\''+p.id+'\')">å‰Šé™¤</button></td>';
+      tr.innerHTML='<td>'+esc(p.category)+'</td><td>'+esc(p.title)+'</td><td>'+esc(p.display_name||p.username)+'</td><td>'+ds+'</td><td><button class="btn btn-danger btn-sm" onclick="delPost(\''+p.id+'\')">íœ</button></td>';
       t.appendChild(tr);
     });
-  }catch(e){t.innerHTML='<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--sub)">ã‚¨ãƒ©ãƒ¼</td></tr>'}
+  }catch(e){t.innerHTML='<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--sub)">ƒGƒ‰[</td></tr>'}
 }
-async function delPost(id){if(!confirm('ã“ã®æŠ•ç¨¿ã‚’å‰Šé™¤ã—ã¾ã™ã‹ï¼Ÿ'))return;try{await a('/api/posts/'+id,{method:'DELETE'});loadPosts()}catch(e){alert(e.message)}}
+async function delPost(id){if(!confirm('‚±‚Ì“Še‚ğíœ‚µ‚Ü‚·‚©H'))return;try{await a('/api/posts/'+id,{method:'DELETE'});loadPosts()}catch(e){alert(e.message)}}
 
 // === Stats ===
 async function loadStats(){
@@ -495,19 +495,19 @@ async function loadStats(){
     const s=await a('/api/stats');
     const grid=$('statGrid');
     const cards=[
-      {label:'ç·ãƒ¦ãƒ¼ã‚¶ãƒ¼æ•°',num:s.totalUsers},{label:'å…ˆç”Ÿ',num:s.byRole?.teacher||0},
-      {label:'éƒ¨é•·',num:s.byRole?.president||0},{label:'å‰¯éƒ¨é•·',num:s.byRole?.['vice-president']||0},
-      {label:'å§”å“¡é•·',num:s.byRole?.chairperson||0},{label:'ç”Ÿå¾’',num:s.byRole?.student||0},
-      {label:'æŠ•ç¨¿æ•°',num:s.totalPosts},{label:'ãƒ­ãƒƒã‚¯ä¸­',num:s.lockedAccounts||0}
+      {label:'‘ƒ†[ƒU[”',num:s.totalUsers},{label:'æ¶',num:s.byRole?.teacher||0},
+      {label:'•”’·',num:s.byRole?.president||0},{label:'•›•”’·',num:s.byRole?.['vice-president']||0},
+      {label:'ˆÏˆõ’·',num:s.byRole?.chairperson||0},{label:'¶“k',num:s.byRole?.student||0},
+      {label:'“Še”',num:s.totalPosts},{label:'ƒƒbƒN’†',num:s.lockedAccounts||0}
     ];
     grid.innerHTML=cards.map(c=>'<div class="stat-card"><div class="stat-num">'+c.num+'</div><div class="stat-label">'+c.label+'</div></div>').join('');
-    renderBar($('roleChart'),s.byRole,{'admin':'ç®¡ç†è€…','teacher':'å…ˆç”Ÿ','president':'éƒ¨é•·','vice-president':'å‰¯éƒ¨é•·','chairperson':'å§”å“¡é•·','student':'ç”Ÿå¾’'});
+    renderBar($('roleChart'),s.byRole,{'admin':'ŠÇ—Ò','teacher':'æ¶','president':'•”’·','vice-president':'•›•”’·','chairperson':'ˆÏˆõ’·','student':'¶“k'});
     renderBar($('clubChart'),s.byClub,{});
     renderBar($('committeeChart'),s.byCommittee,{});
   }catch(e){}
 }
 function renderBar(el,data,labels){
-  const keys=Object.keys(data);if(!keys.length){el.innerHTML='<div style="color:var(--sub);font-size:13px">ãƒ‡ãƒ¼ã‚¿ãŒã‚ã‚Šã¾ã›ã‚“</div>';return}
+  const keys=Object.keys(data);if(!keys.length){el.innerHTML='<div style="color:var(--sub);font-size:13px">ƒf[ƒ^‚ª‚ ‚è‚Ü‚¹‚ñ</div>';return}
   const mx=Math.max(...keys.map(k=>data[k]));
   el.innerHTML=keys.sort((a,b)=>data[b]-data[a]).map(k=>'<div class="bar-row"><span class="bar-label">'+esc(labels[k]||k)+'</span><span class="bar-val">'+data[k]+'</span><div class="bar-fill" style="width:'+Math.max(data[k]/mx*100,5)+'%"></div></div>').join('');
 }
@@ -525,7 +525,7 @@ function renderChatUsers(){
   const t=$('chatUserList');t.innerHTML='';
   flt.forEach(x=>{
     const inChat=partUsernames.has(x.username);
-    const roles=(x.role||'').split(',').map(r=>RL[r.trim()]||r.trim()).filter(Boolean).join('Â·');
+    const roles=(x.role||'').split(',').map(r=>RL[r.trim()]||r.trim()).filter(Boolean).join('E');
     const isProtected=(x.role||'').includes('admin')||(x.role||'').includes('teacher');
     const tr=document.createElement('tr');
     tr.innerHTML='<td>'+esc(x.username)+'</td><td>'+esc(roles)+'</td><td>'+esc(x.display_name||'')+'</td><td><input type="checkbox" '+(inChat?'checked':'')+' data-u="'+esc(x.username)+'" '+(isProtected?'disabled':'')+'></td>';
@@ -541,12 +541,12 @@ $('chatRoleFilter').addEventListener('change',renderChatUsers);
 
 // === Diagnosis ===
 const DIAG_CHECKS = [
-  { id: 'api-ping', label: 'APIã‚µãƒ¼ãƒãƒ¼æ¥ç¶š' },
-  { id: 'endpoints', label: 'ä¸»è¦APIã‚¨ãƒ³ãƒ‰ãƒã‚¤ãƒ³ãƒˆ' },
-  { id: 'static', label: 'ãƒšãƒ¼ã‚¸ãƒ•ã‚¡ã‚¤ãƒ«é…ä¿¡' },
-  { id: 'garbled', label: 'æ–‡å­—åŒ–ã‘ãƒã‚§ãƒƒã‚¯' },
-  { id: 'integrity', label: 'ãƒ¦ãƒ¼ã‚¶ãƒ¼ãƒ‡ãƒ¼ã‚¿æ•´åˆæ€§' },
-  { id: 'ratelimit', label: 'ã‚¢ã‚¯ã‚»ã‚¹åˆ¶é™çŠ¶æ³' }
+  { id: 'api-ping', label: 'APIƒT[ƒo[Ú‘±' },
+  { id: 'endpoints', label: 'å—vAPIƒGƒ“ƒhƒ|ƒCƒ“ƒg' },
+  { id: 'static', label: 'ƒy[ƒWƒtƒ@ƒCƒ‹”zM' },
+  { id: 'garbled', label: '•¶š‰»‚¯ƒ`ƒFƒbƒN' },
+  { id: 'integrity', label: 'ƒ†[ƒU[ƒf[ƒ^®‡«' },
+  { id: 'ratelimit', label: 'ƒAƒNƒZƒX§ŒÀó‹µ' }
 ];
 
 async function runDiagnosis() {
@@ -567,7 +567,7 @@ async function runDiagnosis() {
     div.style.borderLeft = `4px solid ${borderColor}`;
     div.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center">` +
       `<strong style="font-size:14px">${esc(label)}</strong>` +
-      `<span style="font-size:14px;font-weight:700;color:${borderColor}">${status === 'pass' ? 'æ­£å¸¸' : status === 'warn' ? 'æ³¨æ„' : status === 'fail' ? 'ç•°å¸¸' : 'æƒ…å ±'}</span></div>` +
+      `<span style="font-size:14px;font-weight:700;color:${borderColor}">${status === 'pass' ? '³í' : status === 'warn' ? '’ˆÓ' : status === 'fail' ? 'ˆÙí' : 'î•ñ'}</span></div>` +
       `<div style="font-size:13px;margin-top:6px;white-space:pre-wrap">${esc(msg)}</div>` +
       (detail ? `<div style="font-size:11px;color:var(--sub);margin-top:4px;white-space:pre-wrap">${esc(detail)}</div>` : '');
     container.appendChild(div);
@@ -579,12 +579,12 @@ async function runDiagnosis() {
     const r = await fetch(API_BASE + '/api/me', { headers: { 'Authorization': 'Bearer '+token } });
     const ms = Date.now() - t0;
     if (r.ok) {
-      addResult('api-ping', 'pass', `APIã‚µãƒ¼ãƒãƒ¼ã«æ¥ç¶šã§ãã¾ã—ãŸï¼ˆå¿œç­”æ™‚é–“: ${ms}msï¼‰`);
+      addResult('api-ping', 'pass', `APIƒT[ƒo[‚ÉÚ‘±‚Å‚«‚Ü‚µ‚½i‰“šŠÔ: ${ms}msj`);
     } else {
-      addResult('api-ping', 'fail', `APIã‚µãƒ¼ãƒãƒ¼ãŒ HTTP ${r.status} ã‚’è¿”ã—ã¾ã—ãŸ`, `å­¦æ ¡ã‚¿ãƒ–ãƒ¬ãƒƒãƒˆã‹ã‚‰ã‚¢ã‚¯ã‚»ã‚¹ã™ã‚‹å ´åˆã€ãƒ•ã‚£ãƒ«ã‚¿ãƒ¼ã§ãƒ–ãƒ­ãƒƒã‚¯ã•ã‚Œã¦ã„ãªã„ã‹ç¢ºèªã—ã¦ãã ã•ã„`);
+      addResult('api-ping', 'fail', `APIƒT[ƒo[‚ª HTTP ${r.status} ‚ğ•Ô‚µ‚Ü‚µ‚½`, `ŠwZƒ^ƒuƒŒƒbƒg‚©‚çƒAƒNƒZƒX‚·‚éê‡AƒtƒBƒ‹ƒ^[‚ÅƒuƒƒbƒN‚³‚ê‚Ä‚¢‚È‚¢‚©Šm”F‚µ‚Ä‚­‚¾‚³‚¢`);
     }
   } catch(e) {
-    addResult('api-ping', 'fail', `APIã‚µãƒ¼ãƒãƒ¼ã«æ¥ç¶šã§ãã¾ã›ã‚“`, `ã‚¨ãƒ©ãƒ¼: ${e.message}\nå­¦æ ¡ã‚¿ãƒ–ãƒ¬ãƒƒãƒˆã®å ´åˆã€Renderï¼ˆonrender.comï¼‰çµŒç”±ã§ã‚¢ã‚¯ã‚»ã‚¹ã—ã¦ã„ã‚‹ã‹ç¢ºèªã—ã¦ãã ã•ã„`);
+    addResult('api-ping', 'fail', `APIƒT[ƒo[‚ÉÚ‘±‚Å‚«‚Ü‚¹‚ñ`, `ƒGƒ‰[: ${e.message}\nŠwZƒ^ƒuƒŒƒbƒg‚Ìê‡ARenderionrender.comjŒo—R‚ÅƒAƒNƒZƒX‚µ‚Ä‚¢‚é‚©Šm”F‚µ‚Ä‚­‚¾‚³‚¢`);
   }
 
   // 2. Endpoints
@@ -595,9 +595,9 @@ async function runDiagnosis() {
     catch(e) { epNg.push(p) }
   }
   if (epNg.length === 0) {
-    addResult('endpoints', 'pass', `å…¨${endpoints.length}ã‚¨ãƒ³ãƒ‰ãƒã‚¤ãƒ³ãƒˆæ­£å¸¸`);
+    addResult('endpoints', 'pass', `‘S${endpoints.length}ƒGƒ“ƒhƒ|ƒCƒ“ƒg³í`);
   } else {
-    addResult('endpoints', 'warn', `${epNg.length}/${endpoints.length} ã®ã‚¨ãƒ³ãƒ‰ãƒã‚¤ãƒ³ãƒˆã§å•é¡Œ`, `ç•°å¸¸: ${epNg.join(', ')}`);
+    addResult('endpoints', 'warn', `${epNg.length}/${endpoints.length} ‚ÌƒGƒ“ƒhƒ|ƒCƒ“ƒg‚Å–â‘è`, `ˆÙí: ${epNg.join(', ')}`);
   }
 
   // 3. Static files
@@ -608,9 +608,9 @@ async function runDiagnosis() {
     catch(e) { sfNg.push(f) }
   }
   if (sfNg.length === 0) {
-    addResult('static', 'pass', `å…¨${sf.length}ãƒ•ã‚¡ã‚¤ãƒ«æ­£å¸¸é…ä¿¡ä¸­`);
+    addResult('static', 'pass', `‘S${sf.length}ƒtƒ@ƒCƒ‹³í”zM’†`);
   } else {
-    addResult('static', 'warn', `${sfNg.length}ãƒ•ã‚¡ã‚¤ãƒ«ã«å•é¡Œ`, `ç•°å¸¸: ${sfNg.join(', ')}`);
+    addResult('static', 'warn', `${sfNg.length}ƒtƒ@ƒCƒ‹‚É–â‘è`, `ˆÙí: ${sfNg.join(', ')}`);
   }
 
   // 4. Garbled text
@@ -619,30 +619,30 @@ async function runDiagnosis() {
     const posts = await a('/api/admin/posts');
     const issues = [];
     const bad = /[^\x20-\x7E\u3000-\u9FFF\uF900-\uFAFF\u3040-\u309F\u30A0-\u30FF\uFF01-\uFF60\uFFE0-\uFFE6\u2000-\u206F\u2026\u3001-\u3002\uFF08-\uFF09\uFF0C\u30FB\u4E00-\u9FFF]/g;
-    for (const u of users) { for (const f of ['display_name','club','committee','class_num']) { if (u[f] && bad.test(u[f])) { bad.lastIndex=0; issues.push(u.username+'ã®'+f) } } }
-    for (const p of posts) { if (p.title && bad.test(p.title)) { bad.lastIndex=0; issues.push('æŠ•ç¨¿ã€Œ'+p.title+'ã€ã®ã‚¿ã‚¤ãƒˆãƒ«') } }
+    for (const u of users) { for (const f of ['display_name','club','committee','class_num']) { if (u[f] && bad.test(u[f])) { bad.lastIndex=0; issues.push(u.username+'‚Ì'+f) } } }
+    for (const p of posts) { if (p.title && bad.test(p.title)) { bad.lastIndex=0; issues.push('“Šeu'+p.title+'v‚Ìƒ^ƒCƒgƒ‹') } }
     if (issues.length === 0) {
-      addResult('garbled', 'pass', 'æ–‡å­—åŒ–ã‘ãƒ‡ãƒ¼ã‚¿ã¯è¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã§ã—ãŸ');
+      addResult('garbled', 'pass', '•¶š‰»‚¯ƒf[ƒ^‚ÍŒ©‚Â‚©‚è‚Ü‚¹‚ñ‚Å‚µ‚½');
     } else {
-      addResult('garbled', 'warn', `${issues.length}ä»¶ã®æ–‡å­—åŒ–ã‘ã‚’æ¤œå‡º`, issues.join('\n'));
+      addResult('garbled', 'warn', `${issues.length}Œ‚Ì•¶š‰»‚¯‚ğŒŸo`, issues.join('\n'));
     }
-  } catch(e) { addResult('garbled','warn','ãƒã‚§ãƒƒã‚¯ä¸­ã«ã‚¨ãƒ©ãƒ¼', e.message) }
+  } catch(e) { addResult('garbled','warn','ƒ`ƒFƒbƒN’†‚ÉƒGƒ‰[', e.message) }
 
   // 5. Data integrity
   try {
     const users = await a('/api/users');
     const issues = [];
     for (const u of users) {
-      if (!u.display_name) issues.push(u.username+' è¡¨ç¤ºåãªã—');
-      if (!u.role) issues.push(u.username+' æ¨©é™ãªã—');
-      if (!u.grade && !(u.role||'').includes('admin') && !(u.role||'').includes('teacher')) issues.push(u.username+' å­¦å¹´ãªã—');
+      if (!u.display_name) issues.push(u.username+' •\¦–¼‚È‚µ');
+      if (!u.role) issues.push(u.username+' Œ ŒÀ‚È‚µ');
+      if (!u.grade && !(u.role||'').includes('admin') && !(u.role||'').includes('teacher')) issues.push(u.username+' Šw”N‚È‚µ');
     }
     if (issues.length === 0) {
-      addResult('integrity', 'pass', `å…¨${users.length}ãƒ¦ãƒ¼ã‚¶ãƒ¼ã®ãƒ‡ãƒ¼ã‚¿ã«å•é¡Œãªã—`);
+      addResult('integrity', 'pass', `‘S${users.length}ƒ†[ƒU[‚Ìƒf[ƒ^‚É–â‘è‚È‚µ`);
     } else {
-      addResult('integrity', 'warn', `${issues.length}ä»¶ã®å•é¡Œ`, issues.join('\n'));
+      addResult('integrity', 'warn', `${issues.length}Œ‚Ì–â‘è`, issues.join('\n'));
     }
-  } catch(e) { addResult('integrity','warn','ãƒã‚§ãƒƒã‚¯ä¸­ã«ã‚¨ãƒ©ãƒ¼', e.message) }
+  } catch(e) { addResult('integrity','warn','ƒ`ƒFƒbƒN’†‚ÉƒGƒ‰[', e.message) }
 
   // 6. Rate limit
   try {
@@ -652,14 +652,14 @@ async function runDiagnosis() {
     if (rem !== null && lim !== null) {
       const pct = Math.round(parseInt(rem)/parseInt(lim)*100);
       if (pct < 20) {
-        addResult('ratelimit', 'warn', `æ®‹ã‚Šã‚ãšã‹ï¼ˆæ®‹ã‚Š${rem}/${lim}å›ã€${pct}%ï¼‰`);
+        addResult('ratelimit', 'warn', `c‚è‚í‚¸‚©ic‚è${rem}/${lim}‰ñA${pct}%j`);
       } else {
-        addResult('ratelimit', 'pass', `ååˆ†ãªä½™è£•ã‚ã‚Šï¼ˆæ®‹ã‚Š${rem}/${lim}å›ã€${pct}%ï¼‰`);
+        addResult('ratelimit', 'pass', `\•ª‚È—]—T‚ ‚èic‚è${rem}/${lim}‰ñA${pct}%j`);
       }
     } else {
-      addResult('ratelimit', 'info', 'ãƒ¬ãƒ¼ãƒˆåˆ¶é™ã®æƒ…å ±ãŒå–å¾—ã§ãã¾ã›ã‚“ã§ã—ãŸï¼ˆç’°å¢ƒä¾å­˜ï¼‰');
+      addResult('ratelimit', 'info', 'ƒŒ[ƒg§ŒÀ‚Ìî•ñ‚ªæ“¾‚Å‚«‚Ü‚¹‚ñ‚Å‚µ‚½iŠÂ‹«ˆË‘¶j');
     }
-  } catch(e) { addResult('ratelimit','warn','å–å¾—ã‚¨ãƒ©ãƒ¼', e.message) }
+  } catch(e) { addResult('ratelimit','warn','æ“¾ƒGƒ‰[', e.message) }
 
   // Summary
   const all = container.querySelectorAll('.card[data-status]');
@@ -670,12 +670,12 @@ async function runDiagnosis() {
   const summary = document.createElement('div');
   summary.className = 'card';
   summary.style.textAlign = 'center';
-  const verdict = fail > 0 ? 'ä¸€éƒ¨ã®ã‚·ã‚¹ãƒ†ãƒ ã«ç•°å¸¸ãŒã‚ã‚Šã¾ã™ã€‚ç®¡ç†è€…ã«å ±å‘Šã—ã¦ãã ã•ã„ã€‚' : warn > 0 ? 'ã„ãã¤ã‹æ³¨æ„ç‚¹ãŒã‚ã‚Šã¾ã™ã€‚ç¢ºèªã—ã¦ãã ã•ã„ã€‚' : 'å…¨ã¦æ­£å¸¸ã§ã™ã€‚å•é¡Œã¯è¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã§ã—ãŸã€‚';
-  const icon = fail > 0 ? 'ğŸ”´' : warn > 0 ? 'ğŸŸ¡' : 'ğŸŸ¢';
+  const verdict = fail > 0 ? 'ˆê•”‚ÌƒVƒXƒeƒ€‚ÉˆÙí‚ª‚ ‚è‚Ü‚·BŠÇ—Ò‚É•ñ‚µ‚Ä‚­‚¾‚³‚¢B' : warn > 0 ? '‚¢‚­‚Â‚©’ˆÓ“_‚ª‚ ‚è‚Ü‚·BŠm”F‚µ‚Ä‚­‚¾‚³‚¢B' : '‘S‚Ä³í‚Å‚·B–â‘è‚ÍŒ©‚Â‚©‚è‚Ü‚¹‚ñ‚Å‚µ‚½B';
+  const icon = fail > 0 ? '??' : warn > 0 ? '??' : '??';
   summary.innerHTML = `<div style="font-size:32px">${icon}</div>` +
-    `<div style="font-size:18px;font-weight:700;margin:8px 0">æ­£å¸¸: ${pass} é …ç›® / æ³¨æ„: ${warn} é …ç›® / ç•°å¸¸: ${fail} é …ç›®</div>` +
+    `<div style="font-size:18px;font-weight:700;margin:8px 0">³í: ${pass} €–Ú / ’ˆÓ: ${warn} €–Ú / ˆÙí: ${fail} €–Ú</div>` +
     `<div style="font-size:14px;color:${fail?'var(--danger)':warn?'#d4a017':'var(--primary)'}">${esc(verdict)}</div>` +
-    `<div style="font-size:11px;color:var(--sub);margin-top:8px">è¨ºæ–­å®Ÿè¡Œ: ${now}</div>`;
+    `<div style="font-size:11px;color:var(--sub);margin-top:8px">f’fÀs: ${now}</div>`;
   container.insertBefore(summary, container.firstChild);
   btn.disabled = false;
   progress.style.display = 'none';

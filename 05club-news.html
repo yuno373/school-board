@@ -1,35 +1,35 @@
-ï»¿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>éƒ¨æ´»å‹•ãƒ»å§”å“¡ä¼šãŠçŸ¥ã‚‰ã› - ä¸Šè—¤æ²¢ä¸­å­¦æ ¡</title>
+<title>•”Šˆ“®EˆÏˆõ‰ï‚¨’m‚ç‚¹ - ã“¡‘ò’†ŠwZ</title>
 <link rel="stylesheet" href="01style.css">
 </head>
 <body class="pub-body">
 <div class="pub-header">
-<h1>ä¸Šè—¤æ²¢ä¸­å­¦æ ¡ éƒ¨æ´»å‹•ãƒ»å§”å“¡ä¼š</h1>
-<div class="pub-sub">ãŠçŸ¥ã‚‰ã›ä¸€è¦§</div>
+<h1>ã“¡‘ò’†ŠwZ •”Šˆ“®EˆÏˆõ‰ï</h1>
+<div class="pub-sub">‚¨’m‚ç‚¹ˆê——</div>
 </div>
 <div class="pub-main">
 <div id="pubNav" style="display:flex;gap:0;margin-bottom:20px;border-bottom:2px solid #222">
-<button class="tab-btn active" id="pubAll" style="flex:1">ã™ã¹ã¦</button>
-<button class="tab-btn" id="pubClub" style="flex:1">éƒ¨æ´»å‹•</button>
-<button class="tab-btn" id="pubComm" style="flex:1">å§”å“¡ä¼š</button>
+<button class="tab-btn active" id="pubAll" style="flex:1">‚·‚×‚Ä</button>
+<button class="tab-btn" id="pubClub" style="flex:1">•”Šˆ“®</button>
+<button class="tab-btn" id="pubComm" style="flex:1">ˆÏˆõ‰ï</button>
 </div>
-<div id="pubList"><div class="empty-state">èª­ã¿è¾¼ã¿ä¸­...</div></div>
+<div id="pubList"><div class="empty-state">“Ç‚İ‚İ’†...</div></div>
 </div>
-<div class="pub-footer">ä¸Šè—¤æ²¢ä¸­å­¦æ ¡</div>
+<div class="pub-footer">ã“¡‘ò’†ŠwZ</div>
 <script>
 const API_BASE=''
-async function a(p,o={}){const t=sessionStorage.getItem('token'),h={'Content-Type':'application/json',...o.headers};if(t)h['Authorization']='Bearer '+t;const r=await fetch(API_BASE+p,{...o,headers:h}),d=await r.json();if(!r.ok)throw new Error(d.error||'ã‚¨ãƒ©ãƒ¼');return d}
+async function a(p,o={}){const t=sessionStorage.getItem('token'),h={'Content-Type':'application/json',...o.headers};if(t)h['Authorization']='Bearer '+t;const r=await fetch(API_BASE+p,{...o,headers:h}),d=await r.json();if(!r.ok)throw new Error(d.error||'ƒGƒ‰[');return d}
 window.api=a
 let mode='all';
 const $=id=>document.getElementById(id);
 function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
 
 async function load(){
-  const c=$('pubList');c.innerHTML='<div class="empty-state">èª­ã¿è¾¼ã¿ä¸­...</div>';
+  const c=$('pubList');c.innerHTML='<div class="empty-state">“Ç‚İ‚İ’†...</div>';
   try{
     let posts=[];
     if(mode==='all'){
@@ -38,16 +38,16 @@ async function load(){
     }else{
       posts=await api('/api/'+mode);
     }
-    if(!posts.length){c.innerHTML='<div class="empty-state">ç¾åœ¨ãŠçŸ¥ã‚‰ã›ã¯ã‚ã‚Šã¾ã›ã‚“</div>';return}
+    if(!posts.length){c.innerHTML='<div class="empty-state">Œ»İ‚¨’m‚ç‚¹‚Í‚ ‚è‚Ü‚¹‚ñ</div>';return}
     c.innerHTML='';
     posts.forEach(p=>{
       const cd=document.createElement('div');cd.className='pub-card';
       const d=new Date(p.created_at);const ds=(d.getMonth()+1)+'/'+d.getDate();
       const fls=p.files?.map(f=>'<a href="'+esc(f.url)+'" target="_blank" class="pub-file">'+esc(f.name)+'</a>').join('')||'';
-      cd.innerHTML='<div class="pub-cat">'+esc(p.category)+'</div><div class="pub-title">'+esc(p.title)+'</div><div class="pub-content">'+esc(p.content)+'</div>'+(fls?'<div class="pub-files">'+fls+'</div>':'')+'<div class="pub-meta">'+esc(p.username)+' Â· '+ds+'</div>';
+      cd.innerHTML='<div class="pub-cat">'+esc(p.category)+'</div><div class="pub-title">'+esc(p.title)+'</div><div class="pub-content">'+esc(p.content)+'</div>'+(fls?'<div class="pub-files">'+fls+'</div>':'')+'<div class="pub-meta">'+esc(p.username)+' E '+ds+'</div>';
       c.appendChild(cd);
     });
-  }catch(e){c.innerHTML='<div class="empty-state">èª­ã¿è¾¼ã¿ã‚¨ãƒ©ãƒ¼</div>'}
+  }catch(e){c.innerHTML='<div class="empty-state">“Ç‚İ‚İƒGƒ‰[</div>'}
 }
 
 $('pubAll').addEventListener('click',()=>{mode='all';document.querySelectorAll('#pubNav .tab-btn').forEach(b=>b.classList.remove('active'));$('pubAll').classList.add('active');load()});

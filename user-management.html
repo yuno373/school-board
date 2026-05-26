@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <link rel="manifest" href="manifest.json">
-<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>ユーザー管理 - 上藤沢中学校</title>
+<title>ユーザー管琁E- 上藤沢中学校</title>
 <style>
 :root{--primary:#1E4D2B;--primary-dark:#153820;--primary-light:#2D6B40;--accent-pink:#f5a0b8;--accent-blue:#a0c4e8;--accent-yellow:#f5e6a0;--accent-green:#a8d8a0;--bg:#f7f5f0;--card:#fff;--text:#2c2c2c;--sub:#8a8682;--border:#e0dcd4;--danger:#c96565;--radius:12px;--shadow:0 2px 12px rgba(30,77,43,0.06)}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -87,32 +87,32 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
 </head>
 <body>
 <header class="header">
-  <div class="header-title">👥 ユーザー管理</div>
+  <div class="header-title">👥 ユーザー管琁E/div>
   <div class="header-right">
-    <a href="01index.html" class="header-link">黒板に戻る</a>
-    <button class="header-link danger" id="aLogout">ログアウト</button>
+    <a href="01index.html" class="header-link">黒板に戻めE/a>
+    <button class="header-link danger" id="aLogout">ログアウチE/button>
   </div>
 </header>
 <div class="main">
   <div class="tab-bar">
-    <button class="tab-btn active" data-tab="users">📋 生徒管理</button>
-    <button class="tab-btn" data-tab="batch">📋 ID一括生成</button>
-    <button class="tab-btn" data-tab="notifications">🔔 通知管理</button>
-    <button class="tab-btn" data-tab="push">📲 通知設定</button>
-    <button class="tab-btn" data-tab="posts">📝 投稿管理</button>
-    <button class="tab-btn" data-tab="stats">📊 統計</button>
-    <button class="tab-btn" data-tab="chat">💬 チャット管理</button>
+    <button class="tab-btn active" data-tab="users">📋 生徒管琁E/button>
+    <button class="tab-btn" data-tab="batch">📋 ID一括生�E</button>
+    <button class="tab-btn" data-tab="notifications">🔔 通知管琁E/button>
+    <button class="tab-btn" data-tab="push">📲 通知設宁E/button>
+    <button class="tab-btn" data-tab="posts">📝 投稿管琁E/button>
+    <button class="tab-btn" data-tab="stats">📊 統訁E/button>
+    <button class="tab-btn" data-tab="chat">💬 チャチE��管琁E/button>
     <button class="tab-btn" data-tab="diagnosis">🔍 診断</button>
     <button class="tab-btn" data-tab="schedule">⏰ 時間割</button>
-    <button class="tab-btn" data-tab="settings">⚙️ ユーザー設定</button>
+    <button class="tab-btn" data-tab="settings">⚙︁Eユーザー設宁E/button>
   </div>
 
   <!-- Diagnosis Tab -->
   <div class="tab-content" id="tab-diagnosis">
     <div class="card">
-      <h3>システム診断</h3>
-      <p style="font-size:13px;color:var(--sub);margin-bottom:12px">各APIエンドポイント・静的ファイル・データ整合性をチェックし、問題を報告します。</p>
-      <button class="btn btn-primary" id="diagRun">診断を実行</button>
+      <h3>シスチE��診断</h3>
+      <p style="font-size:13px;color:var(--sub);margin-bottom:12px">各APIエンド�Eイント�E静的ファイル・チE�Eタ整合性をチェチE��し、問題を報告します、E/p>
+      <button class="btn btn-primary" id="diagRun">診断を実衁E/button>
       <div id="diagProgress" style="margin-top:10px;font-size:13px;color:var(--sub);display:none">診断中...</div>
     </div>
     <div id="diagResults"></div>
@@ -121,33 +121,33 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
   <!-- Schedule Tab -->
   <div class="tab-content" id="tab-schedule">
     <div class="card">
-      <h3>⏰ 授業時間割設定</h3>
-      <p style="font-size:13px;color:var(--sub);margin-bottom:12px">毎週の授業スケジュールを設定してください。授業開始10分前に通知されます。</p>
+      <h3>⏰ 授業時間割設宁E/h3>
+      <p style="font-size:13px;color:var(--sub);margin-bottom:12px">毎週の授業スケジュールを設定してください。授業開姁E0刁E��に通知されます、E/p>
       <div style="margin-bottom:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
         <select id="schDay" style="padding:6px 10px;border:2px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;background:#faf8f5">
-          <option value="0">日曜</option><option value="1">月曜</option><option value="2">火曜</option><option value="3">水曜</option><option value="4">木曜</option><option value="5">金曜</option><option value="6">土曜</option>
+          <option value="0">日曁E/option><option value="1">月曜</option><option value="2">火曁E/option><option value="3">水曁E/option><option value="4">木曁E/option><option value="5">金曜</option><option value="6">土曜</option>
         </select>
         <select id="schPeriod" style="padding:6px 10px;border:2px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;background:#faf8f5">
-          <option value="1">1限 (8:40-9:30)</option><option value="2">2限 (9:40-10:30)</option><option value="3">3限 (10:40-11:30)</option><option value="4">4限 (11:40-12:30)</option><option value="5">5限 (13:30-14:20)</option><option value="6">6限 (14:30-15:20)</option>
+          <option value="1">1陁E(8:40-9:30)</option><option value="2">2陁E(9:40-10:30)</option><option value="3">3陁E(10:40-11:30)</option><option value="4">4陁E(11:40-12:30)</option><option value="5">5陁E(13:30-14:20)</option><option value="6">6陁E(14:30-15:20)</option>
         </select>
-        <input type="text" id="schSubject" placeholder="教科" style="padding:6px 10px;border:2px solid var(--border);border-radius:6px;font-size:13px;width:90px;font-family:inherit;background:#faf8f5">
+        <input type="text" id="schSubject" placeholder="教私E style="padding:6px 10px;border:2px solid var(--border);border-radius:6px;font-size:13px;width:90px;font-family:inherit;background:#faf8f5">
         <input type="text" id="schClass" placeholder="クラス" style="padding:6px 10px;border:2px solid var(--border);border-radius:6px;font-size:13px;width:80px;font-family:inherit;background:#faf8f5">
         <button class="btn btn-primary btn-sm" id="addSchRow">追加</button>
       </div>
       <table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:10px">
-        <thead><tr><th style="text-align:left;padding:4px 8px;border-bottom:2px solid var(--border)">曜日</th><th style="text-align:left;padding:4px 8px;border-bottom:2px solid var(--border)">時限</th><th style="text-align:left;padding:4px 8px;border-bottom:2px solid var(--border)">教科</th><th style="text-align:left;padding:4px 8px;border-bottom:2px solid var(--border)">クラス</th><th style="width:40px;border-bottom:2px solid var(--border)"></th></tr></thead>
+        <thead><tr><th style="text-align:left;padding:4px 8px;border-bottom:2px solid var(--border)">曜日</th><th style="text-align:left;padding:4px 8px;border-bottom:2px solid var(--border)">時限</th><th style="text-align:left;padding:4px 8px;border-bottom:2px solid var(--border)">教私E/th><th style="text-align:left;padding:4px 8px;border-bottom:2px solid var(--border)">クラス</th><th style="width:40px;border-bottom:2px solid var(--border)"></th></tr></thead>
         <tbody id="scheduleRows"></tbody>
       </table>
       <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px">
-        <button class="btn btn-primary" id="saveSchBtn">保存</button>
+        <button class="btn btn-primary" id="saveSchBtn">保孁E/button>
         <div id="schStatus" style="font-size:12px"></div>
       </div>
       <details style="font-size:13px;border-top:1px solid var(--border);padding-top:10px;margin-top:4px">
-        <summary style="cursor:pointer;font-weight:700;color:var(--sub)">📋 テキストから一括登録</summary>
-        <p style="font-size:12px;color:var(--sub);margin:8px 0">タブ区切りで複数行まとめて追加:</p>
-        <pre style="font-size:11px;color:var(--sub);background:var(--bg);padding:8px;border-radius:6px;margin-bottom:8px">月曜	1限	数学	1-1
-火曜	3限	英語	2-2</pre>
-        <textarea id="schBatchText" style="width:100%;min-height:80px;padding:10px;border:2px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;background:#faf8f5" placeholder="曜日(タブ)時限(タブ)教科(タブ)クラス"></textarea>
+        <summary style="cursor:pointer;font-weight:700;color:var(--sub)">📋 チE��ストから一括登録</summary>
+        <p style="font-size:12px;color:var(--sub);margin:8px 0">タブ区刁E��で褁E��行まとめて追加:</p>
+        <pre style="font-size:11px;color:var(--sub);background:var(--bg);padding:8px;border-radius:6px;margin-bottom:8px">月曜	1陁E数学	1-1
+火曁E3陁E英誁E2-2</pre>
+        <textarea id="schBatchText" style="width:100%;min-height:80px;padding:10px;border:2px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;background:#faf8f5" placeholder="曜日(タチE時限(タチE教私EタチEクラス"></textarea>
         <div style="margin-top:8px;display:flex;gap:8px">
           <button class="btn btn-primary btn-sm" id="schBatchParse">解析して追加</button>
           <button class="btn btn-outline btn-sm" id="schBatchClear">クリア</button>
@@ -160,22 +160,22 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
   <!-- Settings Tab (last) -->
   <div class="tab-content" id="tab-settings">
     <div class="card">
-      <h3>⚙️ 自分の設定</h3>
+      <h3>⚙︁E自刁E�E設宁E/h3>
       <div class="form-row">
         <div class="form-group"><label>学年</label><input type="number" id="sGrade" min="1" max="3"></div>
         <div class="form-group"><label>クラス</label><input type="number" id="sClass" min="1" max="10"></div>
         <div class="form-group"><label>番号</label><input type="number" id="sSeat" min="1" max="50"></div>
       </div>
-      <div class="form-group"><label>表示名</label><input type="text" id="sDispName" placeholder="表示名"></div>
-      <div class="form-group"><label>部活動</label><select id="sClub"><option value="">—</option></select></div>
-      <div class="form-group"><label>委員会</label><select id="sCommittee"><option value="">—</option></select></div>
-      <button class="btn btn-primary" id="saveProfile">保存</button>
+      <div class="form-group"><label>表示吁E/label><input type="text" id="sDispName" placeholder="表示吁E></div>
+      <div class="form-group"><label>部活勁E/label><select id="sClub"><option value=""> E/option></select></div>
+      <div class="form-group"><label>委員企E/label><select id="sCommittee"><option value=""> E/option></select></div>
+      <button class="btn btn-primary" id="saveProfile">保孁E/button>
       <div id="profileStatus"></div>
       <div style="margin-top:20px;border-top:1px solid var(--border);padding-top:16px">
         <h3 style="font-size:14px">🔑 パスワード変更</h3>
-        <div class="form-group"><label>現在のパスワード</label><input type="password" id="sCurPw"></div>
-        <div class="form-group"><label>新しいパスワード</label><input type="password" id="sNewPw"></div>
-        <div class="form-group"><label>新しいパスワード（確認）</label><input type="password" id="sNewPw2"></div>
+        <div class="form-group"><label>現在のパスワーチE/label><input type="password" id="sCurPw"></div>
+        <div class="form-group"><label>新しいパスワーチE/label><input type="password" id="sNewPw"></div>
+        <div class="form-group"><label>新しいパスワード（確認！E/label><input type="password" id="sNewPw2"></div>
         <button class="btn btn-primary" id="changePwBtn">変更</button>
         <div id="pwStatus"></div>
       </div>
@@ -185,22 +185,22 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
   <!-- Users Tab -->
   <div class="tab-content active" id="tab-users">
     <div class="search-bar">
-      <input type="text" id="searchInput" placeholder="名前・部活・委員会・クラスで検索">
-      <select id="searchRole"><option value="">全権限</option><option value="admin">管理者</option><option value="teacher">先生</option><optgroup label="生徒"><option value="president">部長</option><option value="vice-president">副部長</option><option value="chairperson">委員長</option><option value="student">生徒（一般）</option></optgroup></select>
+      <input type="text" id="searchInput" placeholder="名前・部活・委員会�Eクラスで検索">
+      <select id="searchRole"><option value="">全権陁E/option><option value="admin">管琁E��E/option><option value="teacher">先生</option><optgroup label="生征E><option value="president">部長</option><option value="vice-president">副部長</option><option value="chairperson">委員長</option><option value="student">生徒（一般�E�E/option></optgroup></select>
       <button class="btn btn-primary btn-sm" id="aRefresh">更新</button>
     </div>
     <div class="bulk-bar">
-      <label><input type="checkbox" id="selectAll"> すべて選択</label>
+      <label><input type="checkbox" id="selectAll"> すべて選抁E/label>
       <button class="btn btn-danger btn-sm" id="bulkDeleteBtn">選択を削除</button>
       <span style="color:var(--sub);margin:0 4px">|</span>
-      <select id="bulkGrade" style="padding:4px 8px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:inherit"><option value="">学年を選択</option></select>
+      <select id="bulkGrade" style="padding:4px 8px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:inherit"><option value="">学年を選抁E/option></select>
       <select id="bulkClass" style="padding:4px 8px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:inherit"><option value="">全クラス</option></select>
       <button class="btn btn-danger btn-sm" id="bulkGradeDeleteBtn">学年・クラスで削除</button>
       <span id="bulkSelectedCount" style="color:var(--sub);font-size:11px">0人選択中</span>
     </div>
     <div style="overflow-x:auto">
       <table class="user-table">
-        <thead><tr><th style="width:24px"><input type="checkbox" id="selectAllH"></th><th>ログインID</th><th>表示名</th><th>パスワード</th><th>権限</th><th>状態</th><th>学年</th><th>クラス</th><th>番号</th><th>部活</th><th>委員会</th><th>担当学年</th><th>担当教科</th><th>担任</th><th>登録日</th><th></th></tr></thead>
+        <thead><tr><th style="width:24px"><input type="checkbox" id="selectAllH"></th><th>ログインID</th><th>表示吁E/th><th>パスワーチE/th><th>権陁E/th><th>状慁E/th><th>学年</th><th>クラス</th><th>番号</th><th>部活</th><th>委員企E/th><th>拁E��学年</th><th>拁E��教私E/th><th>拁E��</th><th>登録日</th><th></th></tr></thead>
         <tbody id="userList"></tbody>
       </table>
     </div>
@@ -209,40 +209,40 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
   <!-- Batch Tab -->
   <div class="tab-content" id="tab-batch">
     <div class="id-rule">
-      <strong>生徒ID 自動生成</strong><br>
-      年度ごとにクラス数と各クラスの人数を指定できます。<br>
-      ID形式: <strong>{入学年度下2桁 + 通し番号3桁}</strong>
+      <strong>生徒ID 自動生戁E/strong><br>
+      年度ごとにクラス数と吁E��ラスの人数を指定できます、Ebr>
+      ID形弁E <strong>{入学年度丁E桁E+ 通し番号3桁}</strong>
     </div>
     <div id="batchYears"></div>
     <div style="margin:12px 0;display:flex;gap:8px;flex-wrap:wrap">
       <button class="btn btn-outline" id="addBatchYear">+ 年度を追加</button>
     </div>
     <div class="batch-form">
-      <label>初期パスワード<input type="text" id="bPassword" value="111111"></label>
-      <button class="btn btn-primary" id="bGenerate">生成する</button>
+      <label>初期パスワーチEinput type="text" id="bPassword" value="111111"></label>
+      <button class="btn btn-primary" id="bGenerate">生�Eする</button>
     </div>
     <div class="result-box" id="bResult"></div>
     <div style="margin-top:20px;border-top:2px dashed var(--border);padding-top:20px">
-      <h3 style="font-size:15px;font-weight:700;margin-bottom:12px;color:var(--text)">🧑‍🏫 先生ID 一括生成</h3>
+      <h3 style="font-size:15px;font-weight:700;margin-bottom:12px;color:var(--text)">🧑‍🏫 先生ID 一括生�E</h3>
       <div class="batch-form">
-        <label>接頭語<input type="text" id="tPrefix" value="T" style="width:60px"></label>
+        <label>接頭誁Einput type="text" id="tPrefix" value="T" style="width:60px"></label>
         <label>開始番号<input type="text" inputmode="numeric" pattern="[0-9]*" id="tStart" value="1" style="width:60px"></label>
         <label>人数<input type="text" inputmode="numeric" pattern="[0-9]*" id="tCount" value="5" style="width:60px"></label>
-        <label>表示名の接頭語<input type="text" id="tDispPrefix" placeholder="先生" style="width:80px"></label>
-        <label>初期パスワード<input type="text" id="tPassword" value="111111" style="width:70px"></label>
-        <button class="btn btn-primary" id="tGenerate">生成する</button>
+        <label>表示名�E接頭誁Einput type="text" id="tDispPrefix" placeholder="先生" style="width:80px"></label>
+        <label>初期パスワーチEinput type="text" id="tPassword" value="111111" style="width:70px"></label>
+        <button class="btn btn-primary" id="tGenerate">生�Eする</button>
       </div>
       <div class="result-box" id="tResult"></div>
     </div>
     <div style="margin-top:20px;border-top:2px dashed var(--border);padding-top:20px">
       <h3 style="font-size:15px;font-weight:700;margin-bottom:12px;color:var(--text)">📝 先生を手動登録</h3>
       <div class="batch-form">
-        <label>ログインID<input type="text" id="mtUser" placeholder="例: T001" style="width:80px"></label>
-        <label>表示名<input type="text" id="mtDisp" placeholder="氏名" style="width:80px"></label>
-        <label>パスワード<input type="text" id="mtPass" value="111111" style="width:70px"></label>
-        <label>担当教科<input type="text" id="mtSubject" placeholder="例: 数学" style="width:70px"></label>
-        <label>担当学年<select id="mtGrades" style="width:80px"><option value="">---</option><option value="1">1年</option><option value="2">2年</option><option value="3">3年</option><option value="1,2">1・2年</option><option value="1,3">1・3年</option><option value="2,3">2・3年</option><option value="1,2,3">全学年</option></select></label>
-        <label><input type="checkbox" id="mtHomeroom" value="1"> 担任</label>
+        <label>ログインID<input type="text" id="mtUser" placeholder="侁E T001" style="width:80px"></label>
+        <label>表示吁Einput type="text" id="mtDisp" placeholder="氏名" style="width:80px"></label>
+        <label>パスワーチEinput type="text" id="mtPass" value="111111" style="width:70px"></label>
+        <label>拁E��教私Einput type="text" id="mtSubject" placeholder="侁E 数学" style="width:70px"></label>
+        <label>拁E��学年<select id="mtGrades" style="width:80px"><option value="">---</option><option value="1">1年</option><option value="2">2年</option><option value="3">3年</option><option value="1,2">1・2年</option><option value="1,3">1・3年</option><option value="2,3">2・3年</option><option value="1,2,3">全学年</option></select></label>
+        <label><input type="checkbox" id="mtHomeroom" value="1"> 拁E��</label>
         <button class="btn btn-primary" id="mtCreate">登録</button>
       </div>
       <div class="result-box" id="mtResult"></div>
@@ -250,15 +250,15 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
     <div style="margin-top:24px;border-top:2px dashed var(--border);padding-top:20px">
       <h3 style="font-size:15px;font-weight:700;margin-bottom:12px;color:var(--text)">手動でユーザー登録</h3>
       <div class="batch-form">
-        <label>ログインID<input type="text" id="mUser" placeholder="例: 101005" style="width:90px"></label>
-        <label>表示名<input type="text" id="mDisp" placeholder="氏名" style="width:90px"></label>
-        <label>パスワード<input type="text" id="mPass" value="111111" style="width:70px"></label>
-        <label>権限<select id="mRole"><option value="student">生徒</option><option value="teacher">先生</option><option value="president">部長</option><option value="vice-president">副部長</option><option value="chairperson">委員長</option><option value="admin">管理者</option></select></label>
+        <label>ログインID<input type="text" id="mUser" placeholder="侁E 101005" style="width:90px"></label>
+        <label>表示吁Einput type="text" id="mDisp" placeholder="氏名" style="width:90px"></label>
+        <label>パスワーチEinput type="text" id="mPass" value="111111" style="width:70px"></label>
+        <label>権陁Eselect id="mRole"><option value="student">生征E/option><option value="teacher">先生</option><option value="president">部長</option><option value="vice-president">副部長</option><option value="chairperson">委員長</option><option value="admin">管琁E��E/option></select></label>
         <label>学年<input type="number" id="mGrade" min="1" max="3" style="width:50px"></label>
         <label>クラス<input type="number" id="mClass" min="1" max="10" style="width:50px"></label>
         <label>番号<input type="number" id="mSeat" min="1" max="50" style="width:60px"></label>
         <label>部活<select id="mClub" style="width:100px"><option value="">---</option></select></label>
-        <label>委員会<select id="mComm" style="width:100px"><option value="">---</option></select></label>
+        <label>委員企Eselect id="mComm" style="width:100px"><option value="">---</option></select></label>
         <button class="btn btn-primary" id="mCreate">登録</button>
       </div>
       <div id="mResult" style="margin-top:8px;font-size:13px"></div>
@@ -273,26 +273,26 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
   <!-- Push Settings Tab -->
   <div class="tab-content" id="tab-push">
     <div class="card" id="pushStatusCard">
-      <h3>📲 プッシュ通知設定</h3>
+      <h3>📲 プッシュ通知設宁E/h3>
       <p id="pushStatusText" style="font-size:13px;color:var(--sub);margin-bottom:12px">状態を確認中...</p>
       <div id="pushActions">
         <button class="btn btn-primary" id="pushEnableBtn" style="display:none">🔔 通知を有効にする</button>
         <button class="btn btn-outline" id="pushDisableBtn" style="display:none">🔕 通知を解除</button>
-        <button class="btn btn-outline" id="pushTestBtn" style="display:none">📨 テスト通知を送信</button>
+        <button class="btn btn-outline" id="pushTestBtn" style="display:none">📨 チE��ト通知を送信</button>
       </div>
     </div>
     <div class="card" id="pushSendCard" style="display:none">
       <h3>📢 全ユーザーに通知を送信</h3>
-      <p style="font-size:12px;color:var(--sub);margin-bottom:10px">ホーム画面に追加したユーザーの通知センターに届きます</p>
+      <p style="font-size:12px;color:var(--sub);margin-bottom:10px">ホ�Eム画面に追加したユーザーの通知センターに届きまぁE/p>
       <div class="form-group"><label>タイトル</label><input type="text" id="pushTitle" placeholder="タイトル" style="width:100%"></div>
-      <div class="form-group"><label>本文</label><textarea id="pushBody" placeholder="本文（任意）" style="width:100%;min-height:60px;resize:vertical"></textarea></div>
-      <div class="form-group"><label>リンク先（任意）</label><input type="text" id="pushUrl" value="/01index.html" style="width:100%"></div>
+      <div class="form-group"><label>本斁E/label><textarea id="pushBody" placeholder="本斁E��任意！E style="width:100%;min-height:60px;resize:vertical"></textarea></div>
+      <div class="form-group"><label>リンク先（任意！E/label><input type="text" id="pushUrl" value="/01index.html" style="width:100%"></div>
       <button class="btn btn-primary" id="pushSendBtn">送信</button>
       <div id="pushSendResult" style="margin-top:8px;font-size:13px"></div>
       <hr style="margin:14px 0;border-color:var(--border)">
-      <h4 style="font-size:14px;margin-bottom:8px">🚨 防災情報テスト</h4>
-      <p style="font-size:12px;color:var(--sub);margin-bottom:8px">警戒レベル4の通知音＋プッシュ通知をテスト送信します</p>
-      <button class="btn btn-outline" id="disasterTestBtn" style="color:var(--danger);border-color:var(--danger)">🚨 防災テスト通知を送信</button>
+      <h4 style="font-size:14px;margin-bottom:8px">🚨 防災惁E��チE��チE/h4>
+      <p style="font-size:12px;color:var(--sub);margin-bottom:8px">警戒レベル4の通知音�E��EチE��ュ通知をテスト送信しまぁE/p>
+      <button class="btn btn-outline" id="disasterTestBtn" style="color:var(--danger);border-color:var(--danger)">🚨 防災チE��ト通知を送信</button>
       <div id="disasterTestResult" style="margin-top:8px;font-size:13px"></div>
     </div>
   </div>
@@ -301,7 +301,7 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
   <div class="tab-content" id="tab-posts">
     <div style="overflow-x:auto">
       <table class="user-table">
-        <thead><tr><th>カテゴリ</th><th>タイトル</th><th>投稿者</th><th>日付</th><th></th></tr></thead>
+        <thead><tr><th>カチE��リ</th><th>タイトル</th><th>投稿老E/th><th>日仁E/th><th></th></tr></thead>
         <tbody id="postList"></tbody>
       </table>
     </div>
@@ -319,12 +319,12 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
   <div class="tab-content" id="tab-chat">
     <div class="search-bar">
       <input type="text" id="chatSearchInput" placeholder="ユーザー名で検索" style="max-width:200px">
-      <select id="chatRoleFilter"><option value="">全権限</option><option value="teacher">先生</option><option value="admin">管理者</option><option value="student">生徒</option><option value="president">部長</option><option value="vice-president">副部長</option><option value="chairperson">委員長</option></select>
-      <span style="font-size:13px;color:var(--sub);display:flex;align-items:center;gap:4px">参加者: <strong id="chatPartCount" style="color:var(--primary)">0</strong></span>
+      <select id="chatRoleFilter"><option value="">全権陁E/option><option value="teacher">先生</option><option value="admin">管琁E��E/option><option value="student">生征E/option><option value="president">部長</option><option value="vice-president">副部長</option><option value="chairperson">委員長</option></select>
+      <span style="font-size:13px;color:var(--sub);display:flex;align-items:center;gap:4px">参加老E <strong id="chatPartCount" style="color:var(--primary)">0</strong></span>
     </div>
     <div style="overflow-x:auto">
       <table class="user-table">
-        <thead><tr><th>ユーザー名</th><th>権限</th><th>表示名</th><th>参加</th></tr></thead>
+        <thead><tr><th>ユーザー吁E/th><th>権陁E/th><th>表示吁E/th><th>参加</th></tr></thead>
         <tbody id="chatUserList"></tbody>
       </table>
     </div>
@@ -340,13 +340,13 @@ const cu=sessionStorage.getItem('username'),role=sessionStorage.getItem('role'),
 if(!cu||!token){window.location.href='02login.html'}
 
 const userRoles=(role||'').split(',').map(r=>r.trim());
-const RL={'admin':'管理者','teacher':'先生','president':'部長','vice-president':'副部長','chairperson':'委員長','student':'生徒'};
-const ROLES=[{v:'teacher',l:'先生'},{v:'president',l:'部長'},{v:'vice-president',l:'副部長'},{v:'chairperson',l:'委員長'},{v:'student',l:'生徒'}];
-const CLUBS=['吹奏楽部','茶道部','美術部','卓球部','テニス部女子','テニス部男子','サッカー部','野球部','陸上部','バスケ部女子','バスケ部男子','バレー部'];
-const COMM_GROUPS={'学級委員会':['1学年委員会','2学年委員会','3学年委員会'],'専門委員会':['整備委員会','生活委員会','選挙管理委員会','図書委員会','給食委員会','合唱委員会','体育委員会','保健委員会','放送委員会'],'特別委員会':['中央委員会','部活動委員会']};
+const RL={'admin':'管琁E��E,'teacher':'先生','president':'部長','vice-president':'副部長','chairperson':'委員長','student':'生征E};
+const ROLES=[{v:'teacher',l:'先生'},{v:'president',l:'部長'},{v:'vice-president',l:'副部長'},{v:'chairperson',l:'委員長'},{v:'student',l:'生征E}];
+const CLUBS=['吹奏楽部','茶道部','美術部','卓球部','チE��ス部女孁E,'チE��ス部男孁E,'サチE��ー部','野球部','陸上部','バスケ部女孁E,'バスケ部男孁E,'バレー部'];
+const COMM_GROUPS={'学級委員企E:['1学年委員企E,'2学年委員企E,'3学年委員企E],'専門委員企E:['整備委員企E,'生活委員企E,'選挙管琁E��員企E,'図書委員企E,'給食委員企E,'合唱委員企E,'体育委員企E,'保健委員企E,'放送委員企E],'特別委員企E:['中央委員企E,'部活動委員企E]};
 const ALL_COMMS=Object.values(COMM_GROUPS).flat();
 function populateCommitteeSelect(sel){
-  sel.innerHTML='<option value="">—</option>';
+  sel.innerHTML='<option value=""> E/option>';
   for(const[g,items]of Object.entries(COMM_GROUPS)){const og=document.createElement('optgroup');og.label=g;items.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;og.appendChild(o)});sel.appendChild(og)}
 }
 
@@ -379,14 +379,14 @@ loadProfile();
 $('saveProfile').addEventListener('click',async()=>{
   const dn=$('sDispName').value.trim(),club=$('sClub').value,comm=$('sCommittee').value;
   const grade=$('sGrade').value,cls=$('sClass').value,seat=$('sSeat').value;
-  try{await a('/api/me',{method:'PUT',body:JSON.stringify({display_name:dn,club,committee:comm,grade,class_num:cls,seat_num:seat})});$('profileStatus').textContent='✅ 保存しました';$('profileStatus').className='success'}catch(e){$('profileStatus').textContent='❌ '+e.message;$('profileStatus').className='error'}
+  try{await a('/api/me',{method:'PUT',body:JSON.stringify({display_name:dn,club,committee:comm,grade,class_num:cls,seat_num:seat})});$('profileStatus').textContent='✁E保存しました';$('profileStatus').className='success'}catch(e){$('profileStatus').textContent='❁E'+e.message;$('profileStatus').className='error'}
 });
 $('changePwBtn').addEventListener('click',async()=>{
   const cur=$('sCurPw').value,pw=$('sNewPw').value,pw2=$('sNewPw2').value;
   if(!cur||!pw){$('pwStatus').textContent='入力してください';$('pwStatus').className='error';return}
-  if(pw.length<6){$('pwStatus').textContent='6文字以上必要です';$('pwStatus').className='error';return}
+  if(pw.length<6){$('pwStatus').textContent='6斁E��以上忁E��でぁE;$('pwStatus').className='error';return}
   if(pw!==pw2){$('pwStatus').textContent='パスワードが一致しません';$('pwStatus').className='error';return}
-  try{await a('/api/me/password',{method:'POST',body:JSON.stringify({currentPassword:cur,newPassword:pw})});$('pwStatus').textContent='✅ 変更しました';$('pwStatus').className='success';$('sCurPw').value='';$('sNewPw').value='';$('sNewPw2').value=''}catch(e){$('pwStatus').textContent='❌ '+e.message;$('pwStatus').className='error'}
+  try{await a('/api/me/password',{method:'POST',body:JSON.stringify({currentPassword:cur,newPassword:pw})});$('pwStatus').textContent='✁E変更しました';$('pwStatus').className='success';$('sCurPw').value='';$('sNewPw').value='';$('sNewPw2').value=''}catch(e){$('pwStatus').textContent='❁E'+e.message;$('pwStatus').className='error'}
 });
 
 // === Users ===
@@ -397,14 +397,14 @@ async function loadUsers(){
 function populateBulkFilters(){
   const grades = [...new Set(usersData.map(x => x.grade).filter(Boolean))].sort();
   const gEl = $('bulkGrade');
-  gEl.innerHTML = '<option value="">学年を選択</option>' + grades.map(g => `<option value="${esc(g)}">${esc(g)}</option>`).join('');
+  gEl.innerHTML = '<option value="">学年を選抁E/option>' + grades.map(g => `<option value="${esc(g)}">${esc(g)}</option>`).join('');
   updateBulkClasses();
 }
 function updateBulkClasses(){
   const grade = $('bulkGrade').value;
   const classes = [...new Set(usersData.filter(x => !grade || x.grade === grade).map(x => x.class_num).filter(Boolean))].sort();
   const cEl = $('bulkClass');
-  cEl.innerHTML = '<option value="">全クラス</option>' + classes.map(c => `<option value="${esc(c)}">${esc(c)}組</option>`).join('');
+  cEl.innerHTML = '<option value="">全クラス</option>' + classes.map(c => `<option value="${esc(c)}">${esc(c)}絁E/option>`).join('');
 }
 function renderUsers(){
   const q=$('searchInput').value.trim().toLowerCase(),roleFilter=$('searchRole').value;
@@ -415,29 +415,29 @@ function renderUsers(){
     const userRolesX=(x.role||'').split(',').map(s=>s.trim());
     const isAdmin=userRolesX.includes('admin');
     const sd=!isAdmin||userRoles.includes('admin');
-    const pwShow=x.password_plain?'<span class="pwd-show" onclick="this.textContent=this.textContent===\'******\'?\'"+esc(x.password_plain)+"\' :\'******\'">******</span>':'—';
-    const dt=x.created_at?new Date(x.created_at).toLocaleDateString('ja-JP',{month:'numeric',day:'numeric',year:'numeric'}):'—';
+    const pwShow=x.password_plain?'<span class="pwd-show" onclick="this.textContent=this.textContent===\'******\'?\'"+esc(x.password_plain)+"\' :\'******\'">******</span>':' E;
+    const dt=x.created_at?new Date(x.created_at).toLocaleDateString('ja-JP',{month:'numeric',day:'numeric',year:'numeric'}):' E;
     const roleHtml=ROLES.map(rr=>{
       const checked=userRolesX.includes(rr.v);
       const disabled=isAdmin&&!userRoles.includes('admin')?'disabled':'';
       return `<label style="font-size:10px;white-space:nowrap;cursor:pointer;display:flex;align-items:center;gap:2px"><input type="checkbox" ${checked?'checked':''} data-id="${x.id}" data-v="${rr.v}" ${disabled}> ${esc(rr.l)}</label>`;
     }).join('');
     const actions=`<div style="display:flex;gap:2px;flex-wrap:nowrap">
-      ${sd&&x.id!==cu?`<button class="btn btn-danger btn-sm" onclick="delUser('${x.id}','${esc(x.username)}')">削</button>`:''}
+      ${sd&&x.id!==cu?`<button class="btn btn-danger btn-sm" onclick="delUser('${x.id}','${esc(x.username)}')">剁E/button>`:''}
     </div>`;
     tr.innerHTML=`<td style="width:24px;text-align:center"><input type="checkbox" class="user-select" data-id="${esc(x.id)}"></td><td style="font-size:10px">${esc(x.username)}</td>
       <td><input type="text" value="${esc(x.display_name||'')}" onchange="updField('${x.id}','display_name',this.value)" style="width:60px"></td>
-      <td style="white-space:normal">${sd?pwShow+'<br><input type="text" placeholder="新PW" onchange="setPwd(\'${x.id}\',this)" style="width:50px;font-size:10px;margin-top:2px">':'—'}</td>
+      <td style="white-space:normal">${sd?pwShow+'<br><input type="text" placeholder="新PW" onchange="setPwd(\'${x.id}\',this)" style="width:50px;font-size:10px;margin-top:2px">':' E}</td>
       <td><div class="role-group">${roleHtml}</div></td>
-      <td>${isAdmin?'<span class="lock-badge">管理者</span>':''}</td>
+      <td>${isAdmin?'<span class="lock-badge">管琁E��E/span>':''}</td>
       <td><input type="text" value="${esc(x.grade||'')}" onchange="updField('${x.id}','grade',this.value)" style="width:40px"></td>
       <td><input type="text" value="${esc(x.class_num||'')}" onchange="updField('${x.id}','class_num',this.value)" style="width:35px"></td>
       <td><input type="text" value="${esc(x.seat_num||'')}" onchange="updField('${x.id}','seat_num',this.value)" style="width:35px"></td>
-      <td><select onchange="updField('${x.id}','club',this.value)"><option value="">—</option>${CLUBS.map(c=>'<option value="'+c+'"'+(x.club===c?' selected':'')+'>'+c+'</option>').join('')}</select></td>
-      <td><select onchange="updField('${x.id}','committee',this.value)"><option value="">—</option>${Object.entries(COMM_GROUPS).map(([g,items])=>'<optgroup label="'+g+'">'+items.map(c=>'<option value="'+c+'"'+(x.committee===c?' selected':'')+'>'+c+'</option>').join('')+'</optgroup>').join('')}</select></td>
-      <td>${isAdmin||userRolesX.includes('teacher')?`<select onchange="updField('${x.id}','teacher_grade',this.value)"><option value="">—</option><option value="1"${x.teacher_grade==='1'?' selected':''}>1年</option><option value="2"${x.teacher_grade==='2'?' selected':''}>2年</option><option value="3"${x.teacher_grade==='3'?' selected':''}>3年</option><option value="other"${x.teacher_grade==='other'?' selected':''}>その他</option></select>`:'—'}</td>
-      <td>${isAdmin||userRolesX.includes('teacher')?`<input type="text" value="${esc(x.teacher_subject||'')}" onchange="updField('${x.id}','teacher_subject',this.value)" style="width:50px">`:'—'}</td>
-      <td>${isAdmin||userRolesX.includes('teacher')?`<select onchange="updField('${x.id}','teacher_homeroom',this.value)"><option value="">—</option>${[1,2,3,4,5,6,7,8,9,10].map(n=>'<option value="'+n+'"'+(x.teacher_homeroom==String(n)?' selected':'')+'>'+n+'組</option>').join('')}</select>`:'—'}</td>
+      <td><select onchange="updField('${x.id}','club',this.value)"><option value=""> E/option>${CLUBS.map(c=>'<option value="'+c+'"'+(x.club===c?' selected':'')+'>'+c+'</option>').join('')}</select></td>
+      <td><select onchange="updField('${x.id}','committee',this.value)"><option value=""> E/option>${Object.entries(COMM_GROUPS).map(([g,items])=>'<optgroup label="'+g+'">'+items.map(c=>'<option value="'+c+'"'+(x.committee===c?' selected':'')+'>'+c+'</option>').join('')+'</optgroup>').join('')}</select></td>
+      <td>${isAdmin||userRolesX.includes('teacher')?`<select onchange="updField('${x.id}','teacher_grade',this.value)"><option value=""> E/option><option value="1"${x.teacher_grade==='1'?' selected':''}>1年</option><option value="2"${x.teacher_grade==='2'?' selected':''}>2年</option><option value="3"${x.teacher_grade==='3'?' selected':''}>3年</option><option value="other"${x.teacher_grade==='other'?' selected':''}>そ�E仁E/option></select>`:' E}</td>
+      <td>${isAdmin||userRolesX.includes('teacher')?`<input type="text" value="${esc(x.teacher_subject||'')}" onchange="updField('${x.id}','teacher_subject',this.value)" style="width:50px">`:' E}</td>
+      <td>${isAdmin||userRolesX.includes('teacher')?`<select onchange="updField('${x.id}','teacher_homeroom',this.value)"><option value=""> E/option>${[1,2,3,4,5,6,7,8,9,10].map(n=>'<option value="'+n+'"'+(x.teacher_homeroom==String(n)?' selected':'')+'>'+n+'絁E/option>').join('')}</select>`:' E}</td>
       <td>${dt}</td><td>${actions}</td>`;
     tr.querySelectorAll('input[type=checkbox][data-v]').forEach(cb=>{cb.onchange=function(){updRole(this.dataset.id,this.dataset.v,this.checked)}});
     t.appendChild(tr);
@@ -455,9 +455,9 @@ async function updRole(id,val,add){
   }catch(e){alert(e.message);loadUsers()}
 }
 async function updField(id,field,val){try{await a('/api/users/'+id,{method:'PUT',body:JSON.stringify({[field]:val})})}catch(e){alert(e.message)}}
-async function delUser(id,un){if(!confirm('「'+un+'」を削除しますか？'))return;try{await a('/api/users/'+id,{method:'DELETE'});loadUsers()}catch(e){alert(e.message)}}
-async function setPwd(id,inp){const pw=inp.value.trim();if(!pw||pw.length<6){alert('6文字以上入力してください');inp.value='';return}if(!confirm('パスワードを「'+pw+'」に変更しますか？')){inp.value='';return}try{await a('/api/users/'+id,{method:'PUT',body:JSON.stringify({password:pw})});alert('変更しました');inp.value='';loadUsers()}catch(e){alert(e.message);inp.value=''}}
-async function unlockUser(id){try{await a('/api/users/'+id+'/unlock',{method:'POST'});alert('ロックを解除しました');loadUsers()}catch(e){alert(e.message)}}
+async function delUser(id,un){if(!confirm('、E+un+'」を削除しますか�E�E))return;try{await a('/api/users/'+id,{method:'DELETE'});loadUsers()}catch(e){alert(e.message)}}
+async function setPwd(id,inp){const pw=inp.value.trim();if(!pw||pw.length<6){alert('6斁E��以上�E力してください');inp.value='';return}if(!confirm('パスワードを、E+pw+'」に変更しますか�E�E)){inp.value='';return}try{await a('/api/users/'+id,{method:'PUT',body:JSON.stringify({password:pw})});alert('変更しました');inp.value='';loadUsers()}catch(e){alert(e.message);inp.value=''}}
+async function unlockUser(id){try{await a('/api/users/'+id+'/unlock',{method:'POST'});alert('ロチE��を解除しました');loadUsers()}catch(e){alert(e.message)}}
 $('searchInput').addEventListener('input',renderUsers);
 $('searchRole').addEventListener('change',renderUsers);
 $('aRefresh').addEventListener('click',loadUsers);
@@ -481,7 +481,7 @@ $('selectAllH').addEventListener('change', function() {
 $('bulkDeleteBtn').addEventListener('click', async () => {
   const ids = [...document.querySelectorAll('.user-select:checked')].map(cb => cb.dataset.id);
   if (!ids.length) { alert('削除するユーザーを選択してください'); return }
-  if (!confirm(ids.length + '人のユーザーを削除しますか？')) return;
+  if (!confirm(ids.length + '人のユーザーを削除しますか�E�E)) return;
   try {
     await a('/api/users/batch-delete', { method: 'POST', body: JSON.stringify({ ids }) });
     alert(ids.length + '人を削除しました');
@@ -493,8 +493,8 @@ $('bulkGradeDeleteBtn').addEventListener('click', async () => {
   const grade = $('bulkGrade').value;
   const cls = $('bulkClass').value;
   if (!grade) { alert('学年を選択してください'); return }
-  const label = (cls ? grade + '年 ' + cls + '組' : grade + '年');
-  if (!confirm(label + 'のユーザーを全員削除しますか？（管理者・自分自身を除く）')) return;
+  const label = (cls ? grade + '年 ' + cls + '絁E : grade + '年');
+  if (!confirm(label + 'のユーザーを�E員削除しますか�E�（管琁E��E�E自刁E�E身を除く！E)) return;
   try {
     const r = await a('/api/users/batch-delete', { method: 'POST', body: JSON.stringify({ grade, class_num: cls || undefined }) });
     alert(r.deleted + '人を削除しました');
@@ -525,7 +525,7 @@ function renderClassSizes(row){
   let html='';
   for(let i=0;i<n;i++){
     const v=vals[i]||30;
-    html+='<label class="class-size-wrap">'+(i+1)+'組<input type="text" inputmode="numeric" pattern="[0-9]*" class="class-size-input" value="'+v+'" maxlength="2"></label>';
+    html+='<label class="class-size-wrap">'+(i+1)+'絁Einput type="text" inputmode="numeric" pattern="[0-9]*" class="class-size-input" value="'+v+'" maxlength="2"></label>';
   }
   container.innerHTML=html;
 }
@@ -537,19 +537,19 @@ $('bGenerate').addEventListener('click',async()=>{
   for(const r of rows){
     const year=r.querySelector('.b-year').value;
     const sizes=Array.from(r.querySelectorAll('.class-size-input')).map(x=>parseInt(x.value));
-    if(!sizes.every(s=>s>0)){alert(year+'年度: クラス人数が不正です');return}
+    if(!sizes.every(s=>s>0)){alert(year+'年度: クラス人数が不正でぁE);return}
     years.push({year,classes:sizes});
   }
   const password=$('bPassword').value;
-  const label=years.map(y=>y.year+'年度 '+y.classes.map((s,i)=>(i+1)+'組'+s+'人').join(' ')).join('、');
-  if(!confirm('以下の内容で生成しますか？\n'+label+'\nパスワード: '+password))return;
-  $('bGenerate').disabled=true;$('bGenerate').textContent='生成中...';
+  const label=years.map(y=>y.year+'年度 '+y.classes.map((s,i)=>(i+1)+'絁E+s+'人').join(' ')).join('、E);
+  if(!confirm('以下�E冁E��で生�Eしますか�E�\n'+label+'\nパスワーチE '+password))return;
+  $('bGenerate').disabled=true;$('bGenerate').textContent='生�E中...';
   try{
     const r=await a('/api/users/batch',{method:'POST',body:JSON.stringify({years,password})});
     const box=$('bResult');box.className='result-box show';
-    box.innerHTML='<strong>'+r.created+'人</strong> の生徒IDを生成しました<br>初期パスワード: <strong>'+esc(r.password)+'</strong><br>生成ID: '+r.students.slice(0,5).join(', ')+(r.students.length>5?' …他'+(r.students.length-5)+'件':'');
+    box.innerHTML='<strong>'+r.created+'人</strong> の生徒IDを生成しました<br>初期パスワーチE <strong>'+esc(r.password)+'</strong><br>生�EID: '+r.students.slice(0,5).join(', ')+(r.students.length>5?' …仁E+(r.students.length-5)+'件':'');
   }catch(e){alert(e.message)}
-  $('bGenerate').disabled=false;$('bGenerate').textContent='生成する';
+  $('bGenerate').disabled=false;$('bGenerate').textContent='生�Eする';
 });
 renderBatchYears();
 
@@ -560,15 +560,15 @@ $('tGenerate').addEventListener('click',async()=>{
   const count=parseInt($('tCount').value)||1;
   const dispPrefix=$('tDispPrefix').value.trim()||'';
   const password=$('tPassword').value||'111111';
-  if(count<1||count>100){alert('人数は1〜100の範囲で指定してください');return}
-  if(!confirm(prefix+'001〜'+prefix+String(startNum+count-1).padStart(3,'0')+' まで '+count+'人の先生を生成しますか？\nパスワード: '+password))return;
-  $('tGenerate').disabled=true;$('tGenerate').textContent='生成中...';
+  if(count<1||count>100){alert('人数は1、E00の篁E��で持E��してください');return}
+  if(!confirm(prefix+'001、E+prefix+String(startNum+count-1).padStart(3,'0')+' まで '+count+'人の先生を生成しますか�E�\nパスワーチE '+password))return;
+  $('tGenerate').disabled=true;$('tGenerate').textContent='生�E中...';
   try{
     const r=await a('/api/users/batch',{method:'POST',body:JSON.stringify({teachers:count,prefix,startNum,displayPrefix:dispPrefix,password})});
     const box=$('tResult');box.className='result-box show';
-    box.innerHTML='<strong>'+r.created+'人</strong> の先生IDを生成しました<br>初期パスワード: <strong>'+esc(r.password)+'</strong><br>生成ID: '+r.users.slice(0,5).join(', ')+(r.users.length>5?' …他'+(r.users.length-5)+'件':'');
+    box.innerHTML='<strong>'+r.created+'人</strong> の先生IDを生成しました<br>初期パスワーチE <strong>'+esc(r.password)+'</strong><br>生�EID: '+r.users.slice(0,5).join(', ')+(r.users.length>5?' …仁E+(r.users.length-5)+'件':'');
   }catch(e){alert(e.message)}
-  $('tGenerate').disabled=false;$('tGenerate').textContent='生成する';
+  $('tGenerate').disabled=false;$('tGenerate').textContent='生�Eする';
 });
 
 // === Manual Teacher Create ===
@@ -578,7 +578,7 @@ $('mtCreate').addEventListener('click',async()=>{
   const subject=$('mtSubject').value.trim();
   const grades=$('mtGrades').value;
   const homeroom=!!$('mtHomeroom').checked;
-  if(!user||!pass){$('mtResult').textContent='IDとパスワードは必須です';return}
+  if(!user||!pass){$('mtResult').textContent='IDとパスワード�E忁E��でぁE;return}
   $('mtCreate').disabled=true;$('mtCreate').textContent='登録中...';
   try{
     const passHash=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(pass));
@@ -601,8 +601,8 @@ $('mCreate').addEventListener('click', async () => {
   const disp = $('mDisp').value.trim() || user, mr = $('mRole').value;
   const grade = $('mGrade').value, cls = $('mClass').value, seat = $('mSeat').value;
   const club = $('mClub').value, comm = $('mComm').value;
-  if (!user || !pass) { $('mResult').textContent = 'IDとパスワードは必須です'; return }
-  if (!user.match(/^\d+$/)) { $('mResult').textContent = 'IDは数字のみです'; return }
+  if (!user || !pass) { $('mResult').textContent = 'IDとパスワード�E忁E��でぁE; return }
+  if (!user.match(/^\d+$/)) { $('mResult').textContent = 'IDは数字�EみでぁE; return }
   $('mCreate').disabled = true; $('mCreate').textContent = '登録中...';
   try {
     const passHash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pass));
@@ -646,7 +646,7 @@ async function loadPosts(){
     });
   }catch(e){t.innerHTML='<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--sub)">エラー</td></tr>'}
 }
-async function delPost(id){if(!confirm('この投稿を削除しますか？'))return;try{await a('/api/posts/'+id,{method:'DELETE'});loadPosts()}catch(e){alert(e.message)}}
+async function delPost(id){if(!confirm('こ�E投稿を削除しますか�E�E))return;try{await a('/api/posts/'+id,{method:'DELETE'});loadPosts()}catch(e){alert(e.message)}}
 
 // === Stats ===
 async function loadStats(){
@@ -656,17 +656,17 @@ async function loadStats(){
     const cards=[
       {label:'総ユーザー数',num:s.totalUsers},{label:'先生',num:s.byRole?.teacher||0},
       {label:'部長',num:s.byRole?.president||0},{label:'副部長',num:s.byRole?.['vice-president']||0},
-      {label:'委員長',num:s.byRole?.chairperson||0},{label:'生徒',num:s.byRole?.student||0},
-      {label:'投稿数',num:s.totalPosts},{label:'ロック中',num:s.lockedAccounts||0}
+      {label:'委員長',num:s.byRole?.chairperson||0},{label:'生征E,num:s.byRole?.student||0},
+      {label:'投稿数',num:s.totalPosts},{label:'ロチE��中',num:s.lockedAccounts||0}
     ];
     grid.innerHTML=cards.map(c=>'<div class="stat-card"><div class="stat-num">'+c.num+'</div><div class="stat-label">'+c.label+'</div></div>').join('');
-    renderBar($('roleChart'),s.byRole,{'admin':'管理者','teacher':'先生','president':'部長','vice-president':'副部長','chairperson':'委員長','student':'生徒'});
+    renderBar($('roleChart'),s.byRole,{'admin':'管琁E��E,'teacher':'先生','president':'部長','vice-president':'副部長','chairperson':'委員長','student':'生征E});
     renderBar($('clubChart'),s.byClub,{});
     renderBar($('committeeChart'),s.byCommittee,{});
   }catch(e){}
 }
 function renderBar(el,data,labels){
-  const keys=Object.keys(data);if(!keys.length){el.innerHTML='<div style="color:var(--sub);font-size:13px">データがありません</div>';return}
+  const keys=Object.keys(data);if(!keys.length){el.innerHTML='<div style="color:var(--sub);font-size:13px">チE�Eタがありません</div>';return}
   const mx=Math.max(...keys.map(k=>data[k]));
   el.innerHTML=keys.sort((a,b)=>data[b]-data[a]).map(k=>'<div class="bar-row"><span class="bar-label">'+esc(labels[k]||k)+'</span><span class="bar-val">'+data[k]+'</span><div class="bar-fill" style="width:'+Math.max(data[k]/mx*100,5)+'%"></div></div>').join('');
 }
@@ -700,37 +700,37 @@ $('chatRoleFilter').addEventListener('change',renderChatUsers);
 
 // === Diagnosis ===
 const DIAG_CHECKS = [
-  // サーバー
-  { id: 'api-ping', label: 'APIサーバー疎通', section: '🔌 サーバー' },
-  { id: 'auth', label: '認証システム', section: '🔌 サーバー' },
-  { id: 'endpoints-get', label: 'GETエンドポイント全件', section: '🔌 サーバー' },
-  { id: 'endpoints-post', label: 'POSTエンドポイント応答', section: '🔌 サーバー' },
-  // フロント
-  { id: 'static', label: 'ページファイル配信', section: '📄 フロントエンド' },
-  { id: 'pwa', label: 'PWA設定', section: '📄 フロントエンド' },
-  { id: 'push', label: 'プッシュ通知', section: '📄 フロントエンド' },
-  // データ
-  { id: 'users', label: 'ユーザーデータ整合性', section: '🗃️ データ' },
-  { id: 'posts', label: '投稿データ整合性', section: '🗃️ データ' },
-  { id: 'chat', label: '部長チャット', section: '🗃️ データ' },
-  { id: 'dm', label: 'DM機能', section: '🗃️ データ' },
+  // サーバ�E
+  { id: 'api-ping', label: 'APIサーバ�E疎送E, section: '🔌 サーバ�E' },
+  { id: 'auth', label: '認証シスチE��', section: '🔌 サーバ�E' },
+  { id: 'endpoints-get', label: 'GETエンド�Eイント�E件', section: '🔌 サーバ�E' },
+  { id: 'endpoints-post', label: 'POSTエンド�Eイント応筁E, section: '🔌 サーバ�E' },
+  // フロンチE
+  { id: 'static', label: 'ペ�Eジファイル配信', section: '📄 フロントエンチE },
+  { id: 'pwa', label: 'PWA設宁E, section: '📄 フロントエンチE },
+  { id: 'push', label: 'プッシュ通知', section: '📄 フロントエンチE },
+  // チE�Eタ
+  { id: 'users', label: 'ユーザーチE�Eタ整合性', section: '🗃�E�EチE�Eタ' },
+  { id: 'posts', label: '投稿チE�Eタ整合性', section: '🗃�E�EチE�Eタ' },
+  { id: 'chat', label: '部長チャチE��', section: '🗃�E�EチE�Eタ' },
+  { id: 'dm', label: 'DM機�E', section: '🗃�E�EチE�Eタ' },
 
-  { id: 'clubq', label: '部長質問', section: '🗃️ データ' },
-  // 機能
-  { id: 'schedule', label: '黒板予定', section: '⚙️ 機能' },
-  { id: 'teacher-schedule', label: '先生時間割', section: '⚙️ 機能' },
-  { id: 'password-reset', label: 'パスワード再設定', section: '⚙️ 機能' },
-  { id: 'reactions', label: 'リアクション', section: '⚙️ 機能' },
-  { id: 'claims', label: '忘れ物申請', section: '⚙️ 機能' },
-  { id: 'private-posts', label: 'プライベート投稿', section: '⚙️ 機能' },
-  { id: 'login-lock', label: 'ログインロック', section: '⚙️ 機能' },
-  // 状態
-  { id: 'expired', label: '投稿期限切れ', section: '📊 システム状態' },
-  { id: 'ratelimit', label: 'アクセス制限状況', section: '📊 システム状態' },
-  { id: 'cors', label: 'CORS設定', section: '📊 システム状態' },
-  { id: 'setup', label: '初期セットアップ状態', section: '📊 システム状態' },
-  { id: 'teacher-setup', label: '先生セットアップ進捗', section: '📊 システム状態' },
-  { id: 'garbled', label: '文字化けチェック', section: '📊 システム状態' }
+  { id: 'clubq', label: '部長質啁E, section: '🗃�E�EチE�Eタ' },
+  // 機�E
+  { id: 'schedule', label: '黒板予宁E, section: '⚙︁E機�E' },
+  { id: 'teacher-schedule', label: '先生時間割', section: '⚙︁E機�E' },
+  { id: 'password-reset', label: 'パスワード�E設宁E, section: '⚙︁E機�E' },
+  { id: 'reactions', label: 'リアクション', section: '⚙︁E機�E' },
+  { id: 'claims', label: '忘れ物申諁E, section: '⚙︁E機�E' },
+  { id: 'private-posts', label: 'プライベ�Eト投稿', section: '⚙︁E機�E' },
+  { id: 'login-lock', label: 'ログインロチE��', section: '⚙︁E機�E' },
+  // 状慁E
+  { id: 'expired', label: '投稿期限刁E��', section: '📊 シスチE��状慁E },
+  { id: 'ratelimit', label: 'アクセス制限状況E, section: '📊 シスチE��状慁E },
+  { id: 'cors', label: 'CORS設宁E, section: '📊 シスチE��状慁E },
+  { id: 'setup', label: '初期セチE��アチE�E状慁E, section: '📊 シスチE��状慁E },
+  { id: 'teacher-setup', label: '先生セチE��アチE�E進捁E, section: '📊 シスチE��状慁E },
+  { id: 'garbled', label: '斁E��化けチェチE��', section: '📊 シスチE��状慁E }
 ];
 
 async function runDiagnosis() {
@@ -768,7 +768,7 @@ async function runDiagnosis() {
     div.dataset.status = status;
     const borderColor = status === 'pass' ? 'var(--primary)' : status === 'warn' ? '#d4a017' : status === 'fail' ? 'var(--danger)' : 'var(--sub)';
     div.style.borderLeft = `4px solid ${borderColor}`;
-    div.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center"><strong style="font-size:14px">${esc(label)}</strong><span style="font-size:14px;font-weight:700;color:${borderColor}">${status === 'pass' ? '正常' : status === 'warn' ? '注意' : status === 'fail' ? '異常' : '情報'}</span></div><div style="font-size:13px;margin-top:6px;white-space:pre-wrap">${esc(msg)}</div>${detail ? `<div style="font-size:11px;color:var(--sub);margin-top:4px;white-space:pre-wrap">${esc(detail)}</div>` : ''}`;
+    div.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center"><strong style="font-size:14px">${esc(label)}</strong><span style="font-size:14px;font-weight:700;color:${borderColor}">${status === 'pass' ? '正常' : status === 'warn' ? '注愁E : status === 'fail' ? '異常' : '惁E��'}</span></div><div style="font-size:13px;margin-top:6px;white-space:pre-wrap">${esc(msg)}</div>${detail ? `<div style="font-size:11px;color:var(--sub);margin-top:4px;white-space:pre-wrap">${esc(detail)}</div>` : ''}`;
     container.appendChild(div);
   }
   // 1. API Ping
@@ -777,14 +777,14 @@ async function runDiagnosis() {
     const ac = new AbortController(); const tid = setTimeout(() => ac.abort(), 5000);
     const r = await fetch(API_BASE + '/api/me', { headers: { 'Authorization': 'Bearer '+token }, signal: ac.signal }); clearTimeout(tid);
     const ms = Date.now() - t0;
-    r.ok ? addResult('api-ping', 'pass', `APIサーバー接続OK（応答: ${ms}ms）`) : addResult('api-ping', 'fail', `APIサーバーが HTTP ${r.status}`, `URL: /api/me`);
-  } catch(e) { addResult('api-ping', 'fail', 'APIサーバーに接続できません', e.message) }
+    r.ok ? addResult('api-ping', 'pass', `APIサーバ�E接続OK�E�応筁E ${ms}ms�E�`) : addResult('api-ping', 'fail', `APIサーバ�EぁEHTTP ${r.status}`, `URL: /api/me`);
+  } catch(e) { addResult('api-ping', 'fail', 'APIサーバ�Eに接続できません', e.message) }
   // 2. Auth system
   try {
     const ac2 = new AbortController(); const tid2 = setTimeout(() => ac2.abort(), 5000);
     const r = await fetch(API_BASE + '/api/me', { headers: { 'Authorization': 'Bearer '+token }, signal: ac2.signal }); clearTimeout(tid2);
     const d = await r.json();
-    if (r.ok && d.username) addResult('auth', 'pass', `JWT認証OK（ユーザー: ${d.username}, 権限: ${d.role}）`);
+    if (r.ok && d.username) addResult('auth', 'pass', `JWT認証OK�E�ユーザー: ${d.username}, 権陁E ${d.role}�E�`);
     else addResult('auth', 'fail', '認証レスポンスが不正');
   } catch(e) { addResult('auth', 'fail', '認証確認中にエラー', e.message) }
   // 3. All GET endpoints
@@ -797,10 +797,10 @@ async function runDiagnosis() {
       (r.ok ? epOk : epNg).push(p+'('+r.status+')')
     } catch(e) { epNg.push(p) }
   }
-  epNg.length === 0 ? addResult('endpoints-get', 'pass', `全${getEndpoints.length}GETエンドポイント正常`) : addResult('endpoints-get', 'warn', `${epNg.length}/${getEndpoints.length} で問題`, `異常: ${epNg.join(', ')}`);
+  epNg.length === 0 ? addResult('endpoints-get', 'pass', `全${getEndpoints.length}GETエンド�Eイント正常`) : addResult('endpoints-get', 'warn', `${epNg.length}/${getEndpoints.length} で問題`, `異常: ${epNg.join(', ')}`);
   // 4. POST endpoints presence check
   const postEndpoints = ['/api/login','/api/posts','/api/chat/messages','/api/chat/participants','/api/dm/send','/api/dm/groups','/api/password-reset/request','/api/password-reset/fulfill','/api/reactions','/api/push/subscribe','/api/push/unsubscribe','/api/push/notify','/api/push/send','/api/upload','/api/me/password','/api/me/verify','/api/posts/*/claim','/api/posts/*/verify-password','/api/posts/*/set-password'];
-  addResult('endpoints-post', 'pass', `POSTエンドポイント定義数: ${postEndpoints.length}`, postEndpoints.join(', '));
+  addResult('endpoints-post', 'pass', `POSTエンド�Eイント定義数: ${postEndpoints.length}`, postEndpoints.join(', '));
   // 5. Static files
   const sf = ['01index.html','02login.html','user-management.html','admin.html','club-questions.html','chat.html','dm.html','settings.html','teacher-setup.html','install.html','help.html','manifest.json','sw.js','icon.svg'];
   const sfOk = [], sfNg = [];
@@ -813,12 +813,12 @@ async function runDiagnosis() {
     const icon = await fetch('icon.svg', { method:'HEAD' });
     const pwaIssues = [];
     if (!m.ok) pwaIssues.push('manifest.json('+m.status+')');
-    if (!mData.name) pwaIssues.push('manifestにnameなし');
-    if (!mData.start_url) pwaIssues.push('manifestにstart_urlなし');
+    if (!mData.name) pwaIssues.push('manifestにnameなぁE);
+    if (!mData.start_url) pwaIssues.push('manifestにstart_urlなぁE);
     if (!sw.ok) pwaIssues.push('sw.js('+sw.status+')');
     if (!icon.ok) pwaIssues.push('icon.svg('+icon.status+')');
-    pwaIssues.length === 0 ? addResult('pwa', 'pass', 'PWA設定OK（manifest+SW+icon）') : addResult('pwa', 'warn', pwaIssues.join(', '));
-  } catch(e) { addResult('pwa', 'warn', 'PWAチェック中にエラー', e.message) }
+    pwaIssues.length === 0 ? addResult('pwa', 'pass', 'PWA設定OK�E�Eanifest+SW+icon�E�E) : addResult('pwa', 'warn', pwaIssues.join(', '));
+  } catch(e) { addResult('pwa', 'warn', 'PWAチェチE��中にエラー', e.message) }
   // 7. Push notification
   try {
     if ('serviceWorker' in navigator && 'PushManager' in window) {
@@ -828,33 +828,33 @@ async function runDiagnosis() {
           const sub = await reg.pushManager.getSubscription();
           const vk = await a('/api/push/vapid-key');
           const pushOk = sub ? '購読済み' : '未購読';
-          const vapidOk = vk && vk.publicKey ? 'VAPID鍵あり' : 'VAPID鍵なし';
+          const vapidOk = vk && vk.publicKey ? 'VAPID鍵あり' : 'VAPID鍵なぁE;
           return `プッシュ通知: ${pushOk}, ${vapidOk}`;
         })(),
-        new Promise(r => setTimeout(() => r('タイムアウト'), 5000))
+        new Promise(r => setTimeout(() => r('タイムアウチE), 5000))
       ]);
       addResult('push', 'pass', pushResult);
-    } else { addResult('push', 'pass', 'この環境はプッシュ通知非対応') }
-  } catch(e) { addResult('push', 'warn', 'プッシュ通知チェックエラー', e.message) }
+    } else { addResult('push', 'pass', 'こ�E環墁E�Eプッシュ通知非対忁E) }
+  } catch(e) { addResult('push', 'warn', 'プッシュ通知チェチE��エラー', e.message) }
   // 8. User data integrity
   try {
     const users = await a('/api/users');
     const issues = [];
     const roles = {}; const clubs = {}; const comms = {};
     for (const u of users) {
-      if (!u.display_name) issues.push(u.username+' 表示名なし');
-      if (!u.role) issues.push(u.username+' 権限なし');
+      if (!u.display_name) issues.push(u.username+' 表示名なぁE);
+      if (!u.role) issues.push(u.username+' 権限なぁE);
       (u.role||'').split(',').forEach(r => { r=r.trim(); if(r) roles[r]=(roles[r]||0)+1 });
       if (u.club) clubs[u.club]=(clubs[u.club]||0)+1;
       if (u.committee) comms[u.committee]=(comms[u.committee]||0)+1;
-      if (u.password_plain && u.password_plain.length < 6) issues.push(u.username+' パスワード6文字未満');
+      if (u.password_plain && u.password_plain.length < 6) issues.push(u.username+' パスワーチE斁E��未満');
     }
     const hasAdmin = users.some(u => (u.role||'').includes('admin'));
-    if (!hasAdmin) issues.push('管理者が存在しません！');
+    if (!hasAdmin) issues.push('管琁E��E��存在しません�E�E);
     const roleSummary = Object.entries(roles).map(([k,v]) => `${k}:${v}人`).join(', ');
-    const detail = issues.length ? issues.join('\n') : `権限分布: ${roleSummary}` + (Object.keys(clubs).length ? ` | 部活: ${Object.keys(clubs).length}種` : '') + (Object.keys(comms).length ? ` | 委員会: ${Object.keys(comms).length}種` : '');
+    const detail = issues.length ? issues.join('\n') : `権限�E币E ${roleSummary}` + (Object.keys(clubs).length ? ` | 部活: ${Object.keys(clubs).length}種` : '') + (Object.keys(comms).length ? ` | 委員企E ${Object.keys(comms).length}種` : '');
     issues.length === 0 ? addResult('users', 'pass', `全${users.length}ユーザー問題なし`, detail) : addResult('users', 'warn', `${issues.length}件`, detail);
-  } catch(e) { addResult('users', 'warn', 'チェック中にエラー', e.message) }
+  } catch(e) { addResult('users', 'warn', 'チェチE��中にエラー', e.message) }
   // 9. Post data integrity
   try {
     const posts = await a('/api/admin/posts');
@@ -862,64 +862,64 @@ async function runDiagnosis() {
     const catCounts = {};
     let privateCount = 0, expiredCount = 0;
     for (const p of posts) {
-      if (!p.title) issues.push('ID:'+p.id+' タイトルなし');
-      if (!p.category) issues.push('ID:'+p.id+' カテゴリなし');
+      if (!p.title) issues.push('ID:'+p.id+' タイトルなぁE);
+      if (!p.category) issues.push('ID:'+p.id+' カチE��リなぁE);
       catCounts[p.category] = (catCounts[p.category]||0)+1;
       if (p.private_password) privateCount++;
       if (p.expires_at && new Date(p.expires_at) < Date.now()) expiredCount++;
     }
     const catSummary = Object.entries(catCounts).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`${k}:${v}`).join(', ');
-    const details = `カテゴリ別: ${catSummary} | プライベート投稿: ${privateCount}件 | 期限切れ: ${expiredCount}件`;
+    const details = `カチE��リ別: ${catSummary} | プライベ�Eト投稿: ${privateCount}件 | 期限刁E��: ${expiredCount}件`;
     issues.length === 0 ? addResult('posts', 'pass', `全${posts.length}投稿問題なし`, details) : addResult('posts', 'warn', `${issues.length}件`, details);
-  } catch(e) { addResult('posts', 'warn', 'チェック中にエラー', e.message) }
+  } catch(e) { addResult('posts', 'warn', 'チェチE��中にエラー', e.message) }
   // 10. Chat
   try {
     const parts = await a('/api/chat/participants');
     const msgs = await a('/api/chat/messages');
     const count = msgs.length;
     const partCount = parts.length;
-    addResult('chat', 'pass', `参加者: ${partCount}人, メッセージ: ${count}件`, parts.slice(0,10).join(', ')+(parts.length>10?' …他'+(parts.length-10)+'人':''));
-  } catch(e) { addResult('chat', 'warn', 'チャットチェックエラー', e.message) }
+    addResult('chat', 'pass', `参加老E ${partCount}人, メチE��ージ: ${count}件`, parts.slice(0,10).join(', ')+(parts.length>10?' …仁E+(parts.length-10)+'人':''));
+  } catch(e) { addResult('chat', 'warn', 'チャチE��チェチE��エラー', e.message) }
   // 11. DM
   try {
     const convs = await a('/api/dm/conversations');
     const groups = await a('/api/dm/groups');
     const dmCount = convs.filter(c => c.type==='dm').length;
     const grpCount = groups.length;
-    addResult('dm', 'pass', `DM会話: ${dmCount}件, グループ: ${grpCount}件`);
-  } catch(e) { addResult('dm', 'warn', 'DMチェックエラー', e.message) }
+    addResult('dm', 'pass', `DM会話: ${dmCount}件, グルーチE ${grpCount}件`);
+  } catch(e) { addResult('dm', 'warn', 'DMチェチE��エラー', e.message) }
   // 12. Consult
 
   // 13. Club questions
   try {
     const r = await fetch(API_BASE + '/api/club-questions', { headers: { 'Authorization': 'Bearer '+token } });
     const data = r.ok ? await r.json() : [];
-    addResult('clubq', 'pass', `部長質問: ${Array.isArray(data)?data.length:0}件`);
-  } catch(e) { addResult('clubq', 'pass', '部長質問: データ取得できず') }
+    addResult('clubq', 'pass', `部長質啁E ${Array.isArray(data)?data.length:0}件`);
+  } catch(e) { addResult('clubq', 'pass', '部長質啁E チE�Eタ取得できず') }
   // 14. Schedule
   try {
     const sched = await a('/api/schedules');
-    addResult('schedule', 'pass', `黒板予定: ${sched.length}件`);
-  } catch(e) { addResult('schedule', 'pass', '予定: データ取得できず') }
+    addResult('schedule', 'pass', `黒板予宁E ${sched.length}件`);
+  } catch(e) { addResult('schedule', 'pass', '予宁E チE�Eタ取得できず') }
   // 14b. Teacher schedule
   try {
     const r = await fetch(API_BASE + '/api/teacher-schedule', { headers: { 'Authorization': 'Bearer '+token } });
     if (r.ok) { const d = await r.json(); addResult('teacher-schedule', 'pass', `時間割登録: ${Array.isArray(d)?d.length:0}コマ`) }
-    else addResult('teacher-schedule', 'pass', '時間割: 未設定または非対応');
+    else addResult('teacher-schedule', 'pass', '時間割: 未設定また�E非対忁E);
   } catch(e) { addResult('teacher-schedule', 'pass', '時間割: エラー', e.message) }
   // 15. Password reset
   try {
     const reqs = await a('/api/password-reset/requests');
     const pending = reqs.filter(r => !r.fullfilled).length;
     const done = reqs.filter(r => r.fullfilled).length;
-    addResult('password-reset', 'pass', `再設定リクエスト: 待機${pending}件, 完了${done}件`);
-  } catch(e) { addResult('password-reset', 'pass', 'パスワード再設定: データ取得できず') }
+    addResult('password-reset', 'pass', `再設定リクエスチE 征E��E{pending}件, 完亁E{done}件`);
+  } catch(e) { addResult('password-reset', 'pass', 'パスワード�E設宁E チE�Eタ取得できず') }
   // 16. Reactions
   try {
     const r = await fetch(API_BASE + '/api/reactions', { headers: { 'Authorization': 'Bearer '+token } });
     if (r.ok || r.status === 400) addResult('reactions', 'pass', 'リアクションAPI応答OK');
     else addResult('reactions', 'warn', `リアクションAPI HTTP ${r.status}`);
-  } catch(e) { addResult('reactions', 'warn', 'リアクションチェックエラー', e.message) }
+  } catch(e) { addResult('reactions', 'warn', 'リアクションチェチE��エラー', e.message) }
   // 17. Claims
   try {
     const posts = await a('/api/admin/posts');
@@ -931,26 +931,26 @@ async function runDiagnosis() {
   try {
     const posts = await a('/api/admin/posts');
     const privatePosts = posts.filter(p => p.has_private || p.private_password);
-    addResult('private-posts', 'pass', `プライベート投稿: ${privatePosts.length}件（1・2・3学年委員会のみ）`);
-  } catch(e) { addResult('private-posts', 'pass', 'チェックできず', e.message) }
+    addResult('private-posts', 'pass', `プライベ�Eト投稿: ${privatePosts.length}件�E�E・2・3学年委員会�Eみ�E�`);
+  } catch(e) { addResult('private-posts', 'pass', 'チェチE��できず', e.message) }
   // 18b. Login lock
   try {
     const locks = await a('/api/admin/login-locks');
     const active = locks.filter(l => l.until && l.until > Date.now());
-    active.length === 0 ? addResult('login-lock', 'pass', 'ログインロックされたユーザーなし') : addResult('login-lock', 'warn', `${active.length}ユーザーがロック中`, active.map(l => `${l.username}（残り${Math.ceil((new Date(l.until)-Date.now())/60000)}分）`).join(', '));
-  } catch(e) { addResult('login-lock', 'pass', 'ロックチェックエラー', e.message) }
+    active.length === 0 ? addResult('login-lock', 'pass', 'ログインロチE��されたユーザーなぁE) : addResult('login-lock', 'warn', `${active.length}ユーザーがロチE��中`, active.map(l => `${l.username}�E�残り${Math.ceil((new Date(l.until)-Date.now())/60000)}刁E��`).join(', '));
+  } catch(e) { addResult('login-lock', 'pass', 'ロチE��チェチE��エラー', e.message) }
   // 19. Expired posts
   try {
     const posts = await a('/api/admin/posts');
     const expired = posts.filter(p => p.expires_at && new Date(p.expires_at) < Date.now());
-    expired.length === 0 ? addResult('expired', 'pass', '期限切れ投稿なし') : addResult('expired', 'warn', `期限切れ投稿が${expired.length}件あります（自動削除対象）`, expired.map(p => p.title).join(', '));
-  } catch(e) { addResult('expired', 'warn', 'チェックエラー', e.message) }
+    expired.length === 0 ? addResult('expired', 'pass', '期限刁E��投稿なぁE) : addResult('expired', 'warn', `期限刁E��投稿ぁE{expired.length}件あります（�E動削除対象�E�`, expired.map(p => p.title).join(', '));
+  } catch(e) { addResult('expired', 'warn', 'チェチE��エラー', e.message) }
   // 20. Rate limit
   try {
     const r = await fetch(API_BASE + '/api/me', { headers: { 'Authorization': 'Bearer '+token } });
     const rem = r.headers.get('X-RateLimit-Remaining');
     const lim = r.headers.get('X-RateLimit-Limit');
-    if (rem !== null && lim !== null) { const pct = Math.round(parseInt(rem)/parseInt(lim)*100); pct < 20 ? addResult('ratelimit', 'warn', `残りわずか（残り${rem}/${lim}回、${pct}%）`) : addResult('ratelimit', 'pass', `十分な余裕（残り${rem}/${lim}回、${pct}%）`) }
+    if (rem !== null && lim !== null) { const pct = Math.round(parseInt(rem)/parseInt(lim)*100); pct < 20 ? addResult('ratelimit', 'warn', `残りわずか（残り${rem}/${lim}回、E{pct}%�E�`) : addResult('ratelimit', 'pass', `十�Eな余裕（残り${rem}/${lim}回、E{pct}%�E�`) }
     else addResult('ratelimit', 'pass', 'レート制限情報が取得できませんでした');
   } catch(e) { addResult('ratelimit', 'warn', '取得エラー', e.message) }
   // 21. CORS
@@ -958,22 +958,22 @@ async function runDiagnosis() {
     const r = await fetch(API_BASE + '/api/me', { headers: { 'Authorization': 'Bearer '+token } });
     const acao = r.headers.get('Access-Control-Allow-Origin');
     const acah = r.headers.get('Access-Control-Allow-Headers');
-    acao ? addResult('cors', 'pass', `CORS OK (Origin: ${acao})`) : addResult('cors', 'pass', 'CORSヘッダー未確認（Worker経由の場合は問題なし）');
-  } catch(e) { addResult('cors', 'pass', 'CORSチェックできず', e.message) }
+    acao ? addResult('cors', 'pass', `CORS OK (Origin: ${acao})`) : addResult('cors', 'pass', 'CORSヘッダー未確認！Eorker経由の場合�E問題なし！E);
+  } catch(e) { addResult('cors', 'pass', 'CORSチェチE��できず', e.message) }
   // 22. Audit log
   try {
     const r = await fetch(API_BASE + '/api/audit', { headers: { 'Authorization': 'Bearer '+token } });
     if (r.ok) { const log = await r.json(); addResult('audit', 'pass', `監査ログ: ${Array.isArray(log)?log.length:0}件`) }
-    else addResult('audit', 'pass', '監査ログエンドポイントなし（管理画面内で管理）');
-  } catch(e) { addResult('audit', 'pass', '監査ログ: 別途管理') }
+    else addResult('audit', 'pass', '監査ログエンド�Eイントなし（管琁E��面冁E��管琁E��E);
+  } catch(e) { addResult('audit', 'pass', '監査ログ: 別途管琁E) }
   // 23. Setup state
   try {
     const users = await a('/api/users');
     const hasAdmin = users.some(u => (u.role||'').includes('admin'));
     const hasTeacher = users.some(u => (u.role||'').includes('teacher'));
     const hasStudent = users.some(u => (u.role||'').includes('student'));
-    addResult('setup', 'pass', `管理者: ${hasAdmin?'✅':'❌'}, 先生: ${hasTeacher?'✅':'❌'}, 生徒: ${hasStudent?'✅':'❌'}`);
-  } catch(e) { addResult('setup', 'warn', 'チェックエラー', e.message) }
+    addResult('setup', 'pass', `管琁E��E ${hasAdmin?'✁E:'❁E}, 先生: ${hasTeacher?'✁E:'❁E}, 生征E ${hasStudent?'✁E:'❁E}`);
+  } catch(e) { addResult('setup', 'warn', 'チェチE��エラー', e.message) }
   // 24. Teacher setup progress
   try {
     const users = await a('/api/users');
@@ -981,8 +981,8 @@ async function runDiagnosis() {
     const done = teachers.filter(u => u.teacher_setup_done);
     const hasSubject = teachers.filter(u => u.teacher_subject);
     const hasHomeroom = teachers.filter(u => u.teacher_homeroom);
-    addResult('teacher-setup', 'pass', `先生${teachers.length}人中${done.length}人セットアップ済 / 教科設定:${hasSubject.length}人 / 担任:${hasHomeroom.length}人`);
-  } catch(e) { addResult('teacher-setup', 'pass', 'チェックできず', e.message) }
+    addResult('teacher-setup', 'pass', `先生${teachers.length}人中${done.length}人セチE��アチE�E渁E/ 教科設宁E${hasSubject.length}人 / 拁E��:${hasHomeroom.length}人`);
+  } catch(e) { addResult('teacher-setup', 'pass', 'チェチE��できず', e.message) }
   // 25. Garbled text
   try {
     const users = await a('/api/users');
@@ -990,9 +990,9 @@ async function runDiagnosis() {
     const issues = [];
     const bad = /[^\x20-\x7E\u3000-\u9FFF\uF900-\uFAFF\u3040-\u309F\u30A0-\u30FF\uFF01-\uFF60\uFFE0-\uFFE6\u2000-\u206F\u2026\u3001-\u3002\uFF08-\uFF09\uFF0C\u30FB\u4E00-\u9FFF]/g;
     for (const u of users) { for (const f of ['display_name','club','committee','class_num']) { if (u[f] && bad.test(u[f])) { bad.lastIndex=0; issues.push(u.username+'の'+f) } } }
-    for (const p of posts) { if (p.title && bad.test(p.title)) { bad.lastIndex=0; issues.push('投稿「'+p.title+'」のタイトル') } }
-    issues.length === 0 ? addResult('garbled', 'pass', '文字化けデータなし') : addResult('garbled', 'warn', `${issues.length}件の文字化け`, issues.join('\n'));
-  } catch(e) { addResult('garbled', 'warn', 'チェック中にエラー', e.message) }
+    for (const p of posts) { if (p.title && bad.test(p.title)) { bad.lastIndex=0; issues.push('投稿、E+p.title+'」�Eタイトル') } }
+    issues.length === 0 ? addResult('garbled', 'pass', '斁E��化けデータなぁE) : addResult('garbled', 'warn', `${issues.length}件の斁E��化け`, issues.join('\n'));
+  } catch(e) { addResult('garbled', 'warn', 'チェチE��中にエラー', e.message) }
   // Summary
   const pass = results.filter(r => r.status === 'pass').length;
   const warn = results.filter(r => r.status === 'warn').length;
@@ -1001,15 +1001,15 @@ async function runDiagnosis() {
   const summary = document.createElement('div');
   summary.className = 'card';
   summary.style.textAlign = 'center';
-  const verdict = fail > 0 ? '一部のシステムに異常があります。管理者に報告してください。' : warn > 0 ? 'いくつか注意点があります。確認してください。' : '全て正常です。問題は見つかりませんでした。';
+  const verdict = fail > 0 ? '一部のシスチE��に異常があります。管琁E��E��報告してください、E : warn > 0 ? 'ぁE��つか注意点があります。確認してください、E : '全て正常です。問題�E見つかりませんでした、E;
   const icon = fail > 0 ? '🔴' : warn > 0 ? '🟡' : '🟢';
-  summary.innerHTML = `<div style="font-size:32px">${icon}</div><div style="font-size:18px;font-weight:700;margin:8px 0">✅ 正常: ${pass} 件 | ⚠️ 注意: ${warn} 件 | ❌ 異常: ${fail} 件</div><div style="font-size:14px;color:${fail?'var(--danger)':warn?'#d4a017':'var(--primary)'}">${esc(verdict)}</div><div style="font-size:11px;color:var(--sub);margin-top:8px">診断実行: ${now} | チェック項目数: ${results.length}</div>`;
+  summary.innerHTML = `<div style="font-size:32px">${icon}</div><div style="font-size:18px;font-weight:700;margin:8px 0">✁E正常: ${pass} 件 | ⚠�E�E注愁E ${warn} 件 | ❁E異常: ${fail} 件</div><div style="font-size:14px;color:${fail?'var(--danger)':warn?'#d4a017':'var(--primary)'}">${esc(verdict)}</div><div style="font-size:11px;color:var(--sub);margin-top:8px">診断実衁E ${now} | チェチE��頁E��数: ${results.length}</div>`;
   container.insertBefore(summary, container.firstChild);
   // Notify admin if anomalies found
   if (fail > 0 || warn > 0) {
     const failItems = results.filter(r => r.status === 'fail').map(r => { const c = DIAG_CHECKS.find(x => x.id === r.checkId); return (c?c.label:r.checkId)+': '+r.msg; });
     const warnItems = results.filter(r => r.status === 'warn').map(r => { const c = DIAG_CHECKS.find(x => x.id === r.checkId); return (c?c.label:r.checkId)+': '+r.msg; });
-    const msg = '🔴 診断で異常検出: 異常' + fail + '件/注意' + warn + '件\n' + (failItems.length ? '【異常】' + failItems.join(' | ') : '') + (warnItems.length ? '【注意】' + warnItems.join(' | ') : '');
+    const msg = '🔴 診断で異常検�E: 異常' + fail + '件/注愁E + warn + '件\n' + (failItems.length ? '【異常、E + failItems.join(' | ') : '') + (warnItems.length ? '【注意、E + warnItems.join(' | ') : '');
     try { await a('/api/notifications', { method: 'POST', body: JSON.stringify({ type: 'diagnostics', message: msg.slice(0, 500), link: '/user-management.html?tab=diagnosis' }) }) } catch(e) {}
   }
   btn.disabled = false;
@@ -1026,21 +1026,21 @@ async function loadPushSettings(){
   const adminView=userRoles.some(r=>['admin','teacher'].includes(r));
   $('pushSendCard').style.display=adminView?'block':'none';
   const st=$('pushStatusText'),ea=$('pushActions'),eb=$('pushEnableBtn'),db=$('pushDisableBtn'),tb=$('pushTestBtn');
-  if(!('serviceWorker'in navigator)||!('PushManager'in window)){st.textContent='⚠️ このブラウザはプッシュ通知に対応していません';return}
+  if(!('serviceWorker'in navigator)||!('PushManager'in window)){st.textContent='⚠�E�Eこ�Eブラウザはプッシュ通知に対応してぁE��せん';return}
   try{
     const reg=await navigator.serviceWorker.ready;
     const sub=await reg.pushManager.getSubscription();
     if(sub){
-      st.innerHTML='✅ プッシュ通知が有効です';
+      st.innerHTML='✁Eプッシュ通知が有効でぁE;
       eb.style.display='none';db.style.display='';tb.style.display='';
     }else if(Notification.permission==='denied'){
-      st.innerHTML='❌ 通知が拒否されています。ブラウザの設定から許可してください';
+      st.innerHTML='❁E通知が拒否されてぁE��す。ブラウザの設定から許可してください';
       eb.style.display='none';db.style.display='none';tb.style.display='none';
     }else{
-      st.innerHTML='🔔 通知を有効にするとお知らせが届くようになります';
+      st.innerHTML='🔔 通知を有効にするとお知らせが届くようになりまぁE;
       eb.style.display='';db.style.display='none';tb.style.display='none';
     }
-  }catch(e){st.textContent='⚠️ 状態の取得に失敗しました'}
+  }catch(e){st.textContent='⚠�E�E状態�E取得に失敗しました'}
 }
 $('pushEnableBtn').addEventListener('click',async()=>{
   try{
@@ -1065,21 +1065,21 @@ $('pushDisableBtn').addEventListener('click',async()=>{
 $('pushTestBtn').addEventListener('click',async()=>{
   $('pushTestBtn').disabled=true;$('pushTestBtn').textContent='送信中...';
   try{
-    await a('/api/push/send',{method:'POST',body:JSON.stringify({title:'テスト通知',body:'プッシュ通知は正常に動作しています',url:'/01index.html'})});
-    alert('テスト通知を送信しました');
+    await a('/api/push/send',{method:'POST',body:JSON.stringify({title:'チE��ト通知',body:'プッシュ通知は正常に動作してぁE��ぁE,url:'/01index.html'})});
+    alert('チE��ト通知を送信しました');
   }catch(e){alert('エラー: '+e.message)}
-  $('pushTestBtn').disabled=false;$('pushTestBtn').textContent='📨 テスト通知を送信';
+  $('pushTestBtn').disabled=false;$('pushTestBtn').textContent='📨 チE��ト通知を送信';
 });
 $('pushSendBtn').addEventListener('click',async()=>{
   const title=$('pushTitle').value.trim(),body=$('pushBody').value.trim(),url=$('pushUrl').value.trim();
-  if(!title){alert('タイトルは必須です');return}
+  if(!title){alert('タイトルは忁E��でぁE);return}
   $('pushSendBtn').disabled=true;$('pushSendBtn').textContent='送信中...';$('pushSendResult').textContent='';
   try{
     const r=await a('/api/push/send',{method:'POST',body:JSON.stringify({title,body,url})});
-    $('pushSendResult').textContent=`✅ 送信完了（成功: ${r.sent}, 失敗: ${r.failed}）`;
+    $('pushSendResult').textContent=`✁E送信完亁E���E劁E ${r.sent}, 失敁E ${r.failed}�E�`;
     $('pushSendResult').className='success';
   }catch(e){
-    $('pushSendResult').textContent='❌ '+e.message;
+    $('pushSendResult').textContent='❁E'+e.message;
     $('pushSendResult').className='error';
   }
   $('pushSendBtn').disabled=false;$('pushSendBtn').textContent='送信';
@@ -1089,26 +1089,26 @@ $('disasterTestBtn').addEventListener('click',async()=>{
   const btn=$('disasterTestBtn'),res=$('disasterTestResult');
   btn.disabled=true;btn.textContent='送信中...';res.textContent='';
   try{
-    const r=await a('/api/push/send',{method:'POST',body:JSON.stringify({title:'🚨 防災情報: 警戒レベル4テスト',body:'これはテスト配信です。警戒レベル4発令時の通知をシミュレートしています。',url:'/01index.html'})});
-    res.innerHTML=`✅ 送信完了（成功: ${r.sent}, 失敗: ${r.failed}）<br><small style="color:var(--sub)">通知音は各端末の設定に依存します</small>`;
+    const r=await a('/api/push/send',{method:'POST',body:JSON.stringify({title:'🚨 防災惁E��: 警戒レベル4チE��チE,body:'これはチE��ト�E信です。警戒レベル4発令時�E通知をシミュレートしてぁE��す、E,url:'/01index.html'})});
+    res.innerHTML=`✁E送信完亁E���E劁E ${r.sent}, 失敁E ${r.failed}�E�Ebr><small style="color:var(--sub)">通知音は吁E��末の設定に依存しまぁE/small>`;
     res.className='success';
   }catch(e){
-    res.textContent='❌ '+e.message;
+    res.textContent='❁E'+e.message;
     res.className='error';
   }
-  btn.disabled=false;btn.textContent='🚨 防災テスト通知を送信';
+  btn.disabled=false;btn.textContent='🚨 防災チE��ト通知を送信';
 });
 
 // ===== SCHEDULE EDITOR =====
 let scheduleData = [];
-const DAYS = ['日曜','月曜','火曜','水曜','木曜','金曜','土曜'];
+const DAYS = ['日曁E,'月曜','火曁E,'水曁E,'木曁E,'金曜','土曜'];
 function renderSchedule() {
   const tbody = $('scheduleRows');
   tbody.innerHTML = '';
   scheduleData.sort((a,b) => a.day_of_week*100+a.period - (b.day_of_week*100+b.period));
   scheduleData.forEach((s, i) => {
     const tr = document.createElement('tr');
-    tr.innerHTML = `<td style="padding:4px 8px">${DAYS[s.day_of_week]}</td><td style="padding:4px 8px">${s.period}限</td><td style="padding:4px 8px">${esc(s.subject)}</td><td style="padding:4px 8px">${esc(s.class_name||'')}</td><td style="padding:4px 8px"><button class="btn btn-danger btn-sm" onclick="removeSchRow(${i})">削除</button></td>`;
+    tr.innerHTML = `<td style="padding:4px 8px">${DAYS[s.day_of_week]}</td><td style="padding:4px 8px">${s.period}陁E/td><td style="padding:4px 8px">${esc(s.subject)}</td><td style="padding:4px 8px">${esc(s.class_name||'')}</td><td style="padding:4px 8px"><button class="btn btn-danger btn-sm" onclick="removeSchRow(${i})">削除</button></td>`;
     tbody.appendChild(tr);
   });
 }
@@ -1120,7 +1120,7 @@ $('addSchRow').addEventListener('click', () => {
   const cls = $('schClass').value.trim();
   if (!subject) { $('schStatus').textContent = '教科を入力してください'; return; }
   const dup = scheduleData.some(s => s.day_of_week === day && s.period === period);
-  if (dup) { $('schStatus').textContent = 'この曜日・時限は既に登録されています'; return; }
+  if (dup) { $('schStatus').textContent = 'こ�E曜日・時限は既に登録されてぁE��ぁE; return; }
   scheduleData.push({ day_of_week: day, period, subject, class_name: cls });
   renderSchedule();
   $('schSubject').value = ''; $('schClass').value = '';
@@ -1130,8 +1130,8 @@ $('saveSchBtn').addEventListener('click', async () => {
   $('schStatus').textContent = '保存中...';
   try {
     await a('/api/teacher-schedule', { method:'POST', body: JSON.stringify({ schedule: scheduleData }) });
-    $('schStatus').textContent = '✅ 保存しました';
-  } catch(e) { $('schStatus').textContent = '❌ '+e.message; }
+    $('schStatus').textContent = '✁E保存しました';
+  } catch(e) { $('schStatus').textContent = '❁E'+e.message; }
 });
 (async () => {
   try {
@@ -1142,30 +1142,30 @@ $('saveSchBtn').addEventListener('click', async () => {
 })();
 
 // ===== BATCH PASTE =====
-const DAY_MAP = { '日':0,'日曜':0,'日曜日':0,'月':1,'月曜':1,'月曜日':1,'火':2,'火曜':2,'火曜日':2,'水':3,'水曜':3,'水曜日':3,'木':4,'木曜':4,'木曜日':4,'金':5,'金曜':5,'金曜日':5,'土':6,'土曜':6,'土曜日':6 };
-const PERIOD_MAP = { '1限':1,'2限':2,'3限':3,'4限':4,'5限':5,'6限':6,'1':1,'2':2,'3':3,'4':4,'5':5,'6':6 };
+const DAY_MAP = { '日':0,'日曁E:0,'日曜日':0,'朁E:1,'月曜':1,'月曜日':1,'火':2,'火曁E:2,'火曜日':2,'水':3,'水曁E:3,'水曜日':3,'木':4,'木曁E:4,'木曜日':4,'釁E:5,'金曜':5,'金曜日':5,'圁E:6,'土曜':6,'土曜日':6 };
+const PERIOD_MAP = { '1陁E:1,'2陁E:2,'3陁E:3,'4陁E:4,'5陁E:5,'6陁E:6,'1':1,'2':2,'3':3,'4':4,'5':5,'6':6 };
 $('schBatchParse').addEventListener('click', () => {
   const text = $('schBatchText').value.trim();
-  if (!text) { $('schBatchResult').textContent = 'テキストを入力してください'; return; }
+  if (!text) { $('schBatchResult').textContent = 'チE��ストを入力してください'; return; }
   const lines = text.split('\n').filter(l => l.trim());
   let added = 0, errors = [];
   for (const line of lines) {
     const parts = line.split('\t');
-    if (parts.length < 3) { errors.push(`行「${line}」: 書式が違います`); continue; }
+    if (parts.length < 3) { errors.push(`行、E{line}、E 書式が違います`); continue; }
     const dayStr = parts[0].trim(), periodStr = parts[1].trim(), subject = parts[2].trim(), cls = (parts[3]||'').trim();
     const day = DAY_MAP[dayStr];
-    if (day === undefined) { errors.push(`行「${line}」: 曜日「${dayStr}」が不明です`); continue; }
+    if (day === undefined) { errors.push(`行、E{line}、E 曜日、E{dayStr}」が不�Eです`); continue; }
     const period = PERIOD_MAP[periodStr];
-    if (!period) { errors.push(`行「${line}」: 時限「${periodStr}」が不明です`); continue; }
-    if (!subject) { errors.push(`行「${line}」: 教科が空です`); continue; }
+    if (!period) { errors.push(`行、E{line}、E 時限、E{periodStr}」が不�Eです`); continue; }
+    if (!subject) { errors.push(`行、E{line}、E 教科が空です`); continue; }
     const dup = scheduleData.some(s => s.day_of_week === day && s.period === period);
-    if (dup) { errors.push(`行「${line}」: 既に登録済みです`); continue; }
+    if (dup) { errors.push(`行、E{line}、E 既に登録済みです`); continue; }
     scheduleData.push({ day_of_week: day, period, subject, class_name: cls });
     added++;
   }
   renderSchedule();
-  const msg = added > 0 ? `✅ ${added}件追加` : '';
-  const err = errors.length > 0 ? `⚠️ ${errors.length}件エラー（先頭: ${errors[0]}）` : '';
+  const msg = added > 0 ? `✁E${added}件追加` : '';
+  const err = errors.length > 0 ? `⚠�E�E${errors.length}件エラー�E��E頭: ${errors[0]}�E�` : '';
   $('schBatchResult').textContent = [msg, err].filter(Boolean).join(' | ');
   if (errors.length <= 1 && added > 0) $('schBatchText').value = '';
 });

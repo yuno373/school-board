@@ -1,9 +1,9 @@
-ï»¿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
-<title>éƒ¨é•·ãƒãƒ£ãƒƒãƒˆ - ä¸Šè—¤æ²¢ä¸­å­¦æ ¡éƒ¨æ´»å‹•é»’æ¿</title>
+<title>•”’·ƒ`ƒƒƒbƒg - ã“¡‘ò’†ŠwZ•”Šˆ“®•”Â</title>
 <style>
 :root{--primary:#3a6b5c;--primary-dark:#2d5548;--primary-light:#5a8a7a;--accent:#e07a5f;--bg:#f7f4f0;--card:#fff;--text:#2c2c2c;--sub:#8a8682;--border:#e8e2d8;--danger:#c96565;--radius:12px;--shadow:0 2px 12px rgba(58,107,92,0.07)}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -79,29 +79,29 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
 <body>
 <div class="chat-layout">
   <div class="chat-side" id="chatSide">
-    <h2><span>å‚åŠ è€…</span><span><button class="close-btn" id="sideClose">âœ•</button></span></h2>
+    <h2><span>Q‰ÁÒ</span><span><button class="close-btn" id="sideClose">?</button></span></h2>
     <div class="part-list" id="partList"></div>
   </div>
   <div class="chat-main">
     <div class="chat-header">
-      <button class="side-toggle-btn" id="sideToggle">â˜°</button>
-      <h1>éƒ¨é•·ãƒãƒ£ãƒƒãƒˆ <span class="h-count" id="partCount"></span></h1>
-      <a href="/" class="back-btn">â† æˆ»ã‚‹</a>
+      <button class="side-toggle-btn" id="sideToggle">?</button>
+      <h1>•”’·ƒ`ƒƒƒbƒg <span class="h-count" id="partCount"></span></h1>
+      <a href="/" class="back-btn">© –ß‚é</a>
     </div>
     <div id="chatMsgs"></div>
     <div class="file-preview" id="filePreview"></div>
     <div class="chat-input-area">
-      <button class="btn-icon" id="cFileBtn" title="ãƒ•ã‚¡ã‚¤ãƒ«æ·»ä»˜">ğŸ“</button>
+      <button class="btn-icon" id="cFileBtn" title="ƒtƒ@ƒCƒ‹“Y•t">??</button>
       <input type="file" id="cFileInput" multiple accept=".pdf,.jpg,.jpeg,.png,.gif,.txt,.doc,.docx" style="display:none">
-      <textarea id="cInput" placeholder="ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’å…¥åŠ›..." rows="1"></textarea>
-      <button id="cSend">â†’</button>
+      <textarea id="cInput" placeholder="ƒƒbƒZ[ƒW‚ğ“ü—Í..." rows="1"></textarea>
+      <button id="cSend">¨</button>
     </div>
   </div>
 </div>
 <script>
 async function h(p){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(p));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('')}
 const API_BASE=''
-async function a(p,o={}){const t=sessionStorage.getItem('token'),h={'Content-Type':'application/json',...o.headers};if(t)h['Authorization']='Bearer '+t;const r=await fetch(API_BASE+p,{...o,headers:h}),d=await r.json();if(!r.ok)throw new Error(d.error||'ã‚¨ãƒ©ãƒ¼');return d}
+async function a(p,o={}){const t=sessionStorage.getItem('token'),h={'Content-Type':'application/json',...o.headers};if(t)h['Authorization']='Bearer '+t;const r=await fetch(API_BASE+p,{...o,headers:h}),d=await r.json();if(!r.ok)throw new Error(d.error||'ƒGƒ‰[');return d}
 const A={async login(u,p){const k=await h(p),d=await a('/api/login',{method:'POST',body:JSON.stringify({username:u,password:k})});sessionStorage.setItem('token',d.token);sessionStorage.setItem('username',d.username);sessionStorage.setItem('role',d.role);return d},logout(){sessionStorage.clear()},getUser(){const u=sessionStorage.getItem('username'),r=sessionStorage.getItem('role');return u&&r?{username:u,role:r}:null},requireAuth(){const u=this.getUser();if(!u){window.location.href='02login.html';return null}return u},isAdmin(){const u=this.getUser();return u&&u.role==='admin'},canManageUsers(){const u=this.getUser();return u&&['admin','subadmin'].includes(u.role)},async api(p,o){return a(p,o)},hashPassword(p){return h(p)}};window.AUTH=A
 const API=A.api.bind(A);
 const user = AUTH.requireAuth(); if (!user) window.location.href='02login.html';
@@ -114,7 +114,7 @@ $('sideClose').onclick=()=>$('chatSide').classList.remove('open');
 
 (async function checkAccess(){
   try{await API('/api/chat/participants')}
-  catch(e){alert('ãƒãƒ£ãƒƒãƒˆã«å‚åŠ ã—ã¦ã„ã¾ã›ã‚“ã€‚ç®¡ç†è€…ã«é€£çµ¡ã—ã¦ãã ã•ã„ã€‚');window.location.href='01index.html'}
+  catch(e){alert('ƒ`ƒƒƒbƒg‚ÉQ‰Á‚µ‚Ä‚¢‚Ü‚¹‚ñBŠÇ—Ò‚É˜A—‚µ‚Ä‚­‚¾‚³‚¢B');window.location.href='01index.html'}
 })();
 
 let sentFiles = [];
@@ -132,10 +132,10 @@ function renderMsgs(msgs){
     const d=document.createElement('div');d.className='chat-msg '+(own?'own':'other');
     let html='<div class="msg-author">'+(!own?esc(m.username):'')+'</div><div class="msg-text">'+linkify(m.message)+'</div>';
     if(m.files&&m.files.length){
-      html+=m.files.map(f=>'<a href="'+esc(f.url)+'" target="_blank" class="msg-file" rel="noopener"><span>ğŸ“</span> '+esc(f.name)+'</a>').join('');
+      html+=m.files.map(f=>'<a href="'+esc(f.url)+'" target="_blank" class="msg-file" rel="noopener"><span>??</span> '+esc(f.name)+'</a>').join('');
     }
     html+='<div class="msg-time">'+fmtTime(m.created_at)+'</div>';
-    d.innerHTML=html+(canManage?'<button class="del-btn" data-id="'+m.id+'">Ã—</button>':'');
+    d.innerHTML=html+(canManage?'<button class="del-btn" data-id="'+m.id+'">~</button>':'');
     msgsEl.appendChild(d);
   }
   msgsEl.scrollTop=msgsEl.scrollHeight;
@@ -154,10 +154,10 @@ async function loadMsgs(){
       }
       lastTime=msgs.reduce((max,m)=>Math.max(max,new Date(m.created_at).getTime()),lastTime);
     }
-    if(!msgsEl.children.length)msgsEl.innerHTML='<div class="chat-empty">ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã¯ã‚ã‚Šã¾ã›ã‚“</div>';
+    if(!msgsEl.children.length)msgsEl.innerHTML='<div class="chat-empty">ƒƒbƒZ[ƒW‚Í‚ ‚è‚Ü‚¹‚ñ</div>';
   }catch(e){
-    if(e.message.includes('èªè¨¼')){sessionStorage.clear();window.location.href='02login.html';return}
-    msgsEl.innerHTML='<div class="chat-empty">èª­ã¿è¾¼ã¿ã‚¨ãƒ©ãƒ¼</div>';
+    if(e.message.includes('”FØ')){sessionStorage.clear();window.location.href='02login.html';return}
+    msgsEl.innerHTML='<div class="chat-empty">“Ç‚İ‚İƒGƒ‰[</div>';
   }
 }
 
@@ -177,12 +177,12 @@ async function sendMsg(){
     await API('/api/chat',{method:'POST',body:JSON.stringify({message:msg,files})});
     input.value='';input.style.height='auto';sentFiles=[];updateFilePreview();
     await loadMsgs();
-  }catch(e){alert('é€ä¿¡å¤±æ•—: '+e.message)}
+  }catch(e){alert('‘—M¸”s: '+e.message)}
   sendBtn.disabled=false;input.focus();
 }
 
 function updateFilePreview(){
-  filePrev.innerHTML=sentFiles.map((f,i)=>'<span class="fp-item"><span>ğŸ“</span> '+esc(f.name)+' <button class="fp-del" data-idx="'+i+'">âœ•</button></span>').join('');
+  filePrev.innerHTML=sentFiles.map((f,i)=>'<span class="fp-item"><span>??</span> '+esc(f.name)+' <button class="fp-del" data-idx="'+i+'">?</button></span>').join('');
   filePrev.querySelectorAll('.fp-del').forEach(b=>b.onclick=()=>{sentFiles.splice(parseInt(b.dataset.idx),1);updateFilePreview()});
 }
 
@@ -195,17 +195,17 @@ fileInput.onchange=()=>{
 async function loadParts(){
   try{
     const parts=await API('/api/chat/participants');
-    const el=$('partList');$('partCount').textContent='('+parts.length+'äºº)';
-    const rl={'admin':'ç®¡ç†è€…','subadmin':'å…ˆç”Ÿ','manager':'','student':'','student-council':'ç”Ÿå¾’ä¼š'};
-    const subLbl={'club':'éƒ¨é•·','committee':'å§”å“¡é•·'};
+    const el=$('partList');$('partCount').textContent='('+parts.length+'l)';
+    const rl={'admin':'ŠÇ—Ò','subadmin':'æ¶','manager':'','student':'','student-council':'¶“k‰ï'};
+    const subLbl={'club':'•”’·','committee':'ˆÏˆõ’·'};
     el.innerHTML=parts.map((p,i)=>{
       const dotColor=COLORS[i%COLORS.length];
       const roleLabel=p.role==='manager'?(subLbl[p.role_subtype]||''):(rl[p.role]||'');
       const canDel=canManage&&p.role!=='admin'&&p.role!=='subadmin';
-      return '<div class="part-item"><span class="part-dot" style="background:'+dotColor+'"></span><span class="part-name">'+esc(p.display_name||p.username)+'</span><span class="part-role">'+roleLabel+'</span>'+(canDel?'<button class="part-del" data-u="'+esc(p.username)+'">âœ•</button>':'')+'</div>';
+      return '<div class="part-item"><span class="part-dot" style="background:'+dotColor+'"></span><span class="part-name">'+esc(p.display_name||p.username)+'</span><span class="part-role">'+roleLabel+'</span>'+(canDel?'<button class="part-del" data-u="'+esc(p.username)+'">?</button>':'')+'</div>';
     }).join('');
     el.querySelectorAll('.part-del').forEach(b=>b.onclick=async()=>{
-      if(!confirm('ã€Œ'+b.dataset.u+'ã€ã‚’ãƒãƒ£ãƒƒãƒˆã‹ã‚‰å‰Šé™¤ã—ã¾ã™ã‹ï¼Ÿ'))return;
+      if(!confirm('u'+b.dataset.u+'v‚ğƒ`ƒƒƒbƒg‚©‚çíœ‚µ‚Ü‚·‚©H'))return;
       try{await API('/api/chat/participants/'+encodeURIComponent(b.dataset.u),{method:'DELETE'});loadParts()}catch(e){alert(e.message)}
     });
   }catch(e){}
@@ -214,7 +214,7 @@ async function loadParts(){
 msgsEl.onclick=async e=>{
   const btn=e.target.closest('.del-btn');
   if(!btn)return;
-  if(!confirm('å‰Šé™¤ã—ã¾ã™ã‹ï¼Ÿ'))return;
+  if(!confirm('íœ‚µ‚Ü‚·‚©H'))return;
   try{await API('/api/chat/'+btn.dataset.id,{method:'DELETE'});btn.closest('.chat-msg').remove()}catch(e){alert(e.message)}
 };
 
@@ -222,7 +222,7 @@ sendBtn.onclick=sendMsg;
 input.onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg()}};
 input.oninput=()=>{input.style.height='auto';input.style.height=Math.min(input.scrollHeight,120)+'px'};
 
-msgsEl.innerHTML='<div class="chat-empty">èª­ã¿è¾¼ã¿ä¸­...</div>';
+msgsEl.innerHTML='<div class="chat-empty">“Ç‚İ‚İ’†...</div>';
 loadMsgs();loadParts();
 setInterval(loadMsgs,3000);
 </script>

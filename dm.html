@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <link rel="manifest" href="manifest.json">
-<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>DM - 上藤沢中学校 部活動黒板</title>
 <style>
@@ -78,15 +78,15 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
 <header class="header">
   <div class="header-title">💬 DM</div>
   <div class="header-right">
-    <a href="01index.html" class="header-link">黒板に戻る</a>
+    <a href="01index.html" class="header-link">黒板に戻めE/a>
   </div>
 </header>
 <div class="dm-body">
   <div class="dm-sidebar">
-    <h3>📨 メッセージ</h3>
+    <h3>📨 メチE��ージ</h3>
     <div class="dm-search"><input type="text" id="dmSearch" placeholder="検索..."></div>
-    <button class="dm-new-btn" id="dmNewBtn">＋ 新しいメッセージ</button>
-    <button class="dm-new-btn" id="dmNewGroupBtn" style="background:var(--primary-dark);margin-top:2px">👥 グループを作成</button>
+    <button class="dm-new-btn" id="dmNewBtn">�E�E新しいメチE��ージ</button>
+    <button class="dm-new-btn" id="dmNewGroupBtn" style="background:var(--primary-dark);margin-top:2px">👥 グループを作�E</button>
     <div class="dm-conv-list" id="dmConvList">読み込み中...</div>
   </div>
   <div class="dm-main">
@@ -95,7 +95,7 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
       <div class="dm-header" id="dmChatHeader"></div>
       <div class="dm-msgs" id="dmMsgList"></div>
       <div class="dm-input">
-        <input type="text" id="dmMsgInput" placeholder="メッセージを入力..." maxlength="1000" autofocus>
+        <input type="text" id="dmMsgInput" placeholder="メチE��ージを�E劁E.." maxlength="1000" autofocus>
         <button id="dmSendBtn">送信</button>
       </div>
     </div>
@@ -103,8 +103,8 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
 </div>
 <div class="dm-overlay" id="dmOverlay">
   <div class="dm-new-modal" id="dmNewModalContent">
-    <h3 id="dmNewTitle">宛先を選択</h3>
-    <input type="text" id="dmUserSearch" placeholder="名前またはIDで検索..." style="width:100%;padding:8px 10px;border:2px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;margin-bottom:8px">
+    <h3 id="dmNewTitle">宛�Eを選抁E/h3>
+    <input type="text" id="dmUserSearch" placeholder="名前また�EIDで検索..." style="width:100%;padding:8px 10px;border:2px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;margin-bottom:8px">
     <div class="dm-user-list" id="dmUserList"></div>
     <div class="dm-new-actions">
       <button class="btn-cancel" id="dmNewCancel">キャンセル</button>
@@ -143,13 +143,13 @@ async function loadConvs(){
   }catch(e){}
 }
 function roleNames(r){
-  const m={'admin':'管理者','teacher':'先生','president':'部長','vice-president':'副部長','chairperson':'委員長','student':'生徒'};
+  const m={'admin':'管琁E��E,'teacher':'先生','president':'部長','vice-president':'副部長','chairperson':'委員長','student':'生征E};
   return (r||'').split(',').map(s=>m[s.trim()]||s.trim()).filter(Boolean).join('·');
 }
 function timeAgo(t){
   if(!t)return'';const d=new Date(t),n=new Date();
   if(d.toDateString()===n.toDateString())return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
-  const y=(n-d)/86400000;return y<2?'昨日':y<7?Math.floor(y)+'日前':(d.getMonth()+1)+'/'+d.getDate();
+  const y=(n-d)/86400000;return y<2?'昨日':y<7?Math.floor(y)+'日剁E:(d.getMonth()+1)+'/'+d.getDate();
 }
 
 async function openConv(type,id){
@@ -163,7 +163,7 @@ async function openConv(type,id){
     $('#dmChatHeader').innerHTML='💬 '+esc(c?c.display_name:id)+' <span class="dh-role">'+esc(c?roleNames(c.role):'')+'</span>';
   }else{
     const c=convs.find(x=>x.type==='group'&&x.id===id);
-    $('#dmChatHeader').innerHTML='👥 '+esc(c?c.name:'グループ')+' <span class="dh-role">'+(c?c.members.length+'人':'')+'</span>';
+    $('#dmChatHeader').innerHTML='👥 '+esc(c?c.name:'グルーチE)+' <span class="dh-role">'+(c?c.members.length+'人':'')+'</span>';
   }
   await loadMsgs(type,id);
   loadConvs();
@@ -259,8 +259,8 @@ function renderUserList(q,multi){
 // New DM (1-on-1) - teachers/admins only
 if(isStaff){
 $('#dmNewBtn').addEventListener('click',()=>{
-  $('#dmNewTitle').textContent='宛先を選択';
-  $('#dmNewModalContent').innerHTML='<h3 id="dmNewTitle">宛先を選択</h3><input type="text" id="dmUserSearch" placeholder="名前またはIDで検索..." style="width:100%;padding:8px 10px;border:2px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;margin-bottom:8px"><div class="dm-user-list" id="dmUserList"></div><div class="dm-new-actions"><button class="btn-cancel" id="dmNewCancel">キャンセル</button></div>';
+  $('#dmNewTitle').textContent='宛�Eを選抁E;
+  $('#dmNewModalContent').innerHTML='<h3 id="dmNewTitle">宛�Eを選抁E/h3><input type="text" id="dmUserSearch" placeholder="名前また�EIDで検索..." style="width:100%;padding:8px 10px;border:2px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;margin-bottom:8px"><div class="dm-user-list" id="dmUserList"></div><div class="dm-new-actions"><button class="btn-cancel" id="dmNewCancel">キャンセル</button></div>';
   $('#dmOverlay').classList.add('show');
   $('#dmUserSearch').value='';
   renderUserList('',false);
@@ -272,7 +272,7 @@ $('#dmNewBtn').addEventListener('click',()=>{
 // New Group DM - teachers/admins only
 if(isStaff){
 $('#dmNewGroupBtn').addEventListener('click',()=>{
-  $('#dmNewModalContent').innerHTML='<h3>👥 グループを作成</h3><label>グループ名</label><input type="text" id="dmGroupName" placeholder="グループ名"><label>メンバーを選択</label><input type="text" id="dmUserSearch" placeholder="検索..." style="width:100%;padding:8px 10px;border:2px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;margin-bottom:4px"><div class="dm-user-list" id="dmUserList"></div><div class="dm-new-actions"><button class="btn-cancel" id="dmNewCancel">キャンセル</button><button class="btn-primary" id="dmGroupCreateBtn">作成</button></div>';
+  $('#dmNewModalContent').innerHTML='<h3>👥 グループを作�E</h3><label>グループ名</label><input type="text" id="dmGroupName" placeholder="グループ名"><label>メンバ�Eを選抁E/label><input type="text" id="dmUserSearch" placeholder="検索..." style="width:100%;padding:8px 10px;border:2px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;margin-bottom:4px"><div class="dm-user-list" id="dmUserList"></div><div class="dm-new-actions"><button class="btn-cancel" id="dmNewCancel">キャンセル</button><button class="btn-primary" id="dmGroupCreateBtn">作�E</button></div>';
   $('#dmOverlay').classList.add('show');
   $('#dmUserSearch').value='';
   renderUserList('',true);
@@ -282,8 +282,8 @@ $('#dmNewGroupBtn').addEventListener('click',()=>{
   $('#dmGroupCreateBtn').addEventListener('click',async()=>{
     const name=$('#dmGroupName').value.trim();
     const sel=Array.from($('#dmUserList').querySelectorAll('.selected')).map(e=>e.dataset.user);
-    if(!name){alert('グループ名を入力してください');return}
-    if(sel.length<1){alert('メンバーを1人以上選択してください');return}
+    if(!name){alert('グループ名を�E力してください');return}
+    if(sel.length<1){alert('メンバ�EめE人以上選択してください');return}
     try{
       await a('/api/dm/groups',{method:'POST',body:JSON.stringify({name,members:sel})});
       $('#dmOverlay').classList.remove('show');

@@ -1,9 +1,9 @@
-ï»¿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>ç®¡ç†ç”»é¢ - ä¸Šè—¤æ²¢ä¸­å­¦æ ¡éƒ¨æ´»å‹•é»’æ¿</title>
+<title>ŠÇ—‰æ–Ê - ã“¡‘ò’†ŠwZ•”Šˆ“®•”Â</title>
 <style>
 :root{--primary:#3a6b5c;--primary-dark:#2d5548;--primary-light:#5a8a7a;--accent:#e07a5f;--bg:#f7f4f0;--card:#fff;--text:#2c2c2c;--sub:#8a8682;--border:#e8e2d8;--danger:#c96565;--radius:12px;--shadow:0 2px 12px rgba(58,107,92,0.07)}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -70,31 +70,31 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
 </head>
 <body>
 <header class="header">
-  <div class="header-title">ç®¡ç†ç”»é¢</div>
+  <div class="header-title">ŠÇ—‰æ–Ê</div>
   <div class="header-right">
     <span id="aUser" style="font-size:12px;color:rgba(255,255,255,.75)"></span>
-    <a href="01index.html" class="header-link">é»’æ¿ã«æˆ»ã‚‹</a>
-    <button class="header-link danger" id="aLogout">ãƒ­ã‚°ã‚¢ã‚¦ãƒˆ</button>
+    <a href="01index.html" class="header-link">•”Â‚É–ß‚é</a>
+    <button class="header-link danger" id="aLogout">ƒƒOƒAƒEƒg</button>
   </div>
 </header>
 <div class="main-content">
   <div class="tab-bar">
-    <button class="tab-btn active" data-tab="users">ãƒ¦ãƒ¼ã‚¶ãƒ¼ç®¡ç†</button>
-    <button class="tab-btn" data-tab="batch">ç”Ÿå¾’IDä¸€æ‹¬ç”Ÿæˆ</button>
-    <button class="tab-btn" data-tab="posts">æŠ•ç¨¿ç®¡ç†</button>
-    <button class="tab-btn" data-tab="stats">çµ±è¨ˆ</button>
-    <button class="tab-btn" data-tab="chat">ãƒãƒ£ãƒƒãƒˆç®¡ç†</button>
+    <button class="tab-btn active" data-tab="users">ƒ†[ƒU[ŠÇ—</button>
+    <button class="tab-btn" data-tab="batch">¶“kIDˆêŠ‡¶¬</button>
+    <button class="tab-btn" data-tab="posts">“ŠeŠÇ—</button>
+    <button class="tab-btn" data-tab="stats">“Œv</button>
+    <button class="tab-btn" data-tab="chat">ƒ`ƒƒƒbƒgŠÇ—</button>
   </div>
 
   <div class="tab-content active" id="tab-users">
     <div class="search-bar">
-      <input type="text" id="searchInput" placeholder="åå‰ãƒ»éƒ¨æ´»ãƒ»å§”å“¡ä¼šãƒ»ã‚¯ãƒ©ã‚¹ã§æ¤œç´¢">
-      <select id="searchRole"><option value="">å…¨æ¨©é™</option><option value="subadmin">å…ˆç”Ÿ</option><option value="manager">éƒ¨é•·/å§”å“¡é•·</option><option value="student-council">ç”Ÿå¾’ä¼šæœ¬éƒ¨</option><option value="student">ç”Ÿå¾’</option></select>
-      <button class="btn btn-primary btn-sm" id="aRefresh">æ›´æ–°</button>
+      <input type="text" id="searchInput" placeholder="–¼‘OE•”ŠˆEˆÏˆõ‰ïEƒNƒ‰ƒX‚ÅŒŸõ">
+      <select id="searchRole"><option value="">‘SŒ ŒÀ</option><option value="subadmin">æ¶</option><option value="manager">•”’·/ˆÏˆõ’·</option><option value="student-council">¶“k‰ï–{•”</option><option value="student">¶“k</option></select>
+      <button class="btn btn-primary btn-sm" id="aRefresh">XV</button>
     </div>
     <div style="overflow-x:auto">
       <table class="user-table" id="userTable">
-        <thead><tr><th>ãƒ­ã‚°ã‚¤ãƒ³ID</th><th>è¡¨ç¤ºå</th><th>ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰</th><th>æ¨©é™</th><th>å­¦å¹´</th><th>ã‚¯ãƒ©ã‚¹</th><th>ç•ªå·</th><th>éƒ¨æ´»</th><th>å§”å“¡ä¼š</th><th>ç™»éŒ²æ—¥</th><th></th></tr></thead>
+        <thead><tr><th>ƒƒOƒCƒ“ID</th><th>•\¦–¼</th><th>ƒpƒXƒ[ƒh</th><th>Œ ŒÀ</th><th>Šw”N</th><th>ƒNƒ‰ƒX</th><th>”Ô†</th><th>•”Šˆ</th><th>ˆÏˆõ‰ï</th><th>“o˜^“ú</th><th></th></tr></thead>
         <tbody id="userList"></tbody>
       </table>
     </div>
@@ -102,11 +102,11 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
 
   <div class="tab-content" id="tab-batch">
     <div class="batch-form">
-      <label>å…¥å­¦å¹´åº¦<input type="number" id="bYear" value="2026" min="2020" max="2035"></label>
-      <label>ã‚¯ãƒ©ã‚¹æ•°<input type="number" id="bClasses" value="4" min="1" max="10"></label>
-      <label>1ã‚¯ãƒ©ã‚¹äººæ•°<input type="number" id="bPerClass" value="30" min="1" max="50"></label>
-      <label>åˆæœŸãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰<input type="text" id="bPassword" value="111111"></label>
-      <button class="btn btn-primary" id="bGenerate">ç”Ÿæˆã™ã‚‹</button>
+      <label>“üŠw”N“x<input type="number" id="bYear" value="2026" min="2020" max="2035"></label>
+      <label>ƒNƒ‰ƒX”<input type="number" id="bClasses" value="4" min="1" max="10"></label>
+      <label>1ƒNƒ‰ƒXl”<input type="number" id="bPerClass" value="30" min="1" max="50"></label>
+      <label>‰ŠúƒpƒXƒ[ƒh<input type="text" id="bPassword" value="111111"></label>
+      <button class="btn btn-primary" id="bGenerate">¶¬‚·‚é</button>
     </div>
     <div class="result-box" id="bResult"></div>
   </div>
@@ -114,7 +114,7 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
   <div class="tab-content" id="tab-posts">
     <div style="overflow-x:auto">
       <table class="post-table" id="postTable">
-        <thead><tr><th>ã‚«ãƒ†ã‚´ãƒª</th><th>ã‚¿ã‚¤ãƒˆãƒ«</th><th>æŠ•ç¨¿è€…</th><th>æ—¥ä»˜</th><th></th></tr></thead>
+        <thead><tr><th>ƒJƒeƒSƒŠ</th><th>ƒ^ƒCƒgƒ‹</th><th>“ŠeÒ</th><th>“ú•t</th><th></th></tr></thead>
         <tbody id="postList"></tbody>
       </table>
     </div>
@@ -123,27 +123,27 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
   <div class="tab-content" id="tab-stats">
     <div class="stat-grid" id="statGrid"></div>
     <div class="card">
-      <h3>æ¨©é™åˆ¥ãƒ¦ãƒ¼ã‚¶ãƒ¼æ•°</h3>
+      <h3>Œ ŒÀ•Êƒ†[ƒU[”</h3>
       <div class="bar-chart" id="roleChart"></div>
     </div>
     <div class="card">
-      <h3>éƒ¨æ´»åˆ¥ãƒ¦ãƒ¼ã‚¶ãƒ¼æ•°</h3>
+      <h3>•”Šˆ•Êƒ†[ƒU[”</h3>
       <div class="bar-chart" id="clubChart"></div>
     </div>
     <div class="card">
-      <h3>å§”å“¡ä¼šåˆ¥ãƒ¦ãƒ¼ã‚¶ãƒ¼æ•°</h3>
+      <h3>ˆÏˆõ‰ï•Êƒ†[ƒU[”</h3>
       <div class="bar-chart" id="committeeChart"></div>
     </div>
   </div>
 
   <div class="tab-content" id="tab-chat">
     <div class="search-bar" style="margin-bottom:12px">
-      <input type="text" id="chatSearchInput" placeholder="ãƒ¦ãƒ¼ã‚¶ãƒ¼åã§æ¤œç´¢" style="max-width:240px">
-      <span style="font-size:13px;color:var(--sub);display:flex;align-items:center;gap:4px">å‚åŠ è€…: <strong id="chatPartCount" style="color:var(--primary)">0</strong></span>
+      <input type="text" id="chatSearchInput" placeholder="ƒ†[ƒU[–¼‚ÅŒŸõ" style="max-width:240px">
+      <span style="font-size:13px;color:var(--sub);display:flex;align-items:center;gap:4px">Q‰ÁÒ: <strong id="chatPartCount" style="color:var(--primary)">0</strong></span>
     </div>
     <div style="overflow-x:auto">
       <table class="user-table" id="chatUserTable">
-        <thead><tr><th>ãƒ¦ãƒ¼ã‚¶ãƒ¼å</th><th>æ¨©é™</th><th>è¡¨ç¤ºå</th><th>å‚åŠ </th></tr></thead>
+        <thead><tr><th>ƒ†[ƒU[–¼</th><th>Œ ŒÀ</th><th>•\¦–¼</th><th>Q‰Á</th></tr></thead>
         <tbody id="chatUserList"></tbody>
       </table>
     </div>
@@ -153,21 +153,21 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
 <script>
 async function h(p){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(p));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('')}
 const API_BASE=''
-async function a(p,o={}){const t=sessionStorage.getItem('token'),h={'Content-Type':'application/json',...o.headers};if(t)h['Authorization']='Bearer '+t;const r=await fetch(API_BASE+p,{...o,headers:h}),d=await r.json();if(!r.ok)throw new Error(d.error||'ã‚¨ãƒ©ãƒ¼');return d}
+async function a(p,o={}){const t=sessionStorage.getItem('token'),h={'Content-Type':'application/json',...o.headers};if(t)h['Authorization']='Bearer '+t;const r=await fetch(API_BASE+p,{...o,headers:h}),d=await r.json();if(!r.ok)throw new Error(d.error||'ƒGƒ‰[');return d}
 const A={requireAuth(){const u=sessionStorage.getItem('username'),r=sessionStorage.getItem('role'),t=sessionStorage.getItem('token');if(!u||!r||!t)return null;return{username:u,role:r,token:t}},canManageUsers(){const u=this.requireAuth();if(!u)return false;const roles=u.role.split(',').map(s=>s.trim());return roles.some(r=>['admin','subadmin'].includes(r))},logout(){sessionStorage.clear()},getUser(){return this.requireAuth()}};window.AUTH=A;
 const $=id=>document.getElementById(id),esc=s=>{const d=document.createElement('div');d.textContent=s;return d.innerHTML};
 const u=AUTH.requireAuth();if(!u)window.location.href='02login.html';
-if(!AUTH.canManageUsers()){alert('æ¨©é™ãŒã‚ã‚Šã¾ã›ã‚“');window.location.href='01index.html'}
-const RL={'admin':'ç®¡ç†è€…','subadmin':'å…ˆç”Ÿ','manager':'éƒ¨é•·/å§”å“¡é•·','student':'ç”Ÿå¾’','student-council':'ç”Ÿå¾’ä¼šæœ¬éƒ¨'};
-$('aUser').textContent=u.username+'ï¼ˆ'+(u.role||'').split(',').map(r=>RL[r.trim()]||r.trim()).filter(Boolean).join('Â·')+'ï¼‰';
+if(!AUTH.canManageUsers()){alert('Œ ŒÀ‚ª‚ ‚è‚Ü‚¹‚ñ');window.location.href='01index.html'}
+const RL={'admin':'ŠÇ—Ò','subadmin':'æ¶','manager':'•”’·/ˆÏˆõ’·','student':'¶“k','student-council':'¶“k‰ï–{•”'};
+$('aUser').textContent=u.username+'i'+(u.role||'').split(',').map(r=>RL[r.trim()]||r.trim()).filter(Boolean).join('E')+'j';
 $('aLogout').addEventListener('click',()=>{AUTH.logout();window.location.href='02login.html'});
-const ROLES=[{v:'subadmin',l:'å…ˆç”Ÿ'},{v:'manager-club',l:'éƒ¨é•·'},{v:'manager-committee',l:'å§”å“¡é•·'},{v:'student-council',l:'ç”Ÿå¾’ä¼šæœ¬éƒ¨'},{v:'student',l:'ç”Ÿå¾’'}];
+const ROLES=[{v:'subadmin',l:'æ¶'},{v:'manager-club',l:'•”’·'},{v:'manager-committee',l:'ˆÏˆõ’·'},{v:'student-council',l:'¶“k‰ï–{•”'},{v:'student',l:'¶“k'}];
 function roleLabel(r){
-  const m={'subadmin':'å…ˆç”Ÿ','manager-club':'éƒ¨é•·','manager-committee':'å§”å“¡é•·','student-council':'ç”Ÿå¾’ä¼šæœ¬éƒ¨','student':'ç”Ÿå¾’'};
+  const m={'subadmin':'æ¶','manager-club':'•”’·','manager-committee':'ˆÏˆõ’·','student-council':'¶“k‰ï–{•”','student':'¶“k'};
   return m[r]||r;
 }
-const CLUBS=['å¹å¥æ¥½éƒ¨','èŒ¶é“éƒ¨','ç¾è¡“éƒ¨','å“çƒéƒ¨','ãƒ†ãƒ‹ã‚¹éƒ¨å¥³å­','ãƒ†ãƒ‹ã‚¹éƒ¨ç”·å­','ã‚µãƒƒã‚«ãƒ¼éƒ¨','é‡çƒéƒ¨','é™¸ä¸Šéƒ¨','ãƒã‚¹ã‚±éƒ¨å¥³å­','ãƒã‚¹ã‚±éƒ¨ç”·å­','ãƒãƒ¬ãƒ¼éƒ¨'];
-const COMMS=['æ•´å‚™å§”å“¡ä¼š','ç”Ÿæ´»å§”å“¡ä¼š','é¸æŒ™ç®¡ç†å§”å“¡ä¼š','å›³æ›¸å§”å“¡ä¼š','çµ¦é£Ÿå§”å“¡ä¼š','åˆå”±å§”å“¡ä¼š','ä½“è‚²å§”å“¡ä¼š','ä¿å¥å§”å“¡ä¼š','æ”¾é€å§”å“¡ä¼š'];
+const CLUBS=['‘tŠy•”','’ƒ“¹•”','”üp•”','‘ì‹…•”','ƒeƒjƒX•”—q','ƒeƒjƒX•”’jq','ƒTƒbƒJ[•”','–ì‹…•”','—¤ã•”','ƒoƒXƒP•”—q','ƒoƒXƒP•”’jq','ƒoƒŒ[•”'];
+const COMMS=['®”õˆÏˆõ‰ï','¶ŠˆˆÏˆõ‰ï','‘I‹“ŠÇ—ˆÏˆõ‰ï','}‘ˆÏˆõ‰ï','‹‹HˆÏˆõ‰ï','‡¥ˆÏˆõ‰ï','‘ÌˆçˆÏˆõ‰ï','•ÛŒ’ˆÏˆõ‰ï','•ú‘—ˆÏˆõ‰ï'];
 
 document.querySelectorAll('.tab-btn').forEach(b=>b.addEventListener('click',()=>{
   document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));
@@ -178,7 +178,7 @@ document.querySelectorAll('.tab-btn').forEach(b=>b.addEventListener('click',()=>
 
 let usersData=[];
 async function loadUsers(){
-  try{usersData=await a('/api/users');renderUsers()}catch(e){if(e.message.includes('èªè¨¼')){AUTH.logout();window.location.href='02login.html'}}
+  try{usersData=await a('/api/users');renderUsers()}catch(e){if(e.message.includes('”FØ')){AUTH.logout();window.location.href='02login.html'}}
 }
 function renderUsers(){
   const q=$('searchInput').value.trim().toLowerCase(),r=$('searchRole').value;
@@ -189,14 +189,14 @@ function renderUsers(){
     const userRoles=x.role.split(',').map(s=>s.trim());
     const isAdmin=userRoles.includes('admin');
     const sd=u.role!=='admin'||!isAdmin;
-    const pwShow=x.password_plain?'<span class="pwd-show" onclick="this.textContent=this.textContent===\'******\'?\'"'+esc(x.password_plain)+'"\':\'******\'">******</span>':'â€”';
-    const dt=x.created_at?new Date(x.created_at).toLocaleDateString('ja-JP',{month:'numeric',day:'numeric',year:'numeric'}):'â€”';
-    const actions='<div style="display:flex;gap:4px;flex-wrap:wrap">'+(sd&&x.id!==u.id?'<button class="btn btn-danger btn-sm" onclick="delUser(\''+x.id+'\',\''+esc(x.username)+'\')">å‰Šé™¤</button>':'')+(sd?'<button class="btn btn-outline btn-sm" onclick="resetPwd(\''+x.id+'\',\''+esc(x.username)+'\')">PWå†ç™ºè¡Œ</button>':'')+'</div>';
+    const pwShow=x.password_plain?'<span class="pwd-show" onclick="this.textContent=this.textContent===\'******\'?\'"'+esc(x.password_plain)+'"\':\'******\'">******</span>':'?';
+    const dt=x.created_at?new Date(x.created_at).toLocaleDateString('ja-JP',{month:'numeric',day:'numeric',year:'numeric'}):'?';
+    const actions='<div style="display:flex;gap:4px;flex-wrap:wrap">'+(sd&&x.id!==u.id?'<button class="btn btn-danger btn-sm" onclick="delUser(\''+x.id+'\',\''+esc(x.username)+'\')">íœ</button>':'')+(sd?'<button class="btn btn-outline btn-sm" onclick="resetPwd(\''+x.id+'\',\''+esc(x.username)+'\')">PWÄ”­s</button>':'')+'</div>';
     const roleHtml=ROLES.map(rr=>{
       const checked=userRoles.includes(rr.v);
       return '<label style="font-size:11px;white-space:nowrap;cursor:pointer;display:flex;align-items:center;gap:3px"><input type="checkbox" '+(checked?'checked':'')+' data-id="'+x.id+'" data-v="'+rr.v+'"> '+esc(rr.l)+'</label>';
     }).join('');
-    tr.innerHTML='<td>'+esc(x.username)+'</td><td><input type="text" value="'+esc(x.display_name||'')+'" onchange="updField(\''+x.id+'\',\'display_name\',this.value)" style="width:100px"></td><td>'+(sd?pwShow+'<br><input type="text" placeholder="æ–°PW" onchange="setPwd(\''+x.id+'\',this)" style="width:80px;font-size:11px;margin-top:4px">':'â€”')+'</td><td><div style="display:flex;flex-direction:column;gap:2px">'+roleHtml+'</div></td><td><input type="text" value="'+esc(x.grade||'')+'" onchange="updField(\''+x.id+'\',\'grade\',this.value)" style="width:50px"></td><td><input type="text" value="'+esc(x.class_num||'')+'" onchange="updField(\''+x.id+'\',\'class_num\',this.value)" style="width:40px"></td><td><input type="text" value="'+esc(x.seat_num||'')+'" onchange="updField(\''+x.id+'\',\'seat_num\',this.value)" style="width:40px"></td><td><select onchange="updField(\''+x.id+'\',\'club\',this.value)"><option value="">â€”</option>'+CLUBS.map(c=>'<option value="'+c+'"'+(x.club===c?' selected':'')+'>'+c+'</option>').join('')+'</select></td><td><select onchange="updField(\''+x.id+'\',\'committee\',this.value)"><option value="">â€”</option>'+COMMS.map(c=>'<option value="'+c+'"'+(x.committee===c?' selected':'')+'>'+c+'</option>').join('')+'</select></td><td>'+dt+'</td><td>'+actions+'</td>';
+    tr.innerHTML='<td>'+esc(x.username)+'</td><td><input type="text" value="'+esc(x.display_name||'')+'" onchange="updField(\''+x.id+'\',\'display_name\',this.value)" style="width:100px"></td><td>'+(sd?pwShow+'<br><input type="text" placeholder="VPW" onchange="setPwd(\''+x.id+'\',this)" style="width:80px;font-size:11px;margin-top:4px">':'?')+'</td><td><div style="display:flex;flex-direction:column;gap:2px">'+roleHtml+'</div></td><td><input type="text" value="'+esc(x.grade||'')+'" onchange="updField(\''+x.id+'\',\'grade\',this.value)" style="width:50px"></td><td><input type="text" value="'+esc(x.class_num||'')+'" onchange="updField(\''+x.id+'\',\'class_num\',this.value)" style="width:40px"></td><td><input type="text" value="'+esc(x.seat_num||'')+'" onchange="updField(\''+x.id+'\',\'seat_num\',this.value)" style="width:40px"></td><td><select onchange="updField(\''+x.id+'\',\'club\',this.value)"><option value="">?</option>'+CLUBS.map(c=>'<option value="'+c+'"'+(x.club===c?' selected':'')+'>'+c+'</option>').join('')+'</select></td><td><select onchange="updField(\''+x.id+'\',\'committee\',this.value)"><option value="">?</option>'+COMMS.map(c=>'<option value="'+c+'"'+(x.committee===c?' selected':'')+'>'+c+'</option>').join('')+'</select></td><td>'+dt+'</td><td>'+actions+'</td>';
     tr.querySelectorAll('input[type=checkbox][data-id]').forEach(cb=>{
       cb.onchange=function(){updRole(this.dataset.id,this.dataset.v,this.checked)};
     });
@@ -214,41 +214,41 @@ async function updRole(id,val,add){
   }catch(e){alert(e.message);loadUsers()}
 }
 async function updField(id,field,val){try{await a('/api/users/'+id,{method:'PUT',body:JSON.stringify({[field]:val})})}catch(e){alert(e.message)}}
-async function delUser(id,un){if(!confirm('ã€Œ'+un+'ã€ã‚’å‰Šé™¤ã—ã¾ã™ã‹ï¼Ÿ'))return;try{await a('/api/users/'+id,{method:'DELETE'});loadUsers()}catch(e){alert(e.message)}}
-async function resetPwd(id,un){if(!confirm('ã€Œ'+un+'ã€ã®ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ã‚’å†ç™ºè¡Œã—ã¾ã™ã‹ï¼Ÿ'))return;try{const r=await a('/api/users/'+id+'/reset-password',{method:'PUT'});alert('æ–°ã—ã„ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰: '+r.newPassword+'\nã“ã®ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ã‚’ãƒ¦ãƒ¼ã‚¶ãƒ¼ã«ä¼ãˆã¦ãã ã•ã„ã€‚');loadUsers()}catch(e){alert(e.message)}}
-async function setPwd(id,inp){const pw=inp.value.trim();if(!pw||pw.length<6){alert('6æ–‡å­—ä»¥ä¸Šå…¥åŠ›ã—ã¦ãã ã•ã„');inp.value='';return}if(!confirm('ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ã‚’ã€Œ'+pw+'ã€ã«å¤‰æ›´ã—ã¾ã™ã‹ï¼Ÿï¼ˆå–ã‚Šæ¶ˆã›ã¾ã›ã‚“ï¼‰')){inp.value='';return}try{await a('/api/users/'+id,{method:'PUT',body:JSON.stringify({password:pw})});alert('ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ã‚’å¤‰æ›´ã—ã¾ã—ãŸ');inp.value='';loadUsers()}catch(e){alert(e.message);inp.value=''}}
+async function delUser(id,un){if(!confirm('u'+un+'v‚ğíœ‚µ‚Ü‚·‚©H'))return;try{await a('/api/users/'+id,{method:'DELETE'});loadUsers()}catch(e){alert(e.message)}}
+async function resetPwd(id,un){if(!confirm('u'+un+'v‚ÌƒpƒXƒ[ƒh‚ğÄ”­s‚µ‚Ü‚·‚©H'))return;try{const r=await a('/api/users/'+id+'/reset-password',{method:'PUT'});alert('V‚µ‚¢ƒpƒXƒ[ƒh: '+r.newPassword+'\n‚±‚ÌƒpƒXƒ[ƒh‚ğƒ†[ƒU[‚É“`‚¦‚Ä‚­‚¾‚³‚¢B');loadUsers()}catch(e){alert(e.message)}}
+async function setPwd(id,inp){const pw=inp.value.trim();if(!pw||pw.length<6){alert('6•¶šˆÈã“ü—Í‚µ‚Ä‚­‚¾‚³‚¢');inp.value='';return}if(!confirm('ƒpƒXƒ[ƒh‚ğu'+pw+'v‚É•ÏX‚µ‚Ü‚·‚©Hiæ‚èÁ‚¹‚Ü‚¹‚ñj')){inp.value='';return}try{await a('/api/users/'+id,{method:'PUT',body:JSON.stringify({password:pw})});alert('ƒpƒXƒ[ƒh‚ğ•ÏX‚µ‚Ü‚µ‚½');inp.value='';loadUsers()}catch(e){alert(e.message);inp.value=''}}
 $('searchInput').addEventListener('input',renderUsers);
 $('searchRole').addEventListener('change',renderUsers);
 $('aRefresh').addEventListener('click',loadUsers);
 
 $('bGenerate').addEventListener('click',async()=>{
   const year=$('bYear').value,classes=$('bClasses').value,perClass=$('bPerClass').value,password=$('bPassword').value;
-  if(!confirm(year+'å¹´åº¦ å…¥å­¦ '+classes+'ã‚¯ãƒ©ã‚¹ '+perClass+'äºº/ã‚¯ãƒ©ã‚¹ ã§ç”Ÿæˆã—ã¾ã™ã‹ï¼Ÿ'))return;
-  $('bGenerate').disabled=true;$('bGenerate').textContent='ç”Ÿæˆä¸­...';
+  if(!confirm(year+'”N“x “üŠw '+classes+'ƒNƒ‰ƒX '+perClass+'l/ƒNƒ‰ƒX ‚Å¶¬‚µ‚Ü‚·‚©H'))return;
+  $('bGenerate').disabled=true;$('bGenerate').textContent='¶¬’†...';
   try{
     const r=await a('/api/users/batch',{method:'POST',body:JSON.stringify({year,classes,perClass,password})});
     const box=$('bResult');box.className='result-box show';
-    box.innerHTML='<strong>'+r.created+'äºº</strong> ã®ç”Ÿå¾’IDã‚’ç”Ÿæˆã—ã¾ã—ãŸ<br>åˆæœŸãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰: <strong>'+esc(r.password)+'</strong><br>ç”ŸæˆID: '+r.students.slice(0,5).join(', ')+(r.students.length>5?' â€¦ä»–'+(r.students.length-5)+'ä»¶':'');
+    box.innerHTML='<strong>'+r.created+'l</strong> ‚Ì¶“kID‚ğ¶¬‚µ‚Ü‚µ‚½<br>‰ŠúƒpƒXƒ[ƒh: <strong>'+esc(r.password)+'</strong><br>¶¬ID: '+r.students.slice(0,5).join(', ')+(r.students.length>5?' c‘¼'+(r.students.length-5)+'Œ':'');
   }catch(e){alert(e.message)}
-  $('bGenerate').disabled=false;$('bGenerate').textContent='ç”Ÿæˆã™ã‚‹';
+  $('bGenerate').disabled=false;$('bGenerate').textContent='¶¬‚·‚é';
 });
 
 async function loadPosts(){
-  const t=$('postList');t.innerHTML='<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--sub)">èª­ã¿è¾¼ã¿ä¸­...</td></tr>';
+  const t=$('postList');t.innerHTML='<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--sub)">“Ç‚İ‚İ’†...</td></tr>';
   try{
     const ps=await a('/api/admin/posts');
-    if(!ps.length){t.innerHTML='<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--sub)">æŠ•ç¨¿ãŒã‚ã‚Šã¾ã›ã‚“</td></tr>';return}
+    if(!ps.length){t.innerHTML='<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--sub)">“Še‚ª‚ ‚è‚Ü‚¹‚ñ</td></tr>';return}
     t.innerHTML='';
     ps.forEach(p=>{
       const d=new Date(p.created_at);const ds=(d.getMonth()+1)+'/'+d.getDate()+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
       const tr=document.createElement('tr');
-      tr.innerHTML='<td>'+esc(p.category)+'</td><td>'+esc(p.title)+'</td><td>'+esc(p.username)+'</td><td>'+ds+'</td><td><button class="btn btn-danger btn-sm" onclick="delPost(\''+p.id+'\')">å‰Šé™¤</button></td>';
+      tr.innerHTML='<td>'+esc(p.category)+'</td><td>'+esc(p.title)+'</td><td>'+esc(p.username)+'</td><td>'+ds+'</td><td><button class="btn btn-danger btn-sm" onclick="delPost(\''+p.id+'\')">íœ</button></td>';
       t.appendChild(tr);
     });
-  }catch(e){t.innerHTML='<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--sub)">ã‚¨ãƒ©ãƒ¼</td></tr>'}
+  }catch(e){t.innerHTML='<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--sub)">ƒGƒ‰[</td></tr>'}
 }
 async function delPost(id){
-  if(!confirm('ã“ã®æŠ•ç¨¿ã‚’å‰Šé™¤ã—ã¾ã™ã‹ï¼Ÿ'))return;
+  if(!confirm('‚±‚Ì“Še‚ğíœ‚µ‚Ü‚·‚©H'))return;
   try{await a('/api/posts/'+id,{method:'DELETE'});loadPosts()}catch(e){alert(e.message)}
 }
 
@@ -256,21 +256,21 @@ async function loadStats(){
   try{
     const s=await a('/api/stats');
     const grid=$('statGrid');
-    const subLbl={'club':'éƒ¨é•·','committee':'å§”å“¡é•·'};
+    const subLbl={'club':'•”’·','committee':'ˆÏˆõ’·'};
     const managers=Object.entries(s.bySubRole||{}).map(([k,v])=>'<div class="stat-card"><div class="stat-num">'+v+'</div><div class="stat-label">'+esc(subLbl[k]||k)+'</div></div>').join('');
     const cards=[
-      {label:'ç·ãƒ¦ãƒ¼ã‚¶ãƒ¼æ•°',num:s.totalUsers},{label:'å…ˆç”Ÿ',num:s.byRole.subadmin||0},
-      {label:'ç”Ÿå¾’ä¼šæœ¬éƒ¨',num:s.byRole['student-council']||0},
-      {label:'ç”Ÿå¾’',num:s.byRole.student||0},{label:'æŠ•ç¨¿æ•°',num:s.totalPosts}
+      {label:'‘ƒ†[ƒU[”',num:s.totalUsers},{label:'æ¶',num:s.byRole.subadmin||0},
+      {label:'¶“k‰ï–{•”',num:s.byRole['student-council']||0},
+      {label:'¶“k',num:s.byRole.student||0},{label:'“Še”',num:s.totalPosts}
     ];
     grid.innerHTML=cards.map(c=>'<div class="stat-card"><div class="stat-num">'+c.num+'</div><div class="stat-label">'+c.label+'</div></div>').join('')+managers;
-    renderBar($('roleChart'),s.byRole,{'subadmin':'å…ˆç”Ÿ','manager':'éƒ¨é•·/å§”å“¡é•·','student-council':'ç”Ÿå¾’ä¼šæœ¬éƒ¨','student':'ç”Ÿå¾’','admin':'ç®¡ç†è€…'});
+    renderBar($('roleChart'),s.byRole,{'subadmin':'æ¶','manager':'•”’·/ˆÏˆõ’·','student-council':'¶“k‰ï–{•”','student':'¶“k','admin':'ŠÇ—Ò'});
     renderBar($('clubChart'),s.byClub,{});
     renderBar($('committeeChart'),s.byCommittee,{});
   }catch(e){}
 }
 function renderBar(el,data,labels){
-  const keys=Object.keys(data);if(!keys.length){el.innerHTML='<div style="color:var(--sub);font-size:13px">ãƒ‡ãƒ¼ã‚¿ãŒã‚ã‚Šã¾ã›ã‚“</div>';return}
+  const keys=Object.keys(data);if(!keys.length){el.innerHTML='<div style="color:var(--sub);font-size:13px">ƒf[ƒ^‚ª‚ ‚è‚Ü‚¹‚ñ</div>';return}
   const mx=Math.max(...keys.map(k=>data[k]));
   el.innerHTML=keys.sort((a,b)=>data[b]-data[a]).map(k=>'<div class="bar-row"><span class="bar-label">'+esc(labels[k]||k)+'</span><span class="bar-val">'+data[k]+'</span><div class="bar-fill" style="width:'+Math.max(data[k]/mx*100,5)+'%"></div></div>').join('');
 }

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>先生の初期設定 - 上藤沢中学校</title>
+<title>先生の初期設宁E- 上藤沢中学校</title>
 <style>
 :root{--primary:#1E4D2B;--primary-dark:#153820;--bg:#f7f5f0;--card:#fff;--text:#2c2c2c;--sub:#8a8682;--border:#e0dcd4;--radius:12px}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -31,24 +31,24 @@ h1{font-size:18px;font-weight:700;color:var(--primary);margin-bottom:6px;display
 </head>
 <body>
 <div class="card">
-<h1>👨‍🏫 先生の初期設定</h1>
-<p class="desc">はじめまして！学校黒板を使うための基本情報を教えてください</p>
+<h1>👨‍🏫 先生の初期設宁E/h1>
+<p class="desc">はじめまして�E�学校黒板を使ぁE��め�E基本惁E��を教えてください</p>
 <div class="step-indicator" id="stepDots"><div class="step-dot active"></div><div class="step-dot"></div><div class="step-dot"></div></div>
 
 <div class="step active" id="step1">
-<div class="form-group"><label>担当学年</label><select id="tGrade"><option value="">選択してください</option><option value="1">1学年</option><option value="2">2学年</option><option value="3">3学年</option><option value="other">その他（複数学年・全校など）</option></select></div>
+<div class="form-group"><label>拁E��学年</label><select id="tGrade"><option value="">選択してください</option><option value="1">1学年</option><option value="2">2学年</option><option value="3">3学年</option><option value="other">そ�E他（褁E��学年・全校など�E�E/option></select></div>
 <button class="btn" id="step1Btn" disabled>次へ</button>
 </div>
 
 <div class="step" id="step2">
-<div class="form-group"><label>担当教科</label><input type="text" id="tSubject" placeholder="例：数学、英語、理科..." maxlength="50"></div>
+<div class="form-group"><label>拁E��教私E/label><input type="text" id="tSubject" placeholder="例：数学、英語、理私E.." maxlength="50"></div>
 <button class="btn" id="step2Btn">次へ</button>
 </div>
 
 <div class="step" id="step3">
-<div class="form-group"><label>担任を持っていますか？</label><select id="tHomeroom"><option value="">選択してください</option><option value="no">いいえ</option><option value="yes">はい</option></select></div>
-<div class="form-group" id="tHomeroomGroup" style="display:none"><label>何組？</label><input type="number" id="tHomeroomClass" min="1" max="10" placeholder="組番号"></div>
-<button class="btn" id="step3Btn">保存して始める</button>
+<div class="form-group"><label>拁E��を持ってぁE��すか�E�E/label><select id="tHomeroom"><option value="">選択してください</option><option value="no">ぁE��ぁE/option><option value="yes">はぁE/option></select></div>
+<div class="form-group" id="tHomeroomGroup" style="display:none"><label>何絁E��E/label><input type="number" id="tHomeroomClass" min="1" max="10" placeholder="絁E��号"></div>
+<button class="btn" id="step3Btn">保存して始めめE/button>
 </div>
 </div>
 
@@ -75,7 +75,7 @@ $('step3Btn').addEventListener('click',async()=>{
     await a('/api/me',{method:'PUT',body:JSON.stringify({teacher_grade:grade,teacher_subject:subject,teacher_homeroom:homeroom==='yes'?hrClass:'',teacher_setup_done:true})});
     window.location.href='01index.html';
   }catch(e){alert('エラー: '+e.message)}
-  $('step3Btn').disabled=false;$('step3Btn').textContent='保存して始める';
+  $('step3Btn').disabled=false;$('step3Btn').textContent='保存して始めめE;
 });
 </script>
 </body>

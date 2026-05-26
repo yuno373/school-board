@@ -1,12 +1,12 @@
-ï»¿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <link rel="manifest" href="manifest.json">
-<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>éƒ¨é•·ãƒ»å‰¯éƒ¨é•·ãƒ»å§”å“¡é•·ã¸ã®è³ªå• - ä¸Šè—¤æ²¢ä¸­å­¦æ ¡</title>
+<title>•”’·E•›•”’·EˆÏˆõ’·‚Ö‚Ì¿–â - ã“¡‘ò’†ŠwZ</title>
 <style>
 :root{--primary:#1E4D2B;--primary-dark:#153820;--primary-light:#2D6B40;--accent-pink:#f5a0b8;--accent-blue:#a0c4e8;--accent-yellow:#f5e6a0;--accent-green:#a8d8a0;--bg:#f7f5f0;--card:#fff;--text:#2c2c2c;--sub:#8a8682;--border:#e0dcd4;--radius:12px;--shadow:0 2px 12px rgba(30,77,43,0.06)}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -39,27 +39,27 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
 </head>
 <body>
 <header class="header">
-  <div class="header-title">â“ éƒ¨é•·ãƒ»å‰¯éƒ¨é•·ãƒ»å§”å“¡é•·ã¸ã®è³ªå•</div>
+  <div class="header-title">? •”’·E•›•”’·EˆÏˆõ’·‚Ö‚Ì¿–â</div>
   <div class="header-right">
-    <a href="01index.html" class="header-link">é»’æ¿ã«æˆ»ã‚‹</a>
+    <a href="01index.html" class="header-link">•”Â‚É–ß‚é</a>
   </div>
 </header>
 <div class="main">
-  <div class="notice">ğŸ“Œ éƒ¨é•·ãƒ»å‰¯éƒ¨é•·ãƒ»å§”å“¡é•·ã«å€‹åˆ¥ã«è³ªå•ã§ãã¾ã™ã€‚é€šçŸ¥ã¯é€ã‚‰ã‚Œã¾ã›ã‚“ã®ã§ã€å›ç­”ã¾ã§ãŠå¾…ã¡ãã ã•ã„ã€‚</div>
-  <div id="noAccess" style="display:none;background:var(--card);border-radius:var(--radius);padding:40px 20px;box-shadow:var(--shadow);margin-bottom:20px;text-align:center;color:var(--sub);font-size:14px">ã“ã®æ©Ÿèƒ½ã¯éƒ¨æ´»ãƒ»å§”å“¡ä¼šã«æ‰€å±ã—ã¦ã„ã‚‹äººã®ã¿åˆ©ç”¨ã§ãã¾ã™ã€‚<br><a href="settings.html" style="color:var(--primary);font-weight:700">è¨­å®šãƒšãƒ¼ã‚¸</a>ã§æ‰€å±ã‚’ç™»éŒ²ã—ã¦ãã ã•ã„ã€‚</div>
+  <div class="notice">?? •”’·E•›•”’·EˆÏˆõ’·‚ÉŒÂ•Ê‚É¿–â‚Å‚«‚Ü‚·B’Ê’m‚Í‘—‚ç‚ê‚Ü‚¹‚ñ‚Ì‚ÅA‰ñ“š‚Ü‚Å‚¨‘Ò‚¿‚­‚¾‚³‚¢B</div>
+  <div id="noAccess" style="display:none;background:var(--card);border-radius:var(--radius);padding:40px 20px;box-shadow:var(--shadow);margin-bottom:20px;text-align:center;color:var(--sub);font-size:14px">‚±‚Ì‹@”\‚Í•”ŠˆEˆÏˆõ‰ï‚ÉŠ‘®‚µ‚Ä‚¢‚él‚Ì‚İ—˜—p‚Å‚«‚Ü‚·B<br><a href="settings.html" style="color:var(--primary);font-weight:700">İ’èƒy[ƒW</a>‚ÅŠ‘®‚ğ“o˜^‚µ‚Ä‚­‚¾‚³‚¢B</div>
   <div id="qFormArea">
   <div class="form-section">
-    <h2>âœï¸ æ–°ã—ã„è³ªå•</h2>
-    <select id="clubSelect"><option value="">é€ã‚‹å…ˆã‚’é¸æŠ</option></select>
-    <textarea id="qMsg" placeholder="è³ªå•å†…å®¹ã‚’æ›¸ã„ã¦ãã ã•ã„..."></textarea>
-    <button class="submit-btn" id="qBtn">é€ä¿¡ã™ã‚‹</button>
+    <h2>?? V‚µ‚¢¿–â</h2>
+    <select id="clubSelect"><option value="">‘—‚éæ‚ğ‘I‘ğ</option></select>
+    <textarea id="qMsg" placeholder="¿–â“à—e‚ğ‘‚¢‚Ä‚­‚¾‚³‚¢..."></textarea>
+    <button class="submit-btn" id="qBtn">‘—M‚·‚é</button>
   </div>
   </div>
   <div id="qList"></div>
 </div>
 <script>
 const API_BASE=''
-async function a(p,o={}){const t=sessionStorage.getItem('token'),h={'Content-Type':'application/json',...o.headers};if(t)h['Authorization']='Bearer '+t;const r=await fetch(API_BASE+p,{...o,headers:h}),d=await r.json();if(!r.ok)throw new Error(d.error||'ã‚¨ãƒ©ãƒ¼');return d}
+async function a(p,o={}){const t=sessionStorage.getItem('token'),h={'Content-Type':'application/json',...o.headers};if(t)h['Authorization']='Bearer '+t;const r=await fetch(API_BASE+p,{...o,headers:h}),d=await r.json();if(!r.ok)throw new Error(d.error||'ƒGƒ‰[');return d}
 const $=id=>document.getElementById(id),esc=s=>{const d=document.createElement('div');d.textContent=s;return d.innerHTML};
 const cu=sessionStorage.getItem('username'),role=sessionStorage.getItem('role');
 if(!cu||!sessionStorage.getItem('token'))window.location.href='02login.html';
@@ -71,36 +71,36 @@ async function loadProfile(){
     const u=await a('/api/me');
     myClub=u.club||'';myCommittee=u.committee||'';
     const sel=$('clubSelect');
-    if(myClub){const o=document.createElement('option');o.value=myClub;o.textContent=myClub+'ï¼ˆéƒ¨æ´»ï¼‰';sel.appendChild(o)}
-    if(myCommittee){const o=document.createElement('option');o.value=myCommittee;o.textContent=myCommittee+'ï¼ˆå§”å“¡ä¼šï¼‰';sel.appendChild(o)}
+    if(myClub){const o=document.createElement('option');o.value=myClub;o.textContent=myClub+'i•”Šˆj';sel.appendChild(o)}
+    if(myCommittee){const o=document.createElement('option');o.value=myCommittee;o.textContent=myCommittee+'iˆÏˆõ‰ïj';sel.appendChild(o)}
     if(!myClub&&!myCommittee){$('noAccess').style.display='block';$('qFormArea').style.display='none'}
   }catch(e){}
 }
 
 $('qBtn').addEventListener('click',async()=>{
   const msg=$('qMsg').value.trim(),club=$('clubSelect').value;
-  if(!msg||!club){alert('é€ã‚Šå…ˆã¨è³ªå•å†…å®¹ã‚’å…¥åŠ›ã—ã¦ãã ã•ã„');return}
-  $('qBtn').disabled=true;$('qBtn').textContent='é€ä¿¡ä¸­...';
+  if(!msg||!club){alert('‘—‚èæ‚Æ¿–â“à—e‚ğ“ü—Í‚µ‚Ä‚­‚¾‚³‚¢');return}
+  $('qBtn').disabled=true;$('qBtn').textContent='‘—M’†...';
   try{await a('/api/club-questions',{method:'POST',body:JSON.stringify({question:msg,club})});$('qMsg').value='';loadQs()}catch(e){alert(e.message)}
-  $('qBtn').disabled=false;$('qBtn').textContent='é€ä¿¡ã™ã‚‹';
+  $('qBtn').disabled=false;$('qBtn').textContent='‘—M‚·‚é';
 });
 
 async function loadQs(){
   try{
     const data=await a('/api/club-questions');
     const el=$('qList');
-    if(!data.length){el.innerHTML='<div class="empty">è³ªå•ã¯ã¾ã ã‚ã‚Šã¾ã›ã‚“</div>';return}
+    if(!data.length){el.innerHTML='<div class="empty">¿–â‚Í‚Ü‚¾‚ ‚è‚Ü‚¹‚ñ</div>';return}
     el.innerHTML=data.map(q=>{
       const d=new Date(q.created_at);
       const ds=(d.getMonth()+1)+'/'+d.getDate()+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
       const canReply=!q.answered&&(userRoles.includes('president')||userRoles.includes('vice-president')||userRoles.includes('chairperson'));
       const isAdminView=userRoles.includes('admin')||userRoles.includes('teacher');
-      const replyForm=canReply?`<div class="reply-input"><input type="text" placeholder="å›ç­”ã‚’å…¥åŠ›..." id="ar-${q.id}"><button class="reply-btn" onclick="answerQ('${q.id}')">å›ç­”</button></div>`:'';
-      const answerHtml=q.answered?`<div class="answer"><div class="label">âœï¸ å›ç­”</div>${esc(q.reply||'')}</div>`:'';
-      const fromInfo=isAdminView?`<span>${esc(q.from_display||q.from_username)} â†’ </span>`:'';
-      return `<div class="q-card"><div class="meta">${fromInfo}${esc(q.club)} Â· ${ds}</div><div class="question">${esc(q.question||'')}</div>${answerHtml}${replyForm}</div>`;
+      const replyForm=canReply?`<div class="reply-input"><input type="text" placeholder="‰ñ“š‚ğ“ü—Í..." id="ar-${q.id}"><button class="reply-btn" onclick="answerQ('${q.id}')">‰ñ“š</button></div>`:'';
+      const answerHtml=q.answered?`<div class="answer"><div class="label">?? ‰ñ“š</div>${esc(q.reply||'')}</div>`:'';
+      const fromInfo=isAdminView?`<span>${esc(q.from_display||q.from_username)} ¨ </span>`:'';
+      return `<div class="q-card"><div class="meta">${fromInfo}${esc(q.club)} E ${ds}</div><div class="question">${esc(q.question||'')}</div>${answerHtml}${replyForm}</div>`;
     }).join('');
-  }catch(e){$('qList').innerHTML='<div class="empty">èª­ã¿è¾¼ã¿ã‚¨ãƒ©ãƒ¼</div>'}
+  }catch(e){$('qList').innerHTML='<div class="empty">“Ç‚İ‚İƒGƒ‰[</div>'}
 }
 async function answerQ(id){
   const inp=$('ar-'+id);if(!inp)return;

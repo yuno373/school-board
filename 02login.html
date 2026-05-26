@@ -1,12 +1,12 @@
-ï»¿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<link rel="manifest" href="manifest.json">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>ãƒ­ã‚°ã‚¤ãƒ³ - ä¸Šè—¤æ²¢ä¸­å­¦æ ¡ éƒ¨æ´»å‹•é»’æ¿</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <link rel="manifest" href="manifest.json">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>ƒƒOƒCƒ“ - ã“¡‘ò’†ŠwZ •”Šˆ“®•”Â</title>
 <style>
 :root{--primary:#1E4D2B;--primary-dark:#153820;--primary-light:#2D6B40;--accent-pink:#f5a0b8;--accent-blue:#a0c4e8;--accent-yellow:#f5e6a0;--accent-green:#a8d8a0;--bg:#f7f5f0;--card:#fff;--text:#2c2c2c;--sub:#8a8682;--border:#e0dcd4;--danger:#c96565;--radius:12px;--shadow:0 4px 20px rgba(30,77,43,0.08)}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -49,40 +49,40 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sa
 <div class="login-container">
   <div class="login-card" id="loginCard">
     <div class="logo">
-      <div class="logo-icon">ğŸ“‹</div>
-      <h1>éƒ¨æ´»å‹•é»’æ¿</h1>
-      <p>ä¸Šè—¤æ²¢ä¸­å­¦æ ¡</p>
+      <div class="logo-icon">??</div>
+      <h1>•”Šˆ“®•”Â</h1>
+      <p>ã“¡‘ò’†ŠwZ</p>
     </div>
     <div class="error" id="errorMsg"></div>
     <div class="lock-info" id="lockInfo"></div>
     <form id="loginForm" autocomplete="off">
       <div class="form-group">
-        <label for="username">ãƒ­ã‚°ã‚¤ãƒ³IDï¼ˆè¡¨ç¤ºåã§ã‚‚å¯ï¼‰</label>
-        <input type="text" id="username" placeholder="ãƒ­ã‚°ã‚¤ãƒ³IDã¾ãŸã¯è¡¨ç¤ºå" autocomplete="username" required>
+        <label for="username">ƒƒOƒCƒ“IDi•\¦–¼‚Å‚à‰Âj</label>
+        <input type="text" id="username" placeholder="ƒƒOƒCƒ“ID‚Ü‚½‚Í•\¦–¼" autocomplete="username" required>
       </div>
       <div class="form-group">
-        <label for="password">ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰</label>
-        <input type="password" id="password" placeholder="ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ã‚’å…¥åŠ›" autocomplete="current-password" required>
+        <label for="password">ƒpƒXƒ[ƒh</label>
+        <input type="password" id="password" placeholder="ƒpƒXƒ[ƒh‚ğ“ü—Í" autocomplete="current-password" required>
       </div>
-      <button type="submit" class="login-btn" id="loginBtn">ãƒ­ã‚°ã‚¤ãƒ³</button>
+      <button type="submit" class="login-btn" id="loginBtn">ƒƒOƒCƒ“</button>
     </form>
-    <button class="forgot-link" id="forgotBtn">ğŸ”‘ ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ã‚’å¿˜ã‚ŒãŸ</button>
+    <button class="forgot-link" id="forgotBtn">?? ƒpƒXƒ[ƒh‚ğ–Y‚ê‚½</button>
     <div class="pwreset-section" id="pwresetSection">
-      <h3>ğŸ”‘ ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰å†è¨­å®š</h3>
-      <p id="pwresetStep" style="font-size:12px;color:var(--sub);margin-bottom:12px">ã‚ãªãŸã®åå‰ã¾ãŸã¯ãƒ­ã‚°ã‚¤ãƒ³IDã‚’å…¥åŠ›ã—ã€å†è¨­å®šã‚’ä¾é ¼ã™ã‚‹å…ˆç”Ÿã‚’é¸ã‚“ã§ãã ã•ã„ã€‚</p>
+      <h3>?? ƒpƒXƒ[ƒhÄİ’è</h3>
+      <p id="pwresetStep" style="font-size:12px;color:var(--sub);margin-bottom:12px">‚ ‚È‚½‚Ì–¼‘O‚Ü‚½‚ÍƒƒOƒCƒ“ID‚ğ“ü—Í‚µAÄİ’è‚ğˆË—Š‚·‚éæ¶‚ğ‘I‚ñ‚Å‚­‚¾‚³‚¢B</p>
       <div class="form-group">
-        <label>ã‚ãªãŸã®åå‰ï¼ˆãƒ­ã‚°ã‚¤ãƒ³IDï¼‰</label>
-        <input type="text" id="pwUsername" placeholder="ãƒ­ã‚°ã‚¤ãƒ³IDã¾ãŸã¯è¡¨ç¤ºå">
+        <label>‚ ‚È‚½‚Ì–¼‘OiƒƒOƒCƒ“IDj</label>
+        <input type="text" id="pwUsername" placeholder="ƒƒOƒCƒ“ID‚Ü‚½‚Í•\¦–¼">
       </div>
       <div class="form-group">
-        <label>ä¾é ¼ã™ã‚‹å…ˆç”Ÿ</label>
-        <select id="pwTeacher"><option value="">å…ˆç”Ÿã‚’èª­ã¿è¾¼ã¿ä¸­...</option></select>
+        <label>ˆË—Š‚·‚éæ¶</label>
+        <select id="pwTeacher"><option value="">æ¶‚ğ“Ç‚İ‚İ’†...</option></select>
       </div>
-      <button class="login-btn" id="pwResetBtn">ä¾é ¼ã™ã‚‹</button>
-      <div class="success" id="pwSuccess">ä¾é ¼ã—ã¾ã—ãŸã€‚å…ˆç”ŸãŒãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ã‚’å†è¨­å®šã™ã‚‹ã¨ã€ã“ã“ã§ç¢ºèªã§ãã¾ã™ã€‚<br><button class="forgot-link" id="pwCheckBtn" style="margin-top:8px">âœ… å†è¨­å®šã•ã‚ŒãŸã‹ç¢ºèªã™ã‚‹</button><div id="pwNewPwd" style="margin-top:8px;font-weight:700;display:none"></div></div>
-      <button class="forgot-link" id="pwBackBtn" style="margin-top:8px">â† ãƒ­ã‚°ã‚¤ãƒ³ã«æˆ»ã‚‹</button>
+      <button class="login-btn" id="pwResetBtn">ˆË—Š‚·‚é</button>
+      <div class="success" id="pwSuccess">ˆË—Š‚µ‚Ü‚µ‚½Bæ¶‚ªƒpƒXƒ[ƒh‚ğÄİ’è‚·‚é‚ÆA‚±‚±‚ÅŠm”F‚Å‚«‚Ü‚·B<br><button class="forgot-link" id="pwCheckBtn" style="margin-top:8px">? Äİ’è‚³‚ê‚½‚©Šm”F‚·‚é</button><div id="pwNewPwd" style="margin-top:8px;font-weight:700;display:none"></div></div>
+      <button class="forgot-link" id="pwBackBtn" style="margin-top:8px">© ƒƒOƒCƒ“‚É–ß‚é</button>
     </div>
-    <div class="footer"><a href="#">ä¸Šè—¤æ²¢ä¸­å­¦æ ¡ éƒ¨æ´»å‹•é»’æ¿</a></div>
+    <div class="footer"><a href="#">ã“¡‘ò’†ŠwZ •”Šˆ“®•”Â</a></div>
   </div>
 </div>
 <script>
@@ -91,24 +91,24 @@ const $=id=>document.getElementById(id);
 let pwRequestId=null;
 
 $('loginForm').addEventListener('submit',async e=>{
-  e.preventDefault();const btn=$('loginBtn');btn.disabled=true;btn.textContent='ãƒ­ã‚°ã‚¤ãƒ³ä¸­...';
+  e.preventDefault();const btn=$('loginBtn');btn.disabled=true;btn.textContent='ƒƒOƒCƒ“’†...';
   $('errorMsg').className='error';$('lockInfo').className='lock-info';
   try{
     const u=$('username').value.trim(),p=$('password').value;
-    if(!u||!p){$('errorMsg').textContent='å…¥åŠ›ã—ã¦ãã ã•ã„';$('errorMsg').className='error show';btn.disabled=false;btn.textContent='ãƒ­ã‚°ã‚¤ãƒ³';return}
+    if(!u||!p){$('errorMsg').textContent='“ü—Í‚µ‚Ä‚­‚¾‚³‚¢';$('errorMsg').className='error show';btn.disabled=false;btn.textContent='ƒƒOƒCƒ“';return}
     const h=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(p)))).map(x=>x.toString(16).padStart(2,'0')).join('');
     const r=await fetch(API_BASE+'/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:u,password:h})});
     const d=await r.json();
     if(!r.ok){
-      if(d.locked){$('lockInfo').textContent='ğŸ”’ ãƒ­ã‚°ã‚¤ãƒ³ãŒãƒ­ãƒƒã‚¯ã•ã‚Œã¾ã—ãŸã€‚ã‚ã¨'+d.remaining+'åˆ†ãŠå¾…ã¡ãã ã•ã„ã€‚';$('lockInfo').className='lock-info show'}
-      else{$('errorMsg').textContent=d.error||'ãƒ­ã‚°ã‚¤ãƒ³ã«å¤±æ•—ã—ã¾ã—ãŸ';$('errorMsg').className='error show'}
-      btn.disabled=false;btn.textContent='ãƒ­ã‚°ã‚¤ãƒ³';return
+      if(d.locked){$('lockInfo').textContent='?? ƒƒOƒCƒ“‚ªƒƒbƒN‚³‚ê‚Ü‚µ‚½B‚ ‚Æ'+d.remaining+'•ª‚¨‘Ò‚¿‚­‚¾‚³‚¢B';$('lockInfo').className='lock-info show'}
+      else{$('errorMsg').textContent=d.error||'ƒƒOƒCƒ“‚É¸”s‚µ‚Ü‚µ‚½';$('errorMsg').className='error show'}
+      btn.disabled=false;btn.textContent='ƒƒOƒCƒ“';return
     }
     sessionStorage.setItem('token',d.token);sessionStorage.setItem('username',d.username);sessionStorage.setItem('role',d.role);
     sessionStorage.setItem('display_name',d.display_name||d.username);
     const isTeacher=(d.role||'').split(',').some(r=>['teacher','admin'].includes(r.trim()));
     if(isTeacher&&!d.teacher_setup_done){window.location.href='teacher-setup.html'}else{window.location.href='01index.html'}
-  }catch(e){$('errorMsg').textContent='ã‚µãƒ¼ãƒãƒ¼ã«æ¥ç¶šã§ãã¾ã›ã‚“';$('errorMsg').className='error show';btn.disabled=false;btn.textContent='ãƒ­ã‚°ã‚¤ãƒ³'}
+  }catch(e){$('errorMsg').textContent='ƒT[ƒo[‚ÉÚ‘±‚Å‚«‚Ü‚¹‚ñ';$('errorMsg').className='error show';btn.disabled=false;btn.textContent='ƒƒOƒCƒ“'}
 });
 
 // Password reset
@@ -130,41 +130,41 @@ async function loadTeachers(){
     const users=await r.json();
     const teachers=users.filter(u=>(u.role||'').split(',').some(r=>['teacher','admin'].includes(r.trim())));
     const el=$('pwTeacher');
-    el.innerHTML='<option value="">å…ˆç”Ÿã‚’é¸æŠ</option>'+teachers.map(t=>'<option value="'+esc(t.username)+'">'+esc(t.display_name||t.username)+'</option>').join('');
-  }catch(e){$('pwTeacher').innerHTML='<option value="">èª­ã¿è¾¼ã¿ã‚¨ãƒ©ãƒ¼</option>'}
+    el.innerHTML='<option value="">æ¶‚ğ‘I‘ğ</option>'+teachers.map(t=>'<option value="'+esc(t.username)+'">'+esc(t.display_name||t.username)+'</option>').join('');
+  }catch(e){$('pwTeacher').innerHTML='<option value="">“Ç‚İ‚İƒGƒ‰[</option>'}
 }
 function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
 
 $('pwResetBtn').addEventListener('click',async()=>{
   const username=$('pwUsername').value.trim();
   const teacher=$('pwTeacher').value;
-  if(!username){alert('ã‚ãªãŸã®åå‰ã‚’å…¥åŠ›ã—ã¦ãã ã•ã„');return}
-  if(!teacher){alert('å…ˆç”Ÿã‚’é¸æŠã—ã¦ãã ã•ã„');return}
-  $('pwResetBtn').disabled=true;$('pwResetBtn').textContent='é€ä¿¡ä¸­...';
+  if(!username){alert('‚ ‚È‚½‚Ì–¼‘O‚ğ“ü—Í‚µ‚Ä‚­‚¾‚³‚¢');return}
+  if(!teacher){alert('æ¶‚ğ‘I‘ğ‚µ‚Ä‚­‚¾‚³‚¢');return}
+  $('pwResetBtn').disabled=true;$('pwResetBtn').textContent='‘—M’†...';
   try{
     const r=await fetch(API_BASE+'/api/password-reset/request',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username,teacher})});
     const d=await r.json();
-    if(!r.ok){alert(d.error||'ã‚¨ãƒ©ãƒ¼');$('pwResetBtn').disabled=false;$('pwResetBtn').textContent='ä¾é ¼ã™ã‚‹';return}
+    if(!r.ok){alert(d.error||'ƒGƒ‰[');$('pwResetBtn').disabled=false;$('pwResetBtn').textContent='ˆË—Š‚·‚é';return}
     pwRequestId=d.id;
     $('pwResetBtn').style.display='none';
     $('pwSuccess').classList.add('show');
-    $('pwStep').textContent='ä¾é ¼ã—ã¾ã—ãŸã€‚å…ˆç”ŸãŒå†è¨­å®šã™ã‚‹ã¨ä¸‹ã®ãƒœã‚¿ãƒ³ã§ç¢ºèªã§ãã¾ã™ã€‚';
-  }catch(e){alert('ã‚¨ãƒ©ãƒ¼ãŒç™ºç”Ÿã—ã¾ã—ãŸ');$('pwResetBtn').disabled=false;$('pwResetBtn').textContent='ä¾é ¼ã™ã‚‹'}
+    $('pwStep').textContent='ˆË—Š‚µ‚Ü‚µ‚½Bæ¶‚ªÄİ’è‚·‚é‚Æ‰º‚Ìƒ{ƒ^ƒ“‚ÅŠm”F‚Å‚«‚Ü‚·B';
+  }catch(e){alert('ƒGƒ‰[‚ª”­¶‚µ‚Ü‚µ‚½');$('pwResetBtn').disabled=false;$('pwResetBtn').textContent='ˆË—Š‚·‚é'}
 });
 
 $('pwCheckBtn').addEventListener('click',async()=>{
-  if(!pwRequestId){alert('å…ˆã«ä¾é ¼ã—ã¦ãã ã•ã„');return}
+  if(!pwRequestId){alert('æ‚ÉˆË—Š‚µ‚Ä‚­‚¾‚³‚¢');return}
   try{
     const r=await fetch(API_BASE+'/api/password-reset/check/'+pwRequestId);
     const d=await r.json();
     if(d.status==='done'){
       $('pwNewPwd').style.display='block';
-      $('pwNewPwd').innerHTML='æ–°ã—ã„ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰: <strong>'+esc(d.new_password)+'</strong><br><span style="font-size:11px;color:var(--sub)">ã“ã®ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ã§ãƒ­ã‚°ã‚¤ãƒ³ã—ã¦ãã ã•ã„</span>';
-      $('pwCheckBtn').textContent='âœ… ç¢ºèªæ¸ˆã¿';
+      $('pwNewPwd').innerHTML='V‚µ‚¢ƒpƒXƒ[ƒh: <strong>'+esc(d.new_password)+'</strong><br><span style="font-size:11px;color:var(--sub)">‚±‚ÌƒpƒXƒ[ƒh‚ÅƒƒOƒCƒ“‚µ‚Ä‚­‚¾‚³‚¢</span>';
+      $('pwCheckBtn').textContent='? Šm”FÏ‚İ';
     }else{
-      alert('ã¾ã å†è¨­å®šã•ã‚Œã¦ã„ã¾ã›ã‚“ã€‚å…ˆç”ŸãŒå‡¦ç†ã™ã‚‹ã¾ã§ãŠå¾…ã¡ãã ã•ã„ã€‚');
+      alert('‚Ü‚¾Äİ’è‚³‚ê‚Ä‚¢‚Ü‚¹‚ñBæ¶‚ªˆ—‚·‚é‚Ü‚Å‚¨‘Ò‚¿‚­‚¾‚³‚¢B');
     }
-  }catch(e){alert('ã‚¨ãƒ©ãƒ¼')}
+  }catch(e){alert('ƒGƒ‰[')}
 });
 </script>
 <script>if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js')</script>

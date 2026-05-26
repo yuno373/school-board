@@ -1,1 +1,5 @@
-.vercel
+2026*.json
+vapid_keys.json
+push_subs.json
+.wrangler/
+node_modules/

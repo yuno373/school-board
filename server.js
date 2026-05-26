@@ -169,7 +169,9 @@ app.use('/api', async (req, res) => {
 });
 
 app.use(express.static(path.join(__dirname, 'public')));
-const port = process.env.PORT || 10000;
+
+const port = process.env.PORT || 3000;
+
 Promise.all([initVapid(), loadSubsFromR2()]).then(() => {
   app.listen(port, () => console.log('Server running on port ' + port));
 }).catch(() => {

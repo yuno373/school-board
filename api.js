@@ -1869,36 +1869,6 @@ if (path === '/api/users' && method === 'GET') {
     }
 
     // ============================================================
-    // 18c. PUSH NOTIFY (send push notifications to subscribers)
-    // ============================================================
-    if (path === '/api/push/notify' && method === 'POST') {
-      authErr = requireAuth(user);
-      if (authErr) return authErr;
-      const {category, title, body, url, excludeUser} = await request.json();
-      // For now, just log and return ok
-      await auditLog(env, 'push_notify', user.username, {category, title, body, url, excludeUser});
-      return json({ok: true});
-    }
-
-    // ============================================================
-    // 18d. ADMIN UPDATE NOTIFY (send system update notification to all subscribers)
-    // ============================================================
-    if (path === '/api/admin/notify-update' && method === 'POST') {
-      authErr = requireAuth(user, ['admin']);
-      if (authErr) return authErr;
-      const {title, body} = await request.json();
-      if (!title) return json({error: 'タイトルは必須です'}, 400);
-      // Store the notification in R2 for history (optional)
-      const notifications = await r2Get(env.DATA, 'update-notifications.json') || [];
-      notifications.unshift({id: crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2), title, body, sent_at: new Date().toISOString(), sent_by: user.username});
-      if (notifications.length > 50) notifications.length = 50;
-      await r2Put(env.DATA, 'update-notifications.json', notifications);
-      await auditLog(env, 'admin_update_notify', user.username, {title, body});
-      // TODO: Implement actual push notification sending here
-      return json({ok: true});
-    }
-
-    // ============================================================
     // 18b. VAPID KEYS (persist across Render deploys)
     // ============================================================
     if (path === '/api/vapid-keys' && method === 'GET') {

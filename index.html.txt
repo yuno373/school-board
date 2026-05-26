@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Photo Upload</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f0f6ff;
+      padding: 20px;
+    }
+    .box {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      max-width: 450px;
+      margin: auto;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background: #8ecaff;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    img {
+      width: 100%;
+      margin-top: 10px;
+      border-radius: 8px;
+    }
+    .admin {
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #ddd;
+    }
+  </style>
+</head>
+<body>
+
+<div class="box">
+  <h2>写真アップロード</h2>
+
+  <input type="file" id="fileInput">
+  <button onclick="upload()">アップロード</button>
+
+  <h3>ギャラリー</h3>
+  <div id="gallery"></div>
+
+  <div class="admin">
+    <h3>管理者設定</h3>
+    <input type="password" id="adminPass" placeholder="現在のパスワード">
+    <input type="password" id="newPass" placeholder="新しいパスワード">
+    <button onclick="changePass()">パスワード変更</button>
+  </div>
+</div>
+
+<script>
+const API = "https://photo-api.jaimely.workers.dev"; // ←唯希のURLに変更してね
+
+async function upload() {
+  const file = document.getElementById("fileInput").files[0];
+  if (!file) return alert("ファイルを選んでね");
+
+  const url = `${API}/upload?user=admin&filename=${encodeURIComponent(file.name)}`;
+
+  const res = await fetch(url, {
+    method: "POST",
+    body: file
+  });
+
+  alert(await res.text());
+  loadGallery();
+}
+
+async function loadGallery() {
+  const res = await fetch(`${API}/list?user=admin`);
+  const list = await res.json();
+
+  const gallery = document.getElementById("gallery");
+  gallery.innerHTML = "";
+
+  list.forEach(url => {
+    const img = document.createElement("img");
+    img.src = url;
+    gallery.appendChild(img);
+  });
+}
+
+async function changePass() {
+  const pass = document.getElementById("adminPass").value;
+  const newPass = document.getElementById("newPass").value;
+
+  const res = await fetch(`${API}/change-password?password=${pass}&new=${newPass}`);
+  alert(await res.text());
+}
+
+loadGallery();
+</script>
+
+</body>
+</html>
